@@ -24,6 +24,10 @@ export interface AdminEventsParams {
     eventType?: EventType;
     from?: string;
     to?: string;
+    sort?: string;
+    weightingEnabled?: boolean;
+    createdFrom?: string;
+    createdTo?: string;
 }
 
 // 관리자 목록·상태 운영은 가상 시계로 상태가 움직이므로 realtime 프리셋으로 서버 값을 따라간다

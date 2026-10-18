@@ -1,4 +1,5 @@
 import { http } from 'msw';
+import { z } from 'zod';
 
 import type { AdminEventStatus, AdminPrize, MembershipRule } from '@entities/event';
 
@@ -452,6 +453,28 @@ export const adminEventHandlers = [
         const eventType = url.searchParams.get('eventType');
         const from = url.searchParams.get('from');
         const to = url.searchParams.get('to');
+        const sort = url.searchParams.get('sort') ?? 'createdAt,desc';
+        const sortMatch = /^(createdAt|startsAt|endsAt|title),(asc|desc)$/.exec(sort);
+        const createdFrom = url.searchParams.get('createdFrom');
+        const createdTo = url.searchParams.get('createdTo');
+        if (
+            !sortMatch ||
+            [createdFrom, createdTo].some(
+                (date) => date !== null && !z.iso.date().safeParse(date).success,
+            ) ||
+            (createdFrom !== null && createdTo !== null && createdFrom > createdTo)
+        ) {
+            return fail(400, 'EVENT-008', '검색 조건을 확인해 주세요.');
+        }
+        const sortField = sortMatch[1] as 'createdAt' | 'startsAt' | 'endsAt' | 'title';
+        const direction = sortMatch[2] === 'asc' ? 1 : -1;
+        const weightingEnabled = url.searchParams.get('weightingEnabled');
+        const createdStart =
+            createdFrom === null ? null : new Date(`${createdFrom}T00:00:00+09:00`).getTime();
+        const createdEnd =
+            createdTo === null
+                ? null
+                : new Date(`${createdTo}T00:00:00+09:00`).getTime() + 86_400_000;
 
         const filtered = mockAdminEvents
             .filter((item) => {
@@ -463,12 +486,23 @@ export const adminEventHandlers = [
                 ) {
                     return false;
                 }
+                if (weightingEnabled === 'true' && !item.weightingEnabled) return false;
+                if (weightingEnabled === 'false' && item.weightingEnabled) return false;
+                const createdAt = new Date(item.createdAt).getTime();
+                if (createdStart !== null && createdAt < createdStart) return false;
+                if (createdEnd !== null && createdAt >= createdEnd) return false;
                 // 기간 필터 [from, to)는 응모 시작 시각 기준으로 해석한다
                 if (from && new Date(item.startsAt) < new Date(from)) return false;
                 if (to && new Date(item.startsAt) >= new Date(to)) return false;
                 return true;
             })
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
+            .sort((a, b) => {
+                const primary =
+                    sortField === 'title'
+                        ? a.title.localeCompare(b.title)
+                        : new Date(a[sortField]).getTime() - new Date(b[sortField]).getTime();
+                return direction * (primary || a.id.localeCompare(b.id));
+            });
 
         return ok({
             items: filtered

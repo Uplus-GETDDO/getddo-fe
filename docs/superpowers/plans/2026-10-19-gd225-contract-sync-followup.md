@@ -61,12 +61,12 @@ spec: E01 각 EventSummary에 `myEntered:boolean` 항상 반환. 정상 접수 �
 
 spec 파라미터: `sort`(createdAt/startsAt/endsAt/title + `,asc|,desc`, 기본 `createdAt,desc`, 동값은 id 같은 방향), `weightingEnabled`(boolean), `createdFrom`·`createdTo`(KST `YYYY-MM-DD`, `createdAt` 기준 양끝 포함). 위반은 400 `EVENT-008`.
 
-- [ ] `AdminEventsParams`에 `sort?: string`, `weightingEnabled?: boolean`, `createdFrom?: string`, `createdTo?: string` 추가 — 쿼리 스트링으로 그대로 전달 (boolean은 `'true'`/`'false'`)
-- [ ] `adminEvent.ts` AE01 핸들러 — `sort` 파싱(`field,dir` 분리, 허용 목록 외·형식 오류 → 400 `EVENT-008`), `weightingEnabled` 필터(`'true'`/`'false'` 외 값은 무시하지 않고 형식 오류 없이 그냥 필터 — spec은 boolean 검증을 공통에 위임, 목업은 'true'/'false'만 해석), `createdFrom`·`createdTo`(KST 날짜 → `createdAt` 기준 양끝 포함 비교, `createdFrom > createdTo` → `EVENT-008`), 기본 정렬 `createdAt,desc` + id 타이브레이크 유지
-- [ ] `AdminEventsPage` — 정렬 Select(`등록일 최신`/`등록일 오래된`/`시작일 빠른`/`시작일 늦은`/`마감일 빠른`/`마감일 늦은`/`제목 오름차순`/`제목 내림차순`), 가중치 Select(전체/가중치 적용/미적용), 등록일 `DateRangeFilter`(basis="등록일", `createdFrom`·`createdTo`는 `YYYY-MM-DD` 그대로 전송 — UTC 변환하지 않음). `hasAppliedFilters`·`resetFilters`·검색 draft 패턴에 새 상태 통합
-- [ ] `errorMessage.ts` — `EVENT-008: '검색 조건을 확인해 주세요.'` 추가 + 테스트
-- [ ] 목업 테스트 — sort 정상·비정상(EVENT-008), weightingEnabled, createdFrom/To 경계·역전(EVENT-008)
-- [ ] 커밋: `feat(event): 관리자 이벤트 검색에 정렬·가중치·등록일 조건 추가`
+- [x] `AdminEventsParams`에 `sort?: string`, `weightingEnabled?: boolean`, `createdFrom?: string`, `createdTo?: string` 추가 — 쿼리 스트링으로 그대로 전달 (boolean은 `'true'`/`'false'`)
+- [x] `adminEvent.ts` AE01 핸들러 — `sort` 파싱(`field,dir` 분리, 허용 목록 외·형식 오류 → 400 `EVENT-008`), `weightingEnabled` 필터(`'true'`/`'false'` 외 값은 무시하지 않고 형식 오류 없이 그냥 필터 — spec은 boolean 검증을 공통에 위임, 목업은 'true'/'false'만 해석), `createdFrom`·`createdTo`(KST 날짜 → `createdAt` 기준 양끝 포함 비교, `createdFrom > createdTo` → `EVENT-008`), 기본 정렬 `createdAt,desc` + id 타이브레이크 유지
+- [x] `AdminEventsPage` — 정렬 Select(`등록일 최신`/`등록일 오래된`/`시작일 빠른`/`시작일 늦은`/`마감일 빠른`/`마감일 늦은`/`제목 오름차순`/`제목 내림차순`), 가중치 Select(전체/가중치 적용/미적용), 등록일 `DateRangeFilter`(basis="등록일", `createdFrom`·`createdTo`는 `YYYY-MM-DD` 그대로 전송 — UTC 변환하지 않음). `hasAppliedFilters`·`resetFilters`·검색 draft 패턴에 새 상태 통합
+- [x] `errorMessage.ts` — `EVENT-008: '검색 조건을 확인해 주세요.'` 추가 + 테스트
+- [x] 목업 테스트 — sort 정상·비정상(EVENT-008), weightingEnabled, createdFrom/To 경계·역전(EVENT-008)
+- [x] 커밋: `feat(event): 관리자 이벤트 검색에 정렬·가중치·등록일 조건 추가`
 
 ### Task 4: 플래티넘 등급 (ADR-025)
 
