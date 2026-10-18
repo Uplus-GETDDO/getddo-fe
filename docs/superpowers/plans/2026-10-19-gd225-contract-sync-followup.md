@@ -109,11 +109,11 @@ spec(2026-10-15 채택): 목록 순서 1~N, 등록 1~N+1(N=5 거절 `BANNER-004`
 
 **Files:** Modify: `docs/CONTEXT.md`, `docs/DESIGN-SYSTEM.md`, `docs/superpowers/plans/2026-10-17-gd225-hybrid-contract-followup.md`
 
-- [ ] `CONTEXT.md` "백엔드 연동 전 임시 상태" — 2026-10-19 실측 매트릭스로 갱신: AS01·AM04·draws·abuse 미배포(목업 유지/미연동), banner·adminTicket 실연동 해제, AO06/AO07·AP01~04·AM01~03·AS01·AM04는 BE 구현·배포(또는 병합)됐으나 FE 연동 후속, R2/R4/R7 반영, 알림 코드 현행화, 플래티넘(적용 시점 후속 표기), 거절 이력·claimId·AE05/AE08 해소 정정. 잔여: 멤버십 NULL 근본 해결·CANCELED 노출 정책(BE/정책)
-- [ ] `CONTEXT.md` 도메인 표 — R4 겟또타임 용어("기본 이벤트 NO_TICKET·겟또타임 TICKET") 반영
-- [ ] `DESIGN-SYSTEM.md` — grade 토큰 표에 `--color-grade-platinum`/`-soft` 추가
-- [ ] 기존 GD-225 계획 파일 — 코드 반영 확인된 Task 1~5 체크박스를 `[x]`로 정합화 + "잔여 계약은 2026-10-19 후속 계획으로 이관" 표기
-- [ ] 커밋: `docs: spec 확정분과 실측 기준으로 연동 상태 갱신`
+- [x] `CONTEXT.md` "백엔드 연동 전 임시 상태" — 2026-10-19 실측 매트릭스로 갱신: AS01·AM04·draws·abuse 미배포(목업 유지/미연동), banner·adminTicket 실연동 해제, AO06/AO07·AP01~04·AM01~03·AS01·AM04는 BE 구현·배포(또는 병합)됐으나 FE 연동 후속, R2/R4/R7 반영, 알림 코드 현행화, 플래티넘(적용 시점 후속 표기), 거절 이력·claimId·AE05/AE08 해소 정정. 잔여: 멤버십 NULL 근본 해결·CANCELED 노출 정책(BE/정책)
+- [x] `CONTEXT.md` 도메인 표 — R4 겟또타임 용어("기본 이벤트 NO_TICKET·겟또타임 TICKET") 반영
+- [x] `DESIGN-SYSTEM.md` — grade 토큰 표에 `--color-grade-platinum`/`-soft` 추가
+- [x] 기존 GD-225 계획 파일 — 코드 반영 확인된 Task 1~5 체크박스를 `[x]`로 정합화 + "잔여 계약은 2026-10-19 후속 계획으로 이관" 표기
+- [x] 커밋: `docs: spec 확정분과 실측 기준으로 연동 상태 갱신`
 
 ### Task 8: 검증·PR
 
