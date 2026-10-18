@@ -74,14 +74,14 @@ spec 파라미터: `sort`(createdAt/startsAt/endsAt/title + `,asc|,desc`, 기본
 
 spec: `PLATINUM` 추가 — 확률 브론즈 79.98·실버 18·골드 2·플래티넘 0.02(%), 가중치 10, 지급 1장, 출석은 브론즈 고정 유지.
 
-- [ ] `ticketGradeSchema` → `['BRONZE','SILVER','GOLD','PLATINUM']` — Record<TicketGrade,…> 사용처 전부 컴파일 오류로 드러나므로 tsc가 수정 지점을 알려준다
-- [ ] `grade.ts` — LABEL `플래티넘`, DOT `bg-grade-platinum`, WEIGHT `PLATINUM: 10`, ODDS를 `BRONZE:79.98, SILVER:18, GOLD:2, PLATINUM:0.02`로 (주석 갱신)
-- [ ] `tokens.css` — `--color-grade-platinum: #3e5c76;` · `--color-grade-platinum-soft: #dde6ee;` (골드 계열 다음 프리미엄 등급 — 스틸 블루, 디자인 확정 전 임의값 아닌 토큰으로만 추가)
-- [ ] `drawMockTicketGrade` — 누적 분기 `roll<0.7998 BRONZE / <0.9798 SILVER / <0.9998 GOLD / else PLATINUM`
-- [ ] 등급 노출 UI(`TicketGradePill`·`GradeTicketTiles`·`TicketHistoryRow` 등)와 `EntryReceipt` tickets 맵·관리자 티켓 목업(`adminTicket.ts` 시드 grade) 점검 — Record 누락·switch default만 수정, 시드는 필요할 때만 PLATINUM 포함
-- [ ] `entry` 응모 목업의 `tickets` 맵 검증(허용 등급 키 목록)에 PLATINUM 포함 확인
-- [ ] 관련 테스트 갱신(확률표·등급 enum 스냅샷 등 실패분)
-- [ ] 커밋: `feat(ticket): 플래티넘 응모권 등급과 가중치 반영 (ADR-025)`
+- [x] `ticketGradeSchema` → `['BRONZE','SILVER','GOLD','PLATINUM']` — Record<TicketGrade,…> 사용처 전부 컴파일 오류로 드러나므로 tsc가 수정 지점을 알려준다
+- [x] `grade.ts` — LABEL `플래티넘`, DOT `bg-grade-platinum`, WEIGHT `PLATINUM: 10`, ODDS를 `BRONZE:79.98, SILVER:18, GOLD:2, PLATINUM:0.02`로 (주석 갱신)
+- [x] `tokens.css` — `--color-grade-platinum: #3e5c76;` · `--color-grade-platinum-soft: #dde6ee;` (골드 계열 다음 프리미엄 등급 — 스틸 블루, 디자인 확정 전 임의값 아닌 토큰으로만 추가)
+- [x] `drawMockTicketGrade` — 누적 분기 `roll<0.7998 BRONZE / <0.9798 SILVER / <0.9998 GOLD / else PLATINUM`
+- [x] 등급 노출 UI(`TicketGradePill`·`GradeTicketTiles`·`TicketHistoryRow` 등)와 `EntryReceipt` tickets 맵·관리자 티켓 목업(`adminTicket.ts` 시드 grade) 점검 — Record 누락·switch default만 수정, 시드는 필요할 때만 PLATINUM 포함
+- [x] `entry` 응모 목업의 `tickets` 맵 검증(허용 등급 키 목록)에 PLATINUM 포함 확인
+- [x] 관련 테스트 갱신(확률표·등급 enum 스냅샷 등 실패분)
+- [x] 커밋: `feat(ticket): 플래티넘 응모권 등급과 가중치 반영 (ADR-025)`
 
 ### Task 5: 배너 계약 정합 — 1기반 순서·삭제 보존·eventId nullable
 

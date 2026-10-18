@@ -8,6 +8,7 @@ const GRADE_TILE: Record<TicketGrade, string> = {
     BRONZE: 'bg-grade-bronze-soft',
     SILVER: 'bg-grade-silver-soft',
     GOLD: 'bg-grade-gold-soft',
+    PLATINUM: 'bg-grade-platinum-soft',
 };
 
 /**

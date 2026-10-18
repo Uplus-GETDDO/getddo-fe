@@ -214,7 +214,13 @@ const TREND_DAILY: Record<TicketSourceType, [min: number, max: number]> = {
 };
 // 출석은 브론즈만(ADR-016), 미션·게임은 등급 추첨 확률(TICKET_GRADE_ODDS 80 : 18 : 2)대로
 const trendGrade = (source: TicketSourceType, r: number): TicketGrade =>
-    source === 'ATTENDANCE' || r < 0.8 ? 'BRONZE' : r < 0.98 ? 'SILVER' : 'GOLD';
+    source === 'ATTENDANCE' || r < 0.7998
+        ? 'BRONZE'
+        : r < 0.9798
+          ? 'SILVER'
+          : r < 0.9998
+            ? 'GOLD'
+            : 'PLATINUM';
 
 function dayRandom(ymd: string) {
     let x = Number(ymd.replaceAll('-', '')) >>> 0 || 1;

@@ -3,12 +3,13 @@ import { z } from 'zod';
 // getddo-spec/05-api/entry.md 초안의 EntryReceipt — 접수·거절 두 상태만 존재한다
 export const entryStatusSchema = z.enum(['ACCEPTED', 'REJECTED']);
 
-// 등급별 장수 맵 — spec의 응모 계약 키 집합(BRONZE·SILVER·GOLD)이다.
+// 등급별 장수 맵 — spec의 응모 계약 키 집합(BRONZE·SILVER·GOLD·PLATINUM)이다.
 // entities/ticket의 등급과 값은 같지만 응모 계약 소유 필드라 이 슬라이스에 둔다 (슬라이스 간 참조 금지)
 export const ticketsByGradeSchema = z.object({
     BRONZE: z.number().int().nonnegative(),
     SILVER: z.number().int().nonnegative(),
     GOLD: z.number().int().nonnegative(),
+    PLATINUM: z.number().int().nonnegative(),
 });
 
 // 응모 접수 결과 — 최종 접수 여부는 이 응답을 따른다 (화면에서 미리 확정하지 않는다)

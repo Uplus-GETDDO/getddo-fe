@@ -27,7 +27,7 @@ describe('groupTicketHistories', () => {
         expect(groups[0]).toMatchObject({
             count: 3,
             delta: -3,
-            countByGrade: { BRONZE: 0, SILVER: 2, GOLD: 1 },
+            countByGrade: { BRONZE: 0, SILVER: 2, GOLD: 1, PLATINUM: 0 },
             detail: '응모에 사용',
             createdAt: '2026-10-13T00:00:01Z',
         });

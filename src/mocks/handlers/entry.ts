@@ -28,10 +28,10 @@ type EntryReceipt = Entry;
 // 멤버십 규칙 비교 — 우수 < VIP < VVIP (getddo-spec 02-domain/event.md)
 const MEMBERSHIP_RANK: Record<MembershipRule, number> = { excellent: 0, vip: 1, vvip: 2 };
 
-const ZERO_TICKETS: TicketsByGrade = { BRONZE: 0, SILVER: 0, GOLD: 0 };
+const ZERO_TICKETS: TicketsByGrade = { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 };
 
 /**
- * E04 요청 본문의 tickets 맵을 세 등급이 채워진 모양으로 정규화한다 — 생략된 등급은 0이다.
+ * E04 요청 본문의 tickets 맵을 네 등급이 채워진 모양으로 정규화한다 — 생략된 등급은 0이다.
  * 등급 외 키·정수가 아닌 값·음수가 있으면 형식 오류(null)다 (spec EntryRequest)
  */
 function parseTickets(raw: unknown): TicketsByGrade | null {
@@ -46,7 +46,8 @@ function parseTickets(raw: unknown): TicketsByGrade | null {
     return tickets;
 }
 
-const totalOf = (tickets: TicketsByGrade) => tickets.BRONZE + tickets.SILVER + tickets.GOLD;
+const totalOf = (tickets: TicketsByGrade) =>
+    tickets.BRONZE + tickets.SILVER + tickets.GOLD + tickets.PLATINUM;
 
 const sameTickets = (a: TicketsByGrade, b: TicketsByGrade) =>
     ticketGradeSchema.options.every((grade) => a[grade] === b[grade]);
@@ -101,9 +102,9 @@ const seedEntry = (): EntryReceipt => ({
     eventId: 'evt-001',
     eventTitle: '갤럭시 버즈 위클리 래플',
     requestedTicketCount: 1,
-    requestedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0 },
+    requestedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
     deductedTicketCount: 1,
-    deductedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0 },
+    deductedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
     status: 'ACCEPTED',
     requestedAt: '2026-09-15T08:00:00Z',
     acceptedAt: '2026-09-15T08:00:00Z',
@@ -119,11 +120,31 @@ const HOUR_MS = 60 * 60 * 1000;
  * evt-107은 E09 테스트가 "응모하지 않은 사람"을 확인하는 래플이라 시드를 두지 않는다
  */
 const DEMO_ENTRY_SEEDS: { eventId: string; tickets: TicketsByGrade; hoursBeforeEnd: number }[] = [
-    { eventId: 'evt-106', tickets: { BRONZE: 0, SILVER: 2, GOLD: 1 }, hoursBeforeEnd: 2 },
-    { eventId: 'evt-108', tickets: { BRONZE: 1, SILVER: 0, GOLD: 0 }, hoursBeforeEnd: 3 },
-    { eventId: 'evt-110', tickets: { BRONZE: 0, SILVER: 1, GOLD: 0 }, hoursBeforeEnd: 4 },
-    { eventId: 'evt-109', tickets: { BRONZE: 3, SILVER: 0, GOLD: 0 }, hoursBeforeEnd: 5 },
-    { eventId: 'evt-111', tickets: { BRONZE: 0, SILVER: 2, GOLD: 0 }, hoursBeforeEnd: 1 },
+    {
+        eventId: 'evt-106',
+        tickets: { BRONZE: 0, SILVER: 2, GOLD: 1, PLATINUM: 0 },
+        hoursBeforeEnd: 2,
+    },
+    {
+        eventId: 'evt-108',
+        tickets: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 3,
+    },
+    {
+        eventId: 'evt-110',
+        tickets: { BRONZE: 0, SILVER: 1, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 4,
+    },
+    {
+        eventId: 'evt-109',
+        tickets: { BRONZE: 3, SILVER: 0, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 5,
+    },
+    {
+        eventId: 'evt-111',
+        tickets: { BRONZE: 0, SILVER: 2, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 1,
+    },
     { eventId: 'evt-006', tickets: { ...ZERO_TICKETS }, hoursBeforeEnd: 24 * 20 },
 ];
 
@@ -474,7 +495,11 @@ export const entryHandlers = [
             }
         } else if (!rule.weightingEnabled) {
             // 브론즈 1장 고정 — 다른 등급·장수나 브론즈 부족은 모두 BRONZE_REQUIRED로 구분 안내한다
-            const bronzeOnly = tickets.BRONZE === 1 && tickets.SILVER === 0 && tickets.GOLD === 0;
+            const bronzeOnly =
+                tickets.BRONZE === 1 &&
+                tickets.SILVER === 0 &&
+                tickets.GOLD === 0 &&
+                tickets.PLATINUM === 0;
             if (!bronzeOnly || getMockAvailableTicketCountByGrade(userId).BRONZE < 1) {
                 return reject(
                     409,

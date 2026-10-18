@@ -55,7 +55,12 @@ export function TimeRaffleDetailPage() {
     const { data: myResult } = useMyResult(id, isAfterClose);
     const enterEvent = useEnterEvent(id);
     // 가중치 적용 이벤트에서 사용자가 등급별로 고르는 장수 — 브론즈 0장 사용자를 위해 0장에서 시작한다
-    const [tickets, setTickets] = useState<TicketsByGrade>({ BRONZE: 0, SILVER: 0, GOLD: 0 });
+    const [tickets, setTickets] = useState<TicketsByGrade>({
+        BRONZE: 0,
+        SILVER: 0,
+        GOLD: 0,
+        PLATINUM: 0,
+    });
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [shortfallOpen, setShortfallOpen] = useState(false);
     const [completeOpen, setCompleteOpen] = useState(false);
@@ -85,7 +90,7 @@ export function TimeRaffleDetailPage() {
     const isOpen = event.status === 'open';
     const isFree = event.eventType === 'NO_TICKET';
     const isWeighted = event.eventType === 'TICKET' && event.weightingEnabled;
-    const selectedTotal = tickets.BRONZE + tickets.SILVER + tickets.GOLD;
+    const selectedTotal = tickets.BRONZE + tickets.SILVER + tickets.GOLD + tickets.PLATINUM;
 
     // 자격 판정이 아직 안 왔으면 이벤트 카운터로 근사한다 — 서버 판정(E07)이 오면 그 값을 따른다
     const alreadyUsed =
@@ -222,7 +227,7 @@ export function TimeRaffleDetailPage() {
                                       : Math.max(0, remainingLimit - entry.deductedTicketCount),
                             );
                             // 한도가 줄어들어 지금 선택이 범위를 벗어날 수 있으므로 되돌린다
-                            setTickets({ BRONZE: 0, SILVER: 0, GOLD: 0 });
+                            setTickets({ BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 });
                             setCompleteOpen(true);
                         },
                         onError: (error) => {

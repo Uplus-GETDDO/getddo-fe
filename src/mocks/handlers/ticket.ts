@@ -215,12 +215,13 @@ function syncExpired(state: TicketState) {
     }
 }
 
-/** 게임·미션 보상의 등급 추첨 — 보상 건마다 확률로 등급 하나를 결정한다 (브론즈 80%·실버 18%·골드 2%) */
+/** 게임·미션 보상의 등급 추첨 — 보상 건마다 확률로 등급 하나를 결정한다 (브론즈 79.98%·실버 18%·골드 2%·플래티넘 0.02%) */
 export function drawMockTicketGrade(): TicketGrade {
     const roll = Math.random();
-    if (roll < 0.8) return 'BRONZE';
-    if (roll < 0.98) return 'SILVER';
-    return 'GOLD';
+    if (roll < 0.7998) return 'BRONZE';
+    if (roll < 0.9798) return 'SILVER';
+    if (roll < 0.9998) return 'GOLD';
+    return 'PLATINUM';
 }
 
 /** 응모 목업이 차감 전에 보유량을 확인할 때 쓴다 — 사용 가능(AVAILABLE·RETURNED, 미만료) 장수 */
@@ -235,7 +236,7 @@ export function getMockAvailableTicketCountByGrade(userId: string): Record<Ticke
     const state = stateFor(userId);
     syncExpired(state);
     const now = mockNow().getTime();
-    const counts: Record<TicketGrade, number> = { BRONZE: 0, SILVER: 0, GOLD: 0 };
+    const counts: Record<TicketGrade, number> = { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 };
     for (const ticket of state.tickets) {
         if (isUsable(ticket, now)) counts[ticket.grade] += 1;
     }
@@ -352,7 +353,12 @@ export const ticketHandlers = [
         syncExpired(state);
         const now = mockNow().getTime();
 
-        const countByGrade: Record<TicketGrade, number> = { BRONZE: 0, SILVER: 0, GOLD: 0 };
+        const countByGrade: Record<TicketGrade, number> = {
+            BRONZE: 0,
+            SILVER: 0,
+            GOLD: 0,
+            PLATINUM: 0,
+        };
         const holdingByKey = new Map<
             string,
             { grade: TicketGrade; expiresAt: string; count: number }
