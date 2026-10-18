@@ -20,7 +20,8 @@ interface EntryAttempt {
 const sameTickets = (a: EntryTickets, b: EntryTickets) =>
     (a.BRONZE ?? 0) === (b.BRONZE ?? 0) &&
     (a.SILVER ?? 0) === (b.SILVER ?? 0) &&
-    (a.GOLD ?? 0) === (b.GOLD ?? 0);
+    (a.GOLD ?? 0) === (b.GOLD ?? 0) &&
+    (a.PLATINUM ?? 0) === (b.PLATINUM ?? 0);
 
 /**
  * 이벤트에 응모한다 — tickets는 등급별 장수 맵이고 생략된 등급은 0이다 (spec E04).

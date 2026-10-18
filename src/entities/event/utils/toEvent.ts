@@ -67,6 +67,7 @@ export function toEvent(raw: EventSummaryResponse | EventDetailResponse): Event 
                     : topPrize.name
                 : undefined,
         winnerCount: prizes?.reduce((sum, prize) => sum + prize.winnerCount, 0),
+        myEntered: 'maxTicketsPerUser' in raw ? false : (raw.myEntered ?? false),
         myEntryCount: raw.myEntryCount,
         myTicketCount: raw.myTicketCount,
     };

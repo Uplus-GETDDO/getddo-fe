@@ -74,14 +74,16 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 게임·미션 보상의 등급 응모권(브론즈 80%·실버 18%·골드 2%, 출석은 브론즈 고정)을 구분하는 색. 밝기·채도를 고르게 맞춰 너무 따뜻하지도 차갑지도 않게 했다. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕(글자는 잉크색). 다크 모드에도 같은 값을 쓴다.
 
-| Token               | Hex       | 용도                  |
-| ------------------- | --------- | --------------------- |
-| `grade/bronze`      | `#C27C55` | 브론즈 점·막대·테두리 |
-| `grade/bronze-soft` | `#F6E9E1` | 브론즈 알약·카드 바탕 |
-| `grade/silver`      | `#8E9BAD` | 실버 점·막대·테두리   |
-| `grade/silver-soft` | `#ECEFF4` | 실버 알약·카드 바탕   |
-| `grade/gold`        | `#D9A92E` | 골드 점·막대·테두리   |
-| `grade/gold-soft`   | `#FAF0D2` | 골드 알약·카드 바탕   |
+| Token                                                 | Hex       | 용도                    |
+| ----------------------------------------------------- | --------- | ----------------------- |
+| `grade/bronze`                                        | `#C27C55` | 브론즈 점·막대·테두리   |
+| `grade/bronze-soft`                                   | `#F6E9E1` | 브론즈 알약·카드 바탕   |
+| `grade/silver`                                        | `#8E9BAD` | 실버 점·막대·테두리     |
+| `grade/silver-soft`                                   | `#ECEFF4` | 실버 알약·카드 바탕     |
+| `grade/gold`                                          | `#D9A92E` | 골드 점·막대·테두리     |
+| `grade/gold-soft`                                     | `#FAF0D2` | 골드 알약·카드 바탕     |
+| `grade/platinum` (`--color-grade-platinum`)           | `#3E5C76` | 플래티넘 점·막대·테두리 |
+| `grade/platinum-soft` (`--color-grade-platinum-soft`) | `#DDE6EE` | 플래티넘 알약·카드 바탕 |
 
 ### 5) Surface — 배경 레이어
 

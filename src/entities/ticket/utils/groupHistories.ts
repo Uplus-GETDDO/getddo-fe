@@ -60,7 +60,7 @@ export function groupTicketHistories(histories: readonly TicketHistory[]): Ticke
                 reason: history.reason,
                 createdAt: history.createdAt,
                 count: 0,
-                countByGrade: { BRONZE: 0, SILVER: 0, GOLD: 0 },
+                countByGrade: { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 },
                 delta: null,
                 expiresAt: history.expiresAt,
                 detail: detailOf(history),
