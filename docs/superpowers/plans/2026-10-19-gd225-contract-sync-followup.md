@@ -118,7 +118,7 @@ spec(2026-10-15 채택): 목록 순서 1~N, 등록 1~N+1(N=5 거절 `BANNER-004`
 ### Task 8: 검증·PR
 
 - [x] `npm run format:check && npm run lint && npm run test:ci && npm run build` 전부 통과
-- [ ] `git push -u origin fix/GD-225` → `gh pr create --base dev` (템플릿 전부 작성, 관련 이슈 GD-225)
+- [x] `git push -u origin fix/GD-225` → `gh pr create --base dev` (템플릿 전부 작성, 관련 이슈 GD-225)
 - [x] 머지는 사용자 승인 후 — 이 계획은 머지까지 자동으로 진행하지 않는다
 
 ## 잔여(이번 범위 제외 — 문서 기록만)
@@ -145,3 +145,5 @@ spec(2026-10-15 채택): 목록 순서 1~N, 등록 1~N+1(N=5 거절 `BANNER-004`
 - 라이트 1280px와 다크·동작 줄이기 320px 조건을 확인했다. 320px에서 문서 scrollWidth가 429px여서 가로 넘침은 남아 있다. 200% 줌·자동 접근성 감사·전체 Tab 순회는 미검증이다.
 - 플래티넘 전용 이미지가 없어 은색 그림을 재사용한다. 이름·확정 색상 토큰으로 구분하며 전용 이미지는 디자인 후속이다.
 - 사용자 이벤트 목록 UI(GD-233)와 신규 관리자 화면은 변경하지 않았다. 이번 검증은 로컬 목업과 빌드 기준이며 배포 BE 정상 업무 처리까지 검증한 것은 아니다.
+
+- PR 생성: [#91](https://github.com/Uplus-GETDDO/getddo-fe/pull/91), base `dev`, head `fix/GD-225`. 머지는 수행하지 않았다.
