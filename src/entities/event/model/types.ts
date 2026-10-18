@@ -176,6 +176,7 @@ export const eventSchema = z.object({
     // weightingEnabled:true, 월말 소진용은 maxTicketsPerUser:null 조합이다 (getddo-spec 05-api/event.md)
     eventType: eventTypeSchema,
     weightingEnabled: z.boolean(),
+    myEntered: z.boolean().default(false),
     // 상한 실값은 상세(E02)에만 있다 — 목록(E01)만으로 만든 이벤트는 undefined다
     maxTicketsPerUser: z.number().int().nullable().optional(),
     membershipRule: membershipRuleSchema,

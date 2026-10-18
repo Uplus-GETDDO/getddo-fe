@@ -196,6 +196,10 @@ const myAcceptedFor = (userId: string, eventId: string) =>
         (entry) => entry.eventId === eventId && entry.status === 'ACCEPTED',
     );
 
+/** E01은 시드를 포함한 정상 접수 기록을 기준으로 판단한다. */
+export const mockUserHasAcceptedEntry = (userId: string, eventId: string): boolean =>
+    myAcceptedFor(userId, eventId).length > 0;
+
 /** 실제로 접수된 응모만 센다 — E04의 1회 제한·누적 상한과 E07의 참여 판정 근거 */
 const myRealAcceptedFor = (userId: string, eventId: string) =>
     myAcceptedFor(userId, eventId).filter((entry) => !seededEntries.has(entry));

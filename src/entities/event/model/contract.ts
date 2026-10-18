@@ -23,6 +23,8 @@ export const eventSummaryResponseSchema = z.object({
     imageUrl: z.string().nullable(),
     eventType: eventTypeSchema,
     weightingEnabled: z.boolean(),
+    // spec 필수이나 BE 배포 확인 전까지 optional. E02에는 없으며 상세 매핑에서는 무시한다.
+    myEntered: z.boolean().optional(),
     membershipRule: membershipRuleSchema,
     startsAt: z.iso.datetime({ offset: true }),
     endsAt: z.iso.datetime({ offset: true }),

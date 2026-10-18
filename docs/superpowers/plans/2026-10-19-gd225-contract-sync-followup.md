@@ -47,13 +47,13 @@ spec 정정(2026-10-18): `USER_CONTEXT_REQUIRED`→`USER-003`, `USER_CONTEXT_INV
 
 spec: E01 각 EventSummary에 `myEntered:boolean` 항상 반환. 정상 접수 응모가 있으면 true(취소·반환 후에도 기록 기준 유지), 거절만·미응모·관리자 조회는 false. E02·AdminEvent에는 없다.
 
-- [ ] `contract.ts` — `eventSummaryResponseSchema`에 `myEntered: z.boolean().optional()` 추가 + 주석 "spec 필수이나 BE 배포 확인 전까지 optional". `eventDetailResponseSchema`는 extend라 자동 포함 — spec은 E02에 없다고 하므로 `myEntered`를 detail에서 `omit`하거나 그대로 두되 매퍼에서 무시한다 (BE가 E02에 안 보내면 optional이라 무해 — 두되, 주석으로 명시)
-- [ ] `types.ts` Event 스키마 — `myEntered: z.boolean().default(false)` 추가 (화면 모델은 항상 boolean)
-- [ ] `toEvent` 매퍼 — `myEntered: raw.myEntered ?? false`
-- [ ] `entry.ts` — `mockUserHasAcceptedEntry(userId, eventId): boolean` export 추가 (`myAcceptedFor` 재사용, ACCEPTED 건 존재 여부)
-- [ ] `event.ts` — `toSummary(event, now)`에 `myEntered` 계산 추가: 시그니처를 `toSummary(event, now, userId)`로 바꾸고 `http.get('/v1/events')`에서 `request.headers.get('X-User-ID')`를 넘긴다. userId 없거나 관리자면 false. `toResponse`에는 넣지 않는다 (E02는 spec상 myEntered 없음 — 목업도 제외)
-- [ ] 기존 이벤트 핸들러 테스트에 myEntered 케이스 추가(응모한 사용자 true / 미응모 false / 헤더 없음 false)
-- [ ] 커밋: `feat(event): E01 목록에 내 응모 여부 myEntered 반영`
+- [x] `contract.ts` — `eventSummaryResponseSchema`에 `myEntered: z.boolean().optional()` 추가 + 주석 "spec 필수이나 BE 배포 확인 전까지 optional". `eventDetailResponseSchema`는 extend라 자동 포함 — spec은 E02에 없다고 하므로 `myEntered`를 detail에서 `omit`하거나 그대로 두되 매퍼에서 무시한다 (BE가 E02에 안 보내면 optional이라 무해 — 두되, 주석으로 명시)
+- [x] `types.ts` Event 스키마 — `myEntered: z.boolean().default(false)` 추가 (화면 모델은 항상 boolean)
+- [x] `toEvent` 매퍼 — `myEntered: raw.myEntered ?? false`
+- [x] `entry.ts` — `mockUserHasAcceptedEntry(userId, eventId): boolean` export 추가 (`myAcceptedFor` 재사용, ACCEPTED 건 존재 여부)
+- [x] `event.ts` — `toSummary(event, now)`에 `myEntered` 계산 추가: 시그니처를 `toSummary(event, now, userId)`로 바꾸고 `http.get('/v1/events')`에서 `request.headers.get('X-User-ID')`를 넘긴다. userId 없거나 관리자면 false. `toResponse`에는 넣지 않는다 (E02는 spec상 myEntered 없음 — 목업도 제외)
+- [x] 기존 이벤트 핸들러 테스트에 myEntered 케이스 추가(응모한 사용자 true / 미응모 false / 헤더 없음 false)
+- [x] 커밋: `feat(event): e01 목록에 내 응모 여부 myEntered 반영`
 
 ### Task 3: AE01 검색 확장 (R2)
 

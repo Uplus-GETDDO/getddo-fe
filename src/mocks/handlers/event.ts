@@ -6,6 +6,7 @@ import { MEMBERSHIP_LABEL } from '@entities/event';
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
+import { mockUserHasAcceptedEntry } from './entry';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
@@ -1237,7 +1238,7 @@ function toResponse(event: MockEvent, now: number) {
 }
 
 /** E01 목록 항목은 spec의 EventSummary — description·prizes·maxTicketsPerUser는 상세(E02)에만 있다 */
-function toSummary(event: MockEvent, now: number) {
+function toSummary(event: MockEvent, now: number, userId: string | null) {
     const {
         description: _description,
         prizes: _prizes,
@@ -1247,7 +1248,7 @@ function toSummary(event: MockEvent, now: number) {
     void _description;
     void _prizes;
     void _maxTicketsPerUser;
-    return summary;
+    return { ...summary, myEntered: userId ? mockUserHasAcceptedEntry(userId, event.id) : false };
 }
 
 /**
@@ -1267,7 +1268,15 @@ export const eventHandlers = [
         const status = url.searchParams.get('status');
         const now = mockNow().getTime();
         const items = mockEvents
-            .map((event) => toSummary(event, now))
+            .map((event) =>
+                toSummary(
+                    event,
+                    now,
+                    request.headers.get('X-User-Role') === 'ADMIN'
+                        ? null
+                        : request.headers.get('X-User-ID'),
+                ),
+            )
             .filter((event) => !status || event.status === status);
         return ok({
             items: items.slice((page - 1) * size, page * size),

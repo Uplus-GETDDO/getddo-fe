@@ -42,6 +42,12 @@ const DETAIL: EventDetailResponse = {
 };
 
 describe('toEvent', () => {
+    it('목록의 myEntered를 반영하고 누락·상세는 false로 매핑한다', () => {
+        expect(toEvent({ ...SUMMARY, myEntered: true }).myEntered).toBe(true);
+        expect(toEvent(SUMMARY).myEntered).toBe(false);
+        expect(toEvent({ ...DETAIL, myEntered: true }).myEntered).toBe(false);
+    });
+
     it('spec 상태 enum을 화면 상태로 변환한다', () => {
         const cases: [EventSummaryResponse['status'], string][] = [
             ['SCHEDULED', 'upcoming'],
