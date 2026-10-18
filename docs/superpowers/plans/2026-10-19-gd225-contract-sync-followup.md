@@ -89,12 +89,12 @@ spec: `PLATINUM` 추가 — 확률 브론즈 79.98·실버 18·골드 2·플래�
 
 spec(2026-10-15 채택): 목록 순서 1~N, 등록 1~N+1(N=5 거절 `BANNER-004`), 수정 1~N 이동, 삭제 시 빈자리 당김, AB05 전체 ID 원자 반영(409 `BANNER-005`), 이벤트 삭제로 배너 자동 삭제 없음 — 삭제·취소 이벤트 연결분은 사용자 B01에서만 숨기고 관리자 목록 보존, 이전 행 AdminBanner `eventId` nullable.
 
-- [ ] `types.ts` — `adminBannerSchema`의 `eventId`를 `.nullable()`로, `displayOrder`를 `min(1)`로 (B01 사용자 Banner는 `int` 유지 여부 확인 — spec은 int만 명시, 목업 write 검증이 1~N을 강제)
-- [ ] `banner.ts` 목업 — 시드 `displayOrder` 0,1,2 → 1,2,3; 등록 위치 검증 0~N → 1~N+1; 삽입·이동·당기기 산술 전부 1기반으로 (`item.displayOrder !== index` → `index + 1`)
-- [ ] `adminEvent.ts` — `removeMockBannersOfEvent` 호출 제거(이벤트 삭제 시 행 보존), 대신 B01 핸들러가 연결 이벤트를 조회해 목록에서 없거나 `CANCELED`면 숨긴다 (mockEvents에 없는 id = 삭제됨)
-- [ ] `manageBanner` UI·테스트에서 0기반 순서 가정(표시 `displayOrder + 1` 등) 수정
-- [ ] `banner.test.ts` 전면 갱신 — 1~N 경계, 삽입 밀기, 삭제 당기기, 이벤트 삭제 후 사용자 목록 숨김·관리자 보존
-- [ ] 커밋: `fix(banner): 확정 계약의 1기반 순서와 이벤트 삭제 시 행 보존 적용`
+- [x] `types.ts` — `adminBannerSchema`의 `eventId`를 `.nullable()`로, `displayOrder`를 `min(1)`로 (B01 사용자 Banner는 `int` 유지 여부 확인 — spec은 int만 명시, 목업 write 검증이 1~N을 강제)
+- [x] `banner.ts` 목업 — 시드 `displayOrder` 0,1,2 → 1,2,3; 등록 위치 검증 0~N → 1~N+1; 삽입·이동·당기기 산술 전부 1기반으로 (`item.displayOrder !== index` → `index + 1`)
+- [x] `adminEvent.ts` — `removeMockBannersOfEvent` 호출 제거(이벤트 삭제 시 행 보존), 대신 B01 핸들러가 연결 이벤트를 조회해 목록에서 없거나 `CANCELED`면 숨긴다 (mockEvents에 없는 id = 삭제됨)
+- [x] `manageBanner` UI·테스트에서 0기반 순서 가정(표시 `displayOrder + 1` 등) 수정
+- [x] `banner.test.ts` 전면 갱신 — 1~N 경계, 삽입 밀기, 삭제 당기기, 이벤트 삭제 후 사용자 목록 숨김·관리자 보존
+- [x] 커밋: `fix(banner): 확정 계약의 1기반 순서와 이벤트 삭제 시 행 보존 적용`
 
 ### Task 6: `hybridHandlers` 갱신 — 배포 확인분 해제
 

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-// AB01~AB05 응답의 AdminBanner — getddo-spec 05-api/banner.md 초안(검토 대기).
+// AB01~AB05 응답의 AdminBanner — getddo-spec 05-api/banner.md 채택 계약(2026-10-15).
 // spec의 createdBy는 관리자 이벤트 응답에서 제거한 방침(#50)에 맞춰 싣지 않는다
 export const adminBannerSchema = z.object({
     id: z.string(),
-    eventId: z.string(),
+    eventId: z.string().nullable(),
     imageUrl: z.string(),
     imageKey: z.string(),
-    displayOrder: z.number().int().min(0),
+    displayOrder: z.number().int().min(1),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });

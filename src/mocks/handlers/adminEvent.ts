@@ -6,7 +6,6 @@ import type { AdminEventStatus, AdminPrize, MembershipRule } from '@entities/eve
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
-import { removeMockBannersOfEvent } from './banner';
 import { mockEntryTicketTotals, mockEventHasEntries } from './entry';
 import { entryRuleOf, mockEvents, sessionFixedTime } from './event';
 import { fail, ok } from './response';
@@ -441,6 +440,10 @@ const readReason = async (request: Request) => {
     return typeof body?.reason === 'string' ? body.reason.trim() : '';
 };
 
+/** 취소된 이벤트 신규 연결을 배너 목업에서 거절할 때 쓴다. */
+export const mockAdminEventIsCanceled = (eventId: string): boolean =>
+    mockAdminEvents.some((event) => event.id === eventId && event.status === 'CANCELED');
+
 export const adminEventHandlers = [
     // AE01 — 목록: keyword/status/eventType/from/to 필터 + Page<AdminEvent> 봉투 (페이지는 1부터)
     http.get(api('/v1/admin/events'), ({ request }) => {
@@ -547,8 +550,7 @@ export const adminEventHandlers = [
         if (item.entryCount > 0 || mockEventHasEntries(item.id)) {
             return fail(409, 'STATE_CONFLICT', '응모 이력이 있는 이벤트는 삭제할 수 없습니다');
         }
-        // 도메인 규칙: 연결된 배너도 함께 삭제한다
-        removeMockBannersOfEvent(item.id);
+        // 연결 배너는 관리자 목록에 보존하고 B01에서만 숨긴다.
         mockAdminEvents.splice(mockAdminEvents.indexOf(item), 1);
         removeUserProjection(item.id);
         return ok(null);
