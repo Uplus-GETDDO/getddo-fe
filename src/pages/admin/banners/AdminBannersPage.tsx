@@ -67,9 +67,10 @@ export function AdminBannersPage() {
     const count = banners?.length ?? 0;
     const full = count >= BANNER_MAX_COUNT;
     const editing = formTarget !== null && formTarget !== 'new' ? formTarget : null;
-    const nextDisplayOrder = banners?.length
-        ? Math.max(...banners.map((banner) => banner.displayOrder)) + 1
-        : 1;
+    // 쓰기 순서는 보존된 이전 값이 아닌 현재 목록의 1기반 위치다.
+    const displayOrder = editing
+        ? (banners ?? []).findIndex((banner) => banner.id === editing.id) + 1
+        : count + 1;
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
@@ -146,7 +147,7 @@ export function AdminBannersPage() {
                 eventsPending={eventsPending}
                 eventsError={eventsError}
                 onEventsRetry={() => void refetchEvents()}
-                nextDisplayOrder={nextDisplayOrder}
+                displayOrder={displayOrder}
             />
             <DeleteBannerDialog
                 banner={deleteTarget}

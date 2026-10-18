@@ -50,8 +50,8 @@ interface BannerFormDialogProps {
     eventsPending?: boolean;
     eventsError?: boolean;
     onEventsRetry?: () => void;
-    /** 등록 시 보낼 노출 순서 — 목록 맨 뒤에 붙이고, 이후 순서는 목록에서 바꾼다 */
-    nextDisplayOrder: number;
+    /** 현재 전체 목록 기준 1기반 위치 — 등록은 맨 뒤, 수정은 현재 위치다 */
+    displayOrder: number;
 }
 
 function BannerForm({
@@ -60,7 +60,7 @@ function BannerForm({
     eventsPending,
     eventsError,
     onEventsRetry,
-    nextDisplayOrder,
+    displayOrder,
     onDone,
 }: Omit<BannerFormDialogProps, 'open' | 'onOpenChange'> & { onDone: () => void }) {
     const isEdit = banner !== null;
@@ -82,7 +82,7 @@ function BannerForm({
         const body = {
             eventId: values.eventId,
             imageKey: values.imageKey,
-            displayOrder: banner?.displayOrder ?? nextDisplayOrder,
+            displayOrder,
         };
         const options = {
             onSuccess: () => {
@@ -227,7 +227,7 @@ export function BannerFormDialog({
     eventsPending,
     eventsError,
     onEventsRetry,
-    nextDisplayOrder,
+    displayOrder,
 }: BannerFormDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -249,7 +249,7 @@ export function BannerFormDialog({
                     eventsPending={eventsPending}
                     eventsError={eventsError}
                     onEventsRetry={onEventsRetry}
-                    nextDisplayOrder={nextDisplayOrder}
+                    displayOrder={displayOrder}
                     onDone={() => onOpenChange(false)}
                 />
             </DialogContent>

@@ -7,7 +7,8 @@ export const adminBannerSchema = z.object({
     eventId: z.string().nullable(),
     imageUrl: z.string(),
     imageKey: z.string(),
-    displayOrder: z.number().int().min(1),
+    // 이전 행은 관리 변경 전까지 0기반·비연속 순서를 보존한다.
+    displayOrder: z.number().int().min(0),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });
