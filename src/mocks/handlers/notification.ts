@@ -65,7 +65,7 @@ const getNotificationsForUser = (userId: string): Notification[] => {
 export const notificationHandlers = [
     http.get(api('/v1/notifications/me'), ({ request }) => {
         const userId = request.headers.get('X-User-ID');
-        if (!userId) return fail(401, 'USER_CONTEXT_REQUIRED', '사용자 문맥이 필요합니다.');
+        if (!userId) return fail(401, 'USER-003', '사용자 문맥이 필요합니다.');
         const notifications = getNotificationsForUser(userId);
 
         const url = new URL(request.url);
@@ -90,7 +90,7 @@ export const notificationHandlers = [
 
     http.put(api('/v1/notifications/:notificationId/read'), ({ request, params }) => {
         const userId = request.headers.get('X-User-ID');
-        if (!userId) return fail(401, 'USER_CONTEXT_REQUIRED', '사용자 문맥이 필요합니다.');
+        if (!userId) return fail(401, 'USER-003', '사용자 문맥이 필요합니다.');
         const notifications = getNotificationsForUser(userId);
 
         const target = notifications.find((n) => n.id === params.notificationId);
@@ -102,7 +102,7 @@ export const notificationHandlers = [
 
     http.put(api('/v1/notifications/me/read-all'), ({ request }) => {
         const userId = request.headers.get('X-User-ID');
-        if (!userId) return fail(401, 'USER_CONTEXT_REQUIRED', '사용자 문맥이 필요합니다.');
+        if (!userId) return fail(401, 'USER-003', '사용자 문맥이 필요합니다.');
         const notifications = getNotificationsForUser(userId);
 
         const updatedCount = notifications.filter((n) => !n.isRead).length;

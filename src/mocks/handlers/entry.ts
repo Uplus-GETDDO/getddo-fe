@@ -440,7 +440,7 @@ export const entryHandlers = [
         if (user && requestedMembership && requestedMembership !== user.membership) {
             // 멤버십 불일치는 응모 시도 전의 사용자 문맥 오류라 거절 이력으로 저장하지 않는다 —
             // 저장하면 헤더를 고친 재시도까지 옛 거절로 막힌다
-            return fail(409, 'USER_MEMBERSHIP_MISMATCH', '사용자 멤버십 정보가 일치하지 않습니다');
+            return fail(409, 'USER-006', '사용자 멤버십 정보가 일치하지 않습니다');
         }
         if (user?.role === 'ADMIN') {
             return reject(403, 'ENTRY-002', '관리자는 이벤트에 응모할 수 없습니다');

@@ -68,7 +68,7 @@ describe('알림 목업 핸들러 (N01~N03 확정 계약)', () => {
         expect((bad.data as Envelope<null>).code).toBe('NOTIFICATION-001');
     });
 
-    it('없는 알림은 404 NOTIFICATION-002, 헤더 없으면 401 USER_CONTEXT_REQUIRED다', async () => {
+    it('없는 알림은 404 NOTIFICATION-002, 헤더 없으면 401 USER-003다', async () => {
         const missing = await apiClient.put('/v1/notifications/not-exist/read', undefined, {
             ...USER,
             validateStatus: () => true,
@@ -80,7 +80,7 @@ describe('알림 목업 핸들러 (N01~N03 확정 계약)', () => {
             validateStatus: () => true,
         });
         expect(noUser.status).toBe(401);
-        expect((noUser.data as Envelope<null>).code).toBe('USER_CONTEXT_REQUIRED');
+        expect((noUser.data as Envelope<null>).code).toBe('USER-003');
     });
 
     it('읽음 상태는 X-User-ID별로 분리된다', async () => {
