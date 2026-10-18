@@ -100,10 +100,10 @@ spec(2026-10-15 채택): 목록 순서 1~N, 등록 1~N+1(N=5 거절 `BANNER-004`
 
 **Files:** Modify: `src/mocks/handlers/index.ts`
 
-- [ ] `bannerHandlers` 제거 — B01·AB01~05 배포 확인(2026-10-19 실측 400)
-- [ ] `adminTicketHandlers` 제거 — AO03·AO04·AO05·AO08·AO09 배포 확인
-- [ ] 주석 갱신 — 실측일 2026-10-19, 유지 사유: draw·abuse(미배포 404)·audit(버전 제외 ADR-024)·game(형상 불일치)·virtualUsers(spec外). AS01·AM04 미배포(404)지만 FE 미호출이라 핸들러 없음을 명기
-- [ ] 커밋: `fix(mocks): 배포된 배너·관리자 응모권을 하이브리드 목업에서 해제`
+- [x] `bannerHandlers` 제거 — B01·AB01~05 배포 확인(2026-10-19 실측 400)
+- [x] `adminTicketHandlers` 제거 — AO03·AO04·AO05·AO08·AO09 배포 확인
+- [x] 주석 갱신 — 실측일 2026-10-19, 유지 사유: draw·abuse(미배포 404)·audit(버전 제외 ADR-024)·game(형상 불일치)·virtualUsers(spec外). AS01·AM04 미배포(404)지만 FE 미호출이라 핸들러 없음을 명기
+- [x] 커밋: `fix(mocks): 배포된 배너·관리자 응모권을 하이브리드 목업에서 해제`
 
 ### Task 7: docs 동기화
 
