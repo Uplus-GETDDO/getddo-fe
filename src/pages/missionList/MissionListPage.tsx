@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
+import { useAttendanceToday } from '@entities/attendance';
 import { MissionRewardDialog } from '@entities/mission';
 import { TICKET_GRADE_LABEL, type TicketGrade, TicketGradeReveal } from '@entities/ticket';
 import { AttendanceCheckCard } from '@features/checkAttendance';
 import { Button } from '@shared/ui/button';
 import { cn } from '@shared/utils/cn';
+import { formatKst, KST_HOUR_MINUTE } from '@shared/utils/date';
 import { GameRail } from '@widgets/gameRail';
 
 import { MISSION_SECTION_IDS } from './model/sectionIds';
@@ -23,6 +25,10 @@ const MISSION_PARAM = 'mission';
 const SETTLE_SCROLL_MS = 600;
 
 export function MissionListPage() {
+    const { data: attendance } = useAttendanceToday();
+    const attendanceResetCaption = attendance
+        ? `하루 1회 · 다음 초기화 ${formatKst(attendance.nextResetAt, { month: 'numeric', day: 'numeric', ...KST_HOUR_MINUTE })} KST`
+        : '하루 1회 · 매일 자정(00:00 KST) 초기화';
     // 출석 카드를 펼치면(펼쳐보기·출석 완료) 출석 카드가 넓어지고 응모권 내역 카드가 좁아진다.
     // 펼침 상태는 저장하지 않는다 — 페이지에 들어올 때마다 접힌 상태로 새로 시작한다
     const [attendanceExpanded, setAttendanceExpanded] = useState(false);
@@ -88,8 +94,7 @@ export function MissionListPage() {
                         id={MISSION_SECTION_IDS.attendance}
                         className="flex min-w-0 scroll-mt-24 flex-col gap-6"
                     >
-                        {/* 출석 기준일은 00:00 UTC(09:00 KST)에 바뀐다 — getddo-spec 출석 규칙 */}
-                        <SectionHeader title="출석체크" caption="하루 1회 · 오전 9시 초기화" />
+                        <SectionHeader title="출석체크" caption={attendanceResetCaption} />
                         <AttendanceCheckCard
                             expanded={attendanceExpanded}
                             onExpandedChange={setAttendanceExpanded}
@@ -106,7 +111,7 @@ export function MissionListPage() {
             <div id={MISSION_SECTION_IDS.games} className={`${CONTAINER} mt-20 scroll-mt-24`}>
                 <GameRail
                     title="게임"
-                    caption="게임마다 하루 한 번 응모권을 받을 수 있어요. 매일 오전 9시 초기화"
+                    caption="게임마다 하루 한 번 응모권을 받을 수 있어요. 매일 자정(00:00 KST) 초기화"
                 />
             </div>
 
