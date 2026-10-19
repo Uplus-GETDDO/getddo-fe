@@ -67,7 +67,9 @@ export function GradeTicketSteppers({
                                 </span>
                             </span>
                             <span className="text-caption text-fg-tertiary">
-                                보유 {availableByGrade ? `${availableByGrade[grade]}장` : '-'}
+                                {availableByGrade
+                                    ? `보유 ${availableByGrade[grade]}장`
+                                    : '보유 수량 확인 필요'}
                             </span>
                         </div>
                     </div>

@@ -7,6 +7,7 @@ import {
     TICKET_GRADE_IMAGE,
     TICKET_GRADE_LABEL,
     TICKET_GRADES,
+    TicketBalanceStatus,
     useMyTickets,
     useTicketHistories,
 } from '@entities/ticket';
@@ -38,7 +39,8 @@ interface TicketWalletProps {
  * 응모권 모양(양옆 반원 홈·절취선)이고, 응모권을 든 캐릭터가 오른쪽 위에 걸터앉는다
  */
 export function TicketWallet({ now, action }: TicketWalletProps) {
-    const { data: tickets } = useMyTickets();
+    const ticketsQuery = useMyTickets();
+    const tickets = ticketsQuery.data;
     const { data: history } = useTicketHistories();
     const monthly = history ? summarizeMonthlyTickets(history, now) : undefined;
     const balance = useCountUp(tickets?.availableCount);
@@ -63,35 +65,42 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                         사용 가능 응모권
                         <TicketGradeInfo />
                     </p>
-                    <p className="text-title-2 text-fg-primary tabular-nums">{format(balance)}장</p>
+                    <TicketBalanceStatus query={ticketsQuery} />
+                    {(tickets || ticketsQuery.isPending) && (
+                        <p className="text-title-2 text-fg-primary tabular-nums">
+                            {format(balance)}장
+                        </p>
+                    )}
 
                     {/*
                      * 등급 칸은 바탕 없이 얇은 세로선으로만 나눈다 — 응모권 그림이 이미 등급 색이라 바탕까지 칠하면
                      * 회색(실버 바탕 포함)이 다시 생기고 노란 가게 배너 위에서 색이 많아진다
                      */}
-                    <ul
-                        className="divide-border-default mt-4 grid grid-cols-3 divide-x"
-                        aria-label="등급별 보유 응모권"
-                    >
-                        {TICKET_GRADES.map((grade) => (
-                            <li
-                                key={grade}
-                                className="flex flex-col items-center gap-1 px-1.5 pt-2 pb-1.5"
-                            >
-                                <img
-                                    src={TICKET_GRADE_IMAGE[grade]}
-                                    alt=""
-                                    className="h-auto w-full max-w-11"
-                                />
-                                <span className="text-caption text-fg-secondary">
-                                    {TICKET_GRADE_LABEL[grade]}
-                                </span>
-                                <span className="text-body-sm-bold text-fg-primary tabular-nums">
-                                    {format(tickets?.countByGrade[grade])}장
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
+                    {(tickets || ticketsQuery.isPending) && (
+                        <ul
+                            className="divide-border-default mt-4 grid grid-cols-3 divide-x"
+                            aria-label="등급별 보유 응모권"
+                        >
+                            {TICKET_GRADES.map((grade) => (
+                                <li
+                                    key={grade}
+                                    className="flex flex-col items-center gap-1 px-1.5 pt-2 pb-1.5"
+                                >
+                                    <img
+                                        src={TICKET_GRADE_IMAGE[grade]}
+                                        alt=""
+                                        className="h-auto w-full max-w-11"
+                                    />
+                                    <span className="text-caption text-fg-secondary">
+                                        {TICKET_GRADE_LABEL[grade]}
+                                    </span>
+                                    <span className="text-body-sm-bold text-fg-primary tabular-nums">
+                                        {format(tickets?.countByGrade[grade])}장
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
 
                     {/* 절취선 */}
                     <div className="border-border-default mt-4 flex items-center justify-between gap-3 border-t border-dashed pt-3">

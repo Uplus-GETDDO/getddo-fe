@@ -8,7 +8,7 @@ import type { Event } from '@entities/event';
 import { useEventResults, useMyResult } from '@entities/drawResult';
 import { useEntryEligibility } from '@entities/entry';
 import { useEvent } from '@entities/event';
-import { ticketGradeSchema, useMyTickets } from '@entities/ticket';
+import { TicketBalanceStatus, ticketGradeSchema, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
@@ -43,7 +43,8 @@ const STATUS_LABEL: Record<Event['status'], string> = {
 export function TimeRaffleDetailPage() {
     const { id = '' } = useParams();
     const { data: event, isPending, isError } = useEvent(id);
-    const { data: ticket } = useMyTickets();
+    const ticketsQuery = useMyTickets();
+    const ticket = ticketsQuery.data;
     // 응모 자격은 서버 판정으로 받는다 — 진행 중일 때만 조회한다 (E07)
     const { data: eligibility } = useEntryEligibility(id, {
         enabled: event?.status === 'open',
@@ -116,24 +117,35 @@ export function TimeRaffleDetailPage() {
     const requestedTickets: EntryTickets = isFree ? {} : isWeighted ? tickets : { BRONZE: 1 };
     // 가중치 이벤트에서 아무 등급도 고르지 않으면 보낼 요청이 없다
     const needsSelection = isWeighted && selectedTotal < 1;
+    const balanceBlocked = !isFree && (!ticket || ticketsQuery.isError || ticketsQuery.isFetching);
+    const invalidSelection =
+        isWeighted &&
+        ticket != null &&
+        (ticketGradeSchema.options.some((grade) => tickets[grade] > ticket.countByGrade[grade]) ||
+            (remainingLimit !== null && selectedTotal > remainingLimit));
+    const balanceLabel = ticketsQuery.isError
+        ? '응모권 잔액을 다시 조회해 주세요'
+        : '응모권 잔액을 확인하는 중이에요';
 
-    // 잔액을 아직 못 받았으면 부족하다고 단정하지 않고 확인 모달로 보낸다 (최종 판정은 서버 응답).
-    // 서버가 이미 부족을 판정했으면 로컬 잔액과 무관하게 부족 안내로 보낸다
+    // 조회에 성공한 잔액만 부족 판정에 쓴다. 장애 중에는 확인·제출 모두 차단한다.
     const hasEnoughTickets =
         !lacking &&
-        (ticket == null ||
-            isFree ||
-            (isWeighted
-                ? ticketGradeSchema.options.every(
-                      (grade) => tickets[grade] <= ticket.countByGrade[grade],
-                  )
-                : ticket.countByGrade.BRONZE >= 1));
+        (isFree ||
+            (ticket != null &&
+                (isWeighted
+                    ? ticketGradeSchema.options.every(
+                          (grade) => tickets[grade] <= ticket.countByGrade[grade],
+                      )
+                    : ticket.countByGrade.BRONZE >= 1)));
     // 확인 모달은 응모 후 남는 전체 응모권을 보인다 — 브론즈만 쓰는 래플이어도 전체에서 그만큼 줄어든다
     const dialogBalance = ticket?.availableCount ?? null;
+    const submitBlocked =
+        balanceBlocked || needsSelection || invalidSelection || !canEnter || !hasEnoughTickets;
 
     return (
         <main className={CONTAINER}>
             <div className="flex flex-col gap-10">
+                {!confirmOpen && <TicketBalanceStatus query={ticketsQuery} />}
                 <RaffleDetailHero
                     event={event}
                     quantityControl={
@@ -145,12 +157,14 @@ export function TimeRaffleDetailPage() {
                                     remainingLimit={remainingLimit}
                                 />
                                 {isWeighted ? (
-                                    <GradeTicketSteppers
-                                        value={tickets}
-                                        onChange={setTickets}
-                                        availableByGrade={ticket?.countByGrade ?? null}
-                                        remainingLimit={remainingLimit}
-                                    />
+                                    <fieldset disabled={balanceBlocked} className="min-w-0">
+                                        <GradeTicketSteppers
+                                            value={tickets}
+                                            onChange={setTickets}
+                                            availableByGrade={ticket?.countByGrade ?? null}
+                                            remainingLimit={remainingLimit}
+                                        />
+                                    </fieldset>
                                 ) : (
                                     // 등급 미반영 래플은 브론즈 1장 고정이라 고를 수량이 없다
                                     <BronzeOnlyTicket owned={ticket?.countByGrade.BRONZE ?? null} />
@@ -163,9 +177,18 @@ export function TimeRaffleDetailPage() {
                             <Button
                                 ref={entryButtonRef}
                                 size="lg"
-                                disabled={!canEnter || needsSelection}
+                                disabled={
+                                    !canEnter ||
+                                    balanceBlocked ||
+                                    needsSelection ||
+                                    invalidSelection ||
+                                    enterEvent.isPending
+                                }
                                 onClick={() =>
-                                    hasEnoughTickets ? setConfirmOpen(true) : setShortfallOpen(true)
+                                    !balanceBlocked &&
+                                    (hasEnoughTickets
+                                        ? setConfirmOpen(true)
+                                        : setShortfallOpen(true))
                                 }
                                 className="w-full"
                             >
@@ -173,11 +196,15 @@ export function TimeRaffleDetailPage() {
                                     ? '응모 완료'
                                     : forbidden
                                       ? '응모할 수 없어요'
-                                      : needsSelection
-                                        ? '응모권을 골라주세요'
-                                        : alreadyUsed > 0
-                                          ? '추가 응모하기'
-                                          : '응모하기'}
+                                      : balanceBlocked
+                                        ? balanceLabel
+                                        : invalidSelection
+                                          ? '응모 수량을 다시 확인해 주세요'
+                                          : needsSelection
+                                            ? '응모권을 골라주세요'
+                                            : alreadyUsed > 0
+                                              ? '추가 응모하기'
+                                              : '응모하기'}
                             </Button>
                         ) : (
                             // 진행 중이 아니면 상태를 비활성 버튼으로 알린다 — 발표가 끝난 래플도 시안처럼 '발표 완료'를 둔다
@@ -208,7 +235,24 @@ export function TimeRaffleDetailPage() {
                 balance={dialogBalance}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
+                disabled={submitBlocked}
+                notice={
+                    !isFree && (
+                        <>
+                            <TicketBalanceStatus query={ticketsQuery} />
+                            {!balanceBlocked && (invalidSelection || !hasEnoughTickets) && (
+                                <p
+                                    role="status"
+                                    className="text-body-sm text-semantic-error-strong"
+                                >
+                                    응모 수량을 다시 확인해 주세요. 취소한 뒤 수량을 조정해 주세요.
+                                </p>
+                            )}
+                        </>
+                    )
+                }
                 onConfirm={() => {
+                    if (submitBlocked) return;
                     enterEvent.mutate(requestedTickets, {
                         onSuccess: (entry) => {
                             setConfirmOpen(false);

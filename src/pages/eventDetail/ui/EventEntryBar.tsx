@@ -18,6 +18,8 @@ interface EventEntryBarProps {
     completed: boolean;
     /** 장수로 해소되지 않는 자격 부재 — 눌러도 소용없다 */
     forbidden: boolean;
+    balanceBlocked: boolean;
+    balanceLabel: string;
     onEnter: () => void;
     buttonRef?: RefObject<HTMLButtonElement | null>;
 }
@@ -32,18 +34,22 @@ export function EventEntryBar({
     event,
     completed,
     forbidden,
+    balanceBlocked,
+    balanceLabel,
     onEnter,
     buttonRef,
 }: EventEntryBarProps) {
     const isOpen = event.status === 'open';
-    const disabled = !isOpen || completed || forbidden;
+    const disabled = !isOpen || completed || forbidden || balanceBlocked;
     const label = !isOpen
         ? STATUS_LABEL[event.status]
         : completed
           ? '응모 완료'
           : forbidden
             ? '응모할 수 없어요'
-            : '응모하기';
+            : balanceBlocked
+              ? balanceLabel
+              : '응모하기';
 
     return (
         <div className="bg-surface-page border-border-default sticky bottom-0 -mx-6 mt-10 border-t px-6 py-4">
