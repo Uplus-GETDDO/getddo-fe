@@ -3,7 +3,6 @@ import { adminEventHandlers } from './adminEvent';
 import { adminNotificationHandlers } from './adminNotification';
 import { adminTicketHandlers } from './adminTicket';
 import { attendanceHandlers } from './attendance';
-import { auditHandlers } from './audit';
 import { bannerHandlers } from './banner';
 import { drawHandlers } from './draw';
 import { drawResultHandlers } from './drawResult';
@@ -21,7 +20,6 @@ export const handlers = [
     ...adminNotificationHandlers,
     ...adminTicketHandlers,
     ...attendanceHandlers,
-    ...auditHandlers,
     ...bannerHandlers,
     ...drawHandlers,
     ...drawResultHandlers,
@@ -40,7 +38,6 @@ export const handlers = [
 // AS01·AM04는 미배포(404)지만 FE에서 아직 호출하지 않아 목업 핸들러도 없다.
 export const hybridHandlers = [
     ...abuseHandlers, // /v1/admin/abuse-cases — 배포 미구현(404)
-    ...auditHandlers, // /v1/admin/audit-logs — 이번 버전 제외(ADR-024), 실서버 404
     ...drawHandlers, // /v1/admin/draws*·/wins/*·/cancellations/* — 배포 미구현(404)
     // /v1/games — 서버는 구현됐으나 목록 응답이 spec GameSummary({id,code,name,description})로
     // FE gameSchema(title·dailyLimit·remainingPlays 필수)와 불일치. 제출도 spec의 G03/G04
