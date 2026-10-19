@@ -80,6 +80,25 @@ describe('결과 폴링 요청 범위', () => {
         expect(second.result.current[0]?.data?.result).toBe('PENDING');
         client.clear();
     });
+    it('단건 훅도 최초 실패 뒤 재마운트는 요청하지 않는다', async () => {
+        let count = 0;
+        vi.spyOn(apiClient, 'get').mockImplementation(async () => {
+            await Promise.resolve();
+            count++;
+            throw new ApiError('ENTRY-004', '없음', 404);
+        });
+        const { client, wrapper } = setup();
+        const first = renderHook(() => useMyResult('missing'), { wrapper });
+        await tick();
+        expect(first.result.current.isError).toBe(true);
+        expect(count).toBe(1);
+        first.unmount();
+        renderHook(() => useMyResult('missing'), { wrapper });
+        await tick();
+        await tick(60_000);
+        expect(count).toBe(1);
+        client.clear();
+    });
     it('발표 완료 E08과 E09는 최초 조회 뒤 세 주기 동안 추가 요청하지 않는다', async () => {
         const paths: string[] = [];
         vi.spyOn(apiClient, 'get').mockImplementation(async (path) => {

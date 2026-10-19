@@ -66,6 +66,8 @@ export const pollingReadPolicy = {
     retry: (failureCount: number, error: unknown) => !stopsPolling(error) && failureCount < 1,
     retryDelay: (_attempt: number, error: unknown) =>
         errorStatus(error) === 429 ? boundedPollingDelay(getPollingRetryDelay(error)) : 1000,
+    // 종결 오류로 데이터 없이 실패한 쿼리는 재마운트 때도 자동 재요청하지 않는다 — 복구는 명시적 refetch()로만
+    retryOnMount: false,
 };
 
 export function pollingReadInterval(
