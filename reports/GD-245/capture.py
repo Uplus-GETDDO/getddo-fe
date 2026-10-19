@@ -29,13 +29,13 @@ with sync_playwright() as p:
                         page.evaluate("document.documentElement.dataset.textScale = 'large'")
                     page.wait_for_timeout(150)
                     label = f'{width}-{"long" if long_name else "normal"}-{"large" if large else "default"}-{"admin" if admin else "user"}'
-                    data = page.locator('header').evaluate('''h => ({
+                    data = page.locator('header').evaluate('''(h, name) => ({
                         width: innerWidth, documentWidth: document.documentElement.scrollWidth,
                         controls: [...h.querySelectorAll('button, a')].filter(e => e.getBoundingClientRect().width > 0).map(e => {
                             const r=e.getBoundingClientRect(); return {text:e.getAttribute('aria-label') || e.textContent, x:r.x, right:r.right, width:r.width, height:r.height};
                         }),
-                        names: [...h.querySelectorAll('span')].filter(e => e.firstChild?.nodeType===3 && e.textContent.includes('김도윤')).map(e=>({height:e.getBoundingClientRect().height, lineHeight:getComputedStyle(e).lineHeight}))
-                    })''')
+                        names: [...h.querySelectorAll('span')].filter(e => e.firstChild?.nodeType===3 && e.textContent.includes(name)).map(e=>{const height=e.getBoundingClientRect().height, lh=getComputedStyle(e).lineHeight, lineHeight=parseFloat(lh); return {height, lineHeight: lh, wraps: Number.isFinite(lineHeight) && height > lineHeight * 1.5};})
+                    })''', user['name'])
                     results.append(dict(scenario=label, **data))
                     if (not admin and (not long_name or large)) or (admin and long_name and large):
                         page.screenshot(path=str(OUT / f'{PHASE}-{label}.png'))
