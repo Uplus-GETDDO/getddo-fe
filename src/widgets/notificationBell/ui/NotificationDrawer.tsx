@@ -38,7 +38,7 @@ export function NotificationDrawer() {
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
                 aria-label="알림 전체 보기"
-                className={`text-fg-primary flex size-6 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
+                className={`text-fg-primary flex min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
             >
                 <List className="size-6" />
             </SheetTrigger>

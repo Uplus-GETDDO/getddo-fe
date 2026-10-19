@@ -1,0 +1,2074 @@
+[
+    {
+        "scenario": "360-normal-default-user",
+        "width": 360,
+        "documentWidth": 391,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 391.21875,
+                "width": 68.375,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 42,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "360-normal-default-admin",
+        "width": 360,
+        "documentWidth": 391,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 391.21875,
+                "width": 68.375,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 42,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "360-normal-large-user",
+        "width": 360,
+        "documentWidth": 469,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 469.40625,
+                "width": 82.03125,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 50.390625,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "360-normal-large-admin",
+        "width": 360,
+        "documentWidth": 469,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 469.40625,
+                "width": 82.03125,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 50.390625,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "360-long-default-user",
+        "width": 360,
+        "documentWidth": 591,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 590.53125,
+                "width": 267.6875,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "360-long-default-admin",
+        "width": 360,
+        "documentWidth": 591,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 590.53125,
+                "width": 267.6875,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "360-long-large-user",
+        "width": 360,
+        "documentWidth": 709,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 708.578125,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "360-long-large-admin",
+        "width": 360,
+        "documentWidth": 709,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 708.578125,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "390-normal-default-user",
+        "width": 390,
+        "documentWidth": 391,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 391.21875,
+                "width": 68.375,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 42,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "390-normal-default-admin",
+        "width": 390,
+        "documentWidth": 391,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 391.21875,
+                "width": 68.375,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 42,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "390-normal-large-user",
+        "width": 390,
+        "documentWidth": 469,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 469.40625,
+                "width": 82.03125,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 50.390625,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "390-normal-large-admin",
+        "width": 390,
+        "documentWidth": 469,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 469.40625,
+                "width": 82.03125,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 50.390625,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "390-long-default-user",
+        "width": 390,
+        "documentWidth": 591,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 590.53125,
+                "width": 267.6875,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "390-long-default-admin",
+        "width": 390,
+        "documentWidth": 591,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "메뉴",
+                "x": 188.84375,
+                "right": 212.84375,
+                "width": 24,
+                "height": 32
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 242.84375,
+                "right": 266.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 278.84375,
+                "right": 302.84375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 322.84375,
+                "right": 590.53125,
+                "width": 267.6875,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "390-long-large-user",
+        "width": 390,
+        "documentWidth": 709,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 708.578125,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "390-long-large-admin",
+        "width": 390,
+        "documentWidth": 709,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "메뉴",
+                "x": 226.59375,
+                "right": 255.390625,
+                "width": 28.796875,
+                "height": 38.390625
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 291.390625,
+                "right": 320.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 334.578125,
+                "right": 363.375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 387.375,
+                "right": 708.578125,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "768-normal-default-user",
+        "width": 768,
+        "documentWidth": 768,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 188.84375,
+                "right": 202.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 230.671875,
+                "right": 278.6875,
+                "width": 48.015625,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 306.6875,
+                "right": 342.703125,
+                "width": 36.015625,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 370.703125,
+                "right": 394.71875,
+                "width": 24.015625,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 422.71875,
+                "right": 482.75,
+                "width": 60.03125,
+                "height": 76
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 512.75,
+                "right": 536.75,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 548.75,
+                "right": 572.75,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 592.75,
+                "right": 744,
+                "width": 151.25,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 14,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "768-normal-default-admin",
+        "width": 768,
+        "documentWidth": 768,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 188.84375,
+                "right": 202.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 230.671875,
+                "right": 244.5,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 272.5,
+                "right": 286.328125,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 314.328125,
+                "right": 328.15625,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 356.15625,
+                "right": 369.984375,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 399.984375,
+                "right": 536.015625,
+                "width": 136.03125,
+                "height": 36
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 556.015625,
+                "right": 580.015625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 592.015625,
+                "right": 616.015625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 636.015625,
+                "right": 744,
+                "width": 107.984375,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 28,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "768-normal-large-user",
+        "width": 768,
+        "documentWidth": 768,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 293.375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 326.96875,
+                "right": 343.5625,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 377.15625,
+                "right": 393.75,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 427.34375,
+                "right": 443.9375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 479.9375,
+                "right": 508.734375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 523.125,
+                "right": 551.921875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 575.921875,
+                "right": 739.203125,
+                "width": 163.28125,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 16.796875,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "768-normal-large-admin",
+        "width": 768,
+        "documentWidth": 845,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 293.375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 326.96875,
+                "right": 343.5625,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 377.15625,
+                "right": 393.75,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 427.34375,
+                "right": 443.9375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 479.9375,
+                "right": 642.734375,
+                "width": 162.796875,
+                "height": 43.1875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 666.734375,
+                "right": 695.53125,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 709.921875,
+                "right": 738.71875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 762.71875,
+                "right": 844.75,
+                "width": 82.03125,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 50.390625,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "768-long-default-user",
+        "width": 768,
+        "documentWidth": 768,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 188.84375,
+                "right": 202.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 230.671875,
+                "right": 244.5,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 272.5,
+                "right": 286.328125,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 314.328125,
+                "right": 328.15625,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 356.15625,
+                "right": 369.984375,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 399.984375,
+                "right": 423.984375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 435.984375,
+                "right": 459.984375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 479.984375,
+                "right": 747.671875,
+                "width": 267.6875,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "768-long-default-admin",
+        "width": 768,
+        "documentWidth": 904,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 24,
+                "right": 158.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 188.84375,
+                "right": 202.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 230.671875,
+                "right": 244.5,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 272.5,
+                "right": 286.328125,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 314.328125,
+                "right": 328.15625,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 356.15625,
+                "right": 369.984375,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 399.984375,
+                "right": 536.015625,
+                "width": 136.03125,
+                "height": 36
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 556.015625,
+                "right": 580.015625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 592.015625,
+                "right": 616.015625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 636.015625,
+                "right": 903.703125,
+                "width": 267.6875,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "768-long-large-user",
+        "width": 768,
+        "documentWidth": 897,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 293.375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 326.96875,
+                "right": 343.5625,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 377.15625,
+                "right": 393.75,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 427.34375,
+                "right": 443.9375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 479.9375,
+                "right": 508.734375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 523.125,
+                "right": 551.921875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 575.921875,
+                "right": 897.125,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "768-long-large-admin",
+        "width": 768,
+        "documentWidth": 1084,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 293.375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 326.96875,
+                "right": 343.5625,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 377.15625,
+                "right": 393.75,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 427.34375,
+                "right": 443.9375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 479.9375,
+                "right": 642.734375,
+                "width": 162.796875,
+                "height": 43.1875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 666.734375,
+                "right": 695.53125,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 709.921875,
+                "right": 738.71875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 762.71875,
+                "right": 1083.921875,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "1280-normal-default-user",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 40,
+                "right": 174.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 204.84375,
+                "right": 218.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 246.671875,
+                "right": 301.984375,
+                "width": 55.3125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 329.984375,
+                "right": 371.46875,
+                "width": 41.484375,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 399.46875,
+                "right": 427.125,
+                "width": 27.65625,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 455.125,
+                "right": 524.265625,
+                "width": 69.140625,
+                "height": 76
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 1008.75,
+                "right": 1032.75,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 1044.75,
+                "right": 1068.75,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 1088.75,
+                "right": 1240,
+                "width": 151.25,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 14,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "1280-normal-default-admin",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 40,
+                "right": 174.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 204.84375,
+                "right": 218.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 246.671875,
+                "right": 301.984375,
+                "width": 55.3125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 329.984375,
+                "right": 371.46875,
+                "width": 41.484375,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 399.46875,
+                "right": 427.125,
+                "width": 27.65625,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 455.125,
+                "right": 524.265625,
+                "width": 69.140625,
+                "height": 76
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 645.5,
+                "right": 781.53125,
+                "width": 136.03125,
+                "height": 36
+            },
+            {
+                "text": "1시간 빼기",
+                "x": 844.734375,
+                "right": 868.734375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "1시간 더하기",
+                "x": 889.40625,
+                "right": 913.40625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "10분 빼기",
+                "x": 920.96875,
+                "right": 944.96875,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "10분 더하기",
+                "x": 965.640625,
+                "right": 989.640625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 1042.875,
+                "right": 1066.875,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 1078.875,
+                "right": 1102.875,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 1122.875,
+                "right": 1240,
+                "width": 117.125,
+                "height": 36
+            }
+        ],
+        "names": [
+            {
+                "height": 14,
+                "lineHeight": "14px"
+            }
+        ]
+    },
+    {
+        "scenario": "1280-normal-large-user",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 343.15625,
+                "width": 66.375,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 376.75,
+                "right": 426.53125,
+                "width": 49.78125,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 460.125,
+                "right": 493.3125,
+                "width": 33.1875,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 526.90625,
+                "right": 609.875,
+                "width": 82.96875,
+                "height": 91.1875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 973.75,
+                "right": 1002.546875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 1016.9375,
+                "right": 1045.734375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 1069.734375,
+                "right": 1251.203125,
+                "width": 181.46875,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 16.796875,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "1280-normal-large-admin",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 312.5625,
+                "width": 35.78125,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 346.15625,
+                "right": 373,
+                "width": 26.84375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 406.59375,
+                "right": 424.484375,
+                "width": 17.890625,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 458.078125,
+                "right": 502.796875,
+                "width": 44.71875,
+                "height": 91.1875
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 538.796875,
+                "right": 701.59375,
+                "width": 162.796875,
+                "height": 43.1875
+            },
+            {
+                "text": "1시간 빼기",
+                "x": 777.21875,
+                "right": 806.015625,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "1시간 더하기",
+                "x": 830.8125,
+                "right": 859.609375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "10분 빼기",
+                "x": 868.65625,
+                "right": 897.453125,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "10분 더하기",
+                "x": 922.25,
+                "right": 951.046875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 1014.703125,
+                "right": 1043.5,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 1057.890625,
+                "right": 1086.6875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 1110.6875,
+                "right": 1251.203125,
+                "width": 140.515625,
+                "height": 43.1875
+            }
+        ],
+        "names": [
+            {
+                "height": 16.796875,
+                "lineHeight": "16.8px"
+            }
+        ]
+    },
+    {
+        "scenario": "1280-long-default-user",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 40,
+                "right": 174.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 204.84375,
+                "right": 218.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 246.671875,
+                "right": 301.984375,
+                "width": 55.3125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 329.984375,
+                "right": 371.46875,
+                "width": 41.484375,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 399.46875,
+                "right": 427.125,
+                "width": 27.65625,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 455.125,
+                "right": 524.265625,
+                "width": 69.140625,
+                "height": 76
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 781.34375,
+                "right": 805.34375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 817.34375,
+                "right": 841.34375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 861.34375,
+                "right": 1240,
+                "width": 378.65625,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "1280-long-default-admin",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 40,
+                "right": 174.84375,
+                "width": 134.84375,
+                "height": 32
+            },
+            {
+                "text": "홈",
+                "x": 204.84375,
+                "right": 218.671875,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "겟또타임",
+                "x": 246.671875,
+                "right": 260.5,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "이벤트",
+                "x": 288.5,
+                "right": 302.328125,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "미션",
+                "x": 330.328125,
+                "right": 344.15625,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "마이페이지",
+                "x": 372.15625,
+                "right": 385.984375,
+                "width": 13.828125,
+                "height": 76
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 415.984375,
+                "right": 552.015625,
+                "width": 136.03125,
+                "height": 36
+            },
+            {
+                "text": "1시간 빼기",
+                "x": 615.21875,
+                "right": 639.21875,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "1시간 더하기",
+                "x": 659.890625,
+                "right": 683.890625,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "10분 빼기",
+                "x": 691.453125,
+                "right": 715.453125,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "10분 더하기",
+                "x": 736.125,
+                "right": 760.125,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 813.359375,
+                "right": 837.359375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 849.359375,
+                "right": 873.359375,
+                "width": 24,
+                "height": 24
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 893.359375,
+                "right": 1240,
+                "width": 346.640625,
+                "height": 36
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "1280-long-large-user",
+        "width": 1280,
+        "documentWidth": 1280,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 311.90625,
+                "width": 35.125,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 345.5,
+                "right": 371.84375,
+                "width": 26.34375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 405.4375,
+                "right": 423,
+                "width": 17.5625,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 456.59375,
+                "right": 500.5,
+                "width": 43.90625,
+                "height": 91.1875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 700.859375,
+                "right": 729.65625,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 744.046875,
+                "right": 772.84375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 796.84375,
+                "right": 1251.203125,
+                "width": 454.359375,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    },
+    {
+        "scenario": "1280-long-large-admin",
+        "width": 1280,
+        "documentWidth": 1373,
+        "controls": [
+            {
+                "text": "U+ GETDDO",
+                "x": 28.796875,
+                "right": 190.59375,
+                "width": 161.796875,
+                "height": 38.40625
+            },
+            {
+                "text": "홈",
+                "x": 226.59375,
+                "right": 243.1875,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "겟또타임",
+                "x": 276.78125,
+                "right": 293.375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "이벤트",
+                "x": 326.96875,
+                "right": 343.5625,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "미션",
+                "x": 377.15625,
+                "right": 393.75,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "마이페이지",
+                "x": 427.34375,
+                "right": 443.9375,
+                "width": 16.59375,
+                "height": 91.1875
+            },
+            {
+                "text": "관리자 화면으로",
+                "x": 479.9375,
+                "right": 642.734375,
+                "width": 162.796875,
+                "height": 43.1875
+            },
+            {
+                "text": "1시간 빼기",
+                "x": 718.359375,
+                "right": 747.15625,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "1시간 더하기",
+                "x": 771.953125,
+                "right": 800.75,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "10분 빼기",
+                "x": 809.796875,
+                "right": 838.59375,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "10분 더하기",
+                "x": 863.390625,
+                "right": 892.1875,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림, 읽지 않음 3개",
+                "x": 955.84375,
+                "right": 984.640625,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "알림 전체 보기",
+                "x": 999.03125,
+                "right": 1027.828125,
+                "width": 28.796875,
+                "height": 28.796875
+            },
+            {
+                "text": "가상 사용자 전환",
+                "x": 1051.828125,
+                "right": 1373.03125,
+                "width": 321.203125,
+                "height": 43.1875
+            }
+        ],
+        "names": []
+    }
+]
