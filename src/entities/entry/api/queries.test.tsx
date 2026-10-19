@@ -1,13 +1,23 @@
 import type { ReactNode } from 'react';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { useEntryEligibility, useEntryStatistics } from './queries';
+import { ApiError, apiClient } from '@shared/api/client';
+
+import { useEntryEligibility, useEntryStatistics, useEntryStatisticsList } from './queries';
+
+afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+    focusManager.setFocused(undefined);
+});
 
 function setup() {
-    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const client = new QueryClient({
+        defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
+    });
     const wrapper = ({ children }: { children: ReactNode }) => (
         <QueryClientProvider client={client}>{children}</QueryClientProvider>
     );
@@ -15,6 +25,82 @@ function setup() {
 }
 
 describe('useEntryStatistics', () => {
+    it('활성 행만 두 주기 조회하고 숨긴 탭에서는 멈춘 뒤 다시 활성화하면 재개한다', async () => {
+        const counts = new Map<string, number>();
+        vi.spyOn(apiClient, 'get').mockImplementation(async (path) => {
+            await Promise.resolve();
+            const eventId = String(path).split('/')[3]!;
+            counts.set(eventId, (counts.get(eventId) ?? 0) + 1);
+            return {
+                data: {
+                    success: true,
+                    data: {
+                        eventId,
+                        participantCount: 12,
+                        totalSpentTicketCount: 24,
+                        mySpentTicketCount: 1,
+                        serverTime: '2026-10-20T00:00:00Z',
+                    },
+                },
+            };
+        });
+        vi.useFakeTimers();
+        focusManager.setFocused(true);
+        const { client, wrapper } = setup();
+        const open = renderHook(
+            ({ enabled }) => useEntryStatistics('poll-open', { isOpen: true, enabled }),
+            { wrapper, initialProps: { enabled: true } },
+        );
+        const closed = renderHook(() => useEntryStatistics('poll-closed'), { wrapper });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(1);
+        });
+        expect(open.result.current.isSuccess && closed.result.current.isSuccess).toBe(true);
+        for (let cycle = 0; cycle < 2; cycle += 1) {
+            await act(async () => {
+                await vi.advanceTimersByTimeAsync(30_000);
+            });
+            expect(counts.get('poll-open')).toBe(cycle + 2);
+            expect(open.result.current.isFetching).toBe(false);
+        }
+        expect(counts.get('poll-closed')).toBe(1);
+        focusManager.setFocused(false);
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(60_000);
+        });
+        expect(counts.get('poll-open')).toBe(3);
+        focusManager.setFocused(true);
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(30_000);
+        });
+        expect(counts.get('poll-open')).toBe(4);
+        expect(open.result.current.isFetching).toBe(false);
+        open.rerender({ enabled: false });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(60_000);
+        });
+        expect(counts.get('poll-open')).toBe(4);
+        open.unmount();
+        closed.unmount();
+        client.clear();
+    });
+    it('다중 현황 갱신 실패에도 마지막 성공값을 반환한다', async () => {
+        const { client, wrapper } = setup();
+        const { result } = renderHook(() => useEntryStatisticsList(['evt-001']), { wrapper });
+        await waitFor(() => expect(result.current[0]?.participantCount).toBeGreaterThan(0));
+        const previous = result.current[0];
+        vi.spyOn(apiClient, 'get').mockRejectedValue(new ApiError('ENTRY-004', '없음', 404));
+        await act(async () => {
+            await client.refetchQueries({ queryKey: ['entries', 'statistics', 'evt-001'] });
+        });
+        await waitFor(() =>
+            expect(client.getQueryState(['entries', 'statistics', 'evt-001'])?.status).toBe(
+                'error',
+            ),
+        );
+        expect(result.current[0]).toEqual(previous);
+        client.clear();
+    });
     it('E03 응답을 EntryStatistics로 파싱한다', async () => {
         const { wrapper } = setup();
         const { result } = renderHook(() => useEntryStatistics('evt-001'), { wrapper });
@@ -32,9 +118,11 @@ describe('useEntryStatistics', () => {
         await waitFor(() => expect(open.result.current.isSuccess).toBe(true));
         await waitFor(() => expect(other.result.current.isSuccess).toBe(true));
 
-        const intervalOf = (id: string) =>
-            client.getQueryCache().find({ queryKey: ['entries', 'statistics', id] })?.observers[0]
-                ?.options.refetchInterval;
+        const intervalOf = (id: string) => {
+            const query = client.getQueryCache().find({ queryKey: ['entries', 'statistics', id] });
+            const interval = query?.observers[0]?.options.refetchInterval;
+            return typeof interval === 'function' && query ? interval(query) : interval;
+        };
         expect(intervalOf('evt-001')).toBe(30_000);
         expect(intervalOf('evt-002')).toBe(false);
     });

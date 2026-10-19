@@ -33,6 +33,7 @@ export interface ProfileStats {
     onRetryHistories?: () => void;
     /** 응모 내역(응모 중·당첨)을 불러오는 중 — 0건으로 잘못 보이지 않게 글줄 스켈레톤을 둔다 */
     entriesLoading: boolean;
+    entriesUnavailable?: boolean;
     /** 응모권 내역(오늘 적립)을 불러오는 중 */
     historiesLoading: boolean;
 }
@@ -159,16 +160,20 @@ export function ProfileCard({
                     value={
                         stats.entriesLoading
                             ? VALUE_SKELETON
-                            : `${formatNumber(stats.pendingCount)}건`
+                            : stats.entriesUnavailable
+                              ? '일부 결과 미조회'
+                              : `${formatNumber(stats.pendingCount)}건`
                     }
                 >
                     {stats.entriesLoading ? (
                         CAPTION_SKELETON
                     ) : (
                         <span className="text-caption text-fg-tertiary">
-                            {stats.pendingCount > 0
-                                ? '결과 발표를 기다리고 있어요'
-                                : '발표를 기다리는 응모가 없어요'}
+                            {stats.entriesUnavailable
+                                ? '마지막 조회 기준이에요'
+                                : stats.pendingCount > 0
+                                  ? '결과 발표를 기다리고 있어요'
+                                  : '발표를 기다리는 응모가 없어요'}
                         </span>
                     )}
                 </StatTile>
@@ -176,16 +181,22 @@ export function ProfileCard({
                     to="/my-entries?status=WON"
                     label="당첨"
                     value={
-                        stats.entriesLoading ? VALUE_SKELETON : `${formatNumber(stats.wonCount)}건`
+                        stats.entriesLoading
+                            ? VALUE_SKELETON
+                            : stats.entriesUnavailable
+                              ? '일부 결과 미조회'
+                              : `${formatNumber(stats.wonCount)}건`
                     }
                 >
                     {stats.entriesLoading ? (
                         CAPTION_SKELETON
                     ) : (
                         <span className="text-caption text-fg-tertiary">
-                            {stats.lastWonLabel
-                                ? `최근 당첨 ${stats.lastWonLabel}`
-                                : '아직 당첨이 없어요'}
+                            {stats.entriesUnavailable
+                                ? '마지막 조회 기준이에요'
+                                : stats.lastWonLabel
+                                  ? `최근 당첨 ${stats.lastWonLabel}`
+                                  : '아직 당첨이 없어요'}
                         </span>
                     )}
                 </StatTile>

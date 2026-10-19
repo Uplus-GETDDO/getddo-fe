@@ -1,10 +1,15 @@
-import type { Query } from '@tanstack/react-query';
+import type { Query, QueryFunctionContext } from '@tanstack/react-query';
 
 import { useQueries, useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
-import { queryPresets } from '@shared/api/queryPresets';
+import {
+    queryPresets,
+    pollingReadPolicy,
+    pollingReadInterval,
+    withPollingReadGuard,
+} from '@shared/api/queryPresets';
 
 import type { DrawRunStatus, MyResult } from '../model/types';
 
@@ -32,51 +37,63 @@ export const eventResultsApiPath = (eventId: string) => `/v1/events/${eventId}/r
 export function useEventResults(eventId: string, enabled = true) {
     return useQuery({
         ...queryPresets.realtime,
+        ...pollingReadPolicy,
         queryKey: [...DRAW_RESULTS_KEY, eventId],
         enabled,
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(eventResultsApiPath(eventId));
-            return envelopeSchema(publicResultsSchema).parse(data).data;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const { data } = await apiClient.get<unknown>(eventResultsApiPath(eventId), {
+                    signal: context.signal,
+                });
+                return envelopeSchema(publicResultsSchema).parse(data).data;
+            }),
         refetchInterval: (query) =>
-            query.state.data?.isPublished ? false : queryPresets.realtime.refetchInterval,
+            pollingReadInterval(
+                query,
+                !query.state.data?.isPublished &&
+                    !['CANCELED', 'NO_ENTRANTS'].includes(query.state.data?.displayStatus ?? ''),
+            ),
     });
 }
 
 // getddo-spec 05-api/drawing.md E09 — 본인 결과 조회
 export const eventMyResultApiPath = (eventId: string) => `/v1/events/${eventId}/my-result`;
 
-/** 본인 결과 한 이벤트의 쿼리 설정 — 단건(useMyResult)과 여러 건(useMyResults)이 같은 캐시를 나눠 쓴다 */
-const myResultOptions = (eventId: string) => ({
+/** 단건과 다건은 같은 캐시를 공유한다. CANCELED만으로 종결 여부를 추측하지 않는다. */
+const myResultOptions = (eventId: string, polling = true) => ({
     ...queryPresets.realtime,
+    ...pollingReadPolicy,
     queryKey: [...DRAW_RESULTS_KEY, eventId, 'me'],
-    queryFn: async () => {
-        const { data } = await apiClient.get<unknown>(eventMyResultApiPath(eventId));
-        return envelopeSchema(myResultSchema).parse(data).data;
-    },
+    queryFn: (context: QueryFunctionContext) =>
+        withPollingReadGuard(context, async () => {
+            const { data } = await apiClient.get<unknown>(eventMyResultApiPath(eventId), {
+                signal: context.signal,
+            });
+            return envelopeSchema(myResultSchema).parse(data).data;
+        }),
     refetchInterval: (query: Query<MyResult>) =>
-        query.state.data?.isPublished ? false : queryPresets.realtime.refetchInterval,
+        pollingReadInterval(query, polling && !query.state.data?.isPublished),
 });
 
-/**
- * 로그인한 본인의 이벤트 결과.
- *
- * 공개 명단(E08)에서 뒷자리로 찾아보는 것과 달리 서버가 본인 것만 바로 답한다.
- * 공개 전에는 PENDING으로 고정되므로, 공개 여부를 화면이 따로 판정하지 않는다.
- * 폴링 기준은 E08과 같다 — 공개된 뒤에는 멈춘다.
- */
 export function useMyResult(eventId: string, enabled = true) {
     return useQuery({ ...myResultOptions(eventId), enabled });
 }
 
-/**
- * 내가 응모한 여러 이벤트의 본인 결과를 한꺼번에 받는다 (E09는 이벤트 단위라 이벤트마다 한 번씩).
- * 내 응모 내역·마이페이지에서 쓴다. 단건 조회와 캐시 키가 같아 상세 화면과 결과를 나눠 쓴다
- */
-export function useMyResults(eventIds: readonly string[]) {
-    return useQueries({ queries: eventIds.map((eventId) => myResultOptions(eventId)) });
+/** 최초 전체 집계 조회를 유지하고, 후속 주기 조회만 화면에 표시된 이벤트로 제한한다. */
+export function useMyResults(
+    eventIds: readonly string[],
+    pollingEventIds: readonly string[] = eventIds,
+) {
+    const pollingIds = new Set(pollingEventIds);
+    return useQueries({
+        queries: [...new Set(eventIds)].map((eventId) => ({
+            ...myResultOptions(eventId, pollingIds.has(eventId)),
+            // 숨긴 결과의 전체 집계는 화면 복귀·네트워크 복구 때 자동으로 다시 읽지 않는다.
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+        })),
+    });
 }
-
 // ── 관리자 추첨 관리(GD-125) ──
 const drawRunPageSchema = pageSchema(drawRunSchema);
 const drawCandidatePageSchema = pageSchema(drawCandidateSchema);

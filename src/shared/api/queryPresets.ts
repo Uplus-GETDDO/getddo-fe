@@ -1,3 +1,11 @@
+// 대기 시각은 오류와 함께 쿼리 캐시에 남는다. 앱의 가상 시계나 시스템 시각 변경의 영향을 받지 않는다.
+import type { QueryFunctionContext } from '@tanstack/react-query';
+
+import { isAxiosError } from 'axios';
+import { ZodError } from 'zod';
+
+import { ApiError, parseRetryAfter } from './client';
+
 /**
  * 쿼리 캐싱 프리셋 — 도메인 데이터의 성격별 정책을 한곳에서 정의한다.
  * 쿼리마다 staleTime·refetchInterval을 제각각 적으면 같은 데이터가 화면마다 다르게 동작한다.
@@ -23,3 +31,67 @@ export const queryPresets = {
         refetchOnMount: 'always',
     },
 } as const;
+
+// 대기 시각은 오류와 함께 쿼리 캐시에 남아 가상 시계·시스템 시각 변경의 영향을 받지 않는다.
+type ReadError = Error & { pollingRetryAt?: number };
+const errorStatus = (error: unknown) =>
+    error instanceof ApiError
+        ? error.status
+        : isAxiosError(error)
+          ? error.response?.status
+          : undefined;
+const stopsPolling = (error: unknown) =>
+    error instanceof ZodError || [400, 401, 403, 404].includes(errorStatus(error) ?? 0);
+
+/** 429 응답 이후 실제 경과 시간 기준으로 남은 대기 시간(ms). UI의 재시도 안내에도 사용한다. */
+export function getPollingRetryDelay(error: unknown): number {
+    if (!(error instanceof Error) || errorStatus(error) !== 429) return 0;
+    const readError = error as ReadError;
+    if (readError.pollingRetryAt === undefined) {
+        const seconds =
+            error instanceof ApiError
+                ? error.retryAfterSeconds
+                : isAxiosError(error)
+                  ? parseRetryAfter(error.response?.headers?.['retry-after'])
+                  : undefined;
+        readError.pollingRetryAt = performance.now() + (seconds ?? 30) * 1000;
+    }
+    return Math.max(0, readError.pollingRetryAt - performance.now());
+}
+
+export const pollingReadPolicy = {
+    retry: (failureCount: number, error: unknown) => !stopsPolling(error) && failureCount < 1,
+    retryDelay: (_attempt: number, error: unknown) =>
+        errorStatus(error) === 429 ? getPollingRetryDelay(error) : 1000,
+};
+
+export function pollingReadInterval(
+    query: { state: { error: unknown } },
+    active = true,
+): number | false {
+    if (!active || stopsPolling(query.state.error)) return false;
+    return getPollingRetryDelay(query.state.error) || queryPresets.realtime.refetchInterval;
+}
+
+/** refetch·재마운트·무효화 경로도 같은 캐시 오류를 검사해 서버 대기 시간을 우회하지 않는다. */
+export async function withPollingReadGuard<T>(
+    context: QueryFunctionContext,
+    request: () => Promise<T>,
+): Promise<T> {
+    // 최초 실패 뒤 fetch를 시작하면 state.error가 지워지므로 Query 수명에 묶어 대기 근거를 보존한다.
+    const query = context.client
+        .getQueryCache()
+        .find({ queryKey: context.queryKey, exact: true }) as
+        (object & { pollingReadError?: unknown }) | undefined;
+    const error = query?.pollingReadError;
+    if (getPollingRetryDelay(error) > 0) throw error;
+    try {
+        const result = await request();
+        if (query) delete query.pollingReadError;
+        return result;
+    } catch (error) {
+        getPollingRetryDelay(error);
+        if (query) query.pollingReadError = error;
+        throw error;
+    }
+}
