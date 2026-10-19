@@ -21,7 +21,8 @@ export {
     TICKETS_KEY,
     useMyTickets,
 } from './api/queries';
-export { useTicketHistories } from './api/history';
+export { useTicketHistories, useTicketHistoryCounts } from './api/history';
+export { ticketDayRange, ticketMonthRange } from './utils/historyPeriod';
 export { TicketHistoryItem } from './ui/TicketHistoryItem';
 export { TicketGradeReveal } from './ui/TicketGradeReveal';
 export {

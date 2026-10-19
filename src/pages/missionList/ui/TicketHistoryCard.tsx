@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 
 import { TicketHistoryRow, useTicketHistories } from '@entities/ticket';
+import { Button } from '@shared/ui/button';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 
@@ -11,7 +12,8 @@ import { useFreshIds } from '../hooks/useFreshIds';
  * 높이는 옆 출석 카드를 따라가도록 내용을 absolute로 띄운다.
  */
 export function TicketHistoryCard({ className }: { className?: string }) {
-    const { data: history, isPending, isError } = useTicketHistories();
+    const query = useTicketHistories();
+    const { items: history, isPending, isError } = query;
     // 새 내역이 위에서 들어오며 잠깐 강조된다
     const freshIds = useFreshIds(history?.map((item) => item.id));
     // 상세는 한 번에 하나만 펼친다
@@ -32,14 +34,32 @@ export function TicketHistoryCard({ className }: { className?: string }) {
                   마지막 항목이 페이드에 가리지 않게 아래 여백을 둔다
                 */}
                 <div className="[&::-webkit-scrollbar-thumb]:bg-border-strong min-h-0 flex-1 overflow-y-auto pr-1 pb-6 supports-[-moz-appearance:none]:[scrollbar-width:thin] supports-[-moz-appearance:none]:[scrollbar-color:var(--color-border-strong)_transparent] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:min-h-16 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
-                    {isPending && <SkeletonList count={4} className="p-4" />}
-                    {isError && (
-                        <p className="text-body-sm text-destructive p-4">
-                            응모권 내역을 불러오지 못했습니다.
+                    {isPending && (
+                        <p role="status" className="sr-only">
+                            응모권 내역을 불러오는 중
                         </p>
                     )}
-                    {history?.length === 0 && (
-                        <p className="text-body-sm text-fg-tertiary p-4">
+                    {isPending && <SkeletonList count={4} className="p-4" />}
+                    {(isError || query.cursorError) && (
+                        <p role="alert" className="text-body-sm text-destructive p-4">
+                            응모권 내역을 불러오지 못했습니다.
+                            {
+                                <Button
+                                    variant="secondary"
+                                    disabled={query.isFetching}
+                                    onClick={() =>
+                                        void (!query.cursorError && query.isFetchNextPageError
+                                            ? query.fetchNextPage({ cancelRefetch: false })
+                                            : query.refetch())
+                                    }
+                                >
+                                    다시 시도
+                                </Button>
+                            }
+                        </p>
+                    )}
+                    {!isPending && !isError && !query.cursorError && history.length === 0 && (
+                        <p role="status" className="text-body-sm text-fg-tertiary p-4">
                             아직 응모권 내역이 없어요.
                         </p>
                     )}
@@ -61,6 +81,16 @@ export function TicketHistoryCard({ className }: { className?: string }) {
                                 </Fragment>
                             ))}
                         </ul>
+                    )}
+                    {query.hasNextPage && !query.cursorError && (
+                        <Button
+                            variant="secondary"
+                            className="w-full"
+                            disabled={query.isFetching}
+                            onClick={() => void query.fetchNextPage({ cancelRefetch: false })}
+                        >
+                            {query.isFetchingNextPage ? '불러오는 중' : '더 보기'}
+                        </Button>
                     )}
                 </div>
             </div>
