@@ -46,6 +46,12 @@ describe('폴링 읽기 오류 정책', () => {
         expect(count).toBe(2);
         client.clear();
     });
+    it('종결 오류가 남은 쿼리는 데이터가 있어도 재마운트 재조회를 건너뛴다', () => {
+        const remount = pollingReadPolicy.refetchOnMount;
+        expect(remount({ state: { error: new ApiError('ERROR', '실패', 404) } })).toBe(false);
+        expect(remount({ state: { error: null } })).toBe(true);
+        expect(remount({ state: { error: new ApiError('LIMIT', '대기', 429, 90) } })).toBe(true);
+    });
     it('스키마 오류는 재시도와 interval을 중단한다', () => {
         const parsed = z.number().safeParse('invalid');
         if (parsed.success) throw new Error('실패 fixture');
