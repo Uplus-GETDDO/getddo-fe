@@ -6,7 +6,7 @@ import { Button } from '@shared/ui/button';
 import { cn } from '@shared/utils/cn';
 
 /**
- * 대시보드 칸 — 실패 알림·감사 로그 미리보기와 같은 흰 카드(여백 20)에 제목·설명·오른쪽 동작을 둔다.
+ * 대시보드 칸 — 운영 현황 카드(여백 20)에 제목·설명·오른쪽 동작을 둔다.
  * 조회 실패는 칸 안에서 다시 시도로 복구한다
  */
 export function DashboardPanel({

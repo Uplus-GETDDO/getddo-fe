@@ -4,12 +4,11 @@ import { useTicketTrend } from './hooks/useTicketTrend';
 import { ActionQueuePanel } from './ui/ActionQueuePanel';
 import { EventStagePanel } from './ui/EventStagePanel';
 import { OpenEventsPanel } from './ui/OpenEventsPanel';
-import { RecentAuditLogsPanel } from './ui/RecentAuditLogsPanel';
 import { TicketTrendPanel } from './ui/TicketTrendPanel';
 
 /**
  * 관리자 대시보드 — 위에 오늘 숫자, 가운데 추이 그래프와 지금 처리할 일, 그 아래 운영 단계 분포·이벤트 응모 현황 표,
- * 맨 아래 최근 운영 기록. 그래프는 최근 7일 고정이다
+ * 그래프는 최근 7일 고정이다
  */
 export function AdminDashboardPage() {
     const { rows, trend } = useTicketTrend();
@@ -34,7 +33,6 @@ export function AdminDashboardPage() {
                 <EventStagePanel />
                 <OpenEventsPanel className="lg:col-span-2" />
             </div>
-            <RecentAuditLogsPanel />
         </div>
     );
 }
