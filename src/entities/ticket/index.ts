@@ -70,6 +70,7 @@ export {
 export { TicketConsistencyDrawer } from './ui/TicketConsistencyDrawer';
 export { GradeTicketTiles } from './ui/GradeTicketTiles';
 export { TicketGradePill } from './ui/TicketGradePill';
+export { TicketBalanceStatus } from './ui/TicketBalanceStatus';
 export { groupTicketHistories } from './utils/groupHistories';
 export type { TicketHistoryGroup } from './utils/groupHistories';
 export { TicketHistoryRow } from './ui/TicketHistoryRow';

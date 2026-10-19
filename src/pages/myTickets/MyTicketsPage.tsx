@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
 
-import { groupTicketHistories, useMyTickets, useTicketHistories } from '@entities/ticket';
+import {
+    groupTicketHistories,
+    TicketBalanceStatus,
+    useMyTickets,
+    useTicketHistories,
+} from '@entities/ticket';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { PageHeader } from '@shared/ui/page-header';
@@ -26,7 +31,8 @@ const isSameKstMonth = (a: Date | string, b: Date) => {
  * 큰 응모권(사용 가능·등급 구성·곧 만료·이번 달 받은/쓴) 아래에 응모권 기록, 옆에 만료 예정·등급 안내.
  */
 export function MyTicketsPage() {
-    const { data: tickets, isPending: ticketsPending, isError: ticketsError } = useMyTickets();
+    const ticketsQuery = useMyTickets();
+    const { data: tickets, isPending: ticketsPending } = ticketsQuery;
     const historiesQuery = useTicketHistories();
     const clock = useVirtualClock();
     const now = clock.now();
@@ -71,9 +77,7 @@ export function MyTicketsPage() {
 
             {/* 지갑 머리 자리를 잡아 둔다 */}
             {ticketsPending && <SkeletonCard className="h-56" />}
-            {ticketsError && (
-                <p className="text-destructive text-body-sm">응모권 잔액을 불러오지 못했습니다.</p>
-            )}
+            <TicketBalanceStatus query={ticketsQuery} />
             {tickets && (
                 <TicketWalletHero
                     tickets={tickets}

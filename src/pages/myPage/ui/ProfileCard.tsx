@@ -6,7 +6,12 @@ import { Link } from 'react-router-dom';
 import type { VirtualUser } from '@entities/user';
 
 import { MEMBERSHIP_LABEL } from '@entities/event';
-import { TICKET_GRADES, TicketGradePill, type MyTickets } from '@entities/ticket';
+import {
+    TICKET_GRADES,
+    TicketGradePill,
+    TicketBalanceStatus,
+    type useMyTickets,
+} from '@entities/ticket';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar.png';
 import { Badge } from '@shared/ui/badge';
@@ -81,13 +86,14 @@ function StatTile({
  */
 export function ProfileCard({
     user,
-    tickets,
+    ticketsQuery,
     stats,
 }: {
     user: VirtualUser;
-    tickets: MyTickets | undefined;
+    ticketsQuery: ReturnType<typeof useMyTickets>;
     stats: ProfileStats;
 }) {
+    const tickets = ticketsQuery.data;
     return (
         <section className="bg-surface-page border-border-default flex flex-col gap-6 rounded-2xl border p-6 shadow-md">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -123,7 +129,13 @@ export function ProfileCard({
                 <StatTile
                     to="/my-tickets"
                     label="응모권"
-                    value={tickets ? `${formatNumber(tickets.availableCount)}장` : VALUE_SKELETON}
+                    value={
+                        tickets
+                            ? `${formatNumber(tickets.availableCount)}장`
+                            : ticketsQuery.isPending
+                              ? VALUE_SKELETON
+                              : '조회 실패'
+                    }
                 >
                     {tickets && (
                         <span className="flex flex-wrap gap-1">
@@ -188,6 +200,7 @@ export function ProfileCard({
                     </span>
                 </StatTile>
             </div>
+            <TicketBalanceStatus query={ticketsQuery} />
         </section>
     );
 }

@@ -21,7 +21,7 @@ export function MyPage() {
     const user = useSessionStore((state) => state.user);
     const clock = useVirtualClock();
     const now = clock.now();
-    const { data: tickets } = useMyTickets();
+    const ticketsQuery = useMyTickets();
     const historiesQuery = useTicketHistories();
     const entries = useMyEntryRows();
 
@@ -40,7 +40,7 @@ export function MyPage() {
             {user && (
                 <ProfileCard
                     user={user}
-                    tickets={tickets}
+                    ticketsQuery={ticketsQuery}
                     stats={{
                         pendingCount: entries.rows.filter((row) => row.result === 'PENDING').length,
                         wonCount: won.length,

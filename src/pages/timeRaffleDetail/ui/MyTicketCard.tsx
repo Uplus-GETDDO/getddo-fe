@@ -11,14 +11,13 @@ import { formatNumber } from '@shared/utils/format';
  * 낸 장수는 한도가 있으면 막대로 보여 얼마나 더 낼 수 있는지 한눈에 읽히게 한다
  */
 export function MyTicketCard({ event }: { event: Event }) {
-    const { data: ticket } = useMyTickets();
+    const { data: ticket, isPending } = useMyTickets();
 
     const usesTickets = event.eventType === 'TICKET';
     const entryCount = event.myEntryCount ?? 0;
     // 한 번에 여러 장을 쓸 수 있어 횟수 × 차감량으로는 실제 사용량이 나오지 않는다
     const usedTickets = event.myTicketCount ?? entryCount * event.requiredTickets;
     const limit = usesTickets ? event.maxTicketsPerUser : null;
-    const format = (n: number | undefined) => (n == null ? '-' : formatNumber(n));
 
     return (
         <section className="bg-surface-page border-border-default flex flex-col gap-5 rounded-2xl border p-5">
@@ -62,16 +61,22 @@ export function MyTicketCard({ event }: { event: Event }) {
                     <p className="text-body-sm text-fg-tertiary flex items-baseline justify-between gap-3">
                         보유 응모권
                         <span className="text-body-bold text-fg-primary tabular-nums">
-                            {format(ticket?.availableCount)}장
+                            {ticket
+                                ? `${formatNumber(ticket.availableCount)}장`
+                                : isPending
+                                  ? '불러오는 중'
+                                  : '조회 실패'}
                         </span>
                     </p>
-                    <GradeTicketTiles
-                        label="등급별 보유 응모권"
-                        items={TICKET_GRADES.map((grade) => ({
-                            grade,
-                            count: ticket?.countByGrade[grade] ?? null,
-                        }))}
-                    />
+                    {(ticket || isPending) && (
+                        <GradeTicketTiles
+                            label="등급별 보유 응모권"
+                            items={TICKET_GRADES.map((grade) => ({
+                                grade,
+                                count: ticket?.countByGrade[grade] ?? null,
+                            }))}
+                        />
+                    )}
                 </div>
             </div>
         </section>
