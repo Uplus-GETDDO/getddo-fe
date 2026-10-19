@@ -69,6 +69,32 @@ afterEach(() => {
 });
 
 describe('출석 목업 핸들러', () => {
+    it.each([
+        ['2026-10-20', '2026-10-21'],
+        ['2026-10-31', '2026-11-01'],
+    ])('%s KST 자정에 기준일과 다음 초기화 시각이 바뀐다', async (day, nextDay) => {
+        const userId = uniqueUser();
+        freezeDate(`${day}T14:59:59Z`);
+        await check(userId);
+        expect((await today(userId)).data.data).toMatchObject({
+            attendanceDate: day,
+            attended: true,
+            nextResetAt: `${day}T15:00:00.000Z`,
+        });
+        expect((await check(userId)).status).toBe(200);
+
+        freezeDate(`${day}T15:00:00Z`);
+        const status = (await today(userId)).data.data;
+        expect(status).toMatchObject({
+            attendanceDate: nextDay,
+            attended: false,
+            nextResetAt: `${nextDay}T15:00:00.000Z`,
+        });
+        if (nextDay.endsWith('-01')) expect(status.consecutiveDays).toBe(0);
+        expect((await check(userId)).status).toBe(201);
+        expect((await check(userId)).status).toBe(200);
+    });
+
     it('첫 출석은 DAILY 보상을 담은 영수증을 201로 돌려준다', async () => {
         freezeAt('2026-10-20');
         const userId = uniqueUser();
