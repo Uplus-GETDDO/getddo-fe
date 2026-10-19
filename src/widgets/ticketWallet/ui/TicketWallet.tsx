@@ -9,14 +9,15 @@ import {
     TICKET_GRADES,
     TicketBalanceStatus,
     useMyTickets,
-    useTicketHistories,
+    useTicketHistoryCounts,
+    ticketMonthRange,
 } from '@entities/ticket';
 import { useCountUp } from '@shared/hooks/useCountUp';
+import { Button } from '@shared/ui/button';
 import { SkeletonText } from '@shared/ui/skeleton';
 import { formatNumber } from '@shared/utils/format';
 
 import ticketCharacter from '../assets/ticket-character.png';
-import { summarizeMonthlyTickets } from '../utils/monthlyTicketSummary';
 import { TicketGradeInfo } from './TicketGradeInfo';
 
 /** 응모권 모양 — 양옆 절취선 높이를 반원으로 파낸다 (왼쪽 반·오른쪽 반에 각각 구멍 하나) */
@@ -41,8 +42,18 @@ interface TicketWalletProps {
 export function TicketWallet({ now, action }: TicketWalletProps) {
     const ticketsQuery = useMyTickets();
     const tickets = ticketsQuery.data;
-    const { data: history } = useTicketHistories();
-    const monthly = history ? summarizeMonthlyTickets(history, now) : undefined;
+    const summary = useTicketHistoryCounts(
+        (['GRANT', 'REFUND', 'USE', 'EXPIRE'] as const).map((operationType) => ({
+            operationType,
+            ...ticketMonthRange(now),
+        })),
+    );
+    const monthly = summary.counts.every((count) => count !== undefined)
+        ? {
+              earned: summary.counts[0]! + summary.counts[1]!,
+              used: summary.counts[2]! + summary.counts[3]!,
+          }
+        : undefined;
     const balance = useCountUp(tickets?.availableCount);
     // 불러오기 전에는 '-' 대신 둥근 글줄로 숫자 자리를 잡는다
     const format = (n: number | undefined) =>
@@ -102,10 +113,29 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                         </ul>
                     )}
 
+                    {summary.isError && (
+                        <Button
+                            variant="secondary"
+                            disabled={summary.isFetching}
+                            onClick={summary.refetch}
+                        >
+                            월 합계 다시 시도
+                        </Button>
+                    )}
                     {/* 절취선 */}
                     <div className="border-border-default mt-4 flex items-center justify-between gap-3 border-t border-dashed pt-3">
-                        <span className="text-caption text-fg-tertiary whitespace-nowrap">
-                            이번 달 적립 {format(monthly?.earned)} · 사용 {format(monthly?.used)}
+                        <span
+                            aria-live="polite"
+                            className="text-caption text-fg-tertiary whitespace-nowrap"
+                        >
+                            {summary.isError ? (
+                                '이번 달 합계 조회 실패'
+                            ) : (
+                                <>
+                                    이번 달 적립 {format(monthly?.earned)} · 사용{' '}
+                                    {format(monthly?.used)}
+                                </>
+                            )}
                         </span>
                         <Link
                             to={action.to}

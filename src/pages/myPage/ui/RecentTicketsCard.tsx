@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 
 import { TicketHistoryRow, type TicketHistory } from '@entities/ticket';
+import { Button } from '@shared/ui/button';
 import { SkeletonList } from '@shared/ui/skeleton';
 
 import { SectionCard } from './SectionCard';
@@ -16,11 +17,15 @@ export function RecentTicketsCard({
     histories,
     isPending,
     isError,
+    onRetry,
+    isFetching,
 }: {
     /** 최신순으로 정렬된 최근 7일 이력 */
     histories: TicketHistory[];
     isPending: boolean;
     isError: boolean;
+    onRetry: () => void;
+    isFetching: boolean;
 }) {
     const [openId, setOpenId] = useState<string | null>(null);
     return (
@@ -30,12 +35,22 @@ export function RecentTicketsCard({
             moreTo="/my-tickets"
             moreLabel="응모권 내역 전체 보기"
         >
+            {isPending && (
+                <p role="status" className="sr-only">
+                    응모권 내역을 불러오는 중
+                </p>
+            )}
             {isPending && <SkeletonList />}
             {isError && (
-                <p className="text-destructive text-body-sm">응모권 내역을 불러오지 못했습니다.</p>
+                <div role="alert" className="text-destructive text-body-sm">
+                    응모권 내역을 불러오지 못했습니다.
+                    <Button variant="secondary" disabled={isFetching} onClick={onRetry}>
+                        다시 시도
+                    </Button>
+                </div>
             )}
             {!isPending && !isError && histories.length === 0 && (
-                <p className="text-body-sm text-fg-tertiary py-6 text-center">
+                <p role="status" className="text-body-sm text-fg-tertiary py-6 text-center">
                     최근 7일 동안 받거나 쓴 응모권이 없어요.
                 </p>
             )}

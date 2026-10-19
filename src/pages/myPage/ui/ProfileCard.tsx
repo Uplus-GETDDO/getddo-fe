@@ -27,7 +27,10 @@ export interface ProfileStats {
     /** 가장 최근 당첨 응모의 날짜 표기 (없으면 null) */
     lastWonLabel: string | null;
     /** 오늘 받은 응모권 장수 */
-    todayGranted: number;
+    todayGranted: number | undefined;
+    historiesError?: boolean;
+    historiesFetching?: boolean;
+    onRetryHistories?: () => void;
     /** 응모 내역(응모 중·당첨)을 불러오는 중 — 0건으로 잘못 보이지 않게 글줄 스켈레톤을 둔다 */
     entriesLoading: boolean;
     /** 응모권 내역(오늘 적립)을 불러오는 중 */
@@ -192,7 +195,9 @@ export function ProfileCard({
                     value={
                         stats.historiesLoading
                             ? VALUE_SKELETON
-                            : `+${formatNumber(stats.todayGranted)}장`
+                            : stats.todayGranted === undefined
+                              ? '조회 실패'
+                              : `+${formatNumber(stats.todayGranted)}장`
                     }
                 >
                     <span className="text-caption text-fg-tertiary">
@@ -200,6 +205,18 @@ export function ProfileCard({
                     </span>
                 </StatTile>
             </div>
+            {stats.historiesError && (
+                <div role="alert">
+                    <span>오늘 적립 합계를 불러오지 못했습니다.</span>
+                    <Button
+                        variant="secondary"
+                        disabled={stats.historiesFetching}
+                        onClick={stats.onRetryHistories}
+                    >
+                        오늘 적립 다시 시도
+                    </Button>
+                </div>
+            )}
             <TicketBalanceStatus query={ticketsQuery} />
         </section>
     );
