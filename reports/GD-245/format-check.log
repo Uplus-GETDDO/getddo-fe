@@ -1,0 +1,9 @@
+
+> getddo-fe@0.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+[warn] docs/superpowers/plans/2026-10-19-development-roadmap.md
+[warn] docs/superpowers/plans/2026-10-19-next-session-prompts.md
+[warn] reports/20261019-deployment-audit.md
+[warn] Code style issues found in 3 files. Run Prettier with --write to fix.

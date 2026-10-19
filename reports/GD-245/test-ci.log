@@ -1,0 +1,16 @@
+
+> getddo-fe@0.0.0 test:ci
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/s_don/Desktop/Projects/Ureca-getddo/getddo-fe
+
+
+ Test Files  62 passed (62)
+      Tests  478 passed (478)
+   Start at  18:25:21
+   Duration  33.60s (setup 57%, environment 28%, tests 10%, transform 4%, import 1%)
+
+Environment  jsdom was created 62 times · 128.09s total, 28% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
