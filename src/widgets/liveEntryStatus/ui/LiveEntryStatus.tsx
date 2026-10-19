@@ -53,7 +53,7 @@ export function LiveEntryStatus({
                     <Button
                         type="button"
                         variant="secondary"
-                        disabled={query.isFetching}
+                        disabled={query.isFetching || rateLimited}
                         onClick={() => {
                             if (getPollingRetryDelay(error) === 0)
                                 void query.refetch({ cancelRefetch: false });

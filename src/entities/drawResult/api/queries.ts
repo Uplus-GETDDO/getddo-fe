@@ -90,6 +90,7 @@ export function useMyResults(
             ...myResultOptions(eventId, pollingIds.has(eventId)),
             // 숨긴 결과의 전체 집계는 화면 복귀·네트워크 복구 때 자동으로 다시 읽지 않는다.
             refetchOnMount: false,
+            retryOnMount: false,
             refetchOnReconnect: false,
         })),
     });

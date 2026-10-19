@@ -76,6 +76,48 @@ describe('TimeRaffleDetailPage의 E07 사유별 버튼', () => {
             expect(client.getQueryState(['events', 'detail', FREE_EVENT_ID])?.status).toBe('error'),
         );
         expect(screen.getByRole('button', { name: '응모하기' })).toBeInTheDocument();
+        expect(
+            screen.getByText('래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'),
+        ).toBeInTheDocument();
+        server.resetHandlers();
+        await userEvent.click(screen.getByRole('button', { name: '래플 정보 다시 시도' }));
+        await waitFor(() =>
+            expect(
+                screen.queryByText('래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'),
+            ).not.toBeInTheDocument(),
+        );
+        client.clear();
+    });
+
+    it('공개 결과 최초 조회가 실패하고 미응모 상태이면 발표 대기를 추측하지 않는다', async () => {
+        server.use(
+            http.get('*/v1/events/evt-001/results', () => HttpResponse.json({}, { status: 403 })),
+            http.get('*/v1/events/evt-001/my-result', () =>
+                HttpResponse.json({
+                    success: true,
+                    data: {
+                        eventId: 'evt-001',
+                        result: 'NOT_ENTERED',
+                        prize: null,
+                        isPublished: false,
+                        revision: null,
+                        serverTime: new Date().toISOString(),
+                    },
+                }),
+            ),
+        );
+        const { client } = renderPage('evt-001');
+        await settle(client);
+        const cached = client.getQueryData<Record<string, unknown>>([
+            'events',
+            'detail',
+            'evt-001',
+        ]);
+        await act(() =>
+            client.setQueryData(['events', 'detail', 'evt-001'], { ...cached, status: 'CLOSED' }),
+        );
+        await screen.findByRole('button', { name: '공개 결과 다시 시도' });
+        expect(screen.queryByText('아직 발표 전이에요')).not.toBeInTheDocument();
         client.clear();
     });
 

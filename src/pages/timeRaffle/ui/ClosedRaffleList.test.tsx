@@ -77,10 +77,11 @@ describe('마감 래플 표시 범위', () => {
     ] as const)(
         '%s는 표시 %i행만 읽고 두 주기 뒤에도 추가 요청하지 않는다',
         async (mode, count) => {
+            // 마운트된 쿼리의 폴링 interval을 잡으려면 렌더 전에 타이머를 가짜로 바꾼다
+            vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
             const test = setup(mode);
             await waitFor(() => expect(screen.getAllByText(/12명 참여/)).toHaveLength(count));
             expect(test.ids).toHaveLength(count);
-            vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
             await act(async () => {
                 await vi.advanceTimersByTimeAsync(60_000);
             });

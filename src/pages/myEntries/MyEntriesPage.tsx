@@ -137,7 +137,8 @@ export function MyEntriesPage() {
 
             <EntryStatusTiles
                 isPending={isPending || isResultPending}
-                isUnavailable={entriesQuery.isError || entriesQuery.isResultInitialError}
+                isEntriesError={entriesQuery.isError}
+                isUnavailable={entriesQuery.isResultInitialError}
                 tiles={tiles}
                 value={filters.status}
                 onChange={(value: EntryStatusFilter) => setFilter('status', value, 'ALL')}

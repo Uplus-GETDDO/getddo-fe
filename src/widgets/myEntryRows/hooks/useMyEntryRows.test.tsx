@@ -229,14 +229,14 @@ describe('내 응모 표시 범위', () => {
         await settle();
         expect(screen.getByRole('button', { name: '전체 응모 다시 조회' })).toBeEnabled();
         expect(screen.getByText('PENDING')).toBeInTheDocument();
-        const status = screen.getByText(/전체 결과 집계/);
-        const successTime = status.textContent?.split('조회된 결과 중')[1];
+        const successTime = screen.getByText(/가장 오래된 성공 시각/).textContent;
         fail = true;
         await act(async () => {
             await vi.advanceTimersByTimeAsync(32_000);
         });
         expect(screen.getByText('PENDING')).toBeInTheDocument();
-        expect(screen.getByText(/일부 응모 갱신에 실패/).textContent).toContain(successTime);
+        expect(screen.getByText(/일부 응모 갱신에 실패/)).toBeInTheDocument();
+        expect(screen.getByText(/가장 오래된 성공 시각/).textContent).toBe(successTime);
         fail = false;
         recovered = true;
         fireEvent.click(screen.getByRole('button', { name: '전체 응모 다시 조회' }));

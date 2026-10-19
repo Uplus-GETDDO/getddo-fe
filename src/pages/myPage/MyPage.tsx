@@ -58,7 +58,8 @@ export function MyPage() {
                         historiesFetching: daily.isFetching,
                         onRetryHistories: daily.refetch,
                         entriesLoading: entries.isPending || entries.isResultPending,
-                        entriesUnavailable: entries.isError || entries.isResultInitialError,
+                        entriesFailed: entries.isError,
+                        entriesUnavailable: entries.isResultInitialError,
                         historiesLoading: daily.isPending,
                     }}
                 />

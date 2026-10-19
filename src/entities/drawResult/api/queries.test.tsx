@@ -51,6 +51,35 @@ afterEach(() => {
 });
 
 describe('결과 폴링 요청 범위', () => {
+    it('최초 404 뒤 재마운트는 요청하지 않고 명시적 재조회로 복구한다', async () => {
+        let count = 0;
+        let recovered = false;
+        vi.spyOn(apiClient, 'get').mockImplementation(async () => {
+            await Promise.resolve();
+            count++;
+            if (!recovered) throw new ApiError('ENTRY-004', '없음', 404);
+            return { data: { success: true, data: myData('missing') } };
+        });
+        const { client, wrapper } = setup();
+        const first = renderHook(() => useMyResults(['missing']), { wrapper });
+        await tick();
+        expect(first.result.current[0]?.isError).toBe(true);
+        expect(count).toBe(1);
+        first.unmount();
+        const second = renderHook(() => useMyResults(['missing']), { wrapper });
+        await tick();
+        await tick(60_000);
+        expect(count).toBe(1);
+        expect(second.result.current[0]?.data).toBeUndefined();
+        recovered = true;
+        await act(async () => {
+            await second.result.current[0]?.refetch();
+        });
+        await tick();
+        expect(count).toBe(2);
+        expect(second.result.current[0]?.data?.result).toBe('PENDING');
+        client.clear();
+    });
     it('발표 완료 E08과 E09는 최초 조회 뒤 세 주기 동안 추가 요청하지 않는다', async () => {
         const paths: string[] = [];
         vi.spyOn(apiClient, 'get').mockImplementation(async (path) => {

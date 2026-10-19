@@ -34,6 +34,9 @@ export const queryPresets = {
 
 // 대기 시각은 오류와 함께 쿼리 캐시에 남아 가상 시계·시스템 시각 변경의 영향을 받지 않는다.
 type ReadError = Error & { pollingRetryAt?: number };
+// 브라우저 타이머의 최대 지연 — 서버가 준 기한 자체는 자르지 않고 각 예약 단계만 자른다
+const MAX_TIMER_DELAY_MS = 2_147_483_647;
+const boundedPollingDelay = (delay: number) => Math.min(delay, MAX_TIMER_DELAY_MS);
 const errorStatus = (error: unknown) =>
     error instanceof ApiError
         ? error.status
@@ -62,7 +65,7 @@ export function getPollingRetryDelay(error: unknown): number {
 export const pollingReadPolicy = {
     retry: (failureCount: number, error: unknown) => !stopsPolling(error) && failureCount < 1,
     retryDelay: (_attempt: number, error: unknown) =>
-        errorStatus(error) === 429 ? getPollingRetryDelay(error) : 1000,
+        errorStatus(error) === 429 ? boundedPollingDelay(getPollingRetryDelay(error)) : 1000,
 };
 
 export function pollingReadInterval(
@@ -70,7 +73,9 @@ export function pollingReadInterval(
     active = true,
 ): number | false {
     if (!active || stopsPolling(query.state.error)) return false;
-    return getPollingRetryDelay(query.state.error) || queryPresets.realtime.refetchInterval;
+    const retryDelay = getPollingRetryDelay(query.state.error);
+    // 잘린 단계가 만료되면 가드가 같은 대기 오류를 다시 던져 남은 기한을 재계산한다
+    return retryDelay ? boundedPollingDelay(retryDelay) : queryPresets.realtime.refetchInterval;
 }
 
 /** refetch·재마운트·무효화 경로도 같은 캐시 오류를 검사해 서버 대기 시간을 우회하지 않는다. */

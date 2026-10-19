@@ -44,7 +44,8 @@ const STATUS_LABEL: Record<Event['status'], string> = {
 
 export function TimeRaffleDetailPage() {
     const { id = '' } = useParams();
-    const { data: event, isPending, isError } = useEvent(id);
+    const eventQuery = useEvent(id);
+    const { data: event, isPending, isError } = eventQuery;
     const ticketsQuery = useMyTickets();
     const ticket = ticketsQuery.data;
     // 응모 자격은 서버 판정으로 받는다 — 진행 중일 때만 조회한다 (E07)
@@ -75,6 +76,24 @@ export function TimeRaffleDetailPage() {
     const [lastRemaining, setLastRemaining] = useState<number | null>(0);
     // 모달을 닫으면 방금 누른 응모 버튼으로 포커스를 되돌린다
     const entryButtonRef = useRef<HTMLButtonElement>(null);
+    const eventFailureNotice = isError && (
+        <div role="status" className="text-body-sm text-fg-secondary">
+            <p>
+                {event
+                    ? '래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'
+                    : '래플을 불러오지 못했습니다.'}
+            </p>
+            <p>{getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')}</p>
+            <Button
+                type="button"
+                variant="secondary"
+                disabled={eventQuery.isFetching}
+                onClick={() => void eventQuery.refetch()}
+            >
+                래플 정보 다시 시도
+            </Button>
+        </div>
+    );
 
     if (isPending) {
         return (
@@ -85,11 +104,7 @@ export function TimeRaffleDetailPage() {
     }
 
     if (isError && !event) {
-        return (
-            <main className={CONTAINER}>
-                <p className="text-destructive text-body-sm">래플을 불러오지 못했습니다.</p>
-            </main>
-        );
+        return <main className={CONTAINER}>{eventFailureNotice}</main>;
     }
 
     const isOpen = event.status === 'open';
@@ -149,6 +164,7 @@ export function TimeRaffleDetailPage() {
     return (
         <main className={CONTAINER}>
             <div className="flex flex-col gap-10">
+                {eventFailureNotice}
                 {!confirmOpen && <TicketBalanceStatus query={ticketsQuery} />}
                 <RaffleDetailHero
                     event={event}
@@ -255,7 +271,12 @@ export function TimeRaffleDetailPage() {
                                     <Button
                                         type="button"
                                         variant="secondary"
-                                        disabled={query.isFetching}
+                                        disabled={
+                                            query.isFetching ||
+                                            getPollingRetryDelay(
+                                                query.error ?? query.failureReason,
+                                            ) > 0
+                                        }
                                         onClick={() => {
                                             if (
                                                 getPollingRetryDelay(
@@ -280,7 +301,7 @@ export function TimeRaffleDetailPage() {
                 {results?.displayStatus !== 'CANCELED' &&
                     results?.displayStatus !== 'NO_ENTRANTS' &&
                     (myResult?.result === 'PENDING' ||
-                        (event.status === 'closed' && !results?.isPublished)) && (
+                        (event.status === 'closed' && results && !results.isPublished)) && (
                         <MyResultCard entered={myResult?.result === 'PENDING'} />
                     )}
                 {results && (
