@@ -69,7 +69,6 @@ export {
 export { TicketConsistencyDrawer } from './ui/TicketConsistencyDrawer';
 export { GradeTicketTiles } from './ui/GradeTicketTiles';
 export { TicketGradePill } from './ui/TicketGradePill';
-export { TicketRewardChip } from './ui/TicketRewardChip';
 export { TicketBalanceStatus } from './ui/TicketBalanceStatus';
 export { groupTicketHistories } from './utils/groupHistories';
 export type { TicketHistoryGroup } from './utils/groupHistories';
