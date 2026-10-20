@@ -4,20 +4,20 @@
 
 ## Git·PR·배포 상태
 
-| 항목             | 실제 상태                                                                                          |
-| ---------------- | -------------------------------------------------------------------------------------------------- |
-| 작업 위치        | `C:/Users/s_don/Desktop/Projects/Ureca-getddo/getddo-fe`                                           |
-| Jira·브랜치      | 기존 GD-257, `feat/GD-257`                                                                         |
-| 구현 커밋        | `2e0a3b3246dbbdda021dace037febb5378227613` — `feat: 게임 4종의 서버 기록·보상 연동 (GD-257)`       |
-| 문서 커밋        | 이 인계 문서를 포함하는 후속 커밋. `git log -1 -- docs/superpowers/plans/L4-handoff.md`로 조회한다 |
-| 원격 dev         | 착수·최종 fetch 모두 `adf279e0cf87846cfb90fe073567fa00dbdb1920`                                    |
-| L3               | PR #105가 adf279e로 dev에 병합돼 있다. PR #106도 그 이전 이력에 포함됐다                           |
-| GD-257 원격·PR   | push하지 않았고 PR도 생성하지 않았다. 원격 브랜치 없음                                             |
-| GD-257 머지·배포 | 하지 않았다. 자동 Preview 배포를 유발할 수 있는 push도 보류했다                                    |
-| 기존 FE 배포     | adf279e의 기존 배포를 조회했으며 변경본 배포로 간주하지 않는다                                     |
-| BE 대조 기준     | dev `4622b73c02ea337dd8f52a69ed55f7c7da636743`, CloudFront `/api/v1` 실제 응답                     |
+| 항목             | 실제 상태                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| 작업 위치        | `C:/Users/s_don/Desktop/Projects/Ureca-getddo/getddo-fe`                                               |
+| Jira·브랜치      | 기존 GD-257, `feat/GD-257`                                                                             |
+| 구현 커밋        | `2e0a3b3246dbbdda021dace037febb5378227613` — `feat: 게임 4종의 서버 기록·보상 연동 (GD-257)`           |
+| 문서 커밋        | 이 인계 문서를 포함하는 후속 커밋. `git log -1 -- docs/superpowers/plans/L4-handoff.md`로 조회한다     |
+| 원격 dev         | 착수·최종 fetch 모두 `adf279e0cf87846cfb90fe073567fa00dbdb1920`                                        |
+| L3               | PR #105가 adf279e로 dev에 병합돼 있다. PR #106도 그 이전 이력에 포함됐다                               |
+| GD-257 원격·PR   | 원격 `feat/GD-257` 발행, [PR #107](https://github.com/Uplus-GETDDO/getddo-fe/pull/107) OPEN → dev      |
+| GD-257 머지·배포 | 머지·운영 배포 없음. 후속 사용자 승인으로 자동 Preview 배포를 허용했고 PR 생성 후 시작 상태를 확인했다 |
+| 기존 FE 배포     | adf279e의 기존 배포를 조회했으며 변경본 배포로 간주하지 않는다                                         |
+| BE 대조 기준     | dev `4622b73c02ea337dd8f52a69ed55f7c7da636743`, CloudFront `/api/v1` 실제 응답                         |
 
-서브에이전트·Jira 생성·담당 변경·자동 머지·실제 배포는 수행하지 않았다. 독립 리뷰어 인수도 아직 받지 않았다. 자체 diff 검토와 자동 검사는 아래 증거로 구분한다.
+서브에이전트·Jira 생성·담당 변경·자동 머지·운영 배포는 수행하지 않았다. 후속 PR 요청에서 사용자가 “Preview 허용, PR 생성”을 선택해 원격 발행·PR 생성을 진행했다. 독립 리뷰어 인수도 아직 받지 않았다. 자체 diff 검토와 자동 검사는 아래 증거로 구분한다.
 
 ## 구현 범위
 
@@ -109,4 +109,4 @@ playId/playToken/원본 제출은 사용자·게임별 메모리에 유지한다
 | `src/mocks/handlers/index.ts`                                   | 게임 배포 등록은 이미 해제했다. abuse/virtual-user 잔여는 L6 경계이며 무차별 삭제하지 않는다 |
 | `docs/CONTEXT.md`, `docs/backend-integration-status.md`, 로드맵 | 구현·실서버 검증·배포 인수·관리자 계약 차이를 유지                                           |
 
-다음 세션은 AGENTS/CONTEXT/현황/로드맵 L5를 읽고 fetch·branch/status로 실제 상태를 다시 대조한다. GD-257은 미병합 로컬 브랜치이므로 위 코드 커밋을 누락하지 않는 작업 기준을 먼저 정한다. L5 전용 Jira·기존 담당 경계·AP01~AP04/AM01~AM04 배포와 새 관리자 메뉴/라우트 계획 승인은 L5 자체 선행 조건이다. 이번 세션에서는 L5 코드·Jira·새 세션을 만들지 않았다.
+다음 세션은 AGENTS/CONTEXT/현황/로드맵 L5를 읽고 fetch·branch/status로 실제 상태를 다시 대조한다. GD-257은 PR #107의 미병합 원격 브랜치이므로 위 코드 커밋을 누락하지 않는 작업 기준을 먼저 정한다. L5 전용 Jira·기존 담당 경계·AP01~AP04/AM01~AM04 배포와 새 관리자 메뉴/라우트 계획 승인은 L5 자체 선행 조건이다. 이번 세션에서는 L5 코드·Jira·새 세션을 만들지 않았다.
