@@ -96,7 +96,7 @@
 
 ## GD-260 L6 검증 경계
 
-`feat/GD-260`에서 `/virtual-users` 호출 제거·`VITE_VIRTUAL_USERS_JSON` 직접 읽기·샘플 자동 대체 제거·배포 MSW 부팅 종료·`mockServiceWorker.js` 자동 해제·가상 시계 배포 비노출을 구현했다. 로컬 브라우저 검증은 임시 UUID 계정으로 수행해 실서버 401 도달·MSW 미개입만 확인했고, 실제 등록 계정의 업무 인수는 Vercel 환경변수 입력 후 재실행한다. 머지·배포·배포 후 검증은 별도 지시다. [L6 인계](superpowers/plans/L6-handoff.md)·[L6 계획](superpowers/plans/2026-10-21-GD-260-L6-runtime-mock-retirement.md)·[통합 보고서](../reports/20261021-GD-260-L6.md) 참조.
+`feat/GD-260`에서 `/virtual-users` 호출 제거·`VITE_VIRTUAL_USERS_JSON` 직접 읽기·샘플 자동 대체 제거·배포 MSW 부팅 종료·`mockServiceWorker.js` 자동 해제·가상 시계 배포 비노출을 구현했다. 실제 등록 6계정으로 로컬 브라우저 검증을 완료해 로그인·홈·조회가 전부 실서버 200과 실제 UUID를 받았고, 전환 격리·Worker 해제·미설정 안내를 확인했다. 업무 end-to-end 시나리오와 머지·배포·배포 후 검증은 별도다. [L6 인계](superpowers/plans/L6-handoff.md)·[L6 계획](superpowers/plans/2026-10-21-GD-260-L6-runtime-mock-retirement.md)·[통합 보고서](../reports/20261021-GD-260-L6.md) 참조.
 
 ## GD-259 L5 검증 경계
 

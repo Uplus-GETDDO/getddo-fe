@@ -3,457 +3,1108 @@
     "requests": [
         {
             "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000001",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
-            "x-user-role": "USER"
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
         },
         {
             "method": "GET",
             "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
-            "x-user-role": "USER"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f678-71f8-b154-11b44c1926f2",
             "x-user-role": "USER"
         },
         {
             "method": "GET",
             "path": "/v1/admin/notification-jobs?page=1&size=1&status=FAILED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/events?page=1&size=1&status=OPEN",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/events?page=1&size=100&status=OPEN",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/events?page=1&size=3&status=DRAW_CONFIRMED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/admin/events?page=1&size=1&status=SCHEDULED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/tickets/inconsistencies?page=1&size=1",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/admin/events?page=1&size=1&status=CLOSED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/admin/events?page=1&size=1&status=DRAW_CONFIRMED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/admin/events?page=1&size=3&status=DRAW_CONFIRMED",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/admin/events?page=1&size=1&status=OPEN",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/events?page=1&size=1&status=PUBLISHED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/events?page=1&size=1&status=CANCELED",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/events?page=1&size=1&status=NO_ENTRANTS",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/admin/stats/daily?from=2026-10-15&to=2026-10-21",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/admin/events?page=1&size=1&status=REDRAWING",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=OPEN",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/tickets/inconsistencies?page=1&size=1",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=PUBLISHED",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=100&status=OPEN",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=DRAW_CONFIRMED",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/admin/events?page=1&size=1&status=NO_ELIGIBLE_ENTRANTS",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/admin/events?page=1&size=1&status=CANCELED",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/admin/events?page=1&size=1&status=NO_ENTRANTS",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/admin/stats/daily?from=2026-10-15&to=2026-10-21",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/events/01a14319-1ee1-7bc0-97b8-fb5dd97795c0/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/events/01a14318-e037-767e-84f8-8cfe32643709/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/events/01a143aa-bf08-719b-8b13-26e0ad822685/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
-            "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/missions?page=1&size=50",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/banners",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/attendances/today",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/notifications/me?size=1&isRead=false",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/games",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/events?page=1&size=20",
-            "status": 401,
-            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN",
+            "firstEventId": "01a156c2-4f96-7779-8bdb-fe27a5057793"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bd9c-736d-999e-cce99348605a",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN",
+            "firstEventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-id": "01a14280-f677-7a0a-a066-5553d7344fd2",
             "x-user-role": "ADMIN"
         }
     ],
     "checks": [
         {
             "name": "로그인 계정 목록 = 설정 JSON",
-            "users": 3,
+            "users": 6,
             "listed": true
         },
         {
@@ -462,27 +1113,27 @@
         },
         {
             "name": "A 선택 후 실제 API + X-User-ID",
-            "requests": 9,
+            "requests": 20,
             "sample": [
                 {
                     "method": "GET",
-                    "path": "/v1/banners",
-                    "status": 401,
-                    "x-user-id": "00000000-0000-4000-8000-000000000001",
-                    "x-user-role": "USER"
-                },
-                {
-                    "method": "GET",
-                    "path": "/v1/events?page=1&size=20",
-                    "status": 401,
-                    "x-user-id": "00000000-0000-4000-8000-000000000001",
+                    "path": "/v1/games",
+                    "status": 200,
+                    "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
                     "x-user-role": "USER"
                 },
                 {
                     "method": "GET",
                     "path": "/v1/notifications/me?size=1&isRead=false",
-                    "status": 401,
-                    "x-user-id": "00000000-0000-4000-8000-000000000001",
+                    "status": 200,
+                    "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
+                    "x-user-role": "USER"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/attendances/today",
+                    "status": 200,
+                    "x-user-id": "01a14280-f678-7617-9364-6b79d2dcbef2",
                     "x-user-role": "USER"
                 }
             ]
@@ -497,12 +1148,12 @@
         },
         {
             "name": "A→B 전환 시 캐시 리셋·재조회",
-            "bRequests": 10,
+            "bRequests": 27,
             "leakedARequests": []
         },
         {
             "name": "새로고침 후 세션 유지",
-            "user": "임시 검증 B",
+            "user": "테스트사용자2",
             "kept": true
         },
         {

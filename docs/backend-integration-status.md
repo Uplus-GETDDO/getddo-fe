@@ -85,7 +85,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - AS01: 배포·집계 의미는 확인했고 GD-250에서 연결했다. 공용 명세의 “담당자 확인 전” 표시는 남아 있으므로 BE 담당자 확정 시 화면 문구를 대조한다. AM04도 정확한 미션 UUID와 날짜 범위로 가용성을 확인한다.
 - 관리자 미션·출석 정책: GD-259 사용자 승인으로 새 메뉴/라우트·feature 구조를 확정해 구현했다. 기존 담당 경계는 유지하며 격리 실서버 예약/등록 인수가 남아 있다. (응모 조회 AO06/AO07은 GD-250에서 `/admin/entries`로 확정·구현됨)
 - 관리자 게임: AG01~AG03과 규칙·보상 조건 운영 범위, 진행 중 플레이 보호·다음 KST 기준일 적용 계약을 확정한다.
-- 시연 계정: 공급 방식은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 확정·구현했다. Vercel 환경변수에 넣을 실제 등록 계정 JSON(USER/ADMIN/INACTIVE 포함 UUID 목록)과 재배포 후 계정별 실연동 인수가 남아 있다.
+- 시연 계정: 공급 방식은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 확정·구현했고, 실제 등록 6계정(USER 5·ADMIN 1)으로 로컬 실서버 검증을 완료했다. Vercel 환경변수 입력과 재배포 후 인수가 남아 있다.
 - 이미지: B01 공개 URL·현재 이미지 로딩은 확인했다. 실제 업로드 API·키 공급 절차·형식·용량과 격리 실서버 CRUD는 담당자 후속이며 B01 표시 구현과 구분한다.
 - 결과 성능: 원 기획서의 화면 반영 p95 2초·알림 생성 30초 목표를 실제 발표 흐름에서 측정한다. 달성되지 않으면 개선 또는 명시적 범위 조정 없이 완료 처리하지 않는다.
 
@@ -103,5 +103,5 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 - `/virtual-users` 호출을 제거하고 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 전환했다. 샘플 자동 대체를 제거했고 미설정·형식 오류는 로그인의 명시 안내다. 사용자 전환은 기존 `sessionSync`의 전체 쿼리 리셋을 유지하며, 로그아웃 UI는 사용자 전환으로 대체하기로 승인됐다.
 - `vercel.json`의 `VITE_ENABLE_MSW=false`, `main.tsx`의 `mockServiceWorker.js` 자동 해제, `hybridHandlers` 제거로 배포의 업무 가로채기를 종료했다. 가상 시계는 배포 비노출·오버라이드 무력화다.
-- 검증: format/lint/test:ci(758)/build/diff --check 통과. 임시 UUID 계정으로 로컬 preview+실서버 프록시 검증 — `/virtual-users` 미호출, Worker 자동 해제, A→B 전환 시 B 헤더 재조회·A 요청 누수 0, 새로고침 세션 유지, 320/390px, 미설정 안내를 확인했다(`docs/superpowers/plans/L6-browser-evidence.json`, 실계정 401 응답이 MSW 미개입의 증거다).
-- 실제 등록 계정 JSON 입력 후의 업무 인수, 머지·배포·배포 후 검증은 미실시다. [L6 통합 보고서](../reports/20261021-GD-260-L6.md)·[L6 인계](superpowers/plans/L6-handoff.md) 참조.
+- 검증: format/lint/test:ci(758)/build/diff --check 통과. 실제 등록 6계정으로 로컬 preview+실서버 프록시 검증 — 155건 전부 실서버 200·실제 UUID, `/virtual-users` 미호출, Worker 자동 해제, A→B 전환 시 B 헤더 재조회·A 요청 누수 0, 새로고침 세션 유지, 320/390px, 미설정 안내를 확인했다(`docs/superpowers/plans/L6-browser-evidence.json`).
+- 업무 end-to-end 시나리오(적립→응모→추첨→발표→알림→취소 반환), 머지·배포·배포 후 검증은 미실시다. [L6 통합 보고서](../reports/20261021-GD-260-L6.md)·[L6 인계](superpowers/plans/L6-handoff.md) 참조.
