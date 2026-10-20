@@ -67,7 +67,8 @@ export function TicketBalanceWidget({
         statistics.find((query) => query.data?.gameId === id)?.data?.rewardClaimedToday;
     // 셋이 모두 올 때까지 카드 자리만 잡아 둔다 — 비어 있다가 갑자기 섹션이 생기면 아래 내용이 밀리고,
     // 하나씩 도착할 때마다 그리면 순서(orderEarnCards)가 바뀌며 카드가 뒤섞여 보인다
-    const loading = attendancePending || missionsPending || gamesPending;
+    const statisticsPending = isUser && statistics.some((query) => query.isPending);
+    const loading = attendancePending || missionsPending || gamesPending || statisticsPending;
     // 마우스 드래그 + 관성 스크롤은 공용 훅을 쓴다 (터치는 브라우저 네이티브 스크롤)
     const dragScroll = useDragScroll<HTMLDivElement>();
 

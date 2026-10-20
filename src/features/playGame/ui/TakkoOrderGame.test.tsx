@@ -43,7 +43,7 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 describe('주문 결과 표시 중 정지', () => {
-    it.each(['hidden', 'blur', 'button'])(
+    it.each(['hidden', 'blur', 'button', 'Space', 'Enter'])(
         '%s에서 다음 주문을 숨겨진 채 진행하지 않는다',
         async (trigger) => {
             const onGameOver = vi.fn();
@@ -71,7 +71,12 @@ describe('주문 결과 표시 중 정지', () => {
             await advance(10000);
             expect(pick).toBeDisabled();
             expect(onGameOver).not.toHaveBeenCalled();
-            fireEvent.click(screen.getByRole('button', { name: '이어 하기' }));
+            if (trigger === 'Space' || trigger === 'Enter') {
+                fireEvent.keyDown(window, {
+                    key: trigger === 'Space' ? ' ' : 'Enter',
+                    code: trigger,
+                });
+            } else fireEvent.click(screen.getByRole('button', { name: '이어 하기' }));
             await advance(1600);
             expect(pick).toBeDisabled();
             await advance(2599);

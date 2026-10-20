@@ -287,6 +287,11 @@ export function TakkoOrderGame({
             else pause();
             return;
         }
+        if (phase === 'paused' && (event.key === ' ' || event.key === 'Enter')) {
+            event.preventDefault();
+            resume();
+            return;
+        }
         if (phase === 'input') {
             const item = TAKKO_ORDER_MENU[Number(event.key) - 1];
             if (!item) return;

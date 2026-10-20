@@ -15,7 +15,7 @@ with sync_playwright() as p:
  page.on('requestfailed',lambda request:print('failed',request.url,request.failure,flush=True))
  page.on('console',lambda message:print('console',message.type,message.text[:150],message.location,flush=True) if message.type=='error' else None)
  context.add_init_script('localStorage.setItem("getddo-session",'+json.dumps(json.dumps({'state':{'user':user},'version':0}))+');')
- requests=[];errors=[];checks=[];lost={'done':False}
+ requests=[];errors=[];checks=[];tokens=[];lost={'done':False}
  page.on('pageerror',lambda error:errors.append(str(error)))
  def proxy(route):
   url=route.request.url.split('/api',1)[1]
@@ -23,6 +23,8 @@ with sync_playwright() as p:
   headers=route.request.all_headers();headers.pop('origin',None);headers.pop('host',None);headers.pop('referer',None)
   response=route.fetch(url='https://dzc8oneey9mmx.cloudfront.net/api'+url,headers=headers,timeout=15000)
   entry={'method':route.request.method,'path':url,'status':response.status}
+  if route.request.method=='POST' and url.endswith('/plays') and response.status==201:
+   tokens.append(response.json()['data']['playToken'])
   if route.request.method=='PUT' and url.endswith('/result'):
    entry['validationData']=json.loads(route.request.post_data)['validationData'];entry['result']=response.json().get('data')
   requests.append(entry)
@@ -53,7 +55,7 @@ with sync_playwright() as p:
      if button.is_disabled():break
      button.click()
   page.get_by_text('서버 확정 점수:',exact=False).wait_for(timeout=30000)
-  checks.append({'code':code,'serverResult':page.get_by_text('서버 확정 점수:',exact=False).inner_text(),'localStorageHasToken':page.evaluate("Object.values(localStorage).some(v=>v.includes('playToken'))")})
+  checks.append({'code':code,'serverResult':page.get_by_text('서버 확정 점수:',exact=False).inner_text(),'storageHasToken':page.evaluate("(tokens)=>[localStorage,sessionStorage].some(storage=>Object.keys(storage).some(key=>tokens.some(token=>key.includes(token)||(storage.getItem(key)||'').includes(token))))",tokens)})
   page.screenshot(path=str(image_root/('L4-browser-'+code+'.png')),full_page=True)
   print(code,'complete',flush=True)
  page.goto('http://127.0.0.1:5184/my-tickets',wait_until='networkidle')

@@ -231,7 +231,8 @@ export function TakkoRunGame({
         // 연속 프레임 오류는 첫 번째만 남긴다 — 오류가 매 프레임 반복돼도 콘솔이 도배되지 않게
         let frameErrorLogged = false;
         const tick = (now: number) => {
-            const dt = (now - lastFrameAtRef.current) / 1000;
+            // 화면이 멎은 시간을 한 프레임에 따라잡아 보이지 않은 장애물과 충돌하지 않게 한다.
+            const dt = Math.min(0.1, (now - lastFrameAtRef.current) / 1000);
             lastFrameAtRef.current = now;
             try {
                 const run = runRef.current;
