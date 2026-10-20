@@ -26,7 +26,13 @@ export function AdminTicketsPage() {
             <ChipTabs
                 tabs={TABS}
                 value={active.value}
-                onValueChange={(tab) => setSearchParams({ tab })}
+                onValueChange={(tab) =>
+                    setSearchParams((prev) => {
+                        const next = new URLSearchParams(prev);
+                        next.set('tab', tab);
+                        return next;
+                    })
+                }
                 label="응모권 관리"
                 idPrefix="tickets"
             />

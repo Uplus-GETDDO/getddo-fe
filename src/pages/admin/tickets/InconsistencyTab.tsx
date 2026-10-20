@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import {
     TicketConsistencyDrawer,
@@ -10,13 +11,27 @@ import { Button } from '@shared/ui/button';
 import { TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 
+import { useLinkedUserId } from './hooks/useLinkedUserId';
+
 export function InconsistencyTab() {
+    const [searchParams] = useSearchParams();
+    const linkedUserId = searchParams.get('userId');
     const [page, setPage] = useState(1);
-    const [userIdInput, setUserIdInput] = useState('');
-    const [userId, setUserId] = useState('');
+    const [userIdInput, setUserIdInput] = useState(linkedUserId ?? '');
+    const [userId, setUserId] = useState(linkedUserId ?? '');
     // 사용자 직접 조회 — 목록에 나오지 않는 사용자(일치 사용자 포함)의 정합성도 확인한다
     const [lookupInput, setLookupInput] = useState('');
-    const [drawerUserId, setDrawerUserId] = useState<string | null>(null);
+    // ?userId= 링크로 들어오면 그 사용자의 정합성 서랍을 바로 연다
+    const [drawerUserId, setDrawerUserId] = useState<string | null>(linkedUserId);
+    useLinkedUserId(
+        useCallback((linked) => {
+            setUserIdInput(linked ?? '');
+            setUserId(linked ?? '');
+            setPage(1);
+            if (linked) setDrawerUserId(linked);
+            else setDrawerUserId(null);
+        }, []),
+    );
 
     const query = useTicketInconsistencies({
         page,

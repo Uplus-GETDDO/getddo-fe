@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { TICKET_GRADE_LABEL, TicketGrantTable, useAdminTicketGrants } from '@entities/ticket';
@@ -7,6 +7,8 @@ import { Button } from '@shared/ui/button';
 import { DateRangeFilter, OptionFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/utils/date';
+
+import { useLinkedUserId } from './hooks/useLinkedUserId';
 
 const SOURCE_OPTIONS = [
     { value: ALL, label: '전체 구분' },
@@ -35,7 +37,12 @@ export function GrantsTab() {
     // 대시보드 그래프에서 날짜를 눌러 들어오면(?date=YYYY-MM-DD) 그날로 걸러진 채 연다
     const [searchParams] = useSearchParams();
     const linkedDate = parseYmd(searchParams.get('date'));
-    const initial = linkedDate ? { ...EMPTY, from: linkedDate, to: linkedDate } : EMPTY;
+    const linkedUserId = searchParams.get('userId');
+    const initial = {
+        ...EMPTY,
+        ...(linkedDate && { from: linkedDate, to: linkedDate }),
+        ...(linkedUserId && { userId: linkedUserId }),
+    };
     const [page, setPage] = useState(1);
     const [draft, setDraft] = useState(initial);
     // 검색 버튼으로 확정한 값만 쿼리에 넘긴다 — 입력마다 요청하지 않는다
@@ -50,6 +57,13 @@ export function GrantsTab() {
         setPage(1);
     };
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
+    useLinkedUserId(
+        useCallback((userId) => {
+            setDraft((d) => ({ ...d, userId: userId ?? '' }));
+            setApplied((d) => ({ ...d, userId: userId ?? '' }));
+            setPage(1);
+        }, []),
+    );
 
     const query = useAdminTicketGrants({
         page,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import {
@@ -11,6 +11,8 @@ import { Button } from '@shared/ui/button';
 import { DateRangeFilter, OptionFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/utils/date';
+
+import { useLinkedUserId } from './hooks/useLinkedUserId';
 
 const OPERATION_OPTIONS = [
     { value: ALL, label: '전체 처리' },
@@ -25,8 +27,10 @@ export function HistoriesTab() {
     const [searchParams] = useSearchParams();
     const linkedDate = parseYmd(searchParams.get('date'));
     const linkedOperation = searchParams.get('operationType');
+    const linkedUserId = searchParams.get('userId');
     const initial = {
         ...EMPTY,
+        ...(linkedUserId && { userId: linkedUserId }),
         ...(linkedDate && { from: linkedDate, to: linkedDate }),
         ...(linkedOperation &&
             OPERATION_OPTIONS.some((option) => option.value === linkedOperation) && {
@@ -46,6 +50,13 @@ export function HistoriesTab() {
         setPage(1);
     };
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
+    useLinkedUserId(
+        useCallback((userId) => {
+            setDraft((d) => ({ ...d, userId: userId ?? '' }));
+            setApplied((d) => ({ ...d, userId: userId ?? '' }));
+            setPage(1);
+        }, []),
+    );
 
     const query = useAdminTicketHistories({
         page,
