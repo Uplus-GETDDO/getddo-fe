@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react';
 
+import { Badge } from '@shared/ui/badge';
 import { formatNumber } from '@shared/utils/format';
 
 import type { Event } from '../model/types';
@@ -15,11 +16,12 @@ import type { Event } from '../model/types';
  */
 export function EnteredChip({ label }: { label: string }) {
     return (
-        // 내가 한 일이라 눈에 먼저 들어오게 진한 노랑 바탕에 잉크 글자 (D-day 알약·응모 버튼과 같은 노랑)
-        <span className="bg-ticket-primary text-fg-primary text-caption inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 font-semibold">
+        // 내가 한 일이라 눈에 먼저 들어오게 진한 노랑 바탕에 잉크 글자 (D-day 알약·응모 버튼과 같은 노랑).
+        // 공용 Badge sm — 같은 줄의 마감 칩(Badge inverse sm)과 높이·여백을 맞춘다
+        <Badge variant="highlight" size="sm" className="font-semibold">
             <Check aria-hidden className="size-3" />
             {label}
-        </span>
+        </Badge>
     );
 }
 
@@ -55,8 +57,8 @@ export function RaffleEntryChip({
             ? ` · ${formatNumber(mySpentTicketCount)}${limit != null ? `/${formatNumber(limit)}` : ''}장`
             : '';
     return (
-        <span className="bg-ticket-primary text-fg-primary text-caption inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 font-semibold tabular-nums">
+        <Badge variant="highlight" size="sm" className="font-semibold tabular-nums">
             응모 중{count}
-        </span>
+        </Badge>
     );
 }

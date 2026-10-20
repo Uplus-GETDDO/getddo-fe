@@ -33,6 +33,8 @@ function RefreshStatus({
     onRefresh,
     interval,
     className,
+    labelClassName,
+    errorLabel,
 }: {
     fetching: boolean;
     /** 마지막으로 받은 시각(ms) — TanStack Query의 dataUpdatedAt */
@@ -43,17 +45,32 @@ function RefreshStatus({
     /** 자동 갱신 주기 안내 — 예: "30초마다" */
     interval?: string;
     className?: string;
+    /** 글 칸 클래스 — 좁은 자리에서 "lg:sr-only"처럼 아이콘만 남길 때. 글은 화면 낭독기·툴팁(title)으로 남는다 */
+    labelClassName?: string;
+    /** 실패 문구 — 무엇이 실패했는지 옆에 맥락이 없는 자리에서 "잔액 갱신 실패" 처럼 대상을 붙인다 */
+    errorLabel?: string;
 }) {
     const elapsed = useElapsedLabel(updatedAt);
     const showError = error && !fetching;
-    const label = fetching ? '새로 받는 중' : showError ? '갱신 실패 · 다시 시도' : elapsed;
+    const label = fetching
+        ? '새로 받는 중'
+        : showError
+          ? `${errorLabel ?? '갱신 실패'} · 다시 시도`
+          : elapsed;
 
     return (
         <button
             type="button"
             onClick={onRefresh}
             disabled={fetching}
-            aria-label={showError ? '갱신에 실패했어요. 다시 받기' : '지금 다시 받기'}
+            title={labelClassName ? (label ?? undefined) : undefined}
+            aria-label={
+                showError
+                    ? errorLabel
+                        ? `${errorLabel}. 다시 받기`
+                        : '갱신에 실패했어요. 다시 받기'
+                    : '지금 다시 받기'
+            }
             // 바탕이 없으니 좌우 여백도 거의 없앤다 — 남겨 두면 옆 글과의 간격만 어색하게 벌어졌다.
             // 호버는 바탕을 칠하지 않고 글자만 진하고 굵게 — 작은 글 버튼이 회색 알약으로 튀어 보이지 않게 (다른 작은 글 버튼도 같은 규칙)
             // 글자 크기(text-caption)는 cn 밖에서 잇는다 — 글자색과 한 cn에 넣으면 크기가 지워진다
@@ -74,7 +91,7 @@ function RefreshStatus({
                 />
             )}
             {/* 상태 변화는 화면 낭독기에 조용히 알린다 */}
-            <span aria-live="polite">
+            <span aria-live="polite" className={labelClassName}>
                 {label}
                 {interval && !fetching && !showError && elapsed ? ` · ${interval}` : ''}
             </span>

@@ -137,7 +137,7 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                         </span>
                         <Link
                             to={action.to}
-                            className="text-body-sm-bold text-fg-primary focus-visible:ring-border-focus flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                            className="text-body-sm-bold text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
                         >
                             {action.label}
                             <ChevronRight className="size-4" />
@@ -186,7 +186,7 @@ export function TicketWalletCompact({ action }: Pick<TicketWalletProps, 'action'
             </ul>
             <Link
                 to={action.to}
-                className="text-body-sm-bold text-fg-primary focus-visible:ring-border-focus ml-auto flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                className="text-body-sm-bold text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus ml-auto flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
                 {action.label}
                 <ChevronRight className="size-4" />

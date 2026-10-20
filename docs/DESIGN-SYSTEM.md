@@ -190,7 +190,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `secondary`   | 흰 바탕 + `border/strong` | `surface/canvas` + `fg/disabled` 테두리 | `surface/pressed` + `fg/disabled` 테두리 | 보조 행동 — 취소·돌아가기, 카드마다 반복되는 이동(게임하러 가기, 미션하러 가기), 내역 보기 |
 | `ghost`       | 투명, 테두리 없음         | `surface/canvas`                        | `surface/pressed`                        | 아이콘 버튼, 모달 닫기(X), 더보기                                                          |
 | `destructive` | `semantic/error`          | `semantic/error-strong`                 | `semantic/error-strong`                  | 허용된 삭제·취소 등 되돌릴 수 없는 행동                                                    |
-| `link`        | `fg/primary` 글자         | 밑줄                                    | `fg/secondary` + 밑줄                    | 전체보기, 상세보기 등 글자 이동                                                            |
+| `link`        | `fg/secondary` 글자       | `fg/primary` 글자 (밑줄 없음)           | `fg/primary` 글자                        | 전체보기, 상세보기 등 글자 이동                                                            |
 
 - primary는 **행동 묶음마다 하나**만 둔다 (페이지 전체에 하나일 필요는 없다).
 - **마젠타 버튼은 쓰지 않는다** (`emphasis` 제거). 응모처럼 중요한 행동은 색이 아니라 크기(Large)·자리·확인 모달로 드러낸다.

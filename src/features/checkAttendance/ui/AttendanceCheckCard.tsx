@@ -270,7 +270,7 @@ export function AttendanceCheckCard({
                                         type="button"
                                         aria-expanded="true"
                                         onClick={collapse}
-                                        className="text-body-sm text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex shrink-0 cursor-pointer items-center rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                        className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex shrink-0 cursor-pointer items-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                     >
                                         접기
                                         <ChevronUp className="size-5" />
@@ -353,7 +353,7 @@ export function AttendanceCheckCard({
                                                     type="button"
                                                     aria-expanded="false"
                                                     onClick={() => expand()}
-                                                    className="text-body-sm text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex cursor-pointer items-center rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                                    className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex cursor-pointer items-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                                 >
                                                     펼쳐보기
                                                     <ChevronRight className="size-5" />

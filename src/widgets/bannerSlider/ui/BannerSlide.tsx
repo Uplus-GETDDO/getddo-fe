@@ -18,19 +18,33 @@ import bannerBackground from '../assets/banner-bg.jpg';
 const SLIDE_BOX = 'relative flex min-h-91.25 w-full flex-col overflow-hidden rounded-2xl';
 
 /**
- * 배너를 그리지 못할 때의 빈 틀 — 노란 기본 배경을 배너 크기로 깔고 아래 왼쪽에 안내를 둔다.
- * 배너 목록(B01)이 실패해도 홈 맨 위 자리가 통째로 빠져 아래가 밀려 올라오지 않게 한다
+ * 기본 배너 — 배너 목록(B01)을 못 받았을 때 홈 맨 위를 채운다. 관리 배너와 같은 크기·노란 기본 배경에
+ * 늘 있는 겟또타임으로 이어 준다 (특정 이벤트를 모르므로 남은 시간·현황은 두지 않는다)
  */
-export function BannerFrame({ children }: { children: ReactNode }) {
+export function FallbackBanner() {
     return (
-        <div className={`bg-play-yellow ${SLIDE_BOX}`}>
+        <Link
+            to="/time-raffle"
+            className={`bg-play-yellow focus-visible:ring-border-focus group focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset ${SLIDE_BOX}`}
+        >
             <div
                 aria-hidden
                 className="absolute inset-0 bg-cover bg-right-bottom"
                 style={{ backgroundImage: `url(${bannerBackground})` }}
             />
-            <div className="relative mt-auto p-6 sm:px-12.5">{children}</div>
-        </div>
+            <div className="relative flex flex-1 flex-col justify-center gap-1 px-6 py-8 sm:max-w-[55%] sm:px-12.5">
+                <div className="flex items-center gap-1">
+                    <Flame aria-hidden className="fill-fg-primary text-fg-primary size-5.5" />
+                    <span className="text-fg-primary text-body-sm-bold">오늘의 겟또타임</span>
+                </div>
+                <h2 className="text-display text-fg-primary break-keep group-hover:underline group-hover:underline-offset-4">
+                    지금 열린 래플을 확인해 보세요
+                </h2>
+                <p className="text-body text-fg-primary break-keep">
+                    모은 응모권으로 바로 응모할 수 있어요.
+                </p>
+            </div>
+        </Link>
     );
 }
 

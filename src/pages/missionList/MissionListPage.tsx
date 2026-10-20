@@ -78,9 +78,13 @@ export function MissionListPage() {
                 {/* 페이지 머리 — 오늘의 적립: 오늘 더 받을 응모권·진행 세 칸과 내 응모권 지갑 */}
                 <TodayRewardsBanner />
 
+                {/*
+                 * 넓은 화면에서는 두 칸의 제목 줄·카드를 같은 행(subgrid)에 둔다 — 출석판을 펼쳐 오른쪽 칸이 좁아지면
+                 * 내역 제목 줄(갱신 표시·전체보기)이 두 줄로 접히는데, 그래도 두 카드의 윗선이 어긋나지 않는다
+                 */}
                 <div
                     className={cn(
-                        'mt-14 grid gap-x-4 gap-y-10',
+                        'mt-14 grid gap-x-4 gap-y-10 lg:gap-y-6',
                         attendanceExpanded
                             ? 'lg:grid-cols-[885fr_300fr]'
                             : 'lg:grid-cols-[393fr_791fr]',
@@ -88,7 +92,7 @@ export function MissionListPage() {
                 >
                     <section
                         id={MISSION_SECTION_IDS.attendance}
-                        className="flex min-w-0 scroll-mt-24 flex-col gap-6"
+                        className="flex min-w-0 scroll-mt-24 flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid"
                     >
                         <SectionHeader title="출석체크" caption={attendanceResetCaption} />
                         <AttendanceCheckCard
@@ -96,9 +100,9 @@ export function MissionListPage() {
                             onExpandedChange={setAttendanceExpanded}
                         />
                     </section>
-                    <section className="flex min-w-0 flex-col gap-6">
+                    <section className="flex min-w-0 flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid">
                         {/* 제목 줄(갱신 표시 포함)도 카드가 그린다 — 같은 조회의 받는 중·실패를 제목 옆에 보인다 */}
-                        <TicketHistoryCard className="flex-1" />
+                        <TicketHistoryCard className="flex-1" narrow={attendanceExpanded} />
                     </section>
                 </div>
             </div>

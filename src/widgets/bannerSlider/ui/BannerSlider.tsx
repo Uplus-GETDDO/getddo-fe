@@ -10,9 +10,10 @@ import { useEvent } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { Pager } from '@shared/ui/pager';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { Skeleton } from '@shared/ui/skeleton';
 
-import { BannerFrame, BannerSlide } from './BannerSlide';
+import { BannerSlide, FallbackBanner } from './BannerSlide';
 
 const AUTO_SLIDE_MS = 5000;
 
@@ -26,18 +27,6 @@ function ActiveRefresh({
 }) {
     const { data: event } = useEvent(eventId);
     return event && event.status === 'open' ? render(event, true) : null;
-}
-
-/** 배너 목록 실패 안내와 다시 불러오기 */
-function BannerLoadError({ retrying, onRetry }: { retrying: boolean; onRetry: () => void }) {
-    return (
-        <div role="status" className="flex flex-wrap items-center gap-2">
-            <p className="text-body-sm text-fg-secondary">배너를 불러오지 못했습니다.</p>
-            <Button variant="secondary" size="sm" disabled={retrying} onClick={onRetry}>
-                배너 다시 불러오기
-            </Button>
-        </div>
-    );
 }
 
 /**
@@ -127,17 +116,16 @@ export function BannerSlider({
                 if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
             }}
         >
-            {isError &&
-                (total === 0 ? (
-                    // 받아 둔 배너가 없으면 배너 크기의 빈 틀 안에 안내를 둔다 — 자리가 빠지면 아래 섹션이 밀려 올라온다
-                    <div className="force-light">
-                        <BannerFrame>
-                            <BannerLoadError retrying={isFetching} onRetry={() => void refetch()} />
-                        </BannerFrame>
-                    </div>
-                ) : (
-                    <BannerLoadError retrying={isFetching} onRetry={() => void refetch()} />
-                ))}
+            {isError && total === 0 && (
+                /*
+                 * 받아 둔 배너가 없으면 기본 배너로 자리를 채운다 — 홍보 자리라 실패 문구를 크게 띄우지 않는다.
+                 * 자리가 빠지면 아래 섹션이 밀려 올라오고, 빈 틀에 오류만 두면 홈 첫 화면이 고장 나 보인다.
+                 * 실패 안내·다시 불러오기는 아래 줄 갱신 표시가 작게 맡는다
+                 */
+                <div className="force-light">
+                    <FallbackBanner />
+                </div>
+            )}
             {total > 0 && (
                 // 그림 배너라 다크 모드에서도 라이트 색을 쓴다 (tokens.css force-light) — 아래 줄은 페이지 색을 따른다
                 <div className="force-light overflow-hidden rounded-2xl">
@@ -168,10 +156,18 @@ export function BannerSlider({
                     </div>
                 </div>
             )}
-            {(footer || total > 1 || renderRefresh) && (
+            {(footer || total > 1 || renderRefresh || isError) && (
                 <div className="relative z-10 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0 flex-1">{footer}</div>
                     <div className="flex flex-wrap items-center justify-end gap-2 self-end sm:self-auto">
+                        {/* 배너 목록 실패 — 받아 둔 배너(또는 기본 배너)를 둔 채 작은 '갱신 실패 · 다시 시도'만 */}
+                        {isError && (
+                            <RefreshStatus
+                                fetching={isFetching}
+                                error
+                                onRefresh={() => void refetch()}
+                            />
+                        )}
                         {active && renderRefresh && (
                             <ActiveRefresh eventId={active.eventId} render={renderRefresh} />
                         )}

@@ -118,8 +118,9 @@ describe('홈 관리 배너', () => {
         get.mockRejectedValueOnce(new Error('network'));
         const user = userEvent.setup();
         mount();
-        expect(await screen.findByText('배너를 불러오지 못했습니다.')).toBeInTheDocument();
-        await user.click(screen.getByRole('button', { name: '배너 다시 불러오기' }));
+        await user.click(
+            await screen.findByRole('button', { name: '갱신에 실패했어요. 다시 받기' }),
+        );
         expect(
             await screen.findByRole('link', { name: '일반 이벤트 상세 보기' }),
         ).toBeInTheDocument();
@@ -200,11 +201,15 @@ describe('홈 관리 배너', () => {
 });
 
 describe('배너 목록 실패', () => {
-    it('받아 둔 배너가 없으면 배너 크기의 빈 틀 안에 실패 안내와 다시 불러오기를 둔다', async () => {
+    it('받아 둔 배너가 없으면 기본 배너로 자리를 채우고 실패는 아래 줄 갱신 표시로만 알린다', async () => {
         get.mockRejectedValue(new Error('network'));
         mount();
-        const status = await screen.findByText('배너를 불러오지 못했습니다.');
-        expect(status.closest('.min-h-91\\.25')).not.toBeNull();
-        expect(screen.getByRole('button', { name: '배너 다시 불러오기' })).toBeInTheDocument();
+        const fallback = await screen.findByRole('link', {
+            name: /지금 열린 래플을 확인해 보세요/,
+        });
+        expect(fallback).toHaveAttribute('href', '/time-raffle');
+        expect(
+            await screen.findByRole('button', { name: '갱신에 실패했어요. 다시 받기' }),
+        ).toBeInTheDocument();
     });
 });

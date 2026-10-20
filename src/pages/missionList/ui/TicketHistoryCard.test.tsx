@@ -85,3 +85,19 @@ describe('미션 응모권 이력 미리보기', () => {
         ).not.toBeInTheDocument();
     });
 });
+
+describe('좁아진 응모권 내역 칸', () => {
+    it('넓은 화면용 짧은 제목을 두고 갱신 표시 글은 화면 낭독기·툴팁으로 남긴다', () => {
+        state.items = [{ id: 'history-1', reason: '기존 이력' }];
+        state.isError = false;
+        state.isFetching = false;
+        render(
+            <MemoryRouter>
+                <TicketHistoryCard narrow />
+            </MemoryRouter>,
+        );
+        expect(screen.getByText('응모권 내역')).toHaveClass('hidden', 'lg:inline');
+        const refresh = screen.getByRole('button', { name: '지금 다시 받기' });
+        expect(refresh.querySelector('[aria-live]')).toHaveClass('lg:sr-only');
+    });
+});

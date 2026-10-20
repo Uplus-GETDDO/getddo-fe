@@ -122,8 +122,8 @@ export function FeaturedEventCard({
                     {stats.map(({ label, value }) => (
                         <div key={label} className="flex flex-col gap-0.5 px-3 first:pl-0">
                             <dt className="text-caption text-fg-tertiary">{label}</dt>
-                            {/* 숫자는 판단 근거일 뿐 — 굵게 하면 위의 남은 시간·제목보다 세 보여 보통 굵기로 둔다 */}
-                            <dd className="text-body text-fg-primary tabular-nums">{value}</dd>
+                            {/* 숫자는 판단 근거일 뿐 — 굵게 하거나 16으로 두면 위의 남은 시간·제목과 겨뤄 보여 14 보통 굵기로 둔다 */}
+                            <dd className="text-body-sm text-fg-primary tabular-nums">{value}</dd>
                         </div>
                     ))}
                 </dl>

@@ -14,6 +14,7 @@ import { SectionHeader } from './SectionHeader';
 
 /** 미션 페이지에서 미리 보여 주는 최근 내역 수 — 나머지는 마이페이지 응모권 내역(/my-tickets)에서 본다 */
 const PREVIEW_SIZE = 10;
+const TITLE = '응모권 적립 · 사용 내역';
 
 /**
  * 최근 지급·차감 이력(누르면 상세가 펼쳐지는 아코디언). 사용 가능·이번 달 요약은 페이지 머리의 응모권 지갑이 보여 준다.
@@ -21,7 +22,17 @@ const PREVIEW_SIZE = 10;
  * 제목 옆 갱신 표시는 다시 받는 중이면 아이콘이 돌고, 실패하면 받아 둔 내역을 둔 채 다시 시도를 연다.
  * 높이는 옆 출석 카드를 따라가도록 내용을 absolute로 띄운다.
  */
-export function TicketHistoryCard({ className }: { className?: string }) {
+export function TicketHistoryCard({
+    className,
+    narrow = false,
+}: {
+    className?: string;
+    /**
+     * 출석판을 펼쳐 넓은 화면에서 이 칸이 좁아졌는가 — 그때는 제목을 '응모권 내역'으로 줄이고 갱신 표시는 아이콘만 남겨
+     * 제목·갱신·전체보기를 한 줄에 둔다 (두 줄로 접히면 전체보기만 따로 떨어져 보였다). 한 칸으로 쌓이는 좁은 화면은 그대로
+     */
+    narrow?: boolean;
+}) {
     const query = useTicketHistories({ size: PREVIEW_SIZE });
     const { items: history, isPending, isError } = query;
     const failed = isError || query.cursorError;
@@ -34,7 +45,16 @@ export function TicketHistoryCard({ className }: { className?: string }) {
     return (
         <>
             <SectionHeader
-                title="응모권 적립 · 사용 내역"
+                title={
+                    narrow ? (
+                        <>
+                            <span className="lg:hidden">{TITLE}</span>
+                            <span className="hidden lg:inline">응모권 내역</span>
+                        </>
+                    ) : (
+                        TITLE
+                    )
+                }
                 // 처음 받는 중과 비어 있는 실패는 카드 안 뼈대·실패 칸이 알린다
                 refresh={
                     !isPending &&
@@ -44,6 +64,7 @@ export function TicketHistoryCard({ className }: { className?: string }) {
                             updatedAt={query.dataUpdatedAt}
                             error={failed}
                             onRefresh={retry}
+                            labelClassName={narrow ? 'lg:sr-only' : undefined}
                         />
                     )
                 }

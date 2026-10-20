@@ -6,7 +6,7 @@ export function SectionHeader({
     refresh,
     action,
 }: {
-    title: string;
+    title: ReactNode;
     caption?: string;
     /** 제목 옆 작은 갱신 표시(RefreshStatus) — 다시 받는 중이면 아이콘이 돈다 */
     refresh?: ReactNode;
