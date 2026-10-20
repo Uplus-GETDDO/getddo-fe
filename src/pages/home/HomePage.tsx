@@ -5,7 +5,6 @@ import { EventResultRow, useEventList } from '@entities/event';
 import { Button } from '@shared/ui/button';
 import { BannerSlider } from '@widgets/bannerSlider';
 import { EventCardList } from '@widgets/eventCardList';
-import { LiveEntryStatus } from '@widgets/liveEntryStatus';
 import { TicketBalanceWidget } from '@widgets/ticketBalance';
 import { TicketEventSection } from '@widgets/ticketEventSection';
 
@@ -32,16 +31,7 @@ export function HomePage() {
         // 피그마 홈 간격 — 헤더 아래 64(UserLayout이 준다), 섹션 사이 80, 섹션 제목과 내용 24. 마지막 섹션과 푸터는 다른 화면과 같은 112(pb-28)
         <main className="flex w-full flex-col gap-20 pb-28">
             <div className={`${CONTAINER} flex flex-col gap-20`}>
-                <BannerSlider
-                    renderStatus={(event, isActive) => (
-                        <LiveEntryStatus
-                            eventId={event.id}
-                            isOpen={event.status === 'open'}
-                            enabled={isActive}
-                            winnerCount={event.winnerCount}
-                        />
-                    )}
-                />
+                <BannerSlider />
                 <TicketEventSection events={timeRaffles} isPending={isPending} isError={isError} />
             </div>
             <div className={CONTAINER}>

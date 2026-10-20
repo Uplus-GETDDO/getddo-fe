@@ -20,7 +20,7 @@ beforeAll(() => {
 afterAll(() => Reflect.deleteProperty(Element.prototype, 'scrollIntoView'));
 
 const { banners } = vi.hoisted(() => ({
-    banners: [10, 20].map((displayOrder, index) => ({
+    banners: [10, 20].map<bannerEntities.AdminBanner>((displayOrder, index) => ({
         id: `legacy-${index}`,
         eventId: 'evt-001',
         imageKey: 'legacy.png',
@@ -55,6 +55,22 @@ function renderPage() {
 }
 
 describe('이전 배너 관리', () => {
+    it('미연결 이전 배너를 유지하고 수정에는 이벤트 선택을 요구한다', async () => {
+        const first = banners[0]!;
+        first.eventId = null;
+        try {
+            const user = userEvent.setup();
+            renderPage();
+            expect(screen.getByText('(미연결 배너)')).toBeInTheDocument();
+            await user.click(screen.getByRole('button', { name: '(미연결 배너) 배너 수정' }));
+            await user.click(screen.getByRole('button', { name: '수정' }));
+            expect(await screen.findByText('연결할 이벤트를 선택하세요')).toBeInTheDocument();
+            expect(screen.getByRole('dialog')).toBeInTheDocument();
+        } finally {
+            first.eventId = 'evt-001';
+        }
+    });
+
     it('비연속 순서 목록에서도 새 배너를 N+1 위치에 등록한다', async () => {
         const user = userEvent.setup();
         const post = vi.spyOn(apiClient, 'post').mockResolvedValue({

@@ -23,7 +23,7 @@
 - 미션: `entities/mission`, `features/submitMission`, `pages/missionList`, `pages/missionDetail`. 서비스 공통 설문·퀴즈이며 사용자당 미션별 보상은 한 번이다.
 - 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. 서버 UUID와 `code`를 구분하고, 게임 결과·통계·보상은 서버 판정이 기준이다.
 - 알림: `entities/notification`, `features/markNotificationRead`, `widgets/notificationBell`. 관리자 운영은 `entities/adminNotification`, `features/retryAdminNotification`, `pages/admin/notifications`다.
-- 배너: `entities/banner`, `features/manageBanner`, `pages/admin/banners`. `widgets/bannerSlider`는 현재 이벤트 추천을 표시하며 B01 관리 배너를 소비하지 않는다.
+- 배너: `entities/banner`, `features/manageBanner`, `pages/admin/banners`. GD-255에서 홈 최상단 `widgets/bannerSlider`를 B01 관리 이미지 배너로 연결했다. 겟또타임 안내·현황은 아래 기존 `TicketEventSection`이 맡는다. 같은 세션의 관리 변경은 B01·AB01 무효화, 다른 세션은 홈 재진입·창 재포커스·재조회로 반영한다.
 - 사용자: `entities/user`, `features/switchVirtualUser`, `pages/login`, `pages/admin/virtualUsers`. 현재 `/virtual-users` 시연 목록과 AO01/AO02 DB 사용자 조회는 별개다.
 - 지급 전 차단: `entities/abuseCase`, `pages/admin/abuseCases`. 조회 계약은 담당자 확인이 남아 있으며 배포용 목업이 남아 있다.
 - 공통 감사: 전용 조회 API·화면은 범위 밖이며 GD-244에서 FE 조회 코드와 목업을 제거했다. 추첨 실패·실행 감사·공개 변경 이력은 추첨 업무에 속하므로 유지한다.
@@ -71,7 +71,7 @@
 - `env.enableMsw`가 true일 때만 `app/main.tsx`가 브라우저 목업을 시작한다. 개발 모드는 전체 `handlers`, 배포 빌드는 `hybridHandlers`를 등록한다.
 - 현재 하이브리드에는 **관리자 추첨·게임·지급 전 차단·가상 사용자**가 남아 있다. 감사 조회는 없다. 주석의 “추첨 전체 404”는 현재 배포의 증거로 사용하지 않는다.
 - 알림 N01~N03·AN01~AN05, 사용자 결과 E08/E09, 관리자 배너 AB01~AB05, 관리자 응모권 AO03/AO04/AO05/AO08/AO09에는 실서버로 전달하는 호출 코드가 있다. 특히 관리자 알림은 이미 계약을 반영했으므로 신규 구현으로 중복 등록하지 않는다.
-- 홈 B01, AO01/AO02, G02/G05, 실제 G03/G04 및 최초 `result-confirmation` 호출은 남은 작업이다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다.
+- 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 남은 작업이다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
 - 게임은 **색깔·타꼬런·타이밍·주문 네 종류의 계약이 채택**됐다. 타이밍 50점·주문 18점 기준은 2026-10-18 결정이다. 과거 문서의 “규칙 미확정”을 유지하지 않는다. 다만 등록·배포·FE 연동 여부는 별도다.
 - 현재 FE 게임 목록은 임시 `title/dailyLimit/remainingPlays` 모델이고 제출은 단일 `/play`다. G01/G02/G05 모델 분리와 G03 시작→G04 결과 제출 전환이 필요하다. G05의 `validPlayCount`는 누적 횟수이며 “오늘 플레이”가 아니다.
 - 관리자 출석 AP01~AP04·미션 AM01~AM03·응모 AO06/AO07은 공용 명세에 현행 구현이 기록됐지만 대응 FE 화면·호출이 남아 있다. AS01은 구현 기록과 담당자 확인 전 상태가 함께 있고, AM04는 설문 집계 계약을 따른다. 현재 배포 가용성은 새로 검증한다.
