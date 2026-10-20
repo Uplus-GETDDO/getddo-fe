@@ -91,7 +91,7 @@ function StatCard({
                 </>
             )}
             {/* 오른쪽 위 > 자리를 비워 이름이 닿지 않게 한다 */}
-            <span className={cn('text-body-sm text-fg-tertiary', to && 'pr-6')}>{label}</span>
+            <span className={`text-body-sm text-fg-tertiary ${to ? 'pr-6' : ''}`}>{label}</span>
             <div className="text-title-1 text-fg-primary flex items-baseline gap-2 tabular-nums">
                 {pending ? (
                     <>

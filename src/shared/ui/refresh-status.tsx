@@ -54,13 +54,14 @@ function RefreshStatus({
             onClick={onRefresh}
             disabled={fetching}
             aria-label={showError ? '갱신에 실패했어요. 다시 받기' : '지금 다시 받기'}
-            className={cn(
-                'text-caption focus-visible:ring-border-focus inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2 whitespace-nowrap tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-default',
+            // 글자 크기(text-caption)는 cn 밖에서 잇는다 — 글자색과 한 cn에 넣으면 크기가 지워진다
+            className={`text-caption ${cn(
+                'focus-visible:ring-border-focus inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2 whitespace-nowrap tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-default',
                 showError
                     ? 'text-semantic-error-strong hover:bg-surface-sunken'
                     : 'text-fg-tertiary hover:bg-surface-sunken hover:text-fg-primary',
                 className,
-            )}
+            )}`}
         >
             {showError ? (
                 <TriangleAlert aria-hidden className="size-3" />

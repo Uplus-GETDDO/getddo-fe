@@ -53,20 +53,15 @@ function QueueRow({
                 />
                 <span className="flex min-w-0 flex-col">
                     <span
-                        className={cn(
-                            'text-body-sm-bold',
-                            idle ? 'text-fg-tertiary' : 'text-fg-primary',
-                        )}
+                        // 타이포 토큰과 글자색은 cn으로 합치면 앞쪽이 지워져 문자열로 잇는다
+                        className={`text-body-sm-bold ${idle ? 'text-fg-tertiary' : 'text-fg-primary'}`}
                     >
                         {label}
                     </span>
                     <span className="text-caption text-fg-tertiary truncate">{detail}</span>
                 </span>
                 <span
-                    className={cn(
-                        'text-body-bold ml-auto tabular-nums',
-                        idle ? 'text-fg-tertiary' : 'text-fg-primary',
-                    )}
+                    className={`text-body-bold ml-auto tabular-nums ${idle ? 'text-fg-tertiary' : 'text-fg-primary'}`}
                 >
                     {formatNumber(count)}
                     {unit}
