@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { TICKET_GRADE_LABEL, TicketGrantTable, useAdminTicketGrants } from '@entities/ticket';
@@ -7,6 +7,8 @@ import { Button } from '@shared/ui/button';
 import { DateRangeFilter, OptionFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/utils/date';
+
+import { useLinkedUserId } from './hooks/useLinkedUserId';
 
 const SOURCE_OPTIONS = [
     { value: ALL, label: '전체 구분' },
@@ -32,23 +34,34 @@ const EMPTY = {
 
 // AO03 — 지급 응모권 수는 totalElements다. 등급별 수는 등급 필터를 바꿔 조회한다
 export function GrantsTab() {
-    // 대시보드 그래프에서 날짜를 눌러 들어오면(?date=YYYY-MM-DD) 그날로 걸러진 채 연다.
-    // 참여율 카드에서 오면(?sourceType=ATTENDANCE 등) 지급 구분도 함께 건다
+    // 대시보드 그래프에서 날짜를 눌러 들어오면(?date=YYYY-MM-DD) 그날로 걸러진 채 연다
     const [searchParams] = useSearchParams();
     const linkedDate = parseYmd(searchParams.get('date'));
-    const linkedSource = SOURCE_OPTIONS.find(
-        (option) => option.value !== ALL && option.value === searchParams.get('sourceType'),
-    )?.value;
+    const linkedUserId = searchParams.get('userId');
     const initial = {
         ...EMPTY,
         ...(linkedDate && { from: linkedDate, to: linkedDate }),
-        ...(linkedSource && { sourceType: linkedSource }),
+        ...(linkedUserId && { userId: linkedUserId }),
     };
     const [page, setPage] = useState(1);
     const [draft, setDraft] = useState(initial);
     // 검색 버튼으로 확정한 값만 쿼리에 넘긴다 — 입력마다 요청하지 않는다
     const [applied, setApplied] = useState(initial);
     const [rangeError, setRangeError] = useState(false);
+    // 같은 화면에서 ?date= 가 바뀌면 이전 링크의 날짜가 남지 않게 URL 기준으로 덮는다
+    const [prevLinkedDate, setPrevLinkedDate] = useState(linkedDate);
+    if (prevLinkedDate !== linkedDate) {
+        setPrevLinkedDate(linkedDate);
+        const patchLinked = (d: typeof EMPTY) => ({
+            ...d,
+            from: linkedDate ?? '',
+            to: linkedDate ?? '',
+        });
+        setDraft(patchLinked);
+        setApplied(patchLinked);
+        setRangeError(false);
+        setPage(1);
+    }
     const hasPendingDraft = JSON.stringify(draft) !== JSON.stringify(applied);
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
     const resetFilters = () => {
@@ -58,6 +71,13 @@ export function GrantsTab() {
         setPage(1);
     };
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
+    useLinkedUserId(
+        useCallback((userId) => {
+            setDraft((d) => ({ ...d, userId: userId ?? '' }));
+            setApplied((d) => ({ ...d, userId: userId ?? '' }));
+            setPage(1);
+        }, []),
+    );
 
     const query = useAdminTicketGrants({
         page,
@@ -147,7 +167,6 @@ export function GrantsTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 지급 이력이 없습니다."

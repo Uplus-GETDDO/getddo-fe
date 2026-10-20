@@ -1,4 +1,4 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
@@ -58,10 +58,9 @@ export interface TicketInconsistenciesParams extends PageParams {
 }
 
 // 정합성은 요청 시점에 계산한 값이라 캐시하지 않고 화면에 들어올 때마다 새로 받는다.
-// 페이지·필터를 바꾸면 새 결과가 올 때까지 이전 목록을 두고, 화면의 새로고침 표시로 받는 중임을 알린다
+// 페이지·필터를 바꾸면 이전 결과를 새 페이지처럼 보이지 않도록 로딩 상태로 돌아간다
 const adminListOptions = {
     ...queryPresets.noCache,
-    ...queryPresets.paged,
 } as const;
 
 // AO03 — 지급 이력
@@ -136,64 +135,4 @@ export function useTicketConsistency(userId: string | null) {
     });
 }
 
-type CountParams<T> = Omit<T, 'page' | 'size'>;
-
-/** 조건별 건수 묶음 — 순서는 넘긴 조건 순서와 같다. 하나라도 실패하면 isError */
-export interface AdminTicketCounts {
-    counts: (number | undefined)[];
-    isPending: boolean;
-    isError: boolean;
-    refetch: () => void;
-}
-
-// 대시보드 집계 — 일별·출처별 집계 API가 아직 없어 조건마다 size=1로 불러 totalElements(전체 건수)만 쓴다.
-// 조건 수만큼 요청이 나가므로 기간을 짧게(최대 14일) 쓴다. 집계 API가 생기면 이 두 훅만 바꾼다
-const COUNT_STALE_MS = 60_000;
-
-const combineCounts = (
-    results: { data?: number; isPending: boolean; isError: boolean; refetch: () => unknown }[],
-): AdminTicketCounts => ({
-    counts: results.map((result) => result.data),
-    isPending: results.some((result) => result.isPending),
-    isError: results.some((result) => result.isError),
-    refetch: () => results.forEach((result) => void result.refetch()),
-});
-
-/** AO03 지급 건수 — 조건마다 한 장씩 센 지급 응모권 수 */
-export function useAdminTicketGrantCounts(
-    paramsList: CountParams<AdminTicketGrantsParams>[],
-): AdminTicketCounts {
-    return useQueries({
-        queries: paramsList.map((params) => ({
-            queryKey: [...ADMIN_TICKETS_KEY, 'grants', 'count', params],
-            staleTime: COUNT_STALE_MS,
-            queryFn: async () => {
-                const { data } = await apiClient.get<unknown>(ADMIN_TICKET_GRANTS_API_PATH, {
-                    params: { ...params, page: 1, size: 1 },
-                });
-                return envelopeSchema(pageSchema(ticketGrantSchema)).parse(data).data.totalElements;
-            },
-        })),
-        combine: combineCounts,
-    });
-}
-
-/** AO05 이력 건수 — 예: operationType=USE로 응모에 쓴 응모권 수 */
-export function useAdminTicketHistoryCounts(
-    paramsList: CountParams<AdminTicketHistoriesParams>[],
-): AdminTicketCounts {
-    return useQueries({
-        queries: paramsList.map((params) => ({
-            queryKey: [...ADMIN_TICKETS_KEY, 'histories', 'count', params],
-            staleTime: COUNT_STALE_MS,
-            queryFn: async () => {
-                const { data } = await apiClient.get<unknown>(ADMIN_TICKET_HISTORIES_API_PATH, {
-                    params: { ...params, page: 1, size: 1 },
-                });
-                return envelopeSchema(pageSchema(adminTicketHistorySchema)).parse(data).data
-                    .totalElements;
-            },
-        })),
-        combine: combineCounts,
-    });
-}
+// 대시보드 집계는 AS01(entities/adminStats)로 대체됐다 — 조건별 count 훅은 제거됐다

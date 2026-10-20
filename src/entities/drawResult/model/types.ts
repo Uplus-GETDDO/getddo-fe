@@ -102,13 +102,14 @@ export const drawRunStatusSchema = z.enum([
     'NO_ENTRIES',
     'NO_CANDIDATES',
 ]);
-export const drawExecutionTypeSchema = z.enum(['AUTO', 'MANUAL']);
+export const drawTypeSchema = z.enum(['INITIAL', 'REPLACEMENT']);
 
 export const drawRunSchema = z.object({
     id: z.string(),
     eventId: z.string(),
     runNumber: z.number().int(),
-    executionType: drawExecutionTypeSchema,
+    // 최초/재추첨 종류 — 자동 실행인지 관리자가 시작·재개했는지는 이 필드로 추정하지 않는다
+    drawType: drawTypeSchema,
     status: drawRunStatusSchema,
     // 이벤트의 최초 실행 ID — 시간상 직전 실행이나 취소 원본 실행이 아니다
     originalDrawId: z.string().nullable(),
@@ -117,10 +118,15 @@ export const drawRunSchema = z.object({
     createdAt: z.iso.datetime({ offset: true }),
 });
 
+/**
+ * AD02 실행 상세의 취소 근거 요약 — 해당 실행을 발생시킨 취소와 그 실행의 결과가
+ * 이후 취소된 근거를 함께 담는다. resultId는 취소된 결과, replacementRunId는
+ * 그 취소에 연결된 재추첨 실행(취소 원본 실행 ID와 다르다)
+ */
 export const cancellationSummarySchema = z.object({
     id: z.string(),
-    canceledDrawResultId: z.string(),
-    canceledDrawRunId: z.string(),
+    resultId: z.string(),
+    replacementRunId: z.string().nullable(),
     canceledBy: z.string(),
     reason: z.string(),
     canceledAt: z.iso.datetime({ offset: true }),
@@ -140,17 +146,46 @@ export const drawResultSchema = z.object({
     isCanceled: z.boolean(),
 });
 
+// GET /admin/draws/{drawId}/failures 항목 — message는 코드에 대응하는 관리자용 안내이며 원문 예외·스택이 아니다
+export const drawFailureSchema = z.object({
+    id: z.string(),
+    runId: z.string(),
+    failureCode: z.string(),
+    message: z.string(),
+    failedAt: z.iso.datetime({ offset: true }),
+    traceId: z.string().nullable(),
+});
+
+// GET /admin/draws/{drawId}/execution-audits 항목 — beforeData/afterData는 JSON이 아닌 문자열로 온다
+export const drawExecutionAuditSchema = z.object({
+    id: z.string(),
+    actorId: z.string().nullable(),
+    action: z.string(),
+    reason: z.string().nullable(),
+    beforeData: z.string().nullable(),
+    afterData: z.string().nullable(),
+    requestId: z.string().nullable(),
+    createdAt: z.iso.datetime({ offset: true }),
+});
+
+/**
+ * 실행 요약 — 실패 정보와 취소 근거를 중첩으로 제공한다.
+ * retryAt이 있으면 자동 재시도 예약, 없고 FAILED면 waitingForOperator(운영자 대기)다.
+ */
+export const drawExecutionSummarySchema = z.object({
+    failureCount: z.number().int(),
+    latestFailure: drawFailureSchema.nullable(),
+    retryAt: z.iso.datetime({ offset: true }).nullable(),
+    waitingForOperator: z.boolean(),
+    cancellations: z.array(cancellationSummarySchema),
+});
+
 export const drawRunDetailSchema = drawRunSchema.extend({
     algorithmVersion: z.string().nullable(),
     rulesSnapshot: z.record(z.string(), z.unknown()).nullable(),
     snapshotFixedAt: z.iso.datetime({ offset: true }).nullable(),
-    cancellations: z.array(cancellationSummarySchema),
     results: z.array(drawResultSchema),
-    failureCount: z.number().int(),
-    lastFailureCode: z.string().nullable(),
-    lastFailureMessage: z.string().nullable(),
-    lastFailedAt: z.iso.datetime({ offset: true }).nullable(),
-    lastFailureTraceId: z.string().nullable(),
+    execution: drawExecutionSummarySchema,
 });
 
 // ticketCount는 실제 차감 장수, weight는 등급 가중치 합(브론즈 1·실버 3·골드 5)으로 서로 다른 값이다
@@ -200,13 +235,36 @@ export const drawExecutionResponseSchema = z.object({
     confirmation: drawConfirmationSchema.nullable(),
 });
 
+/**
+ * GD-199 최초 발표 응답 (`POST /admin/draws/{runId}/result-confirmation`, 본문 없음).
+ * 최초 발표의 정상 성공은 isPublished=true + 실제 공개 식별자·버전·시각이다.
+ * confirmedBy/confirmedAt은 요청 실행의 확인 기록이라 실제 발표자와 다를 수 있다 —
+ * 실제 발표자·시각은 공개 버전(PublicListChange)의 confirmedBy/confirmedAt으로 확인한다.
+ */
+export const drawResultConfirmationSchema = z.object({
+    eventId: z.string(),
+    confirmationId: z.string(),
+    runId: z.string(),
+    confirmedBy: z.string(),
+    confirmedAt: z.iso.datetime({ offset: true }),
+    isPublished: z.boolean(),
+    publicationId: z.string().nullable(),
+    revision: z.number().int().nullable(),
+    publishedAt: z.iso.datetime({ offset: true }).nullable(),
+});
+
 export type DrawRunStatus = z.infer<typeof drawRunStatusSchema>;
+export type DrawType = z.infer<typeof drawTypeSchema>;
 export type DrawRun = z.infer<typeof drawRunSchema>;
 export type CancellationSummary = z.infer<typeof cancellationSummarySchema>;
 export type DrawResult = z.infer<typeof drawResultSchema>;
+export type DrawFailure = z.infer<typeof drawFailureSchema>;
+export type DrawExecutionAudit = z.infer<typeof drawExecutionAuditSchema>;
+export type DrawExecutionSummary = z.infer<typeof drawExecutionSummarySchema>;
 export type DrawRunDetail = z.infer<typeof drawRunDetailSchema>;
 export type DrawCandidate = z.infer<typeof drawCandidateSchema>;
 export type DrawVerification = z.infer<typeof drawVerificationSchema>;
 export type DrawConfirmationResult = z.infer<typeof drawConfirmationResultSchema>;
 export type DrawConfirmation = z.infer<typeof drawConfirmationSchema>;
 export type DrawExecutionResponse = z.infer<typeof drawExecutionResponseSchema>;
+export type DrawResultConfirmation = z.infer<typeof drawResultConfirmationSchema>;

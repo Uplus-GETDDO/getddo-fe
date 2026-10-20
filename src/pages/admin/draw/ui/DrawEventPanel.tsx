@@ -12,7 +12,6 @@ import { formatKst } from '@shared/utils/date';
 
 import { DrawRunDetail } from './DrawRunDetail';
 import { DRAW_RUN_PAGE_SIZE, DrawRunList } from './DrawRunList';
-import { PolicyPendingChip } from './PolicyPendingNotice';
 import { ResultChangesSection } from './ResultChangesSection';
 
 type PanelTab = 'runs' | 'changes';
@@ -83,8 +82,8 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
                     </p>
                     {awaitingFirstPublication && (
                         <p className="text-body-sm text-fg-secondary">
-                            결과 확정·확인 저장만으로는 공개되지 않으며, 공개 호출의 세부 계약은{' '}
-                            <PolicyPendingChip /> 입니다. 서버가 공개하기 전에는 결과가 공개되지
+                            결과 확정만으로는 공개되지 않습니다. 추첨 실행 탭에서 최신 실행을 검토한
+                            뒤 최초 발표로 공개합니다. 발표 전까지 사용자에게 결과가 공개되지
                             않습니다.
                         </p>
                     )}

@@ -17,7 +17,6 @@ import { env } from '@shared/config/env';
 import { recentKstDays } from '@shared/utils/date';
 
 import { mockNow } from '../now';
-import { MOCK_GENERATED_USERS } from './mockUsers';
 import { fail, ok } from './response';
 
 /*
@@ -208,18 +207,11 @@ function seedStore() {
 // 날짜로 정한 난수라 같은 날은 늘 같은 값이다. 불일치·반환은 만들지 않아 정합성 시드에 영향이 없다
 const TREND_DAYS = 14;
 const TREND_START = BASE_TIME + 4 * 24 * STEP_MS;
-// 활성 사용자(약 220명) 기준 참여율이 출석 40~55%, 미션 15~25%, 게임 20~35%쯤 나오도록 잡았다
 const TREND_DAILY: Record<TicketSourceType, [min: number, max: number]> = {
-    ATTENDANCE: [90, 120],
-    MISSION: [35, 55],
-    GAME: [45, 75],
+    ATTENDANCE: [9, 16],
+    MISSION: [3, 8],
+    GAME: [4, 10],
 };
-// 추이 지급을 받는 사람 — 고정 시드 사용자 뒤에 활성 생성 사용자를 잇는다.
-// 하루 지급 수가 이 인원보다 적어 같은 날 같은 출처로 한 사람이 두 번 받지 않는다
-const TREND_USERS: readonly { id: string; name: string }[] = [
-    ...MOCK_ADMIN_USERS,
-    ...MOCK_GENERATED_USERS.filter((user) => user.active),
-];
 // 출석은 브론즈만(ADR-016), 미션·게임은 등급 추첨 확률(TICKET_GRADE_ODDS 80 : 18 : 2)대로
 const trendGrade = (source: TicketSourceType, r: number): TicketGrade =>
     source === 'ATTENDANCE' || r < 0.7998
@@ -231,8 +223,7 @@ const trendGrade = (source: TicketSourceType, r: number): TicketGrade =>
             : 'PLATINUM';
 
 function dayRandom(ymd: string) {
-    // 날짜 숫자를 그대로 씨앗으로 쓰면 이웃한 날의 첫 값이 거의 같아 매일 같은 수가 나온다 — 곱해서 흩는다
-    let x = Math.imul(Number(ymd.replaceAll('-', '')), 2654435761) >>> 0 || 1;
+    let x = Number(ymd.replaceAll('-', '')) >>> 0 || 1;
     return () => {
         x ^= x << 13;
         x ^= x >>> 17;
@@ -259,7 +250,7 @@ function seedTrend() {
                 const usedAt = random() < 0.5 ? grantedAt + 2 * STEP_MS : null;
                 if (grantedAt > now) continue;
                 serial += 1;
-                const user = TREND_USERS[serial % TREND_USERS.length];
+                const user = MOCK_ADMIN_USERS[serial % MOCK_ADMIN_USERS.length];
                 const event = EVENTS[serial % EVENTS.length];
                 if (!user || !event) continue;
                 const ticketId = `tk-t${String(serial).padStart(4, '0')}`;
@@ -327,7 +318,7 @@ seedAll();
 // 목업 상태를 처음으로 되돌린다 — 테스트가 데이터를 바꾼 뒤 정리할 때 쓴다
 export const resetAdminTicketStore = seedAll;
 
-const userName = (userId: string) => TREND_USERS.find((u) => u.id === userId)?.name ?? userId;
+const userName = (userId: string) => MOCK_ADMIN_USERS.find((u) => u.id === userId)?.name ?? userId;
 
 type Mismatch = TicketMismatch & { userId: string; grade: TicketGrade };
 

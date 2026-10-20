@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
@@ -28,8 +28,8 @@ export interface AbuseCasesParams {
 export function useAbuseCases(params: AbuseCasesParams) {
     return useQuery({
         ...queryPresets.standard,
-        ...queryPresets.paged,
         queryKey: [...ABUSE_CASES_KEY, 'list', params],
+        placeholderData: keepPreviousData,
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(ABUSE_CASES_API_PATH, { params });
             return envelopeSchema(abuseCasePageSchema).parse(data).data;

@@ -54,16 +54,12 @@ export {
     ADMIN_TICKET_REFUNDS_API_PATH,
     ADMIN_TICKETS_KEY,
     ticketConsistencyApiPath,
-    useAdminTicketGrantCounts,
     useAdminTicketGrants,
-    useAdminTicketHistoryCounts,
     useAdminTicketHistories,
     useAdminTicketRefunds,
     useTicketConsistency,
     useTicketInconsistencies,
 } from './api/admin';
-export { useAdminTicketGrantUserCounts } from './api/adminGrantUsers';
-export type { GrantUserCount } from './api/adminGrantUsers';
 export {
     AdminTicketHistoryTable,
     TicketGrantTable,

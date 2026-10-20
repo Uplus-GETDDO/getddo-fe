@@ -156,7 +156,6 @@ export interface MockEvent {
     startsAt: string;
     endsAt: string;
     status: EventStatus;
-    isRecommended?: boolean;
     isTimeRaffle?: boolean;
     raffleDetail?: ReturnType<typeof raffleDetail>;
     requiredTickets: number;
@@ -168,7 +167,6 @@ export interface MockEvent {
     weightingEnabled?: boolean;
     maxTicketsPerUser?: number | null;
     membershipRule?: MembershipRule;
-    tags?: string[];
     prizeName: string;
     winnerCount: number;
     // 응모 현황 원천 — 이벤트 응답(E01/E02)에는 싣지 않고 E03 응모 통계로만 내려간다 (ADR-0007)
@@ -208,7 +206,6 @@ export const mockEvents: MockEvent[] = [
     {
         id: 'evt-001',
         isTimeRaffle: true,
-        isRecommended: true,
         title: '갤럭시 버즈 위클리 래플',
         description: '응모권 1장으로 참여하는 주간 추첨 이벤트',
         bannerImageUrl: null,
@@ -219,7 +216,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: demoTime(7 * 24 * 60 * MINUTE),
         status: 'open',
         requiredTickets: 1,
-        tags: ['디지털기기'],
         prizeName: '갤럭시 버즈',
         winnerCount: 10,
         participantCount: 842,
@@ -230,7 +226,6 @@ export const mockEvents: MockEvent[] = [
     {
         id: 'evt-002',
         isTimeRaffle: true,
-        isRecommended: true,
         title: '출석왕 챌린지',
         description:
             '이번 달 출석 미션 완주자 대상 추첨. 응모권 1장부터 참여하고 많이 쓸수록 당첨 확률이 올라가요.',
@@ -239,7 +234,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-31T14:59:59Z',
         status: 'open',
         requiredTickets: 3,
-        tags: ['기프티콘·상품권'],
         prizeName: '네이버페이 포인트 5만원',
         winnerCount: 100,
         participantCount: 2310,
@@ -257,7 +251,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-20T14:59:59Z',
         status: 'upcoming',
         requiredTickets: 1,
-        tags: ['기프티콘·상품권'],
         prizeName: '스타벅스 e카드',
         winnerCount: 50,
         participantCount: null,
@@ -267,7 +260,6 @@ export const mockEvents: MockEvent[] = [
     },
     {
         id: 'evt-006',
-        isRecommended: true,
         title: '데이터 쿠폰 무료 응모',
         description:
             '응모권 없이 누구나 참여할 수 있는 데이터 쿠폰 추첨 이벤트예요. 한 번만 응모할 수 있고, 마감 뒤 자동으로 추첨합니다. 당첨되면 쿠폰이 U+ 멤버십 앱 쿠폰함으로 바로 들어가요.',
@@ -297,7 +289,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: kstAt(15, 23),
         status: 'open',
         requiredTickets: 0,
-        tags: ['데이터·통신'],
         prizeName: 'U+ 데이터 쿠폰 5GB',
         winnerCount: 1000,
         participantCount: 4820,
@@ -345,7 +336,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: kstAt(20, 23),
         status: 'open',
         requiredTickets: 0,
-        tags: ['기프티콘·상품권'],
         prizeName: '스타벅스 아메리카노 쿠폰',
         winnerCount: 500,
         participantCount: 2110,
@@ -365,7 +355,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-20T14:59:59Z',
         status: 'upcoming',
         requiredTickets: 3,
-        tags: ['데이터·통신', '멤버십 혜택'],
         prizeName: 'U+ 데이터 쿠폰 5GB',
         winnerCount: 10,
         participantCount: null,
@@ -383,7 +372,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-09-20T14:59:59Z',
         status: 'closed',
         requiredTickets: 1,
-        tags: ['데이터·통신'],
         prizeName: 'U+ 데이터 쿠폰 5GB',
         winnerCount: 50,
         participantCount: 3204,
@@ -401,7 +389,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-08-31T14:59:59Z',
         status: 'drawn',
         requiredTickets: 2,
-        tags: ['기프티콘·상품권'],
         prizeName: '네이버페이 포인트 3만원',
         winnerCount: 30,
         participantCount: 1890,
@@ -444,7 +431,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: kstAt(5, 23),
         status: 'open',
         requiredTickets: 0,
-        tags: ['멤버십 혜택'],
         prizeName: 'U+ 멤버십 포인트 5,000P',
         winnerCount: 1000,
         participantCount: 1540,
@@ -454,7 +440,6 @@ export const mockEvents: MockEvent[] = [
     },
     {
         id: 'evt-012',
-        isRecommended: true,
         title: '갤럭시 버즈3 오픈 응모',
         description:
             '응모권 없이 참여하는 갤럭시 버즈3 추첨 이벤트예요. 마감 뒤 자동으로 추첨하고, 관리자 확인이 끝나면 당첨자 명단을 공개합니다. 경품은 발표 후 3 영업일 이내 발송돼요.',
@@ -467,7 +452,6 @@ export const mockEvents: MockEvent[] = [
         requiredTickets: 0,
         // VIP 전용 — 상세의 '참여 자격' 문구가 등급별로 달라지는 것을 보려면 하나는 상위 등급이어야 한다
         membershipRule: 'vip',
-        tags: ['디지털기기'],
         prizeName: '갤럭시 버즈3',
         winnerCount: 20,
         participantCount: 980,
@@ -539,7 +523,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: kstAt(9, 23),
         status: 'open',
         requiredTickets: 0,
-        tags: ['한정 굿즈'],
         prizeName: '갤럭시 워치5 40mm 스트랩',
         winnerCount: 20,
         participantCount: 640,
@@ -559,7 +542,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: demoTime(20 * 24 * 60 * MINUTE),
         status: 'open',
         requiredTickets: 1,
-        tags: ['멤버십 혜택'],
         prizeName: 'U+ 데이터 쿠폰 10GB',
         winnerCount: 20,
         participantCount: 210,
@@ -571,7 +553,6 @@ export const mockEvents: MockEvent[] = [
     {
         id: 'evt-201',
         isTimeRaffle: true,
-        isRecommended: true,
         title: '갤럭시 탭 S11 응모',
         description: '응모권 1장으로 참여하는 태블릿 추첨 이벤트',
         bannerImageUrl: null,
@@ -579,7 +560,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-05T14:59:59Z',
         status: 'open',
         requiredTickets: 1,
-        tags: ['디지털기기'],
         prizeName: '갤럭시 탭 S11',
         winnerCount: 3,
         participantCount: 1820,
@@ -642,7 +622,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: kstAt(9, 23),
         status: 'open',
         requiredTickets: 0,
-        tags: ['기프티콘·상품권'],
         prizeName: '배달앱 5,000원 쿠폰',
         winnerCount: 10,
         participantCount: 3120,
@@ -661,7 +640,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: kstAt(-4, 23),
         status: 'open',
         requiredTickets: 0,
-        tags: ['한정 굿즈'],
         prizeName: '무너 2027 캘린더',
         winnerCount: 200,
         participantCount: 1460,
@@ -672,7 +650,6 @@ export const mockEvents: MockEvent[] = [
     {
         id: 'evt-204',
         isTimeRaffle: true,
-        isRecommended: true,
         title: '데이터 2GB 충전 쿠폰 응모',
         description: '응모권 1장으로 참여하는 데이터 충전 쿠폰 추첨 이벤트',
         bannerImageUrl: '/images/events/data-coupon.webp',
@@ -680,7 +657,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-24T14:59:59Z',
         status: 'open',
         requiredTickets: 1,
-        tags: ['데이터·통신'],
         prizeName: 'U+ 데이터 쿠폰 2GB',
         winnerCount: 500,
         participantCount: 2740,
@@ -701,7 +677,6 @@ export const mockEvents: MockEvent[] = [
         status: 'open',
         requiredTickets: 0,
         membershipRule: 'vvip',
-        tags: ['멤버십 혜택'],
         prizeName: 'VIP콕 더블 이용권',
         winnerCount: 800,
         // 아직 열리지 않아 응모자도, 내 응모도 없다
@@ -713,7 +688,6 @@ export const mockEvents: MockEvent[] = [
     {
         id: 'evt-206',
         isTimeRaffle: true,
-        isRecommended: true,
         title: 'CGV 영화 관람권 응모',
         description:
             '응모권 1장부터 참여하고 많이 쓸수록 당첨 확률이 올라가는 영화 관람권 추첨 이벤트',
@@ -722,7 +696,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-27T14:59:59Z',
         status: 'open',
         requiredTickets: 2,
-        tags: ['기프티콘·상품권'],
         prizeName: 'CGV 관람권 2매',
         winnerCount: 150,
         participantCount: 4210,
@@ -733,7 +706,6 @@ export const mockEvents: MockEvent[] = [
     {
         id: 'evt-207',
         isTimeRaffle: true,
-        isRecommended: true,
         title: '에어팟 4 응모',
         description: '응모권 1장부터 참여하고 많이 쓸수록 당첨 확률이 올라가는 이어폰 추첨 이벤트',
         bannerImageUrl: null,
@@ -741,7 +713,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: '2026-10-06T14:59:59Z',
         status: 'open',
         requiredTickets: 2,
-        tags: ['디지털기기'],
         prizeName: '에어팟 4',
         winnerCount: 5,
         participantCount: 3640,
@@ -764,7 +735,6 @@ export const mockEvents: MockEvent[] = [
         endsAt: demoTime(-2 * MINUTE),
         status: 'open',
         requiredTickets: 0,
-        tags: ['한정 굿즈'],
         prizeName: '무너 리유저블 컵',
         winnerCount: 400,
         participantCount: 1230,
@@ -789,7 +759,6 @@ export const mockEvents: MockEvent[] = [
             '무너 커스텀 메탈릭 피규어 1종 + 아크릴 디스플레이 케이스 + 인증 카드',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '무너 한정 굿즈 세트',
         winnerCount: 5,
         participantCount: 1234,
@@ -812,7 +781,6 @@ export const mockEvents: MockEvent[] = [
             '닌텐도 스위치 2 본체 + 조이콘 2 + 전용 캐리 파우치',
         ),
         requiredTickets: 1,
-        tags: ['디지털기기'],
         prizeName: '닌텐도 스위치 2',
         winnerCount: 1,
         participantCount: 1284,
@@ -835,7 +803,6 @@ export const mockEvents: MockEvent[] = [
             '에어팟 프로 3 본체 + 충전 케이스 + 실리콘 팁 3종',
         ),
         requiredTickets: 2,
-        tags: ['디지털기기'],
         prizeName: '에어팟 프로 3',
         winnerCount: 3,
         participantCount: 2048,
@@ -858,7 +825,6 @@ export const mockEvents: MockEvent[] = [
             '무너와 친구들 인형 4종 + 전용 보관 파우치',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '무너 인형 4종 세트',
         winnerCount: 20,
         participantCount: 3320,
@@ -881,7 +847,6 @@ export const mockEvents: MockEvent[] = [
             '아이패드 에어 M3 11형 128GB + 정품 스마트 폴리오',
         ),
         requiredTickets: 3,
-        tags: ['디지털기기'],
         prizeName: '아이패드 에어 M3',
         winnerCount: 1,
         participantCount: null,
@@ -904,7 +869,6 @@ export const mockEvents: MockEvent[] = [
             '무너 아크릴 키링 6종 + 컬렉터 카드',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '무너 키링 6종 세트',
         winnerCount: 50,
         participantCount: null,
@@ -927,7 +891,6 @@ export const mockEvents: MockEvent[] = [
             'LG 스탠바이미 2 본체 + 전용 무빙 스탠드',
         ),
         requiredTickets: 3,
-        tags: ['디지털기기'],
         prizeName: 'LG 스탠바이미 2',
         winnerCount: 1,
         participantCount: null,
@@ -950,7 +913,6 @@ export const mockEvents: MockEvent[] = [
             '갤럭시 워치8 40mm + 추가 스트랩 1종',
         ),
         requiredTickets: 2,
-        tags: ['디지털기기'],
         prizeName: '갤럭시 워치8',
         winnerCount: 2,
         participantCount: 1740,
@@ -973,7 +935,6 @@ export const mockEvents: MockEvent[] = [
             '무너 머그컵 + 스티커 팩 + 에코백',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '무너 시즌 굿즈 박스',
         winnerCount: 30,
         participantCount: 2960,
@@ -997,7 +958,6 @@ export const mockEvents: MockEvent[] = [
             '1등 무너 메탈릭 피규어 · 2등 무너 아크릴 키링 세트 · 3등 무너 굿즈 박스',
         ),
         requiredTickets: 2,
-        tags: ['한정 굿즈'],
         prizeName: '무너 메탈릭 피규어',
         winnerCount: 56,
         participantCount: 4820,
@@ -1020,7 +980,6 @@ export const mockEvents: MockEvent[] = [
             '다이슨 에어랩 멀티 스타일러 + 전용 케이스',
         ),
         requiredTickets: 3,
-        tags: ['한정 굿즈'],
         prizeName: '다이슨 에어랩',
         winnerCount: 1,
         participantCount: 4120,
@@ -1043,7 +1002,6 @@ export const mockEvents: MockEvent[] = [
             '소니 WH-1000XM6 본체 + 하드 케이스 + 항공 어댑터',
         ),
         requiredTickets: 2,
-        tags: ['디지털기기'],
         prizeName: '소니 WH-1000XM6',
         winnerCount: 2,
         participantCount: 2280,
@@ -1066,7 +1024,6 @@ export const mockEvents: MockEvent[] = [
             '무너 극세사 담요 1종 + 보관 파우치',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '무너 한정 담요',
         winnerCount: 40,
         participantCount: 3610,
@@ -1089,7 +1046,6 @@ export const mockEvents: MockEvent[] = [
             '스타벅스 텀블러 + 드립백 원두 세트 + 리유저블 컵',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '스타벅스 럭키백',
         winnerCount: 25,
         participantCount: 1980,
@@ -1114,7 +1070,6 @@ export const mockEvents: MockEvent[] = [
             '무너 시그니처 머그 1종 + 전용 코스터',
         ),
         requiredTickets: 1,
-        tags: ['한정 굿즈'],
         prizeName: '무너 시그니처 머그',
         winnerCount: 10,
         participantCount: 412,
@@ -1223,7 +1178,6 @@ function toResponse(event: MockEvent, now: number) {
             },
         ],
         // 시연 전용 표시 필드 — spec에 없어 실서버 응답에는 오지 않는다
-        isRecommended: event.isRecommended,
         isTimeRaffle: event.isTimeRaffle,
         detailVisual: event.detailVisual,
         // 멤버십 안내는 공통 문구가 아니라 이 래플의 자격 등급으로 적는다
@@ -1231,7 +1185,6 @@ function toResponse(event: MockEvent, now: number) {
             ...event.raffleDetail,
             membershipNote: `${MEMBERSHIP_LABEL[rule.membershipRule]} 등급 이상 응모할 수 있어요`,
         },
-        tags: event.tags,
         myEntryCount: event.myEntryCount,
         myTicketCount: event.myTicketCount,
     };
@@ -1248,7 +1201,12 @@ function toSummary(event: MockEvent, now: number, userId: string | null) {
     void _description;
     void _prizes;
     void _maxTicketsPerUser;
-    return { ...summary, myEntered: userId ? mockUserHasAcceptedEntry(userId, event.id) : false };
+    return {
+        ...summary,
+        // 목록에는 prizes가 없어 당첨 인원 합계를 따로 싣는다 (BE 작업 중인 계약과 같은 모양)
+        winnerCount: event.winnerCount,
+        myEntered: userId ? mockUserHasAcceptedEntry(userId, event.id) : false,
+    };
 }
 
 /**

@@ -7,6 +7,7 @@ import type { EventActionKind } from '@features/manageEvent';
 import {
     ADMIN_STATUS_META,
     EVENT_TYPE_LABEL,
+    EventThumbnail,
     MEMBERSHIP_LABEL,
     useAdminEvent,
 } from '@entities/event';
@@ -108,6 +109,14 @@ export function AdminEventDetailPage() {
                     </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                    <Button variant="secondary" asChild>
+                        <Link to={`/admin/entries?view=participants&eventId=${event.id}`}>
+                            참여자 조회
+                        </Link>
+                    </Button>
+                    <Button variant="secondary" asChild>
+                        <Link to={`/admin/entries?eventId=${event.id}`}>응모 이력 조회</Link>
+                    </Button>
                     {hasDraw && (
                         <Button variant="secondary" asChild>
                             <Link to={`/admin/draw?eventId=${event.id}`}>추첨 관리</Link>
@@ -157,7 +166,19 @@ export function AdminEventDetailPage() {
                 {event.canceledAt && (
                     <InfoRow label="취소 이력">{formatKst(event.canceledAt, KST_YMD_HM)}</InfoRow>
                 )}
-                <InfoRow label="이미지 키">{event.imageKey ?? '없음'}</InfoRow>
+                {/* 올린 사진이 맞는지는 그림으로 봐야 안다 — 키는 사람이 알아볼 수 없는 값이다 */}
+                <InfoRow label="대표 이미지">
+                    {event.imageUrl ? (
+                        <span className="flex items-center gap-3">
+                            <EventThumbnail src={event.imageUrl} className="size-14" />
+                            <span className="text-caption text-fg-tertiary truncate">
+                                {event.imageKey}
+                            </span>
+                        </span>
+                    ) : (
+                        '없음'
+                    )}
+                </InfoRow>
                 <InfoRow label="등록일">{formatKst(event.createdAt, KST_YMD_HM)}</InfoRow>
             </section>
 
@@ -166,6 +187,7 @@ export function AdminEventDetailPage() {
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
+                            <TableHead className="w-20">이미지</TableHead>
                             <TableHead className="w-16">등수</TableHead>
                             <TableHead>경품명</TableHead>
                             <TableHead className="w-24">당첨 인원</TableHead>
@@ -175,6 +197,9 @@ export function AdminEventDetailPage() {
                     <TableBody>
                         {event.prizes.map((prize) => (
                             <TableRow key={prize.id} className="hover:bg-transparent">
+                                <TableCell>
+                                    <EventThumbnail src={prize.imageUrl} className="size-12" />
+                                </TableCell>
                                 <TableCell>{prize.rank}등</TableCell>
                                 <TableCell className="font-medium">{prize.name}</TableCell>
                                 <TableCell>{prize.winnerCount}명</TableCell>

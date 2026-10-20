@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { TicketRefundTable, useAdminTicketRefunds } from '@entities/ticket';
 import { isDateRangeOrdered, PAGE_SIZE } from '@shared/model/filterConstants';
@@ -7,14 +8,19 @@ import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
 
+import { useLinkedUserId } from './hooks/useLinkedUserId';
+
 const EMPTY = { eventId: '', userId: '', from: '', to: '' };
 
 // AO08 — 이벤트 취소로 반환된 응모권. 반환은 즉시 끝나므로 처리 상태 필터가 없다.
 // 실서버는 이벤트 취소→반환 연결 전까지 빈 목록이라 빈 상태를 정상 안내로 보여준다
 export function RefundsTab() {
+    const [searchParams] = useSearchParams();
+    const linkedUserId = searchParams.get('userId');
+    const initial = { ...EMPTY, ...(linkedUserId && { userId: linkedUserId }) };
     const [page, setPage] = useState(1);
-    const [draft, setDraft] = useState(EMPTY);
-    const [applied, setApplied] = useState(EMPTY);
+    const [draft, setDraft] = useState(initial);
+    const [applied, setApplied] = useState(initial);
     const [rangeError, setRangeError] = useState(false);
     const hasPendingDraft = JSON.stringify(draft) !== JSON.stringify(applied);
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
@@ -25,6 +31,13 @@ export function RefundsTab() {
         setPage(1);
     };
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
+    useLinkedUserId(
+        useCallback((userId) => {
+            setDraft((d) => ({ ...d, userId: userId ?? '' }));
+            setApplied((d) => ({ ...d, userId: userId ?? '' }));
+            setPage(1);
+        }, []),
+    );
 
     const query = useAdminTicketRefunds({
         page,
@@ -92,7 +105,6 @@ export function RefundsTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="이벤트 취소로 반환된 응모권이 없습니다."

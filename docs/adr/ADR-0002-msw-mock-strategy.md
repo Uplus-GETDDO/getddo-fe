@@ -20,4 +20,10 @@
 
 - 백엔드 없이 전 화면 개발·시연이 가능하다
 - 목업은 "계약의 임시 구현"일 뿐 진실이 아니다 — 계약 확정 시 핸들러를 수정하며 드리프트를 해소한다
-- MSW 환경에서만 세션이 `ADMIN`으로 시작하는 등 목업 전용 분기가 존재한다 (`entities/user/model/session.ts`). 실제 업무 요청의 사용자 문맥은 `05-api/common.md`의 `X-User-ID`·`X-User-Role` 필수 및 조건부 `X-User-Membership` 검증을 따른다
+- 현재 세션의 초기 사용자는 `null`이며 로그인 화면에서 선택한다(`entities/user/model/session.ts`, 2026-10-20 확인). 과거 ADMIN 자동 시작 설명은 현행 동작이 아니다. 실제 업무 요청은 `05-api/common.md`의 `X-User-ID`·`X-User-Role` 필수 및 조건부 `X-User-Membership` 검증을 따른다.
+
+## 2026-10-20 현황과 종료 계획
+
+현재 배포 하이브리드는 관리자 추첨·게임·차단 조회·가상 사용자 네 영역이다. 공통 감사 조회는 GD-244에서 제거했다. 정확한 코드 근거는 [연동 현황](../backend-integration-status.md)을 따른다.
+
+배포 목업 종료는 [통합 로드맵](../superpowers/plans/2026-10-20-backend-integration-roadmap.md)의 계획이며 아직 구현된 결정으로 표시하지 않는다. 각 업무 실연동 검증 뒤 배포 핸들러를 해제하고, 마지막에 `/virtual-users` 의존과 브라우저 Worker 부팅을 정리한다. 테스트용 MSW·fixture는 유지한다. 인증·환경 설정 변경은 구현 전 승인한다.

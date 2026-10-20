@@ -143,7 +143,6 @@ export function JobsTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 알림 작업이 없습니다."

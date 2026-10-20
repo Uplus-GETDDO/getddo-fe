@@ -1,44 +1,39 @@
-import { RefreshStatus } from '@shared/ui/refresh-status';
+import { useAdminDailyStats } from '@entities/adminStats';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { recentKstDays } from '@shared/utils/date';
 import { AdminStatSummary } from '@widgets/adminStatSummary';
 
-import { useDashboardRefresh } from './hooks/useDashboardRefresh';
-import { useParticipationTrend } from './hooks/useParticipationTrend';
+import { TREND_DAYS, toTrendRows } from './hooks/useTicketTrend';
 import { ActionQueuePanel } from './ui/ActionQueuePanel';
 import { EventStagePanel } from './ui/EventStagePanel';
 import { OpenEventsPanel } from './ui/OpenEventsPanel';
-import { ParticipationTrendPanel } from './ui/ParticipationTrendPanel';
+import { TicketTrendPanel } from './ui/TicketTrendPanel';
 
 /**
- * 관리자 대시보드 — 위에 오늘 숫자, 가운데 활동 참여율 추이와 지금 처리할 일, 그 아래 운영 단계 분포·이벤트 응모 현황 표,
- * 그래프는 최근 7일 고정이다
+ * 관리자 대시보드 — 위에 오늘 숫자, 가운데 추이 그래프와 지금 처리할 일, 그 아래 운영 단계 분포·이벤트 응모 현황 표.
+ * 요약·추이는 같은 AS01 일별 집계(최근 7일, KST)를 나눠 쓴다 — 조건별 목록 조회로 건수를 세지 않는다.
+ * AS01은 서버 저장 데이터 조회일 뿐 관리자 가상 시계가 서버 시간을 바꾸지는 않는다
  */
 export function AdminDashboardPage() {
-    const { rows, total, trend } = useParticipationTrend();
-    const refresh = useDashboardRefresh();
+    const days = recentKstDays(useVirtualClock().now(), TREND_DAYS);
+    const stats = useAdminDailyStats({
+        from: days[0]!.ymd,
+        to: days[days.length - 1]!.ymd,
+    });
+    const rows = toTrendRows(stats.data?.days ?? []);
 
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-body-sm text-fg-secondary">
-                    운영 중 확인이 잦은 지표를 모았습니다. 카드를 눌러 각 관리 화면으로 이동하세요.
-                </p>
-                {/* 진행 중 이벤트·추첨은 30초마다, 나머지 숫자는 1분 캐시 — 누르면 화면 전체를 바로 다시 받는다 */}
-                <RefreshStatus
-                    fetching={refresh.fetching}
-                    updatedAt={refresh.updatedAt}
-                    error={refresh.error}
-                    onRefresh={refresh.refresh}
-                />
-            </div>
-            <AdminStatSummary />
+            <p className="text-body-sm text-fg-secondary">
+                운영 중 확인이 잦은 지표를 모았습니다. 카드를 눌러 각 관리 화면으로 이동하세요.
+            </p>
+            <AdminStatSummary stats={stats} />
             <div className="grid gap-4 lg:grid-cols-3">
-                <ParticipationTrendPanel
+                <TicketTrendPanel
                     rows={rows}
-                    total={total}
-                    isPending={trend.isPending}
-                    isError={trend.isError}
-                    hasData={trend.hasData}
-                    onRetry={trend.refetch}
+                    isPending={stats.isPending}
+                    isError={stats.isError}
+                    onRetry={() => void stats.refetch()}
                     className="lg:col-span-2"
                 />
                 <ActionQueuePanel />

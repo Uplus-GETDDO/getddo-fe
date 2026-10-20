@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { TriangleAlert } from 'lucide-react';
 import { useId } from 'react';
 
 import { Button } from '@shared/ui/button';
@@ -15,7 +14,6 @@ export function DashboardPanel({
     caption,
     actions,
     error,
-    hasData = false,
     onRetry,
     className,
     children,
@@ -24,14 +22,11 @@ export function DashboardPanel({
     caption?: ReactNode;
     actions?: ReactNode;
     error?: boolean;
-    /** 이전에 받은 데이터가 있는가 — 있으면 다시 받기에 실패해도 내용을 그대로 둔다 */
-    hasData?: boolean;
     onRetry?: () => void;
     className?: string;
     children: ReactNode;
 }) {
     const titleId = useId();
-    const staleError = Boolean(error && hasData);
     return (
         <section
             aria-labelledby={titleId}
@@ -47,24 +42,9 @@ export function DashboardPanel({
                     </h2>
                     {caption && <p className="text-caption text-fg-tertiary">{caption}</p>}
                 </div>
-                {(staleError || actions) && (
-                    <div className="flex items-center gap-1">
-                        {/* 다시 받기에 실패했지만 이전 내용이 있으면 내용은 두고 작게 알린다 */}
-                        {staleError && (
-                            <button
-                                type="button"
-                                onClick={onRetry}
-                                className="text-caption text-semantic-error-strong hover:bg-surface-sunken focus-visible:ring-border-focus inline-flex h-8 items-center gap-1 rounded-full px-2.5 focus-visible:ring-2 focus-visible:outline-none"
-                            >
-                                <TriangleAlert aria-hidden className="size-3.5" />
-                                갱신 실패 · 다시 시도
-                            </button>
-                        )}
-                        {actions}
-                    </div>
-                )}
+                {actions && <div className="flex items-center gap-1">{actions}</div>}
             </div>
-            {error && !hasData ? (
+            {error ? (
                 <div className="flex items-center gap-3" role="alert">
                     <p className="text-semantic-error-strong text-body-sm">
                         정보를 불러오지 못했습니다.

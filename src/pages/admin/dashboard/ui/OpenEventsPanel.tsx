@@ -76,8 +76,15 @@ function OpenEventRow({
                 >
                     {event.title}
                 </Link>
-                <span className="text-caption text-fg-tertiary tabular-nums">
+                <span className="text-caption text-fg-tertiary flex items-center gap-2 tabular-nums">
                     {formatKstDot(event.endsAt, true)} 마감
+                    <Link
+                        to={`/admin/entries?view=participants&eventId=${encodeURIComponent(event.id)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-fg-brand focus-visible:ring-border-focus rounded hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                    >
+                        참여자 조회
+                    </Link>
                 </span>
             </TableCell>
             <TableCell className="text-body-sm text-fg-secondary tabular-nums">
@@ -133,7 +140,6 @@ export function OpenEventsPanel({ className }: { className?: string }) {
             }
             actions={<ViewAllLink to="/admin/events?status=OPEN" />}
             error={query.isError}
-            hasData={query.data !== undefined}
             onRetry={() => void query.refetch()}
             className={className}
         >

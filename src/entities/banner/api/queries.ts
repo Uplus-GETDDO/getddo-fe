@@ -5,7 +5,24 @@ import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
 import { queryPresets } from '@shared/api/queryPresets';
 
-import { adminBannerSchema } from '../model/types';
+import { adminBannerSchema, bannerSchema } from '../model/types';
+
+export const BANNERS_KEY = ['banners'] as const;
+export const BANNERS_API_PATH = '/v1/banners';
+export const bannerListSchema = envelopeSchema(z.array(bannerSchema));
+
+export function useBanners() {
+    return useQuery({
+        ...queryPresets.noCache,
+        queryKey: BANNERS_KEY,
+        refetchOnWindowFocus: 'always',
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(BANNERS_API_PATH);
+            // 숨김 뒤 비연속 순서도 서버 배열 그대로 표시한다.
+            return bannerListSchema.parse(data).data;
+        },
+    });
+}
 
 // AB01은 배열을 data에 싣는다(최대 5개라 Page가 아니다) — 표시 순서는 서버가 정한 그대로 쓴다
 export const adminBannerListSchema = envelopeSchema(z.array(adminBannerSchema));

@@ -14,6 +14,7 @@ import { TicketBalanceWidget } from '@widgets/ticketBalance';
 import { TicketEventSection } from '@widgets/ticketEventSection';
 
 import { QuickLinks } from './ui/QuickLinks';
+import { myAwaitingResults } from './utils/homeSections';
 
 /** 피그마 홈 본문 폭 1200 (좌우 여백 24 포함 1248) — 헤더와 같은 폭 */
 const CONTAINER = 'mx-auto w-full max-w-312 px-6';
@@ -34,9 +35,7 @@ export function HomePage() {
         (event) => !event.isTimeRaffle && event.requiredTickets === 0,
     );
     // 멘토링 — 발표 대기·결과는 내가 응모한 것만 (목록 E01의 myEntered)
-    const resultEvents = (events ?? []).filter(
-        (event) => event.myEntered && (event.status === 'closed' || event.status === 'drawn'),
-    );
+    const resultEvents = myAwaitingResults(events ?? []);
 
     return (
         // 피그마 홈 간격 — 헤더 아래 64(UserLayout이 준다), 섹션 사이 80, 섹션 제목과 내용 24. 마지막 섹션과 푸터는 다른 화면과 같은 112(pb-28)

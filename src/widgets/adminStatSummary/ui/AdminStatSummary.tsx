@@ -1,14 +1,14 @@
+import type { UseQueryResult } from '@tanstack/react-query';
+
 import { ArrowDownRight, ArrowUpRight, ChevronRight, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import type { DailyStats, DailyStatsDay } from '@entities/adminStats';
+
 import { useAdminEvents } from '@entities/event';
-import { useAdminTicketGrantUserCounts } from '@entities/ticket';
-import { useAdminUserCount } from '@entities/user';
-import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { Skeleton } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
-import { recentKstDays } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
 
 interface StatCardProps {
@@ -17,23 +17,19 @@ interface StatCardProps {
     value?: number;
     /** 초기 조회 중이면 값 자리에 스켈레톤 — 카드 껍데기(제목·설명·링크)는 그대로 둔다 */
     pending?: boolean;
-    /** 조회 실패로 보여줄 값이 없음 — 값 자리에 실패 문구를 두고 재시도 버튼을 연다. 이전 값이 있으면 넘기지 않는다 */
+    /** 조회 실패 — 값 자리에 실패 문구를 두고 재시도 버튼을 연다 */
     error?: boolean;
     onRetry?: () => void;
     description: string;
-    /** 누르면 열 관리 화면 — 이어질 화면이 없으면 생략하고 카드는 읽기 전용이 된다 */
+    /** 관리 화면 링크 — 없으면 카드는 조회 전용 표시가 된다 */
     to?: string;
-    /** 값 뒤 단위 — 이벤트는 건, 참여율은 % */
+    /** 값 뒤 단위 — 이벤트·기록은 건, 응모권은 장 */
     unit?: string;
-    /** 어제와 비교할 때의 단위 — 참여율은 %p */
-    deltaUnit?: string;
-    /** 큰 숫자 옆에 작게 붙이는 근거 — 예: 102 / 222명 */
-    sub?: string;
     /** 어제 같은 지표 — 있으면 설명 대신 어제보다 늘었는지·줄었는지 적는다 */
     previous?: number;
 }
 
-/** 어제 같은 시각까지와 비교 — 늘고 준 것이 좋고 나쁨을 뜻하지 않으므로 색 대신 화살표로만 구분한다 */
+/** 어제와 비교 — 늘고 준 것이 좋고 나쁨을 뜻하지 않으므로 색 대신 화살표로만 구분한다 */
 function Delta({ value, previous, unit }: { value: number; previous: number; unit: string }) {
     const diff = value - previous;
     const Icon = diff > 0 ? ArrowUpRight : diff < 0 ? ArrowDownRight : Minus;
@@ -45,12 +41,12 @@ function Delta({ value, previous, unit }: { value: number; previous: number; uni
                     ? '변화 없음'
                     : `${diff > 0 ? '+' : '−'}${formatNumber(Math.abs(diff))}${unit}`}
             </span>
-            어제 이 시각 대비
+            어제 대비
         </span>
     );
 }
 
-/** 숫자 카드 — 흰 카드에 이름·큰 숫자·어제 비교만. 색 막대 없이 숫자가 먼저 읽히고, 오른쪽 위 > 로 누를 수 있음을 알린다 */
+/** 숫자 카드 — 흰 카드에 이름·큰 숫자·어제 대비만. 색 막대 없이 숫자가 먼저 읽히고, 링크가 있으면 오른쪽 위 > 로 누를 수 있음을 알린다 */
 function StatCard({
     label,
     value,
@@ -60,8 +56,6 @@ function StatCard({
     description,
     to,
     unit = '건',
-    deltaUnit = unit,
-    sub,
     previous,
 }: StatCardProps) {
     return (
@@ -72,27 +66,26 @@ function StatCard({
                 to && 'hover:border-fg-brand hover:ring-fg-brand hover:ring-1',
             )}
         >
+            {/* 카드 전체를 덮는 링크 — 재시도 버튼은 relative로 링크 위에 띄운다 */}
             {to && (
-                <>
-                    {/* 카드 전체를 덮는 링크 — 재시도 버튼은 relative로 링크 위에 띄운다 */}
-                    <Link
-                        to={to}
-                        aria-label={`${label} 화면으로 이동`}
-                        className={cn(
-                            'absolute inset-0 rounded-2xl',
-                            'focus-visible:ring-border-focus focus-visible:ring-offset-surface-page focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-                        )}
-                    />
-                    {/* 누르면 관리 화면으로 간다는 표시 — 움직임 없이 올리면 색만 진해진다 */}
-                    <ChevronRight
-                        aria-hidden
-                        className="text-fg-tertiary group-hover:text-fg-primary absolute top-5 right-5 size-5"
-                    />
-                </>
+                <Link
+                    to={to}
+                    aria-label={`${label} 화면으로 이동`}
+                    className={cn(
+                        'absolute inset-0 rounded-2xl',
+                        'focus-visible:ring-border-focus focus-visible:ring-offset-surface-page focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                    )}
+                />
             )}
-            {/* 오른쪽 위 > 자리를 비워 이름이 닿지 않게 한다 */}
-            <span className={`text-body-sm text-fg-tertiary ${to ? 'pr-6' : ''}`}>{label}</span>
-            <div className="text-title-1 text-fg-primary flex items-baseline gap-2 tabular-nums">
+            {/* 누르면 관리 화면으로 간다는 표시 — 움직임 없이 올리면 색만 진해진다 */}
+            {to && (
+                <ChevronRight
+                    aria-hidden
+                    className="text-fg-tertiary group-hover:text-fg-primary absolute top-5 right-5 size-5"
+                />
+            )}
+            <span className="text-body-sm text-fg-tertiary">{label}</span>
+            <div className="text-title-1 text-fg-primary tabular-nums">
                 {pending ? (
                     <>
                         <Skeleton className="h-8 w-20" />
@@ -105,16 +98,11 @@ function StatCard({
                 ) : value == null ? (
                     '—'
                 ) : (
-                    <>
-                        {`${formatNumber(value)}${unit}`}
-                        {sub && (
-                            <span className="text-caption text-fg-tertiary font-normal">{sub}</span>
-                        )}
-                    </>
+                    `${formatNumber(value)}${unit}`
                 )}
             </div>
             {!pending && !error && value != null && previous != null ? (
-                <Delta value={value} previous={previous} unit={deltaUnit} />
+                <Delta value={value} previous={previous} unit={unit} />
             ) : (
                 <span className="text-caption text-fg-tertiary">{description}</span>
             )}
@@ -127,89 +115,109 @@ function StatCard({
     );
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-const COMPARE_STEP_MS = 10 * 60 * 1000;
-
-/** 참여율(%) — 분모가 없거나 0이면 계산하지 않는다 */
-const rate = (users: number | undefined, total: number | undefined) =>
-    users == null || !total ? undefined : Math.round((users / total) * 100);
-
-const PARTICIPATION = [
-    { source: 'ATTENDANCE', label: '오늘 출석 참여율', description: '출석 보상을 받은 사용자' },
-    { source: 'MISSION', label: '오늘 설문·퀴즈 참여율', description: '설문·퀴즈를 완료한 사용자' },
-    { source: 'GAME', label: '오늘 게임 참여율', description: '게임 보상을 받은 사용자' },
-] as const;
+const grantedOf = (day: DailyStatsDay | undefined) =>
+    day === undefined
+        ? undefined
+        : day.grantedTickets.ATTENDANCE + day.grantedTickets.MISSION + day.grantedTickets.GAME;
 
 /**
- * 관리자 대시보드 지표 요약 — 진행 중 이벤트와 출석·미션·게임 참여율을 모아 각 관리 화면으로 이어준다.
- * 참여율 = 그날 보상을 받은 사용자 수 ÷ 활성 일반 사용자 수. 오늘·어제는 가상 시계 기준 KST 날짜다
+ * 관리자 대시보드 지표 요약 — 대시보드 페이지가 조회한 AS01 일별 집계를 요약 카드와 함께 쓴다.
+ * 탐지 기록은 지급 차단 확정이 아니므로 상세 링크를 두지 않는다(차단 메뉴의 실연동은 L2).
+ * 오늘·어제는 AS01 days의 마지막 두 항목(KST 날짜, 서버 기준)이다
  */
-export function AdminStatSummary() {
-    const now = useVirtualClock().now();
-    const days = recentKstDays(now, 2);
-    const [yesterday, today] = days.map(({ from, to }) => ({ from, to }));
-    // 오늘은 하루가 덜 끝났으므로 어제도 같은 시각까지만 센다. 쿼리 키가 매 렌더 바뀌지 않게 10분 단위로 내린다
-    const sameTimeYesterday = yesterday && {
-        from: yesterday.from,
-        to: new Date(
-            Math.floor((now.getTime() - DAY_MS) / COMPARE_STEP_MS) * COMPARE_STEP_MS,
-        ).toISOString(),
-    };
-    // 카드를 누르면 오늘 조건이 걸린 채 목록이 열린다
-    const todayYmd = days[1]?.ymd ?? '';
-
+export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> }) {
     const openEvents = useAdminEvents({ page: 1, size: 1, status: 'OPEN' });
-    // 참여율의 분모 — 응모할 수 있는 활성 일반 사용자 수
-    const activeUsers = useAdminUserCount({ role: 'USER', status: 'ACTIVE' });
-    // 출처마다 [어제, 오늘] 순서로 받는다
-    const participants = useAdminTicketGrantUserCounts(
-        PARTICIPATION.flatMap(({ source }) => [
-            { ...sameTimeYesterday, sourceType: source },
-            { ...today, sourceType: source },
-        ]),
-    );
-    const total = activeUsers.data;
+
+    const days = stats.data?.days ?? [];
+    const today = days[days.length - 1];
+    const yesterday = days[days.length - 2];
+    const todayYmd = today?.date ?? '';
+    const totalUserCount = stats.data?.totalUserCount;
+    const participationRate =
+        today && totalUserCount != null && totalUserCount > 0
+            ? `${formatNumber(Math.round((today.activeUserCount / totalUserCount) * 1000) / 10)}%`
+            : '계산 불가';
 
     return (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-                label="진행 중 이벤트"
-                value={openEvents.data?.totalElements}
-                pending={openEvents.isPending}
-                error={openEvents.isError && !openEvents.data}
-                onRetry={() => void openEvents.refetch()}
-                description="지금 응모를 받는 이벤트"
-                to="/admin/events?status=OPEN"
-            />
-            {PARTICIPATION.map(({ source, label, description }, index) => {
-                const before = participants.counts[index * 2];
-                const current = participants.counts[index * 2 + 1];
-                const value = rate(current?.users, total);
-                const hasValue = value !== undefined;
-                return (
-                    <StatCard
-                        key={source}
-                        label={label}
-                        value={value}
-                        unit="%"
-                        deltaUnit="%p"
-                        previous={rate(before?.users, total)}
-                        sub={
-                            current && total
-                                ? `${formatNumber(current.users)}${current.capped ? '+' : ''} / ${formatNumber(total)}명`
-                                : undefined
-                        }
-                        pending={participants.isPending || activeUsers.isPending}
-                        error={(participants.isError || activeUsers.isError) && !hasValue}
-                        onRetry={() => {
-                            participants.refetch();
-                            void activeUsers.refetch();
-                        }}
-                        description={description}
-                        to={`/admin/tickets?tab=grants&date=${todayYmd}&sourceType=${source}`}
-                    />
-                );
-            })}
+        <div className="flex flex-col gap-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <StatCard
+                    label="진행 중 이벤트"
+                    value={openEvents.data?.totalElements}
+                    pending={openEvents.isPending}
+                    error={openEvents.isError}
+                    onRetry={() => void openEvents.refetch()}
+                    description="지금 응모를 받는 이벤트"
+                    to="/admin/events?status=OPEN"
+                />
+                <StatCard
+                    label="오늘 지급한 응모권"
+                    value={grantedOf(today)}
+                    previous={grantedOf(yesterday)}
+                    unit="장"
+                    pending={stats.isPending}
+                    error={stats.isError}
+                    onRetry={() => void stats.refetch()}
+                    description="출석·미션·게임 보상"
+                    to={today ? `/admin/tickets?tab=grants&date=${todayYmd}` : undefined}
+                />
+                <StatCard
+                    label="오늘 응모에 쓴 응모권"
+                    value={today?.usedTickets}
+                    previous={yesterday?.usedTickets}
+                    unit="장"
+                    pending={stats.isPending}
+                    error={stats.isError}
+                    onRetry={() => void stats.refetch()}
+                    description="이벤트 응모로 차감된 응모권(반환 미차감)"
+                    to={
+                        today
+                            ? `/admin/tickets?tab=histories&date=${todayYmd}&operationType=USE`
+                            : undefined
+                    }
+                />
+                <StatCard
+                    label="오늘 어뷰징 탐지 기록"
+                    value={today?.blockedCount}
+                    previous={yesterday?.blockedCount}
+                    pending={stats.isPending}
+                    error={stats.isError}
+                    onRetry={() => void stats.refetch()}
+                    description="탐지 기록 수 — 차단 확정 건수가 아님"
+                />
+            </div>
+            {stats.data && (
+                <dl className="text-caption text-fg-tertiary flex flex-wrap gap-x-6 gap-y-1 px-1">
+                    <div className="flex gap-1.5">
+                        <dt>오늘 응모자</dt>
+                        <dd className="text-fg-primary tabular-nums">
+                            {formatNumber(today?.entrantCount ?? 0)}명
+                        </dd>
+                    </div>
+                    <div className="flex gap-1.5">
+                        <dt>오늘 접수 응모</dt>
+                        <dd className="text-fg-primary tabular-nums">
+                            {formatNumber(today?.entryCount ?? 0)}건
+                        </dd>
+                    </div>
+                    <div className="flex gap-1.5">
+                        <dt>오늘 활동 사용자</dt>
+                        <dd className="text-fg-primary tabular-nums">
+                            {formatNumber(today?.activeUserCount ?? 0)}명
+                        </dd>
+                    </div>
+                    <div className="flex gap-1.5">
+                        <dt>현재 활성 일반 사용자</dt>
+                        <dd className="text-fg-primary tabular-nums">
+                            {formatNumber(totalUserCount ?? 0)}명
+                        </dd>
+                    </div>
+                    <div className="flex gap-1.5">
+                        <dt>참여율(활동 사용자 ÷ 현재 활성 일반 사용자)</dt>
+                        <dd className="text-fg-primary tabular-nums">{participationRate}</dd>
+                    </div>
+                </dl>
+            )}
         </div>
     );
 }

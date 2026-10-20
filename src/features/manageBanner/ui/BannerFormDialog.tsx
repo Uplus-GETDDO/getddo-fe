@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import type { AdminBanner } from '@entities/banner';
 
-import { BANNER_IMAGE_KEY_MAX_LENGTH, BANNER_IMAGE_TEMP_POLICY } from '@entities/banner';
+import { BANNER_IMAGE_KEY_MAX_LENGTH } from '@entities/banner';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
 import {
@@ -94,7 +94,6 @@ function BannerForm({
         else createBanner.mutate(body, options);
     });
 
-    const { formats, maxMegabytes } = BANNER_IMAGE_TEMP_POLICY;
     const showEventStatus =
         eventsPending || eventsError || (!eventsPending && !eventsError && events.length === 0);
     const eventDescribedBy = errors.eventId
@@ -188,10 +187,8 @@ function BannerForm({
                         {errors.imageKey.message}
                     </p>
                 )}
-                {/* 확정된 정책처럼 보이지 않도록 임시 기준임을 함께 밝힌다 */}
                 <p className="text-fg-tertiary text-caption">
-                    허용 형식·용량 기준은 담당자 확정 전입니다. 임시 안내: {formats.join('·')},
-                    파일당 {maxMegabytes}MB 이하
+                    업로드 방법·허용 형식·용량 기준은 담당자 확인이 필요합니다.
                 </p>
             </div>
 

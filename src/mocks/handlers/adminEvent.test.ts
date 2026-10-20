@@ -165,7 +165,9 @@ describe('관리자 이벤트 목업 핸들러', () => {
             `/v1/admin/events?keyword=${encodeURIComponent('취소된')}`,
         );
         const searchedItems = (searched.data as Envelope<{ items: AdminEventBody[] }>).data.items;
-        expect(searchedItems.some((e) => e.id === 'adm-902')).toBe(true);
+        expect(searchedItems.some((e) => e.id === '20000000-0000-4000-8000-000000000902')).toBe(
+            true,
+        );
 
         // 페이지 슬라이스 — 2페이지는 1페이지와 다른 항목을 가진다
         const p1 = await call('get', '/v1/admin/events?page=1&size=2');

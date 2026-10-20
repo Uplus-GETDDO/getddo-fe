@@ -3,12 +3,14 @@ import type { LucideIcon } from 'lucide-react';
 import {
     Bell,
     CalendarDays,
+    ClipboardList,
     Clock,
     Dices,
     Images,
     LayoutDashboard,
     ShieldAlert,
     Ticket,
+    UserSearch,
     Users,
 } from 'lucide-react';
 
@@ -22,6 +24,8 @@ export interface AdminNavItem {
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     { to: '/admin', label: '대시보드', icon: LayoutDashboard, end: true },
+    { to: '/admin/users', label: '사용자 조회', icon: UserSearch },
+    { to: '/admin/entries', label: '응모 조회', icon: ClipboardList },
     { to: '/admin/events', label: '이벤트 관리', icon: CalendarDays },
     { to: '/admin/draw', label: '추첨 관리', icon: Dices },
     { to: '/admin/tickets', label: '응모권 관리', icon: Ticket },

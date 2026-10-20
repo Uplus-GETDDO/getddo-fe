@@ -13,6 +13,42 @@ import { recordMockTicketRefund } from './ticket';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
 
+/**
+ * 올린 이미지를 키로 기억한다 — 실서버의 S3 자리.
+ *
+ * 등록·수정은 키만 싣고 오므로, 화면에 보여 줄 주소는 이 표에서 되찾는다.
+ * 새로고침하면 사라진다(목업은 메모리에만 둔다) — 그때는 키만 남아 회색 칸이 된다.
+ */
+const mockUploadedImages = new Map<string, string>();
+
+/** 등록·수정이 실어 온 키를 화면 주소로 바꾼다 — 모르는 키는 주소가 없다 */
+export function resolveMockImageUrl(imageKey: string | null | undefined): string | null {
+    return imageKey ? (mockUploadedImages.get(imageKey) ?? null) : null;
+}
+
+/**
+ * multipart 본문에서 파일 한 덩이를 꺼낸다.
+ *
+ * request.formData()는 이 환경(undici)에서 예외를 던진다. 바이트를 그대로 보존하는 latin1로
+ * 한 번 읽어 머리말 위치를 찾고, 같은 자리에서 원본 바이트를 잘라 낸다.
+ */
+function readMultipartFile(buffer: ArrayBuffer): { contentType: string; dataUrl: string } | null {
+    const bytes = new Uint8Array(buffer);
+    const text = new TextDecoder('latin1').decode(bytes);
+
+    const header = /filename="[^"]*"[^]*?content-type:\s*([^\r\n]+)\r?\n\r?\n/i.exec(text);
+    if (!header) return null;
+
+    const start = header.index + header[0].length;
+    const end = text.indexOf('\r\n--', start);
+    const body = bytes.slice(start, end === -1 ? bytes.length : end);
+
+    let binary = '';
+    for (const byte of body) binary += String.fromCharCode(byte);
+    const contentType = header[1]!.trim().toLowerCase();
+    return { contentType, dataUrl: `data:${contentType};base64,${btoa(binary)}` };
+}
+
 /** ADR-009 — 유형과 무관하게 마감 + 5분 검토 후 자동으로 최초 발표한다 */
 const ANNOUNCE_DELAY_MS = 5 * 60 * 1000;
 const MINUTE = 60 * 1000;
@@ -106,17 +142,23 @@ function adminSeed(
 // 관리자 전용 시드 — 시간만으로는 나오지 않는 운영 상태(취소·재추첨·대상 없음 종료)를 시연용으로 채운다
 const extraSeeds: MockAdminEvent[] = [
     adminSeed({
-        id: 'adm-902',
+        id: '20000000-0000-4000-8000-000000000902',
         title: '취소된 오픈 기념 이벤트',
         description: '경품 수급 문제로 취소된 이벤트.',
-        startsAt: sessionFixedTime('adm-902-starts', -72 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-902-ends', -24 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000902-starts',
+            -72 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000902-ends', -24 * 60 * MINUTE),
         status: 'CANCELED',
-        canceledAt: sessionFixedTime('adm-902-canceled', -36 * 60 * MINUTE),
+        canceledAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000902-canceled',
+            -36 * 60 * MINUTE,
+        ),
         entryCount: 45,
         prizes: [
             {
-                id: 'adm-902-p1',
+                id: '20000000-0000-4000-8000-000000000902-p1',
                 rank: 1,
                 name: '스타벅스 e카드',
                 description: null,
@@ -126,15 +168,18 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-903',
+        id: '20000000-0000-4000-8000-000000000903',
         title: '응모자 없이 종료된 이벤트',
         description: '마감까지 응모가 없어 자동 종료된 이벤트.',
-        startsAt: sessionFixedTime('adm-903-starts', -50 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-903-ends', -26 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000903-starts',
+            -50 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000903-ends', -26 * 60 * MINUTE),
         status: 'NO_ENTRANTS',
         prizes: [
             {
-                id: 'adm-903-p1',
+                id: '20000000-0000-4000-8000-000000000903-p1',
                 rank: 1,
                 name: '무너 스티커 팩',
                 description: null,
@@ -144,17 +189,20 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-904',
+        id: '20000000-0000-4000-8000-000000000904',
         title: '재추첨 진행 중인 래플',
         description: '당첨 취소에 따른 재추첨이 진행 중인 이벤트.',
-        startsAt: sessionFixedTime('adm-904-starts', -80 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-904-ends', -30 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000904-starts',
+            -80 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000904-ends', -30 * 60 * MINUTE),
         status: 'REDRAWING',
         entryCount: 800,
         usedTicketTotal: 1600,
         prizes: [
             {
-                id: 'adm-904-p1',
+                id: '20000000-0000-4000-8000-000000000904-p1',
                 rank: 1,
                 name: '닌텐도 스위치 2',
                 description: null,
@@ -164,17 +212,20 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-905',
+        id: '20000000-0000-4000-8000-000000000905',
         title: '발표 대기 중인 이벤트',
         description: '추첨이 확정되고 공개 명단 갱신을 기다리는 이벤트.',
-        startsAt: sessionFixedTime('adm-905-starts', -70 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-905-ends', -20 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000905-starts',
+            -70 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000905-ends', -20 * 60 * MINUTE),
         status: 'DRAW_CONFIRMED',
         entryCount: 540,
         usedTicketTotal: 1080,
         prizes: [
             {
-                id: 'adm-905-p1',
+                id: '20000000-0000-4000-8000-000000000905-p1',
                 rank: 1,
                 name: '에어팟 4',
                 description: null,
@@ -184,17 +235,20 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-906',
+        id: '20000000-0000-4000-8000-000000000906',
         title: '최초 추첨이 실패한 래플',
         description: '최초 추첨 선정 중 오류가 나 재개를 기다리는 이벤트.',
-        startsAt: sessionFixedTime('adm-906-starts', -70 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-906-ends', -20 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000906-starts',
+            -70 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000906-ends', -20 * 60 * MINUTE),
         status: 'DRAW_CONFIRMED',
         entryCount: 420,
         usedTicketTotal: 840,
         prizes: [
             {
-                id: 'adm-906-p1',
+                id: '20000000-0000-4000-8000-000000000906-p1',
                 rank: 1,
                 name: '갤럭시 버즈',
                 description: null,
@@ -259,7 +313,6 @@ function toUserProjection(item: MockAdminEvent) {
         weightingEnabled: item.weightingEnabled,
         maxTicketsPerUser: item.maxTicketsPerUser,
         membershipRule: item.membershipRule,
-        tags: item.membershipRule === 'excellent' ? [] : ['멤버십 혜택'],
         prizeName:
             item.prizes.length > 1
                 ? `${item.prizes[0]?.name ?? ''} 외 ${item.prizes.length - 1}종`
@@ -395,14 +448,14 @@ function writeBodyToItem(body: EventWriteBody, id: string, nowIso: string): Mock
         rank: p.rank as number,
         name: (p.name as string).trim(),
         description: typeof p.description === 'string' && p.description ? p.description : null,
-        imageUrl: null,
+        imageUrl: resolveMockImageUrl(p.imageKey as string | null),
         winnerCount: p.winnerCount as number,
     }));
     return {
         id,
         title: (body.title as string).trim(),
         description: (body.description as string).trim(),
-        imageUrl: null,
+        imageUrl: resolveMockImageUrl(body.imageKey as string | null),
         imageKey: (body.imageKey as string | null) ?? null,
         eventType: body.eventType as MockAdminEvent['eventType'],
         weightingEnabled: body.weightingEnabled as boolean,
@@ -443,6 +496,10 @@ const readReason = async (request: Request) => {
 /** 취소된 이벤트 신규 연결을 배너 목업에서 거절할 때 쓴다. */
 export const mockAdminEventIsCanceled = (eventId: string): boolean =>
     mockAdminEvents.some((event) => event.id === eventId && event.status === 'CANCELED');
+
+/** 목업 이벤트 존재 여부 — AO07 등 다른 관리자 목업의 404 판정에 쓴다 */
+export const mockAdminEventExists = (eventId: string): boolean =>
+    mockAdminEvents.some((event) => event.id === eventId);
 
 export const adminEventHandlers = [
     // AE01 — 목록: keyword/status/eventType/from/to 필터 + Page<AdminEvent> 봉투 (페이지는 1부터)
@@ -522,6 +579,36 @@ export const adminEventHandlers = [
         const item = findItem(params.eventId);
         if (!item) return fail(404, 'RESOURCE_NOT_FOUND', '이벤트를 찾을 수 없습니다');
         return ok(toAdminResponse(item, mockNow().getTime()));
+    }),
+
+    /**
+     * 이벤트·경품 이미지 업로드 (BE GD-227).
+     *
+     * 실서버는 S3에 올리고 키와 공개 주소를 돌려준다. 목업은 올린 바이트를 키에 묶어 기억해
+     * 등록·수정 뒤에도 같은 그림이 보이게 한다. 형식·용량 기준은 서버와 같게 맞춘다.
+     */
+    http.post(api('/v1/admin/events/images'), async ({ request }) => {
+        // 이 파일의 다른 관리자 핸들러와 같이 역할 검사는 두지 않는다 — 실서버가 판정한다
+        const target = new URL(request.url).searchParams.get('target');
+        if (target !== 'EVENT' && target !== 'PRIZE') {
+            return fail(400, 'COMMON-002', 'target은 EVENT 또는 PRIZE여야 합니다');
+        }
+
+        const buffer = await request.arrayBuffer().catch(() => null);
+        const file = buffer && readMultipartFile(buffer);
+        if (!file) return fail(400, 'COMMON-002', '파일이 없습니다');
+
+        const png = file.contentType === 'image/png';
+        if (!png && file.contentType !== 'image/jpeg') {
+            return fail(400, 'EVENT-009', 'PNG 또는 JPG만 올릴 수 있습니다');
+        }
+        if (buffer.byteLength > 5_000_000)
+            return fail(400, 'EVENT-009', '5MB까지 올릴 수 있습니다');
+
+        const directory = target === 'EVENT' ? 'events' : 'prizes';
+        const key = `${directory}/${crypto.randomUUID()}.${png ? 'png' : 'jpg'}`;
+        mockUploadedImages.set(key, file.dataUrl);
+        return ok({ key, url: file.dataUrl }, 201);
     }),
 
     // AE03 — 등록: 이벤트와 경품이 함께 성공하거나 함께 실패한다

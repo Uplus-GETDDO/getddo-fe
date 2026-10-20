@@ -1,53 +1,58 @@
 import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
 import { queryPresets } from '@shared/api/queryPresets';
 
-import type { UserStatus } from '../model/adminUser';
-import type { Membership, UserRole } from '../model/types';
-
-import { adminUserSchema } from '../model/adminUser';
+import {
+    adminUserSchema,
+    membershipSchema,
+    userRoleSchema,
+    userStatusSchema,
+} from '../model/types';
 
 export const ADMIN_USERS_KEY = ['admin', 'users'] as const;
+export const adminUsersParamsSchema = z.object({
+    page: z.number().int().min(1),
+    size: z.number().int().min(1).max(100),
+    userId: z.uuid().optional(),
+    keyword: z.string().trim().max(20).optional(),
+    role: userRoleSchema.optional(),
+    status: userStatusSchema.optional(),
+    membership: membershipSchema.optional(),
+});
+export type AdminUsersParams = z.infer<typeof adminUsersParamsSchema>;
+export const adminUserListSchema = pageSchema(adminUserSchema).extend({
+    totalUserCount: z.number().int().nonnegative(),
+});
+export type AdminUserList = z.infer<typeof adminUserListSchema>;
 
-export const ADMIN_USERS_API_PATH = '/v1/admin/users';
-
-export interface AdminUsersParams {
-    page: number;
-    size: number;
-    userId?: string;
-    /** 이름 부분 검색 — 최대 20자 */
-    keyword?: string;
-    role?: UserRole;
-    status?: UserStatus;
-    membership?: Membership;
-}
-
-const adminUserPageSchema = envelopeSchema(pageSchema(adminUserSchema));
-
-// AO01 — 관리자 사용자 목록. 생성 시각 최신순이며 totalElements는 필터에 맞는 전체 건수다
 export function useAdminUsers(params: AdminUsersParams) {
     return useQuery({
-        ...queryPresets.paged,
-        queryKey: [...ADMIN_USERS_KEY, params],
+        ...queryPresets.noCache,
+        retry: false,
+        queryKey: [...ADMIN_USERS_KEY, 'list', params],
         queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(ADMIN_USERS_API_PATH, { params });
-            return adminUserPageSchema.parse(data).data;
+            const { data } = await apiClient.get<unknown>('/v1/admin/users', {
+                params: adminUsersParamsSchema.parse(params),
+            });
+            return envelopeSchema(adminUserListSchema).parse(data).data;
         },
     });
 }
 
-// AO01 건수 — size=1로 불러 totalElements만 쓴다. 예: 활성 일반 사용자 수(참여율 분모)
-export function useAdminUserCount(params: Omit<AdminUsersParams, 'page' | 'size'>) {
+export function useAdminUser(userId: string | null) {
     return useQuery({
-        queryKey: [...ADMIN_USERS_KEY, 'count', params],
-        staleTime: 60_000,
+        ...queryPresets.noCache,
+        retry: false,
+        queryKey: [...ADMIN_USERS_KEY, 'detail', userId],
+        enabled: !!userId && z.uuid().safeParse(userId).success,
         queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(ADMIN_USERS_API_PATH, {
-                params: { ...params, page: 1, size: 1 },
-            });
-            return adminUserPageSchema.parse(data).data.totalElements;
+            const { data } = await apiClient.get<unknown>(
+                `/v1/admin/users/${encodeURIComponent(userId!)}`,
+            );
+            return envelopeSchema(adminUserSchema).parse(data).data;
         },
     });
 }

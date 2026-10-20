@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+export const bannerSchema = z.object({
+    id: z.string(),
+    eventId: z.string(),
+    imageUrl: z.string(),
+    displayOrder: z.number().int().min(0),
+});
+
+export type Banner = z.infer<typeof bannerSchema>;
+
 // AB01~AB05 응답의 AdminBanner — getddo-spec 05-api/banner.md 채택 계약(2026-10-15).
 // spec의 createdBy는 관리자 이벤트 응답에서 제거한 방침(#50)에 맞춰 싣지 않는다
 export const adminBannerSchema = z.object({

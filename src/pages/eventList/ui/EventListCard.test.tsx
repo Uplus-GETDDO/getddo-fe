@@ -16,7 +16,6 @@ const event = (overrides: Partial<Event>): Event =>
         startsAt: '2026-10-01T00:00:00Z',
         endsAt: '2026-10-31T00:00:00Z',
         myEntered: false,
-        tags: [],
         ...overrides,
     }) as Event;
 

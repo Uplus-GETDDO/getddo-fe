@@ -130,7 +130,6 @@ export function DeliveriesTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 발송 이력이 없습니다."

@@ -96,6 +96,22 @@ export const adminRoutes: RouteObject[] = [
                 ),
             },
             {
+                path: 'users',
+                element: lazyPage(() =>
+                    import('@pages/admin/users/AdminUsersPage').then((m) => ({
+                        default: m.AdminUsersPage,
+                    })),
+                ),
+            },
+            {
+                path: 'entries',
+                element: lazyPage(() =>
+                    import('@pages/admin/entries/AdminEntriesPage').then((m) => ({
+                        default: m.AdminEntriesPage,
+                    })),
+                ),
+            },
+            {
                 path: 'tickets',
                 element: lazyPage(() =>
                     import('@pages/admin/tickets/AdminTicketsPage').then((m) => ({

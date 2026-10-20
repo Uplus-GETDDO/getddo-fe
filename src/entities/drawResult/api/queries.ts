@@ -16,6 +16,8 @@ import type { DrawRunStatus, MyResult } from '../model/types';
 import { isDrawRunInProgress } from '../model/runStatus';
 import {
     drawCandidateSchema,
+    drawExecutionAuditSchema,
+    drawFailureSchema,
     drawRunDetailSchema,
     drawRunSchema,
     drawVerificationSchema,
@@ -99,6 +101,8 @@ export function useMyResults(
 const drawRunPageSchema = pageSchema(drawRunSchema);
 const drawCandidatePageSchema = pageSchema(drawCandidateSchema);
 const drawVerificationPageSchema = pageSchema(drawVerificationSchema);
+const drawFailurePageSchema = pageSchema(drawFailureSchema);
+const drawExecutionAuditPageSchema = pageSchema(drawExecutionAuditSchema);
 
 export const DRAWS_KEY = ['admin', 'draws'] as const;
 
@@ -112,6 +116,13 @@ export const drawChecksApiPath = (drawId: string) => `${drawApiPath(drawId)}/che
 export const drawResumeApiPath = (runId: string) => `${drawApiPath(runId)}/resume`;
 export const cancellationRedrawsApiPath = (cancellationId: string) =>
     `/v1/admin/cancellations/${cancellationId}/redraws`;
+// GD-137 관리자 운영 이력 — 실행별 실패 이력·실행 감사. 공통 감사 조회와 다른 업무별 경로다
+export const drawFailuresApiPath = (drawId: string) => `${drawApiPath(drawId)}/failures`;
+export const drawExecutionAuditsApiPath = (drawId: string) =>
+    `${drawApiPath(drawId)}/execution-audits`;
+// GD-199 — 최신 검토 실행의 최종 확인과 최초 공개를 한 요청으로 처리한다 (본문·추가 멱등 헤더 없음)
+export const drawResultConfirmationApiPath = (runId: string) =>
+    `${drawApiPath(runId)}/result-confirmation`;
 
 export interface PageParams {
     page: number;
@@ -121,20 +132,22 @@ export interface PageParams {
 // 서버가 선정하는 동안만 realtime 프리셋 주기로 폴링하고, 끝나면 멈춘다
 const POLL_MS = queryPresets.realtime.refetchInterval;
 
+// AD01 단일 페이지 fetch — 취소 원본 결과를 찾기 위한 이전 페이지 순차 탐색에서도 쓴다
+export async function fetchEventDrawsPage(eventId: string, params: PageParams) {
+    const { data } = await apiClient.get<unknown>(eventDrawsApiPath(eventId), { params });
+    return envelopeSchema(drawRunPageSchema).parse(data).data;
+}
+
 // AD01 — 이벤트의 실행 목록(Page). 진행 중인 실행이 하나라도 있으면 폴링한다
 export function useEventDraws(eventId: string, params: PageParams) {
     return useQuery({
         ...queryPresets.realtime,
-        ...queryPresets.paged,
         refetchInterval: (query) =>
             query.state.data?.items.some((run) => isDrawRunInProgress(run.status))
                 ? POLL_MS
                 : false,
         queryKey: [...DRAWS_KEY, 'list', eventId, params],
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(eventDrawsApiPath(eventId), { params });
-            return envelopeSchema(drawRunPageSchema).parse(data).data;
-        },
+        queryFn: () => fetchEventDrawsPage(eventId, params),
         enabled: Boolean(eventId),
     });
 }
@@ -144,7 +157,8 @@ async function fetchDrawRun(drawId: string) {
     return envelopeSchema(drawRunDetailSchema).parse(data).data;
 }
 
-const drawRunOptions = (drawId: string | null) => ({
+// fetchQuery에서도 같은 키·fetcher를 써야 상세 캐시를 공유한다 — 화면 밖 탐색용으로 export한다
+export const drawRunOptions = (drawId: string | null) => ({
     ...queryPresets.realtime,
     refetchInterval: (query: { state: { data?: { status: DrawRunStatus } } }) =>
         query.state.data && isDrawRunInProgress(query.state.data.status) ? POLL_MS : false,
@@ -167,7 +181,6 @@ export function useDrawRuns(drawIds: string[]) {
 export function useDrawCandidates(drawId: string | null, params: PageParams) {
     return useQuery({
         ...queryPresets.standard,
-        ...queryPresets.paged,
         queryKey: [...DRAWS_KEY, 'participants', drawId, params],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawParticipantsApiPath(drawId!), {
@@ -183,11 +196,40 @@ export function useDrawCandidates(drawId: string | null, params: PageParams) {
 export function useDrawVerifications(drawId: string | null, params: PageParams) {
     return useQuery({
         ...queryPresets.standard,
-        ...queryPresets.paged,
         queryKey: [...DRAWS_KEY, 'checks', drawId, params],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawChecksApiPath(drawId!), { params });
             return envelopeSchema(drawVerificationPageSchema).parse(data).data;
+        },
+        enabled: Boolean(drawId),
+    });
+}
+
+// GD-137 — 실행의 전체 실패 이력 (failedAt·id 내림차순은 서버 정렬). 추가만 되는 기록이다
+export function useDrawFailures(drawId: string | null, params: PageParams) {
+    return useQuery({
+        ...queryPresets.standard,
+        queryKey: [...DRAWS_KEY, 'failures', drawId, params],
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(drawFailuresApiPath(drawId!), {
+                params,
+            });
+            return envelopeSchema(drawFailurePageSchema).parse(data).data;
+        },
+        enabled: Boolean(drawId),
+    });
+}
+
+// GD-137 — 실행의 시작·재개·취소 등 업무 감사 이력 (createdAt·id 내림차순은 서버 정렬)
+export function useDrawExecutionAudits(drawId: string | null, params: PageParams) {
+    return useQuery({
+        ...queryPresets.standard,
+        queryKey: [...DRAWS_KEY, 'execution-audits', drawId, params],
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(drawExecutionAuditsApiPath(drawId!), {
+                params,
+            });
+            return envelopeSchema(drawExecutionAuditPageSchema).parse(data).data;
         },
         enabled: Boolean(drawId),
     });
