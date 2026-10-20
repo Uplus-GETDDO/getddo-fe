@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useEventList } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
-import { Badge } from '@shared/ui/badge';
 import { LoadingBlock, Skeleton, SkeletonCard, SkeletonHeading } from '@shared/ui/skeleton';
 
 import { RAFFLE_SECTION_IDS } from './model/sectionIds';
@@ -12,7 +11,7 @@ import { ClosedRaffleList } from './ui/ClosedRaffleList';
 import { LiveRaffleSection } from './ui/LiveRaffleSection';
 import { TimeRaffleHero } from './ui/TimeRaffleHero';
 import { TimeRaffleTrustNotice } from './ui/TimeRaffleTrustNotice';
-import { UpcomingRaffleCard } from './ui/UpcomingRaffleCard';
+import { UpcomingRaffleSection } from './ui/UpcomingRaffleSection';
 
 const CONTAINER = 'mx-auto w-full max-w-312 px-6 pb-28';
 
@@ -58,11 +57,6 @@ export function TimeRafflePage() {
         setSlideOnSwitch(true);
         setSearchParams(next === 'closed' ? { [VIEW_PARAM]: 'closed' } : {});
     };
-
-    // 머리의 진행 칸 — 진행 중·오픈 예정은 기본 화면에만 있어 마감 화면이면 먼저 칸을 바꾼다.
-    // 발표 대기 칸은 개수가 미리보기에 없는 오래된 대기 건을 가리킬 수 있어 항상 전체 목록으로 연다
-    const selectSection = (targetId: string) =>
-        changeView(targetId === RAFFLE_SECTION_IDS.closed ? 'closed' : 'now', targetId);
 
     if (isPending) {
         return (
@@ -117,13 +111,7 @@ export function TimeRafflePage() {
     return (
         <main className={CONTAINER}>
             <div className="flex flex-col gap-14">
-                <TimeRaffleHero
-                    live={byEndsAtAsc}
-                    upcoming={byOpensAtAsc}
-                    closed={byEndsAtDesc}
-                    now={now}
-                    onSelectSection={selectSection}
-                />
+                <TimeRaffleHero live={byEndsAtAsc} now={now} />
 
                 {/*
                  * 머리 아래 내용 칸만 갈아 끼운다 — 마감 화면은 옆에서 밀려 들어오고, 돌아가면 반대쪽에서 들어온다.
@@ -149,37 +137,19 @@ export function TimeRafflePage() {
                         />
                     ) : (
                         <>
-                            <LiveRaffleSection id={RAFFLE_SECTION_IDS.live} events={byEndsAtAsc} />
+                            <LiveRaffleSection
+                                id={RAFFLE_SECTION_IDS.live}
+                                events={byEndsAtAsc}
+                                now={now}
+                                ticketLimit={ENTRY_TICKET_LIMIT}
+                            />
 
-                            <section
+                            <UpcomingRaffleSection
                                 id={RAFFLE_SECTION_IDS.upcoming}
-                                className="flex scroll-mt-24 flex-col gap-6"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <h2 className="text-title-3 text-fg-primary">오픈 예정</h2>
-                                    {byOpensAtAsc.length > 0 && (
-                                        <Badge variant="neutral" size="sm">
-                                            {byOpensAtAsc.length}
-                                        </Badge>
-                                    )}
-                                </div>
-                                {byOpensAtAsc.length === 0 ? (
-                                    <p className="text-body-sm text-fg-tertiary">
-                                        오픈 예정인 래플이 없어요.
-                                    </p>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                        {byOpensAtAsc.map((event) => (
-                                            <UpcomingRaffleCard
-                                                key={event.id}
-                                                event={event}
-                                                now={now}
-                                                ticketLimit={ENTRY_TICKET_LIMIT}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
+                                events={byOpensAtAsc}
+                                now={now}
+                                ticketLimit={ENTRY_TICKET_LIMIT}
+                            />
 
                             <ClosedRaffleList
                                 id={RAFFLE_SECTION_IDS.closed}

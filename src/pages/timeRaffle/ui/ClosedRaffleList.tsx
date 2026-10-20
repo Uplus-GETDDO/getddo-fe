@@ -6,7 +6,6 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { EnteredChip } from '@entities/event';
-import { getErrorMessage } from '@shared/api/errorMessage';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { StatusDot } from '@shared/ui/status-dot';
@@ -121,9 +120,9 @@ export function ClosedRaffleList({
 }
 
 function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
-    // 마감 이후라 값이 더 늘지 않는다 — 폴링 없이 행마다 1회 조회한다.
-    const statisticsQuery = useEntryStatistics(event.id);
-    const { data: statistics, dataUpdatedAt, isError, isFetching } = statisticsQuery;
+    // 마감 이후라 값이 더 늘지 않는다 — 폴링 없이 행마다 1회 조회하고, 받으면 참여 인원만 설명 줄에 붙인다.
+    // 조회 시각·갱신 실패 줄은 두지 않는다 — 바뀌지 않는 값이라 '마지막 성공' 시각이 무슨 뜻인지 읽히지 않았다
+    const { data: statistics } = useEntryStatistics(event.id);
     const isDrawn = event.status === 'drawn';
     // 발표 여부는 status로만 판단한다 — 예정 시각은 계약에 없고 실제 공개 전까지는 발표 대기다 (ADR-022)
     const statusLabel = isDrawn ? '발표 완료' : '발표 대기';
@@ -159,37 +158,9 @@ function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
                     <p className="text-body-bold text-fg-primary truncate">{event.title}</p>
                     <p className="text-caption text-fg-tertiary">{meta.join(' · ')}</p>
                 </div>
-                <ChevronRight className="text-fg-secondary group-hover:text-fg-primary size-7 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:translate-x-1" />
+                {/* 줄 호버는 배경만 바뀐다 — 화살표까지 움직이면 줄이 흔들려 보였다 */}
+                <ChevronRight className="text-fg-secondary group-hover:text-fg-primary size-7 shrink-0" />
             </Link>
-            <div className="text-caption text-fg-tertiary flex flex-wrap items-center gap-2 px-4 pb-3">
-                {dataUpdatedAt > 0 && (
-                    <span>현황 마지막 성공 {formatKst(new Date(dataUpdatedAt))}</span>
-                )}
-                {isFetching && (
-                    <span role="status">
-                        {statistics ? '현황 갱신 중이에요.' : '현황을 확인하고 있어요.'}
-                    </span>
-                )}
-                {isError && (
-                    <>
-                        <span role="status">
-                            {statistics
-                                ? '현황 갱신에 실패했어요. 이전 값을 표시합니다.'
-                                : '현황을 불러오지 못했어요.'}{' '}
-                            {getErrorMessage(statisticsQuery.error)}
-                        </span>
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            disabled={isFetching}
-                            aria-label={`${event.title} 현황 다시 조회`}
-                            onClick={() => void statisticsQuery.refetch({ cancelRefetch: false })}
-                        >
-                            현황 다시 조회
-                        </Button>
-                    </>
-                )}
-            </div>
         </li>
     );
 }
