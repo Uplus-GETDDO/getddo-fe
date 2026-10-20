@@ -26,9 +26,7 @@ export type GachaPhase = 'idle' | 'spinning' | 'dropping' | 'opening' | 'reveale
  */
 const MACHINE_W = 120;
 const BALL = 26;
-const BALL_X = { min: 33, max: 87 };
 const BALL_FLOOR = 100;
-const BALL_CEIL = 62;
 /** 무대 가운데(캡슐이 열리는 자리)에서 배출구까지 거리 */
 const CHUTE_OFFSET = 66;
 
@@ -103,7 +101,7 @@ const SPIN_DURATION = 1.1;
 /**
  * 공 하나의 움직임 — 회전은 옮겨 간 거리만큼 줘 실제로 구르는 것처럼 보이게 한다.
  * idle: 쉬는 자리 둘레를 좌우로 데굴데굴 구르다 가끔 낮게 통통 (반복)
- * spinning: 지금 자리에서 시작해 유리 안을 와리가리 크게 튄다 (손잡이가 도는 동안 한 번)
+ * spinning: 손잡이가 도는 동안 제자리 둘레에서 짧고 불규칙하게 덜그럭 — 크게 날지 않고 들썩이며 새 자리 쪽으로 조금씩 밀린다
  * dropping: 튀던 자리에서 새 자리로 떨어져 통 튀며 앉는다 — 처음 자리로 되돌아가 정렬되지 않게
  */
 function ballMotion(ball: Ball, phase: GachaPhase) {
@@ -112,19 +110,26 @@ function ballMotion(ball: Ball, phase: GachaPhase) {
         const x: (number | null)[] = [null];
         const y: (number | null)[] = [null];
         const rotate: (number | null)[] = [null];
+        const steps = 12;
         let lastX = ball.home.x;
         let lastR = ball.home.rotate;
-        for (let i = 1; i <= 5; i++) {
-            const nx = BALL_X.min + rand() * (BALL_X.max - BALL_X.min);
-            lastR += (nx - lastX) * ROLL_DEG_PER_PX;
+        for (let i = 1; i <= steps; i++) {
+            // 흔들리며 새 자리 쪽으로 70%까지 밀려 간다 — 나머지는 배출될 때 떨어져 앉는다
+            const t = (i / steps) * 0.7;
+            const cx = ball.home.x + (ball.settle.x - ball.home.x) * t;
+            const cy = ball.home.y + (ball.settle.y - ball.home.y) * t;
+            const nx = cx + (rand() * 2 - 1) * 3;
+            // 짝수 칸은 바닥에 부딪히고 홀수 칸은 살짝 들썩인다
+            const ny = i % 2 === 1 ? cy - 3 - rand() * 5 : cy;
+            lastR += (nx - lastX) * ROLL_DEG_PER_PX + (rand() * 2 - 1) * 12;
             lastX = nx;
             x.push(nx);
-            y.push(i % 2 === 1 ? BALL_CEIL + rand() * 18 : BALL_FLOOR - rand() * 14);
+            y.push(ny);
             rotate.push(lastR);
         }
         return {
             animate: { x, y, rotate },
-            transition: { duration: SPIN_DURATION, ease: 'easeInOut' as const },
+            transition: { duration: SPIN_DURATION, ease: 'easeOut' as const },
         };
     }
     if (phase === 'dropping') {
@@ -201,13 +206,20 @@ export function CapsuleGacha({
                             phase === 'dropping'
                                 ? { opacity: 0, scale: 0.85, y: -6 }
                                 : shaking
-                                  ? { opacity: 1, scale: 1, y: 0, rotate: [0, -1.5, 1.5, -1, 1, 0] }
+                                  ? {
+                                        opacity: 1,
+                                        scale: 1,
+                                        y: 0,
+                                        // 기계도 손잡이를 돌리는 힘에 잘게 떨린다
+                                        x: [0, -1, 1, -0.5, 0.5, 0],
+                                        rotate: [0, -0.6, 0.6, -0.4, 0.3, 0],
+                                    }
                                   : { opacity: 1, scale: 1, y: 0, rotate: 0 }
                         }
                         transition={
                             phase === 'dropping'
                                 ? { delay: 0.9, duration: 0.5, ease: 'easeIn' }
-                                : { duration: 0.5, repeat: shaking ? Infinity : 0 }
+                                : { duration: 0.22, repeat: shaking ? Infinity : 0 }
                         }
                     >
                         {/* 안쪽 공 — 기계 그림 뒤에 두어 유리 너머로 보이고 바닥 턱에 살짝 가린다 */}
