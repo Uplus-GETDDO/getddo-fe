@@ -169,7 +169,8 @@
             },
             "status": 409,
             "rejectionCode": "ENTRY-007",
-            "balanceDelta": 0
+            "balanceDelta": 0,
+            "source": "수동 인라인 스크립트 실행분 — verifyL6DeployRemaining.mjs 재실행으로 재현되지 않는다 — 현 스크립트는 상한 초과 수량 요청으로 ENTRY-007을 재현한다"
         }
     ]
 }

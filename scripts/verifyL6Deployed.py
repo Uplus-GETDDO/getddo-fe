@@ -37,7 +37,7 @@ COMMIT = subprocess.run(
 evidence = {
     'kind': 'Vercel 배포(getddo-fe.vercel.app) 실측 — 빌드·프록시 없음',
     'checkedAt': datetime.now(timezone.utc).isoformat(),
-    'commit': COMMIT,
+    'verifierCommit': COMMIT,
     'url': BASE,
     'requests': [],
     'checks': [],
@@ -119,8 +119,8 @@ with sync_playwright() as p:
     for user in USERS:
         page.get_by_text(user['name'], exact=False).first.wait_for()
     check('로그인 계정 목록 = 배포 JSON', users=len(USERS), listed=True)
-    assert not any(r['path'] == '/virtual-users' for r in evidence['requests'])
-    check('/virtual-users 미호출', ok=True)
+    # 기록 경로는 /api 이후 접미사(/v1/...) — 엔드포인트명 접미사로 판정한다
+    assert not any(r['path'].endswith('/virtual-users') for r in evidence['requests'])
     page.screenshot(path=str(IMAGES / 'L6-deploy-login.png'), full_page=True)
 
     # 3) 기존 설치 재현 — 실제 /mockServiceWorker.js(구 목업 설치) + 다른 앱 Worker를 함께 등록한다.
@@ -266,7 +266,8 @@ with sync_playwright() as p:
     context.set_offline(False)
     page.reload(wait_until='networkidle')
     page.wait_for_timeout(1000)
-    recovered = page.evaluate('document.documentElement.scrollWidth > 0')
+    # 복구 판정은 렌더된 앱 내용으로 한다 — offline 오류 페이지도 scrollWidth>0이므로 무의미하다
+    recovered = page.get_by_text(USER_A['name'], exact=False).count() > 0
     check('오프라인→재연결', offlineNavError=offline_nav_error,
           offlinePreview=offline_body, recoveredAfterOnline=bool(recovered))
     page.screenshot(path=str(IMAGES / 'L6-deploy-online-recovered.png'), full_page=True)
@@ -291,6 +292,10 @@ with sync_playwright() as p:
     check('200% 확대 실측(640 CSS px·DPR 2)', **metrics)
     zpage.screenshot(path=str(IMAGES / 'L6-deploy-zoom200.png'), full_page=True)
     browser.close()
+
+# 전체 방문이 끝난 뒤 /virtual-users 호출이 한 번도 없었는지 최종 확인한다
+assert not any(r['path'].endswith('/virtual-users') for r in evidence['requests'])
+check('/virtual-users 미호출(전 구간)', ok=True)
 
 save()
 print(json.dumps({'checks': len(evidence['checks']), 'requests': len(evidence['requests']), 'errors': evidence['errors']}, ensure_ascii=False))

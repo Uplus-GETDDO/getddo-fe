@@ -99,5 +99,6 @@
                 }
             ]
         }
-    ]
+    ],
+    "provenance": "전 check가 수동 인라인 스크립트 실행분 — verifyL6DeployRemaining.mjs banner 모드는 동일 절차(등록→수정→순서→삭제→복원)를 재현하되 check명이 다르다"
 }

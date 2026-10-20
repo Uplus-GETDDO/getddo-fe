@@ -54,7 +54,7 @@ if (!target && mode !== 'closed') {
     process.exit(0);
 }
 
-if (mode !== 'grades') {
+if (mode === 'full') {
     const before = await wallet();
     const body = { tickets: { BRONZE: 1 } };
     const key = randomUUID();
@@ -76,7 +76,10 @@ if (mode !== 'grades') {
         newKeyStatus: again.status,
         newKeyCode: again.code,
         newKeyReceiptStatus: again.data?.status,
-        newKeyRejection: again.data?.rejectionCode ?? again.code,
+        newKeyRejection: again.data?.rejectionCode ?? null,
+        // 새 키 재응모는 계약상 상한 내 별도 응모(201)가 정상 — 거절이 기대값이 아니다
+        newKeyExpected: '201 ACCEPTED(상한 내 별도 응모)',
+        newKeyMatchesExpected: again.status === 201 && again.data?.status === 'ACCEPTED',
         balanceDelta: after.availableCount - before.availableCount,
         bronzeDelta: after.countByGrade?.BRONZE - before.countByGrade?.BRONZE,
         eligibilityAfter,
@@ -108,7 +111,9 @@ if (mode === 'full' || mode === 'grades') {
         gradeResults[grade] = {
             status: result.status,
             receiptStatus: result.data?.status,
-            rejectionCode: result.data?.rejectionCode ?? result.code,
+            // 영수증의 거절 코드와 봉투의 코드는 별도 필드로 기록한다
+            rejectionCode: result.data?.rejectionCode ?? null,
+            envelopeCode: result.code,
             deducted: result.data?.deductedTicketCount,
             balanceDelta: balanceAfter.availableCount - balanceBefore.availableCount,
         };
@@ -141,7 +146,8 @@ if (mode === 'closed') {
             eventTitle: closed.title,
             status: result.status,
             receiptStatus: result.data?.status,
-            rejectionCode: result.data?.rejectionCode ?? result.code,
+            rejectionCode: result.data?.rejectionCode ?? null,
+            envelopeCode: result.code,
             deducted: result.data?.deductedTicketCount,
             balanceDelta: balanceAfter.availableCount - balanceBefore.availableCount,
         });

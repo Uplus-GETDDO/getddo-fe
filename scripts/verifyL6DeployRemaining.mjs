@@ -6,13 +6,25 @@
 //   limit-cancel — 격리 이벤트 생성 → 상한 거절 → 관리자 취소 → 원래 등급 반환·이력 일치
 //   draw         — 격리 이벤트 생성 → 응모 → 마감+5분 자동 추첨 → 관리자 검증 → 발표 → 결과·알림
 //   banner       — L3 배너 등록·수정·순서·삭제 (짧은 수명의 [TEST] 배너)
-//   admin-writes — L5 관리자 쓰기: AP02·AP04 정책, AM03 미션
+//   admin-writes — L5 관리자 쓰기: AP02·AP04·AM03 (성공 생성은 하지 않고 검증
+//                  실패·보장된 중복 거절만 실행 — 운영에 데이터를 남기지 않는다)
 //   misc         — 429 유도 시도(출석 반복)·p95 측정
 // 증거는 모드별 별도 JSON으로 나눠 병렬 실행해도 덮어쓰지 않는다.
+// 환경변수: L6_DEPLOY_URL 필수 (배포 루트 또는 .../api/v1) — 기본 대상이 없어
+// 운영을 향한 오실행이 불가능하다.
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
-const BASE = 'https://getddo-fe.vercel.app/api/v1';
+// 대상은 환경변수로만 지정한다 — 기본값이 프로덕션이면 실수로 운영에 쓰기를
+// 반복할 수 있어 하드코딩하지 않는다. 배포 루트·API 루트 둘 다 받는다.
+const deployUrl = process.env.L6_DEPLOY_URL;
+if (!deployUrl)
+    throw new Error(
+        'L6_DEPLOY_URL 환경변수가 필요합니다 (예: https://<배포> 또는 https://<배포>/api/v1).',
+    );
+const BASE = deployUrl.replace(/\/$/, '').endsWith('/api/v1')
+    ? deployUrl.replace(/\/$/, '')
+    : `${deployUrl.replace(/\/$/, '')}/api/v1`;
 const ADMIN = '01a14280-f677-7a0a-a066-5553d7344fd2';
 const USER = '01a14280-f678-7617-9364-6b79d2dcbef2';
 const USER_MEMBERSHIP = 'excellent';
@@ -101,7 +113,12 @@ async function runProbe() {
         })),
     });
 
-    for (const event of interesting.slice(0, 4)) {
+    // endsAt 최신순 앞 4개가 아니라 상태별 대표를 고른다 — PUBLISHED·REDRAWING이
+    // 뒤로 밀려 누락되는 것을 막는다.
+    const representatives = ['PUBLISHED', 'REDRAWING', 'DRAW_CONFIRMED', 'NO_ENTRANTS', 'CANCELED']
+        .map((status) => interesting.find((e) => e.status === status))
+        .filter(Boolean);
+    for (const event of representatives) {
         const draws = await adminGet(`/admin/events/${event.id}/draws?size=10`);
         const runs = draws.data?.items ?? [];
         const detail = runs[0] ? await adminGet(`/admin/draws/${runs[0].id}`) : null;
@@ -258,20 +275,33 @@ async function runLimitCancel() {
         push({ name: '응모·취소', unverified: '이벤트 OPEN 대기 시간 초과' });
         return;
     }
+    // maxTicketsPerUser=1인 이벤트에 상한 초과 수량을 먼저 요청한다 — 응모 이력이
+    // 없는 상태라 중복(ENTRY-006)보다 상한(ENTRY-007)이 먼저 평가돼야 한다.
+    const limit = await call('POST', `/events/${eventId}/entries`, {
+        body: { tickets: { BRONZE: 2 } },
+        key: randomUUID(),
+    });
+    const limitBalanceAfter = await wallet();
     const entry = await call('POST', `/events/${eventId}/entries`, {
         body: { tickets: { BRONZE: 1 } },
         key: randomUUID(),
     });
-    const limit = await call('POST', `/events/${eventId}/entries`, {
+    const dup = await call('POST', `/events/${eventId}/entries`, {
         body: { tickets: { BRONZE: 1 } },
         key: randomUUID(),
     });
     push({
-        name: '응모 접수 후 상한 거절',
+        name: '상한 초과·응모·중복 거절',
+        limitStatus: limit.status,
+        limitRejectionCode: limit.data?.rejectionCode ?? null,
+        limitEnvelopeCode: limit.code,
+        limitDeducted: limit.data?.deductedTicketCount,
+        bronzeAfterLimit: limitBalanceAfter.countByGrade?.BRONZE,
         entryStatus: entry.status,
         entryReceiptStatus: entry.data?.status,
-        limitStatus: limit.status,
-        limitRejectionCode: limit.data?.rejectionCode ?? limit.code,
+        duplicateStatus: dup.status,
+        duplicateRejectionCode: dup.data?.rejectionCode ?? null,
+        duplicateEnvelopeCode: dup.code,
     });
 
     const beforeCancel = await wallet();
@@ -376,16 +406,37 @@ async function runDraw() {
         verification: check.data,
     });
 
-    const publish = await call('POST', `/admin/draws/${run.id}/result-confirmation`, {
-        admin: true,
-    });
+    // 검증 직후 즉시 발표하면 409 DRAW-005가 관측됐다 — 짧은 백오프 재시도를 둔다.
+    const publishAttempts = [];
+    let publish = null;
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+        const attemptAt = new Date().toISOString();
+        publish = await call('POST', `/admin/draws/${run.id}/result-confirmation`, {
+            admin: true,
+        });
+        publishAttempts.push({
+            attempt: attempt + 1,
+            at: attemptAt,
+            status: publish.status,
+            code: publish.code,
+        });
+        if (publish.status === 200) break;
+        if (publish.code !== 'DRAW-005') break; // 재시도해도 의미 없는 오류는 중단
+        await sleep(5_000 * (attempt + 1));
+    }
     const eventAfter = await adminGet(`/admin/events/${eventId}`);
+    const runsAfter = await adminGet(`/admin/events/${eventId}/draws?size=5`);
     push({
-        name: '발표(result-confirmation)',
-        status: publish.status,
-        code: publish.code,
+        name: '발표(result-confirmation)·최종 상태',
+        attempts: publishAttempts,
         data: publish.data,
         eventStatusAfter: eventAfter.data?.status,
+        finalRuns: (runsAfter.data?.items ?? []).map((r) => ({
+            id: r.id,
+            runNumber: r.runNumber,
+            drawType: r.drawType,
+            status: r.status,
+        })),
     });
 
     const publicResults = await userGet(`/events/${eventId}/results`);
@@ -430,6 +481,10 @@ async function runBanner() {
     push({ name: '배너 현황', status: before.status, count: list.length });
 
     const open = (await adminGet('/admin/events?size=5&status=OPEN')).data?.items?.[0];
+    if (!open) {
+        push({ name: '배너 CRUD', unverified: 'OPEN 상태 이벤트가 없어 연결 대상을 고르지 못함' });
+        return;
+    }
     if (list.length >= 5) {
         const blocked = await call('POST', '/admin/banners', {
             admin: true,
@@ -458,77 +513,124 @@ async function runBanner() {
     });
     if (created.status !== 201) return;
 
-    const updated = await call('PUT', `/admin/banners/${bannerId}`, {
-        admin: true,
-        body: { eventId: open.id, imageKey: 'demo-20261016/banner-02.svg', displayOrder: 1 },
-    });
-    const userList = await userGet('/banners');
-    push({
-        name: '배너 수정·사용자 목록 반영(AB03·B01)',
-        updateStatus: updated.status,
-        displayOrderAfter: updated.data?.displayOrder,
-        imageKeyAfter: updated.data?.imageKey,
-        userBanners: (userList.data ?? []).map((b) => ({
-            id: b.id,
-            displayOrder: b.displayOrder,
-            eventId: b.eventId,
-        })),
-    });
+    // 중간에 예외가 나도 테스트 배너가 배포 환경에 남지 않게 정리를 finally로 보장한다.
+    try {
+        const updated = await call('PUT', `/admin/banners/${bannerId}`, {
+            admin: true,
+            body: {
+                eventId: open.id,
+                imageKey: 'demo-20261016/banner-02.svg',
+                displayOrder: 1,
+            },
+        });
+        const userList = await userGet('/banners');
+        push({
+            name: '배너 수정·사용자 목록 반영(AB03·B01)',
+            updateStatus: updated.status,
+            displayOrderAfter: updated.data?.displayOrder,
+            imageKeyAfter: updated.data?.imageKey,
+            userBanners: (userList.data ?? []).map((b) => ({
+                id: b.id,
+                displayOrder: b.displayOrder,
+                eventId: b.eventId,
+            })),
+        });
 
-    const mid = await adminGet('/admin/banners');
-    const order = (mid.data ?? []).map((b) => b.id);
-    const reordered = await call('PUT', '/admin/banners/order', {
-        admin: true,
-        body: { bannerIds: [bannerId, ...order.filter((id) => id !== bannerId)] },
-    });
-    const restored = await call('PUT', '/admin/banners/order', {
-        admin: true,
-        body: { bannerIds: order },
-    });
-    const deleted = await call('DELETE', `/admin/banners/${bannerId}`, { admin: true });
-    const after = await adminGet('/admin/banners');
-    push({
-        name: '배너 순서·삭제(AB05·AB04)',
-        reorderStatus: reordered.status,
-        restoreStatus: restored.status,
-        deleteStatus: deleted.status,
-        remainingCount: (after.data ?? []).length,
-        testBannerRemoved: !(after.data ?? []).some((b) => b.id === bannerId),
-    });
+        const mid = await adminGet('/admin/banners');
+        const order = (mid.data ?? []).map((b) => b.id);
+        const reordered = await call('PUT', '/admin/banners/order', {
+            admin: true,
+            body: { bannerIds: [bannerId, ...order.filter((id) => id !== bannerId)] },
+        });
+        const restored = await call('PUT', '/admin/banners/order', {
+            admin: true,
+            body: { bannerIds: order },
+        });
+        push({
+            name: '배너 순서 변경·복원(AB05)',
+            reorderStatus: reordered.status,
+            restoreStatus: restored.status,
+        });
+    } finally {
+        const deleted = await call('DELETE', `/admin/banners/${bannerId}`, { admin: true });
+        const originalOrder = list.map((b) => b.id);
+        const orderRestored = originalOrder.length
+            ? await call('PUT', '/admin/banners/order', {
+                  admin: true,
+                  body: { bannerIds: originalOrder },
+              })
+            : null;
+        const after = await adminGet('/admin/banners');
+        push({
+            name: '배너 삭제·원본 순서 복원(AB04)',
+            deleteStatus: deleted.status,
+            orderRestoreStatus: orderRestored?.status,
+            remainingCount: (after.data ?? []).length,
+            testBannerRemoved: !(after.data ?? []).some((b) => b.id === bannerId),
+        });
+    }
 }
 
 // ── admin-writes: AP02·AP04·AM03 ──
+// 성공 생성은 다음 적용일의 실제 정책·미션을 공유 운영 환경에 남긴다(삭제 API 부재).
+// 따라서 성공 요청은 보내지 않고, 검증 실패(400)와 보장된 중복 거절(409)만 보낸다 —
+// 중복 POST는 동일 적용일 정책이 이미 있을 때만 보내므로 새 데이터가 생기지 않는다.
+const nextKstMidnightUtc = () => {
+    const kst = new Date(Date.now() + 9 * 3_600_000);
+    const next = Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate() + 1);
+    return new Date(next - 9 * 3_600_000).toISOString();
+};
+const nextKstMonth = () => {
+    const kst = new Date(Date.now() + 9 * 3_600_000);
+    const year = kst.getUTCMonth() === 11 ? kst.getUTCFullYear() + 1 : kst.getUTCFullYear();
+    const month = ((kst.getUTCMonth() + 1) % 12) + 1;
+    return `${year}-${String(month).padStart(2, '0')}`;
+};
+
 async function runAdminWrites() {
-    const daily = await adminGet('/admin/policies/attendance/daily?size=5');
-    const current = daily.data?.items?.[0];
+    const daily = await adminGet('/admin/policies/attendance/daily?size=20');
+    const dailyItems = daily.data?.items ?? [];
+    const nextEffective = nextKstMidnightUtc();
+    const dailyCovered = dailyItems.some((p) => p.effectiveFrom === nextEffective);
     const invalid = await call('POST', '/admin/policies/attendance/daily', {
         admin: true,
         body: { rewardTicketCount: 0 },
     });
-    const created = await call('POST', '/admin/policies/attendance/daily', {
-        admin: true,
-        body: { rewardTicketCount: current?.rewardTicketCount ?? 1 },
-    });
-    const dup = await call('POST', '/admin/policies/attendance/daily', {
-        admin: true,
-        body: { rewardTicketCount: current?.rewardTicketCount ?? 1 },
-    });
+    // 동일 적용일 정책이 이미 있어야 이 POST는 항상 409로 끝난다 — 없으면 성공
+    // 생성이 되어 운영에 정책을 남기므로 미실행으로 기록한다.
+    const dup = dailyCovered
+        ? await call('POST', '/admin/policies/attendance/daily', {
+              admin: true,
+              body: { rewardTicketCount: dailyItems[0]?.rewardTicketCount ?? 1 },
+          })
+        : null;
     push({
         name: 'AP02 일일 출석 정책',
-        currentPolicy: current,
+        nextEffectiveFrom: nextEffective,
+        policies: dailyItems.map((p) => ({
+            id: p.id,
+            effectiveFrom: p.effectiveFrom,
+            rewardTicketCount: p.rewardTicketCount,
+        })),
         invalidStatus: invalid.status,
         invalidCode: invalid.code,
-        createdStatus: created.status,
-        createdData: created.data,
-        duplicateStatus: dup.status,
-        duplicateCode: dup.code,
+        duplicateStatus: dup?.status,
+        duplicateCode: dup?.code,
+        createSkipped: dailyCovered
+            ? undefined
+            : '다음 KST 자정 정책 없음 — 성공 생성은 운영 데이터를 남기므로 실행하지 않음',
     });
 
-    const streak = await adminGet('/admin/policies/attendance/streak?size=5');
-    const streakCreated = await call('POST', '/admin/policies/attendance/streak', {
-        admin: true,
-        body: { milestones: [{ milestoneDays: 1, rewardTicketCount: 1 }] },
-    });
+    const streak = await adminGet('/admin/policies/attendance/streak?size=20');
+    const streakItems = streak.data?.items ?? [];
+    const nextMonth = nextKstMonth();
+    const streakCovered = streakItems.some((s) => s.effectiveMonth === nextMonth);
+    const streakDup = streakCovered
+        ? await call('POST', '/admin/policies/attendance/streak', {
+              admin: true,
+              body: { milestones: [{ milestoneDays: 1, rewardTicketCount: 1 }] },
+          })
+        : null;
     const streakInvalid = await call('POST', '/admin/policies/attendance/streak', {
         admin: true,
         body: {
@@ -540,12 +642,15 @@ async function runAdminWrites() {
     });
     push({
         name: 'AP04 연속 출석 정책',
-        existing: streak.data?.items?.map((s) => s.effectiveMonth),
-        createdStatus: streakCreated.status,
-        createdData: streakCreated.data,
-        createdCode: streakCreated.code,
+        nextEffectiveMonth: nextMonth,
+        existing: streakItems.map((s) => s.effectiveMonth),
+        duplicateStatus: streakDup?.status,
+        duplicateCode: streakDup?.code,
         invalidStatus: streakInvalid.status,
         invalidCode: streakInvalid.code,
+        createSkipped: streakCovered
+            ? undefined
+            : '다음 KST 월 정책 없음 — 성공 생성은 운영 데이터를 남기므로 실행하지 않음',
     });
 
     const missionBody = {
@@ -568,17 +673,28 @@ async function runAdminWrites() {
             },
         ],
     };
-    const mission = await call('POST', '/admin/missions', { admin: true, body: missionBody });
+    // 재실행마다 미션이 쌓이지 않도록 동일 PREFIX 미션이 있으면 생성을 건너뛴다
+    // (삭제 API 부재 — 최초 1회 생성분만 운영 잔여 데이터로 기록한다).
+    const existing = await adminGet(
+        `/admin/missions?size=20&keyword=${encodeURIComponent(PREFIX)}`,
+    );
+    const existingMission = (existing.data?.items ?? []).find((m) => m.title?.startsWith(PREFIX));
+    const mission = existingMission
+        ? null
+        : await call('POST', '/admin/missions', { admin: true, body: missionBody });
     const missionInvalid = await call('POST', '/admin/missions', {
         admin: true,
         body: { ...missionBody, rewardTicketCount: 5 },
     });
     push({
         name: 'AM03 미션 등록',
-        createdStatus: mission.status,
-        createdCode: mission.code,
-        createdId: mission.data?.id,
-        missionStatus: mission.data?.status,
+        createdStatus: mission?.status,
+        createdCode: mission?.code,
+        createdId: mission?.data?.id,
+        missionStatus: mission?.data?.status,
+        existingTestMission: existingMission
+            ? { id: existingMission.id, title: existingMission.title }
+            : undefined,
         invalidStatus: missionInvalid.status,
         invalidCode: missionInvalid.code,
     });

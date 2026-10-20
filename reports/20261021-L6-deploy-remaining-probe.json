@@ -717,7 +717,8 @@
                         }
                     ]
                 }
-            }
+            },
+            "source": "수동 인라인 스크립트 실행분 — verifyL6DeployRemaining.mjs 재실행으로 재현되지 않는다 — 현 probe 모드는 상태별 대표 이벤트의 draws·detail·participants·checks·failures를 직접 조회한다"
         }
     ]
 }

@@ -183,7 +183,8 @@
             "userNotification": {
                 "title": "추첨 결과 발표",
                 "createdAt": "2026-10-20T17:37:30.245437Z"
-            }
+            },
+            "source": "수동 인라인 스크립트 실행분 — verifyL6DeployRemaining.mjs 재실행으로 재현되지 않는다"
         }
     ]
 }
