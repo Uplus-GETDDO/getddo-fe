@@ -1,0 +1,60 @@
+{
+    "at": "2026-10-20T17:31:56.314Z",
+    "kind": "배포 통합 인수 잔여 — admin-writes",
+    "checks": [
+        {
+            "name": "AP02 일일 출석 정책",
+            "currentPolicy": {
+                "id": "01a143a8-b6de-775d-9c0e-7b0b067914ae",
+                "rewardTicketCount": 1,
+                "effectiveFrom": "2026-10-15T15:00:00Z",
+                "effectiveUntil": null,
+                "createdBy": "01a14280-f677-7a0a-a066-5553d7344fd2",
+                "createdAt": "2026-10-16T07:41:46.219762Z"
+            },
+            "invalidStatus": 400,
+            "invalidCode": "COMMON-002",
+            "createdStatus": 201,
+            "createdData": {
+                "id": "01a15a5e-b2eb-7ad7-8731-b34bf0e7f0b7",
+                "rewardTicketCount": 1,
+                "effectiveFrom": "2026-10-21T15:00:00Z",
+                "effectiveUntil": null,
+                "createdBy": "01a14280-f677-7a0a-a066-5553d7344fd2",
+                "createdAt": "2026-10-20T17:31:58.059789Z"
+            },
+            "duplicateStatus": 409,
+            "duplicateCode": "ATTENDANCE-004"
+        },
+        {
+            "name": "AP04 연속 출석 정책",
+            "existing": ["2026-10"],
+            "createdStatus": 201,
+            "createdData": {
+                "id": "01a15a5e-b40a-7445-a218-09b8ddf967c8",
+                "effectiveMonth": "2026-11",
+                "milestones": [
+                    {
+                        "id": "01a15a5e-b413-7578-af0a-8ff320695a91",
+                        "milestoneDays": 1,
+                        "rewardTicketCount": 1
+                    }
+                ],
+                "createdBy": "01a14280-f677-7a0a-a066-5553d7344fd2",
+                "createdAt": "2026-10-20T17:31:58.346397Z"
+            },
+            "createdCode": "SUCCESS",
+            "invalidStatus": 400,
+            "invalidCode": "ATTENDANCE-003"
+        },
+        {
+            "name": "AM03 미션 등록",
+            "createdStatus": 201,
+            "createdCode": "SUCCESS",
+            "createdId": "01a15a5e-b4e5-7a81-bbd8-2ccf9cd30109",
+            "missionStatus": "ACTIVE",
+            "invalidStatus": 400,
+            "invalidCode": "MISSION-001"
+        }
+    ]
+}

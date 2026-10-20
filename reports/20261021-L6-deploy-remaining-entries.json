@@ -1,0 +1,175 @@
+{
+    "at": "2026-10-20T17:29:25.756Z",
+    "kind": "배포 통합 인수 잔여 — already",
+    "checks": [
+        {
+            "name": "ALREADY_ENTERED 거절",
+            "eventId": "01a15a5b-8edb-7711-a4cb-babe1f6948c3",
+            "eventTitle": "[TEST-GD261] 추첨·발표",
+            "status": 409,
+            "rejectionCode": "ENTRY-006",
+            "balanceDelta": 0
+        },
+        {
+            "name": "격리 이벤트 생성(상한 1장)",
+            "status": 201,
+            "eventId": "01a15a5c-9966-7ab2-afc5-9ac5dba785e7",
+            "startsAt": "2026-10-20T17:28:39.217Z",
+            "code": "SUCCESS"
+        },
+        {
+            "name": "응모 접수 후 상한 거절",
+            "entryStatus": 201,
+            "entryReceiptStatus": "ACCEPTED",
+            "limitStatus": 409,
+            "limitRejectionCode": "ENTRY-006"
+        },
+        {
+            "name": "이벤트 취소→원래 등급 반환→이력 일치",
+            "cancelStatus": 200,
+            "operation": {
+                "eventId": "01a15a5c-9966-7ab2-afc5-9ac5dba785e7",
+                "previousStatus": "OPEN",
+                "status": "CANCELED",
+                "refundedTicketCount": 1,
+                "processedAt": "2026-10-20T17:29:40.760900Z"
+            },
+            "bronzeBefore": 1,
+            "bronzeAfter": 2,
+            "recentHistories": [
+                {
+                    "id": "01a15a5c-9aa5-7b40-a798-06c735ea4a9a",
+                    "ticketId": "01a15a51-dae9-758a-8ed7-76bea8d9390e",
+                    "operationType": "REFUND",
+                    "grade": "BRONZE",
+                    "status": "RETURNED",
+                    "expiresAt": "2026-11-30T15:00:00Z",
+                    "reason": "[TEST-GD261] 통합 인수 검증 후 정리",
+                    "createdAt": "2026-10-20T17:29:40.771057Z",
+                    "eventId": null,
+                    "eventEntryId": null,
+                    "missionId": null,
+                    "gameId": "01a15714-8ece-7944-95ef-31fed5a68f81",
+                    "attendanceDate": null,
+                    "originalUseHistoryId": "01a15a5c-99f2-7241-88b5-fb3a66d39eb9",
+                    "correctedHistoryId": null
+                },
+                {
+                    "id": "01a15a5c-99f2-7241-88b5-fb3a66d39eb9",
+                    "ticketId": "01a15a51-dae9-758a-8ed7-76bea8d9390e",
+                    "operationType": "USE",
+                    "grade": "BRONZE",
+                    "status": "SPENT",
+                    "expiresAt": "2026-10-31T15:00:00Z",
+                    "reason": "이벤트 응모",
+                    "createdAt": "2026-10-20T17:29:40.591850Z",
+                    "eventId": "01a15a5c-9966-7ab2-afc5-9ac5dba785e7",
+                    "eventEntryId": "0c03cb0d-c06c-464f-9d47-333a4fb46735",
+                    "missionId": null,
+                    "gameId": "01a15714-8ece-7944-95ef-31fed5a68f81",
+                    "attendanceDate": null,
+                    "originalUseHistoryId": null,
+                    "correctedHistoryId": null
+                },
+                {
+                    "id": "01a15a5b-9012-71e9-8df4-f95e65d35d45",
+                    "ticketId": "01a15a51-d90c-7d5f-a4ef-1b27f1ac125a",
+                    "operationType": "USE",
+                    "grade": "BRONZE",
+                    "status": "SPENT",
+                    "expiresAt": "2026-10-31T15:00:00Z",
+                    "reason": "이벤트 응모",
+                    "createdAt": "2026-10-20T17:28:32.526683Z",
+                    "eventId": "01a15a5b-8edb-7711-a4cb-babe1f6948c3",
+                    "eventEntryId": "84366cf9-f444-4509-af46-0feea5b8fb7d",
+                    "missionId": null,
+                    "gameId": "01a14dce-e375-7801-977c-19ba1dec3635",
+                    "attendanceDate": null,
+                    "originalUseHistoryId": null,
+                    "correctedHistoryId": null
+                },
+                {
+                    "id": "01a15a53-6d98-77eb-a6da-0d6a6cba73ba",
+                    "ticketId": "01a15a51-d674-76f2-8440-0a2e6e513bcb",
+                    "operationType": "USE",
+                    "grade": "BRONZE",
+                    "status": "SPENT",
+                    "expiresAt": "2026-10-31T15:00:00Z",
+                    "reason": "이벤트 응모",
+                    "createdAt": "2026-10-20T17:19:39.414073Z",
+                    "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                    "eventEntryId": "6d0e4820-a2d3-45d3-a4fd-2cae67f90b79",
+                    "missionId": null,
+                    "gameId": "01a15714-8ece-7929-9127-273bb6db4875",
+                    "attendanceDate": null,
+                    "originalUseHistoryId": null,
+                    "correctedHistoryId": null
+                },
+                {
+                    "id": "01a15a53-6ccb-7c07-81e2-0a27e8302cac",
+                    "ticketId": "01a15a51-bb29-71ca-8714-2ae45165fd53",
+                    "operationType": "USE",
+                    "grade": "BRONZE",
+                    "status": "SPENT",
+                    "expiresAt": "2026-10-31T15:00:00Z",
+                    "reason": "이벤트 응모",
+                    "createdAt": "2026-10-20T17:19:39.209Z",
+                    "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                    "eventEntryId": "d8484ee1-fabe-4718-b8d1-4c45cf99145e",
+                    "missionId": "01a143a8-b6df-7cbd-a070-7a196e668677",
+                    "gameId": null,
+                    "attendanceDate": null,
+                    "originalUseHistoryId": null,
+                    "correctedHistoryId": null
+                }
+            ],
+            "adminRefundStatus": 200,
+            "adminRefunds": [
+                {
+                    "id": "01a15a5c-9aa5-7b40-a798-06c735ea4a9a",
+                    "spendHistoryId": "01a15a5c-99f2-7241-88b5-fb3a66d39eb9",
+                    "ticketId": "01a15a51-dae9-758a-8ed7-76bea8d9390e",
+                    "grade": "BRONZE",
+                    "eventId": "01a15a5c-9966-7ab2-afc5-9ac5dba785e7",
+                    "eventTitle": "[TEST-GD261] 상한·취소 반환",
+                    "userId": "01a14280-f678-7617-9364-6b79d2dcbef2",
+                    "userName": "테스트사용자1",
+                    "reasonType": "EVENT_CANCELED",
+                    "refundedAt": "2026-10-20T17:29:40.771057Z",
+                    "targetExpiresAt": "2026-11-30T15:00:00Z"
+                }
+            ],
+            "myEntries": [
+                {
+                    "id": "1d1874d4-8b13-4277-8ae9-755a68b7a56e",
+                    "status": "REJECTED",
+                    "deductedTicketCount": 0
+                },
+                {
+                    "id": "0c03cb0d-c06c-464f-9d47-333a4fb46735",
+                    "status": "ACCEPTED",
+                    "deductedTicketCount": 1
+                }
+            ],
+            "adminParticipantCount": 1,
+            "deleteAfterEntriesStatus": 409,
+            "deleteAfterEntriesCode": "EVENT-013"
+        },
+        {
+            "name": "TICKET_LIMIT_EXCEEDED 거절",
+            "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+            "eventTitle": "[DEMO-20261016] 06 예정 응모권 이벤트",
+            "eligibility": {
+                "usedTicketCount": 5,
+                "remainingTicketLimit": 0,
+                "reasons": ["TICKET_LIMIT_EXCEEDED"]
+            },
+            "requestTickets": {
+                "BRONZE": 4
+            },
+            "status": 409,
+            "rejectionCode": "ENTRY-007",
+            "balanceDelta": 0
+        }
+    ]
+}

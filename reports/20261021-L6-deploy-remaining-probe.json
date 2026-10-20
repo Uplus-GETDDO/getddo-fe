@@ -1,0 +1,723 @@
+{
+    "at": "2026-10-20T17:28:30.810Z",
+    "kind": "배포 통합 인수 잔여 — probe",
+    "checks": [
+        {
+            "name": "INACTIVE 계정 존재 여부",
+            "status": 200,
+            "count": 0,
+            "note": "0이면 INACTIVE 동작 검증은 계정 입력 없이 불가"
+        },
+        {
+            "name": "AR01 abuse-cases 상태",
+            "status": 404,
+            "code": "HTTP-404",
+            "note": "404면 여전히 미구현 — 완료로 표시하지 않는다"
+        },
+        {
+            "name": "종료·발표 상태 이벤트 목록",
+            "count": 15,
+            "events": [
+                {
+                    "id": "01a143aa-c081-7e7b-bd33-5b5474a95574",
+                    "title": "[DEMO-20261016] 09 취소·응모권 반환",
+                    "status": "CANCELED",
+                    "endsAt": "2026-11-15T07:43:44.649707Z"
+                },
+                {
+                    "id": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "title": "dfsadfsa",
+                    "status": "CANCELED",
+                    "endsAt": "2026-10-21T00:42:00Z"
+                },
+                {
+                    "id": "01a14871-57fc-7770-81df-26cfc6a3e2b5",
+                    "title": "ㅁㄴㅇㄻㄴㅇㄹ",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-17T09:59:00Z"
+                },
+                {
+                    "id": "01a1430a-e24b-7235-933f-2392e6e0e162",
+                    "title": "123",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T08:52:00Z"
+                },
+                {
+                    "id": "01a1430a-8e06-77d3-8cd7-d87053050fc4",
+                    "title": "123",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T08:52:00Z"
+                },
+                {
+                    "id": "01a1430a-11b6-7652-bd45-b7ce69afba0c",
+                    "title": "123",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T08:52:00Z"
+                },
+                {
+                    "id": "01a143aa-c0ff-7c32-a8ca-45d269f0056a",
+                    "title": "[DEMO-20261016] 10 응모자 없는 추첨",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T07:45:44.649707Z"
+                },
+                {
+                    "id": "01a143aa-c00d-7520-ae86-8d1e9d225202",
+                    "title": "[DEMO-20261016] 08 가중치 추첨·발표",
+                    "status": "PUBLISHED",
+                    "endsAt": "2026-10-16T07:45:44.649707Z"
+                },
+                {
+                    "id": "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f",
+                    "title": "[DEMO-20261016] 07 무료 추첨·발표",
+                    "status": "REDRAWING",
+                    "endsAt": "2026-10-16T07:45:44.649707Z"
+                },
+                {
+                    "id": "01a14306-0b39-73d3-ac6a-544fb78dae90",
+                    "title": "dsgfdsfgdf",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T06:53:00Z"
+                },
+                {
+                    "id": "01a14305-afd6-7393-8483-aac94bb7c74b",
+                    "title": "dsgfdsfgdf",
+                    "status": "CANCELED",
+                    "endsAt": "2026-10-16T06:53:00Z"
+                },
+                {
+                    "id": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7",
+                    "title": "dsgfdsfgdf",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T06:53:00Z"
+                },
+                {
+                    "id": "01a14305-a6bf-7933-a35c-a5555ad5a7cb",
+                    "title": "dsgfdsfgdf",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T06:53:00Z"
+                },
+                {
+                    "id": "01a14305-663a-72de-8d15-3c15782f5c06",
+                    "title": "dsgfdsfgdf",
+                    "status": "NO_ENTRANTS",
+                    "endsAt": "2026-10-16T06:53:00Z"
+                },
+                {
+                    "id": "01a14300-06a9-719e-b32f-d99e7dbf11d0",
+                    "title": "테스트1",
+                    "status": "CANCELED",
+                    "endsAt": "2026-10-16T05:10:00Z"
+                }
+            ]
+        },
+        {
+            "name": "추첨 이력 — [DEMO-20261016] 09 취소·응모권 반환 (CANCELED)",
+            "eventId": "01a143aa-c081-7e7b-bd33-5b5474a95574",
+            "drawsStatus": 200,
+            "runs": [],
+            "publicResults": {
+                "status": 200,
+                "isPublished": false,
+                "displayStatus": "CANCELED"
+            }
+        },
+        {
+            "name": "추첨 이력 — dfsadfsa (CANCELED)",
+            "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+            "drawsStatus": 200,
+            "runs": [],
+            "publicResults": {
+                "status": 200,
+                "isPublished": false,
+                "displayStatus": "CANCELED"
+            }
+        },
+        {
+            "name": "추첨 이력 — ㅁㄴㅇㄻㄴㅇㄹ (NO_ENTRANTS)",
+            "eventId": "01a14871-57fc-7770-81df-26cfc6a3e2b5",
+            "drawsStatus": 200,
+            "runs": [
+                {
+                    "id": "01a14951-8dd7-7da9-a042-3decea5e1315",
+                    "runNumber": 0,
+                    "drawType": "INITIAL",
+                    "status": "NO_ENTRIES",
+                    "confirmedAt": null
+                }
+            ],
+            "latestResults": [],
+            "execution": {
+                "failureCount": 0,
+                "latestFailure": null,
+                "retryAt": null,
+                "waitingForOperator": false,
+                "cancellations": []
+            },
+            "participantCount": 0,
+            "checksCount": 0,
+            "failuresCount": 0,
+            "publicResults": {
+                "status": 200,
+                "isPublished": false,
+                "displayStatus": "NO_ENTRANTS"
+            }
+        },
+        {
+            "name": "추첨 이력 — 123 (NO_ENTRANTS)",
+            "eventId": "01a1430a-e24b-7235-933f-2392e6e0e162",
+            "drawsStatus": 200,
+            "runs": [
+                {
+                    "id": "01a143ed-cf81-7dfc-88a8-1fa3571211c2",
+                    "runNumber": 0,
+                    "drawType": "INITIAL",
+                    "status": "NO_ENTRIES",
+                    "confirmedAt": null
+                }
+            ],
+            "latestResults": [],
+            "execution": {
+                "failureCount": 0,
+                "latestFailure": null,
+                "retryAt": null,
+                "waitingForOperator": false,
+                "cancellations": []
+            },
+            "participantCount": 0,
+            "checksCount": 0,
+            "failuresCount": 0,
+            "publicResults": {
+                "status": 200,
+                "isPublished": false,
+                "displayStatus": "NO_ENTRANTS"
+            }
+        },
+        {
+            "name": "관리자 응모권 반환 이력(AO08)",
+            "status": 200,
+            "total": 12,
+            "items": [
+                {
+                    "id": "01a159b1-b3e7-7499-a9d0-5543bf6e3df6",
+                    "spendHistoryId": "01a15878-4504-72a6-ac99-85e016668d70",
+                    "ticketId": "01a15877-74ba-75ff-9521-4a540eb43fc4",
+                    "grade": "BRONZE",
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "eventTitle": "dfsadfsa",
+                    "userId": "01a14280-f678-7617-9364-6b79d2dcbef2",
+                    "userName": "테스트사용자1",
+                    "reasonType": "EVENT_CANCELED",
+                    "refundedAt": "2026-10-20T14:23:00.580281Z",
+                    "targetExpiresAt": "2026-11-30T15:00:00Z"
+                },
+                {
+                    "id": "01a159b1-b3da-7902-acb6-0fa15a31ff35",
+                    "spendHistoryId": "01a156c7-1cd7-7c65-9064-9459f2e3e515",
+                    "ticketId": "01a143ac-92cf-7544-b411-55ae7498b33e",
+                    "grade": "BRONZE",
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "eventTitle": "dfsadfsa",
+                    "userId": "01a14280-f678-71f8-b154-11b44c1926f2",
+                    "userName": "테스트사용자2",
+                    "reasonType": "EVENT_CANCELED",
+                    "refundedAt": "2026-10-20T14:23:00.566933Z",
+                    "targetExpiresAt": "2026-11-30T15:00:00Z"
+                },
+                {
+                    "id": "01a159b1-b3ca-7ee9-ad25-5fa92af6d649",
+                    "spendHistoryId": "01a15879-d35a-7f74-9e9e-49318a758db6",
+                    "ticketId": "01a143aa-d2c9-75a2-b21b-d39aec128e68",
+                    "grade": "BRONZE",
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "eventTitle": "dfsadfsa",
+                    "userId": "01a14280-f678-7100-9c3d-ffb9873fadcf",
+                    "userName": "테스트사용자5",
+                    "reasonType": "EVENT_CANCELED",
+                    "refundedAt": "2026-10-20T14:23:00.551384Z",
+                    "targetExpiresAt": "2026-11-30T15:00:00Z"
+                },
+                {
+                    "id": "01a159b1-b3ac-7f93-a79b-a192d65dc0a0",
+                    "spendHistoryId": "01a15788-21e6-7185-9117-c8e40ae76221",
+                    "ticketId": "01a143aa-cd93-7a13-a0d1-f2141f217e46",
+                    "grade": "BRONZE",
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "eventTitle": "dfsadfsa",
+                    "userId": "01a14280-f678-725e-9a73-f62eeb5b7976",
+                    "userName": "테스트사용자4",
+                    "reasonType": "EVENT_CANCELED",
+                    "refundedAt": "2026-10-20T14:23:00.520736Z",
+                    "targetExpiresAt": "2026-11-30T15:00:00Z"
+                },
+                {
+                    "id": "01a159b1-b3ac-7e9d-a00c-120303c435d7",
+                    "spendHistoryId": "01a15788-21e6-705c-8c85-8c265413c60b",
+                    "ticketId": "01a143aa-cd0e-79cd-8702-bb9536915c1c",
+                    "grade": "BRONZE",
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "eventTitle": "dfsadfsa",
+                    "userId": "01a14280-f678-725e-9a73-f62eeb5b7976",
+                    "userName": "테스트사용자4",
+                    "reasonType": "EVENT_CANCELED",
+                    "refundedAt": "2026-10-20T14:23:00.520736Z",
+                    "targetExpiresAt": "2026-11-30T15:00:00Z"
+                }
+            ]
+        },
+        {
+            "name": "알림 잡 이력(AN01)",
+            "status": 200,
+            "total": 15,
+            "items": [
+                {
+                    "id": "01a159b1-b3f3-76ac-bffd-7a72c375a7d3",
+                    "type": "EVENT_CANCELED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a15725-b3ae-7223-8102-82bb4af144a5",
+                    "type": "RESULT_CHANGED",
+                    "status": "COMPLETED",
+                    "attempts": 2
+                },
+                {
+                    "id": "01a15725-b3ae-71fd-980d-712811a01764",
+                    "type": "RESULT_CHANGED",
+                    "status": "COMPLETED",
+                    "attempts": 2
+                },
+                {
+                    "id": "01a1510d-23d1-7718-a30f-fa8de0d4f882",
+                    "type": "EVENT_CANCELED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a148c7-f10a-764c-91c2-c03c17f65aff",
+                    "type": "EVENT_START",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a148c7-f0e0-7851-af51-cc6648db2cbf",
+                    "type": "EVENT_START",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a143b4-0924-798d-a9d9-50f2cec5b047",
+                    "type": "RESULT_CHANGED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a143b3-caf2-7124-b3c4-ab454b1286e3",
+                    "type": "RESULT_PUBLISHED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a143b3-c9fa-7bdf-8cce-e9c2c2641b7a",
+                    "type": "RESULT_PUBLISHED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                },
+                {
+                    "id": "01a143ab-887d-76a5-86c6-a5864c74aa07",
+                    "type": "EVENT_CANCELED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                }
+            ]
+        },
+        {
+            "name": "기존 추첨 실행·재추첨 상세(AD01~AD08·감사)",
+            "detail": {
+                "01a143aa-c00d-7520-ae86-8d1e9d225202": {
+                    "runs": [
+                        {
+                            "run": {
+                                "id": "01a143b1-2b69-7712-9914-ab5b7f5595cb",
+                                "eventId": "01a143aa-c00d-7520-ae86-8d1e9d225202",
+                                "runNumber": 0,
+                                "drawType": "INITIAL",
+                                "status": "CONFIRMED",
+                                "originalDrawId": null,
+                                "startedAt": "2026-10-16T07:50:46.912858Z",
+                                "confirmedAt": "2026-10-16T07:50:47.034251Z",
+                                "createdAt": "2026-10-16T07:50:46.889555Z"
+                            },
+                            "detail": {
+                                "results": [
+                                    {
+                                        "id": "01a143b1-2bfa-7848-8d1a-4cdb928091dd",
+                                        "prizeId": "01a143aa-c00d-7d39-8304-bf5c2646843a",
+                                        "prizeRank": 1,
+                                        "slotNumber": 1,
+                                        "selectionOrder": 1,
+                                        "resultType": "SELECTED",
+                                        "candidateId": "01a143b1-2baf-75e9-bffb-4995c88fe78c",
+                                        "userId": "01a143a8-b6de-778b-818b-b4c57be3a836",
+                                        "wasPublished": true,
+                                        "isCanceled": false
+                                    },
+                                    {
+                                        "id": "01a143b1-2bfa-7cfa-af08-18948c3e609b",
+                                        "prizeId": "01a143aa-c00d-7d39-8304-bf5c2646843a",
+                                        "prizeRank": 1,
+                                        "slotNumber": 2,
+                                        "selectionOrder": 2,
+                                        "resultType": "SELECTED",
+                                        "candidateId": "01a143b1-2baf-7320-af92-7602730da74d",
+                                        "userId": "01a14280-f678-725e-9a73-f62eeb5b7976",
+                                        "wasPublished": true,
+                                        "isCanceled": false
+                                    },
+                                    {
+                                        "id": "01a143b1-2bfb-7b5a-8194-c29b11340d6f",
+                                        "prizeId": "01a143aa-c00e-719b-9043-ee9f7395a016",
+                                        "prizeRank": 2,
+                                        "slotNumber": 1,
+                                        "selectionOrder": 3,
+                                        "resultType": "SELECTED",
+                                        "candidateId": "01a143b1-2bae-7bb9-a96e-db53d336aa99",
+                                        "userId": "01a14280-f678-71f8-b154-11b44c1926f2",
+                                        "wasPublished": true,
+                                        "isCanceled": false
+                                    }
+                                ],
+                                "execution": {
+                                    "failureCount": 0,
+                                    "latestFailure": null,
+                                    "retryAt": null,
+                                    "waitingForOperator": false,
+                                    "cancellations": []
+                                }
+                            },
+                            "checks": [
+                                {
+                                    "id": "01a143b3-cc01-72c4-81d3-baba577b30a6",
+                                    "drawRunId": "01a143b1-2b69-7712-9914-ab5b7f5595cb",
+                                    "passed": true,
+                                    "checks": [
+                                        {
+                                            "code": "SUPPORTED_INPUT",
+                                            "passed": true,
+                                            "message": "실행 종류·입력 버전·알고리즘 검증 범위: 일치"
+                                        },
+                                        {
+                                            "code": "FIXED_INPUT",
+                                            "passed": true,
+                                            "message": "입력·결과 확정 시각: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_RELATIONS",
+                                            "passed": true,
+                                            "message": "실행·원본 후보·응모자 연결: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_EVIDENCE",
+                                            "passed": true,
+                                            "message": "저장 응모 수량·등급·가중치 근거: 일치"
+                                        },
+                                        {
+                                            "code": "RESULTS",
+                                            "passed": true,
+                                            "message": "저장 경품 자리·선정 순서·후보·사용자 중복: 일치"
+                                        }
+                                    ],
+                                    "verifiedAt": "2026-10-16T07:53:39.072778Z",
+                                    "verifiedBy": "01a14280-f677-7a0a-a066-5553d7344fd2"
+                                }
+                            ],
+                            "failures": [],
+                            "audits": [
+                                {
+                                    "action": "DRAW_EXECUTE",
+                                    "actorId": null,
+                                    "createdAt": "2026-10-16T07:50:46.923914Z"
+                                }
+                            ],
+                            "participants": 5
+                        }
+                    ]
+                },
+                "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f": {
+                    "runs": [
+                        {
+                            "run": {
+                                "id": "01a143b4-0611-7e06-a04f-cf9c7412ae23",
+                                "eventId": "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f",
+                                "runNumber": 1,
+                                "drawType": "REPLACEMENT",
+                                "status": "CONFIRMED",
+                                "originalDrawId": "01a143b1-2a50-72e1-94c8-9e988222eb1d",
+                                "startedAt": "2026-10-16T07:53:53.970816Z",
+                                "confirmedAt": "2026-10-16T07:53:54.122170Z",
+                                "createdAt": "2026-10-16T07:53:53.937992Z"
+                            },
+                            "detail": {
+                                "results": [
+                                    {
+                                        "id": "01a143b4-06ca-7719-8901-b24385abc0b6",
+                                        "prizeId": "01a143aa-bf8c-7f0d-81e2-a0fe8a25cfd6",
+                                        "prizeRank": 1,
+                                        "slotNumber": 1,
+                                        "selectionOrder": 1,
+                                        "resultType": "SELECTED",
+                                        "candidateId": "01a143b1-2ab7-7af4-adcf-d39bb7a2e899",
+                                        "userId": "01a14280-f678-725e-9a73-f62eeb5b7976",
+                                        "wasPublished": true,
+                                        "isCanceled": false
+                                    }
+                                ],
+                                "execution": {
+                                    "failureCount": 0,
+                                    "latestFailure": null,
+                                    "retryAt": null,
+                                    "waitingForOperator": false,
+                                    "cancellations": [
+                                        {
+                                            "id": "01a143b4-0614-79e4-9e50-b3a1a9b79c0f",
+                                            "resultId": "01a143b1-2b32-7593-a9d6-7fc8d8a022d8",
+                                            "replacementRunId": "01a143b4-0611-7e06-a04f-cf9c7412ae23",
+                                            "canceledBy": "01a14280-f677-7a0a-a066-5553d7344fd2",
+                                            "reason": "[DEMO] 시연용 당첨 취소 및 빈자리 재추첨 검증",
+                                            "canceledAt": "2026-10-16T07:53:53.923081Z"
+                                        }
+                                    ]
+                                }
+                            },
+                            "checks": [
+                                {
+                                    "id": "01a143b4-07ee-7bd7-bde1-4365f746aa14",
+                                    "drawRunId": "01a143b4-0611-7e06-a04f-cf9c7412ae23",
+                                    "passed": true,
+                                    "checks": [
+                                        {
+                                            "code": "SUPPORTED_INPUT",
+                                            "passed": true,
+                                            "message": "실행 종류·입력 버전·알고리즘 검증 범위: 일치"
+                                        },
+                                        {
+                                            "code": "FIXED_INPUT",
+                                            "passed": true,
+                                            "message": "입력·결과 확정 시각: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_RELATIONS",
+                                            "passed": true,
+                                            "message": "실행·원본 후보·응모자 연결: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_EVIDENCE",
+                                            "passed": true,
+                                            "message": "저장 응모 수량·등급·가중치 근거: 일치"
+                                        },
+                                        {
+                                            "code": "REPLACEMENT_SOURCE",
+                                            "passed": true,
+                                            "message": "최초 조건·후보·최초 가중치·과거 당첨 후보 제외: 일치"
+                                        },
+                                        {
+                                            "code": "REPLACEMENT_SLOTS",
+                                            "passed": true,
+                                            "message": "고정 대상 자리·유지 결과의 원본 배정: 일치"
+                                        },
+                                        {
+                                            "code": "RESULTS",
+                                            "passed": true,
+                                            "message": "저장 경품 자리·선정 순서·후보·사용자 중복: 일치"
+                                        }
+                                    ],
+                                    "verifiedAt": "2026-10-16T07:53:54.414329Z",
+                                    "verifiedBy": "01a14280-f677-7a0a-a066-5553d7344fd2"
+                                }
+                            ],
+                            "failures": [],
+                            "audits": [
+                                {
+                                    "action": "DRAW_EXECUTE",
+                                    "actorId": "01a14280-f677-7a0a-a066-5553d7344fd2",
+                                    "createdAt": "2026-10-16T07:53:53.974958Z"
+                                }
+                            ],
+                            "participants": 3
+                        },
+                        {
+                            "run": {
+                                "id": "01a143b1-2a50-72e1-94c8-9e988222eb1d",
+                                "eventId": "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f",
+                                "runNumber": 0,
+                                "drawType": "INITIAL",
+                                "status": "CONFIRMED",
+                                "originalDrawId": null,
+                                "startedAt": "2026-10-16T07:50:46.640403Z",
+                                "confirmedAt": "2026-10-16T07:50:46.833041Z",
+                                "createdAt": "2026-10-16T07:50:46.608367Z"
+                            },
+                            "detail": {
+                                "results": [
+                                    {
+                                        "id": "01a143b1-2b32-7593-a9d6-7fc8d8a022d8",
+                                        "prizeId": "01a143aa-bf8c-7f0d-81e2-a0fe8a25cfd6",
+                                        "prizeRank": 1,
+                                        "slotNumber": 1,
+                                        "selectionOrder": 1,
+                                        "resultType": "SELECTED",
+                                        "candidateId": "01a143b1-2ab7-7704-bcf6-7f00da2bb0f0",
+                                        "userId": "01a14280-f678-7f8e-b785-3bcfdd11279b",
+                                        "wasPublished": true,
+                                        "isCanceled": true
+                                    },
+                                    {
+                                        "id": "01a143b1-2b35-718e-9406-3208a3faff4f",
+                                        "prizeId": "01a143aa-bf8c-7f0d-81e2-a0fe8a25cfd6",
+                                        "prizeRank": 1,
+                                        "slotNumber": 2,
+                                        "selectionOrder": 2,
+                                        "resultType": "SELECTED",
+                                        "candidateId": "01a143b1-2ab7-7cd5-bfd8-c2c50a3cf389",
+                                        "userId": "01a14280-f678-7100-9c3d-ffb9873fadcf",
+                                        "wasPublished": true,
+                                        "isCanceled": false
+                                    }
+                                ],
+                                "execution": {
+                                    "failureCount": 0,
+                                    "latestFailure": null,
+                                    "retryAt": null,
+                                    "waitingForOperator": false,
+                                    "cancellations": [
+                                        {
+                                            "id": "01a143b4-0614-79e4-9e50-b3a1a9b79c0f",
+                                            "resultId": "01a143b1-2b32-7593-a9d6-7fc8d8a022d8",
+                                            "replacementRunId": "01a143b4-0611-7e06-a04f-cf9c7412ae23",
+                                            "canceledBy": "01a14280-f677-7a0a-a066-5553d7344fd2",
+                                            "reason": "[DEMO] 시연용 당첨 취소 및 빈자리 재추첨 검증",
+                                            "canceledAt": "2026-10-16T07:53:53.923081Z"
+                                        }
+                                    ]
+                                }
+                            },
+                            "checks": [
+                                {
+                                    "id": "01a143b3-cb09-759a-b612-b2da91af0be2",
+                                    "drawRunId": "01a143b1-2a50-72e1-94c8-9e988222eb1d",
+                                    "passed": true,
+                                    "checks": [
+                                        {
+                                            "code": "SUPPORTED_INPUT",
+                                            "passed": true,
+                                            "message": "실행 종류·입력 버전·알고리즘 검증 범위: 일치"
+                                        },
+                                        {
+                                            "code": "FIXED_INPUT",
+                                            "passed": true,
+                                            "message": "입력·결과 확정 시각: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_RELATIONS",
+                                            "passed": true,
+                                            "message": "실행·원본 후보·응모자 연결: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_EVIDENCE",
+                                            "passed": true,
+                                            "message": "저장 응모 수량·등급·가중치 근거: 일치"
+                                        },
+                                        {
+                                            "code": "RESULTS",
+                                            "passed": true,
+                                            "message": "저장 경품 자리·선정 순서·후보·사용자 중복: 일치"
+                                        }
+                                    ],
+                                    "verifiedAt": "2026-10-16T07:53:38.824962Z",
+                                    "verifiedBy": "01a14280-f677-7a0a-a066-5553d7344fd2"
+                                },
+                                {
+                                    "id": "01a143b1-dcf3-7e7f-bcf4-4f296bba9a05",
+                                    "drawRunId": "01a143b1-2a50-72e1-94c8-9e988222eb1d",
+                                    "passed": true,
+                                    "checks": [
+                                        {
+                                            "code": "SUPPORTED_INPUT",
+                                            "passed": true,
+                                            "message": "실행 종류·입력 버전·알고리즘 검증 범위: 일치"
+                                        },
+                                        {
+                                            "code": "FIXED_INPUT",
+                                            "passed": true,
+                                            "message": "입력·결과 확정 시각: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_RELATIONS",
+                                            "passed": true,
+                                            "message": "실행·원본 후보·응모자 연결: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_EVIDENCE",
+                                            "passed": true,
+                                            "message": "저장 응모 수량·등급·가중치 근거: 일치"
+                                        },
+                                        {
+                                            "code": "RESULTS",
+                                            "passed": true,
+                                            "message": "저장 경품 자리·선정 순서·후보·사용자 중복: 일치"
+                                        }
+                                    ],
+                                    "verifiedAt": "2026-10-16T07:51:32.339354Z",
+                                    "verifiedBy": "01a14280-f677-7a0a-a066-5553d7344fd2"
+                                },
+                                {
+                                    "id": "01a143b1-868a-7fee-aa1d-02641f29efa2",
+                                    "drawRunId": "01a143b1-2a50-72e1-94c8-9e988222eb1d",
+                                    "passed": true,
+                                    "checks": [
+                                        {
+                                            "code": "SUPPORTED_INPUT",
+                                            "passed": true,
+                                            "message": "실행 종류·입력 버전·알고리즘 검증 범위: 일치"
+                                        },
+                                        {
+                                            "code": "FIXED_INPUT",
+                                            "passed": true,
+                                            "message": "입력·결과 확정 시각: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_RELATIONS",
+                                            "passed": true,
+                                            "message": "실행·원본 후보·응모자 연결: 일치"
+                                        },
+                                        {
+                                            "code": "CANDIDATE_EVIDENCE",
+                                            "passed": true,
+                                            "message": "저장 응모 수량·등급·가중치 근거: 일치"
+                                        },
+                                        {
+                                            "code": "RESULTS",
+                                            "passed": true,
+                                            "message": "저장 경품 자리·선정 순서·후보·사용자 중복: 일치"
+                                        }
+                                    ],
+                                    "verifiedAt": "2026-10-16T07:51:10.213754Z",
+                                    "verifiedBy": "01a14280-f677-7a0a-a066-5553d7344fd2"
+                                }
+                            ],
+                            "failures": [],
+                            "audits": [
+                                {
+                                    "action": "DRAW_EXECUTE",
+                                    "actorId": null,
+                                    "createdAt": "2026-10-16T07:50:46.651006Z"
+                                }
+                            ],
+                            "participants": 5
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

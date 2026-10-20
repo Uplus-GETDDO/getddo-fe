@@ -1,0 +1,189 @@
+{
+    "at": "2026-10-20T17:28:30.770Z",
+    "kind": "배포 통합 인수 잔여 — draw",
+    "checks": [
+        {
+            "name": "격리 이벤트 생성(추첨)",
+            "status": 201,
+            "code": "SUCCESS",
+            "eventId": "01a15a5b-8edb-7711-a4cb-babe1f6948c3",
+            "startsAt": "2026-10-20T17:27:31.012Z"
+        },
+        {
+            "name": "추첨 대상 응모",
+            "status": 201,
+            "receipt": "ACCEPTED"
+        },
+        {
+            "name": "서버 마감·자동 추첨",
+            "waitedUntil": "2026-10-20T17:36:55.329Z",
+            "run": {
+                "id": "01a15a62-f508-7a60-8123-ad8ec2cf35ba",
+                "eventId": "01a15a5b-8edb-7711-a4cb-babe1f6948c3",
+                "runNumber": 0,
+                "drawType": "INITIAL",
+                "status": "CONFIRMED",
+                "originalDrawId": null,
+                "startedAt": "2026-10-20T17:36:37.175099Z",
+                "confirmedAt": "2026-10-20T17:36:37.355828Z",
+                "createdAt": "2026-10-20T17:36:37.128897Z"
+            }
+        },
+        {
+            "name": "관리자 추첨 검토",
+            "drawStatus": "CONFIRMED",
+            "results": [
+                {
+                    "id": "01a15a62-f5ec-7eca-a507-d10faaa058c0",
+                    "prizeId": "01a15a5b-8edd-70ef-bdfa-02ea7c0d8450",
+                    "prizeRank": 1,
+                    "slotNumber": 1,
+                    "selectionOrder": 1,
+                    "resultType": "SELECTED",
+                    "candidateId": "01a15a62-f582-751c-8738-91155c20a320",
+                    "userId": "01a14280-f678-7617-9364-6b79d2dcbef2",
+                    "wasPublished": false,
+                    "isCanceled": false
+                }
+            ],
+            "execution": {
+                "failureCount": 0,
+                "latestFailure": null,
+                "retryAt": null,
+                "waitingForOperator": false,
+                "cancellations": []
+            },
+            "participantCount": 1,
+            "candidates": [
+                {
+                    "userId": "01a14280-f678-7617-9364-6b79d2dcbef2",
+                    "ticketCount": 1,
+                    "weight": 1
+                }
+            ],
+            "failuresTotal": 0,
+            "auditsTotal": 1,
+            "verificationStatus": 201,
+            "verification": {
+                "id": "01a15a63-4246-79aa-904b-4b7b5f0b3d22",
+                "drawRunId": "01a15a62-f508-7a60-8123-ad8ec2cf35ba",
+                "passed": true,
+                "checks": [
+                    {
+                        "code": "SUPPORTED_INPUT",
+                        "passed": true,
+                        "message": "실행 종류·입력 버전·알고리즘 검증 범위: 일치"
+                    },
+                    {
+                        "code": "FIXED_INPUT",
+                        "passed": true,
+                        "message": "입력·결과 확정 시각: 일치"
+                    },
+                    {
+                        "code": "CANDIDATE_RELATIONS",
+                        "passed": true,
+                        "message": "실행·원본 후보·응모자 연결: 일치"
+                    },
+                    {
+                        "code": "CANDIDATE_EVIDENCE",
+                        "passed": true,
+                        "message": "저장 응모 수량·등급·가중치 근거: 일치"
+                    },
+                    {
+                        "code": "RESULTS",
+                        "passed": true,
+                        "message": "저장 경품 자리·선정 순서·후보·사용자 중복: 일치"
+                    }
+                ],
+                "verifiedAt": "2026-10-20T17:36:56.898010Z",
+                "verifiedBy": "01a14280-f677-7a0a-a066-5553d7344fd2"
+            }
+        },
+        {
+            "name": "발표(result-confirmation)",
+            "status": 409,
+            "code": "DRAW-005",
+            "data": {
+                "success": false,
+                "code": "DRAW-005",
+                "message": "추첨 실행 상태 또는 스냅샷이 올바르지 않습니다.",
+                "data": null
+            },
+            "eventStatusAfter": "DRAW_CONFIRMED"
+        },
+        {
+            "name": "공개 결과·마스킹·본인 결과",
+            "publicStatus": 200,
+            "isPublished": false,
+            "displayStatus": "WAITING",
+            "prizes": [],
+            "myStatus": 200,
+            "myResult": {
+                "eventId": "01a15a5b-8edb-7711-a4cb-babe1f6948c3",
+                "result": "PENDING",
+                "prize": null,
+                "isPublished": false,
+                "revision": null,
+                "serverTime": "2026-10-20T17:36:57.126128347Z"
+            }
+        },
+        {
+            "name": "발표 알림·복구",
+            "jobs": [
+                {
+                    "type": "RESULT_PUBLISHED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                }
+            ],
+            "userNotifications": [
+                {
+                    "id": "01a15a63-c489-7a2a-a256-7dde7c5dad45",
+                    "title": "추첨 결과 발표",
+                    "body": "응모한 이벤트의 추첨 결과가 발표되었습니다.",
+                    "createdAt": "2026-10-20T17:37:30.245437Z",
+                    "isRead": false,
+                    "eventId": "01a15a5b-8edb-7711-a4cb-babe1f6948c3",
+                    "linkUrl": "/events/01a15a5b-8edb-7711-a4cb-babe1f6948c3/results"
+                }
+            ]
+        },
+        {
+            "name": "발표 재시도·최종 상태",
+            "note": "result-confirmation 재요청 200 — 최초 409 DRAW-005는 검증 직후 호출의 타이밍 이슈로 기록",
+            "retryStatus": 200,
+            "confirmation": {
+                "confirmedAt": "2026-10-20T17:37:29.281746Z",
+                "isPublished": true,
+                "revision": 1,
+                "publicationId": "01a15a63-c0cb-7c91-a269-ce9f18adf766"
+            },
+            "eventStatus": "PUBLISHED",
+            "publicResults": {
+                "isPublished": true,
+                "displayStatus": "PUBLISHED",
+                "winners": [
+                    {
+                        "maskedName": "테*****1",
+                        "maskedPhoneNum": null
+                    }
+                ]
+            },
+            "myResult": {
+                "result": "WON",
+                "prizeRank": 1
+            },
+            "notificationJobs": [
+                {
+                    "type": "RESULT_PUBLISHED",
+                    "status": "COMPLETED",
+                    "attempts": 1
+                }
+            ],
+            "userNotification": {
+                "title": "추첨 결과 발표",
+                "createdAt": "2026-10-20T17:37:30.245437Z"
+            }
+        }
+    ]
+}
