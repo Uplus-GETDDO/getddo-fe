@@ -91,7 +91,7 @@ async function collect(url, size, schema) {
     const items = [];
     for (let n = 1; ; n++) {
         const data = await request(`${url}?page=${n}&size=${size}`, page(schema));
-        if (!data?.items) break;
+        if (!data?.items) throw new Error(`전체 수집 실패: ${url} page=${n}`);
         items.push(...data.items);
         if (items.length >= data.totalElements) break;
         if (!data.items.length) throw new Error('전체 수집 중 빈 페이지');

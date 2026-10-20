@@ -1,3 +1,5 @@
+import type { ChangeEvent } from 'react';
+
 import { useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { ZodError } from 'zod';
@@ -37,16 +39,17 @@ export function MissionFormDialog({
     const mutation = useCreateMission();
     const [error, setError] = useState('');
     const [uncertain, setUncertain] = useState(false);
-    const { register, control, handleSubmit, reset } = useForm<MissionFormValues>({
-        defaultValues: {
-            title: '',
-            description: '',
-            missionType: 'SURVEY',
-            startsAt: '',
-            endsAt: '',
-            questions: [{ ...emptyQuestion }],
-        },
-    });
+    const { register, control, handleSubmit, reset, getValues, setValue } =
+        useForm<MissionFormValues>({
+            defaultValues: {
+                title: '',
+                description: '',
+                missionType: 'SURVEY',
+                startsAt: '',
+                endsAt: '',
+                questions: [{ ...emptyQuestion }],
+            },
+        });
     const { fields, append, remove } = useFieldArray({ control, name: 'questions' });
     const values = useWatch({ control });
     const quiz = values.missionType === 'QUIZ';
@@ -120,7 +123,23 @@ export function MissionFormDialog({
                             미션 유형
                             <select
                                 className="border-border-default bg-surface-elevated min-h-11 rounded-md border p-2"
-                                {...register('missionType')}
+                                {...register('missionType', {
+                                    onChange: (event: ChangeEvent<HTMLSelectElement>) => {
+                                        const nextQuiz = event.target.value === 'QUIZ';
+                                        getValues('questions').forEach((q, i) => {
+                                            const allowed = nextQuiz
+                                                ? q.questionType !== 'FREE_TEXT'
+                                                : ['SINGLE_CHOICE', 'FREE_TEXT'].includes(
+                                                      q.questionType,
+                                                  );
+                                            if (!allowed)
+                                                setValue(
+                                                    `questions.${i}.questionType`,
+                                                    'SINGLE_CHOICE',
+                                                );
+                                        });
+                                    },
+                                })}
                             >
                                 <option value="SURVEY">설문</option>
                                 <option value="QUIZ">퀴즈</option>
