@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useEventList } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
+import { Button } from '@shared/ui/button';
 import { LoadingBlock, Skeleton, SkeletonCard, SkeletonHeading } from '@shared/ui/skeleton';
 
 import { RAFFLE_SECTION_IDS } from './model/sectionIds';
@@ -18,6 +19,12 @@ const CONTAINER = 'mx-auto w-full max-w-312 px-6 pb-28';
 
 /** ADR-010 — 가중치 적용 이벤트는 사용자·이벤트별 누적 5장까지만 쓸 수 있다 */
 const ENTRY_TICKET_LIMIT = 5;
+
+/**
+ * 오픈 예정에 한 번에 두는 장수 — 세 칸 한 줄이 꽉 차는 수다.
+ * 래플이 쌓이면 오픈 예정만 끝없이 길어져 아래 마감한 래플까지 내려가지 못한다 ('더 보기'로 늘린다)
+ */
+const UPCOMING_PAGE_SIZE = 6;
 
 type RaffleView = 'now' | 'closed';
 
@@ -38,6 +45,7 @@ export function TimeRafflePage() {
     const pendingScroll = useRef<string | null>(null);
     // 처음 들어왔을 때는 움직이지 않는다 — 진행 중 카드가 밀려 들어오면 정보가 늦게 읽힌다. 전체보기·뒤로로 바꿀 때만 민다
     const [slideOnSwitch, setSlideOnSwitch] = useState(false);
+    const [shownUpcoming, setShownUpcoming] = useState(UPCOMING_PAGE_SIZE);
 
     const scrollTo = (target: string) => {
         document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -168,15 +176,30 @@ export function TimeRafflePage() {
                                         오픈 예정인 래플이 없어요.
                                     </p>
                                 ) : (
-                                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                        {byOpensAtAsc.map((event) => (
-                                            <UpcomingRaffleCard
-                                                key={event.id}
-                                                event={event}
-                                                now={now}
-                                                ticketLimit={ENTRY_TICKET_LIMIT}
-                                            />
-                                        ))}
+                                    <div className="flex flex-col gap-6">
+                                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                            {byOpensAtAsc.slice(0, shownUpcoming).map((event) => (
+                                                <UpcomingRaffleCard
+                                                    key={event.id}
+                                                    event={event}
+                                                    now={now}
+                                                    ticketLimit={ENTRY_TICKET_LIMIT}
+                                                />
+                                            ))}
+                                        </div>
+                                        {byOpensAtAsc.length > shownUpcoming && (
+                                            <Button
+                                                variant="secondary"
+                                                className="self-center"
+                                                onClick={() =>
+                                                    setShownUpcoming(
+                                                        (count) => count + UPCOMING_PAGE_SIZE,
+                                                    )
+                                                }
+                                            >
+                                                더 보기
+                                            </Button>
+                                        )}
                                     </div>
                                 )}
                             </section>
