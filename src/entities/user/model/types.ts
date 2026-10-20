@@ -17,3 +17,17 @@ export const virtualUserSchema = z.object({
 export type UserRole = z.infer<typeof userRoleSchema>;
 export type Membership = z.infer<typeof membershipSchema>;
 export type VirtualUser = z.infer<typeof virtualUserSchema>;
+
+export const userStatusSchema = z.enum(['ACTIVE', 'INACTIVE']);
+export const adminUserSchema = z.object({
+    id: z.uuid(),
+    name: z.string().max(20),
+    role: userRoleSchema,
+    status: userStatusSchema,
+    membership: membershipSchema.nullable(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+});
+
+export type AdminUser = z.infer<typeof adminUserSchema>;
+export type UserStatus = z.infer<typeof userStatusSchema>;
