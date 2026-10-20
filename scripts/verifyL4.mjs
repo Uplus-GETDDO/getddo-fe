@@ -57,6 +57,21 @@ async function request(method, url, body, role = 'USER') {
         retryAfter: response.headers.get('retry-after'),
     };
 }
+async function put(url, body, role = 'USER') {
+    let result = await request('PUT', url, body, role);
+    if (result.status === 429) {
+        check('429 실제 빈도 제한', {
+            status: 429,
+            code: result.code,
+            retryAfter: result.retryAfter,
+        });
+        await new Promise((resolve) =>
+            setTimeout(resolve, (Number(result.retryAfter) || 60) * 1000 + 100),
+        );
+        result = await request('PUT', url, body, role);
+    }
+    return result;
+}
 function inputFor(code, start) {
     const random = sessionModel.createXorshift32(start.gameData.seed);
     if (code === 'COLOR_WORD') {
@@ -146,28 +161,13 @@ if (mode !== 'edges')
         schemas.gameStartSchema.parse(start.data);
         const { input, expected } = inputFor(game.code, start.data);
         const body = { playToken: start.data.playToken, validationData: input };
-        let result = await request(
-            'PUT',
-            `/games/${game.id}/plays/${start.data.playId}/result`,
-            body,
-        );
-        if (result.status === 429) {
-            check('429 실제 대기', { status: 429, retryAfter: result.retryAfter });
-            await new Promise((resolve) =>
-                setTimeout(resolve, (Number(result.retryAfter) || 60) * 1000 + 100),
-            );
-            result = await request(
-                'PUT',
-                `/games/${game.id}/plays/${start.data.playId}/result`,
-                body,
-            );
-        }
+        const result = await put(`/games/${game.id}/plays/${start.data.playId}/result`, body);
         if (result.status === 200) schemas.playResultSchema.parse(result.data);
-        const duplicate = await request(
-            'PUT',
-            `/games/${game.id}/plays/${start.data.playId}/result`,
-            body,
-        );
+        const duplicate = await put(`/games/${game.id}/plays/${start.data.playId}/result`, body);
+        const duplicateMatches =
+            duplicate.status === 200 &&
+            result.status === 200 &&
+            JSON.stringify(duplicate.data) === JSON.stringify(result.data);
         const after = await request('GET', `/games/${game.id}/statistics/me`);
         const walletAfter = await request('GET', '/tickets/me');
         const histories = await request('GET', '/tickets/histories/me?size=100');
@@ -179,7 +179,7 @@ if (mode !== 'edges')
             expectedScore: expected,
             scoreMatches: result.data?.score === expected,
             duplicateStatus: duplicate.status,
-            duplicateMatches: JSON.stringify(duplicate.data) === JSON.stringify(result.data),
+            duplicateMatches,
             statisticsAfter: after.data,
             validPlayDelta: after.data.validPlayCount - before.data.validPlayCount,
             totalScoreDelta: after.data.totalScore - before.data.totalScore,
@@ -200,6 +200,7 @@ if (mode !== 'edges')
         });
         if (result.data?.status !== 'VALID' || result.data.score !== expected)
             throw new Error(`${game.code} 서버 판정 불일치`);
+        if (!duplicateMatches) throw new Error(`${game.code} 중복 제출 결과 불일치`);
         const adminStart = await request('POST', `/games/${game.id}/plays`, undefined, 'ADMIN');
         const adminStats = await request(
             'GET',
@@ -209,8 +210,7 @@ if (mode !== 'edges')
         );
         const adminSubmit =
             adminStart.status === 201
-                ? await request(
-                      'PUT',
+                ? await put(
                       `/games/${game.id}/plays/${adminStart.data.playId}/result`,
                       { playToken: adminStart.data.playToken, validationData: input },
                       'ADMIN',
@@ -226,21 +226,6 @@ if (mode !== 'edges')
     }
 
 if (mode === 'edges') {
-    const put = async (url, body) => {
-        let result = await request('PUT', url, body);
-        if (result.status === 429) {
-            check('429 실제 빈도 제한', {
-                status: 429,
-                code: result.code,
-                retryAfter: result.retryAfter,
-            });
-            await new Promise((resolve) =>
-                setTimeout(resolve, (Number(result.retryAfter) || 60) * 1000 + 100),
-            );
-            result = await request('PUT', url, body);
-        }
-        return result;
-    };
     for (const game of list.data) {
         const start = (await request('POST', `/games/${game.id}/plays`)).data;
         const random = sessionModel.createXorshift32(start.gameData.seed);
