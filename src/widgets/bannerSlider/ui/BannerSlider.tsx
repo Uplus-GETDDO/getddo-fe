@@ -16,12 +16,43 @@ import { Skeleton } from '@shared/ui/skeleton';
 import { formatRemaining } from '@shared/utils/date';
 
 import bannerBackground from '../assets/banner-bg.jpg';
-import { BannerMascot } from './BannerMascot';
+import bannerMascot from '../assets/banner-mascot.webp';
+import { useCenteredImage } from '../utils/imageContentBox';
 
 const AUTO_SLIDE_MS = 5000;
 const MAX_SLIDES = 5;
-/** 피그마 홈 배너의 타꼬 캐릭터 — 배너 이미지 대신 장식으로 보여주고, 넘어올 때마다 저글링한다 */
-const SHOW_MASCOT = true;
+
+/**
+ * 배너 오른쪽 그림 — 상품 그림이 있으면 상품을, 없거나 불러오지 못하면 타꼬 캐릭터를 둔다 (넓은 화면만).
+ * 응모를 정할 때 가장 먼저 보는 게 '무엇을 주는지'라 큰 자리는 상품이 쓴다 (피그마 홈 배너).
+ * 상품 그림은 정사각형 투명 PNG로 받는다 — 곱하기 섞기는 어두운 상품 위로 배경 물결이 비쳐 쓰지 않는다
+ */
+function BannerVisual({ imageUrl }: { imageUrl: string | null | undefined }) {
+    const [failedUrl, setFailedUrl] = useState<string | null>(null);
+    // 사진마다 여백이 달라 아래로 쏠려 보였다 — 실제 상품 영역을 재서 칸 가운데로 옮긴다 (translate 클래스와 따로 합쳐지는 transform)
+    const centered = useCenteredImage(imageUrl);
+    if (imageUrl && failedUrl !== imageUrl) {
+        return (
+            <img
+                src={imageUrl}
+                alt=""
+                aria-hidden
+                onError={() => setFailedUrl(imageUrl)}
+                style={centered ? { transform: centered } : undefined}
+                className="pointer-events-none absolute top-1/2 right-16 hidden size-80 -translate-y-1/2 object-contain drop-shadow-xl select-none xl:block"
+            />
+        );
+    }
+    // 피그마 홈 배너의 타꼬 캐릭터 — 배너 오른쪽 위로 살짝 걸친다. 배너 안에 두어 넘길 때 배너와 함께 미끄러진다
+    return (
+        <img
+            src={bannerMascot}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute -top-16.75 right-8 hidden w-125 select-none xl:block"
+        />
+    );
+}
 
 /**
  * 배너 설명 — 목록(E01)에는 설명이 없어(spec EventSummary) 상세(E02)에서 받는다.
@@ -214,20 +245,14 @@ export function BannerSlider({
                                     </div>
                                     {/* 상세로 이동하는 버튼이라 '응모하러 가기' — 실제로 응모권을 쓰는 '응모하기'와 구분한다 */}
                                     {/* 버튼과 갱신 표시는 배너 전체 링크 위에 올린다 */}
-                                    <div className="relative z-2 flex flex-wrap items-center gap-3">
+                                    <div className="relative z-2 flex flex-wrap items-end gap-3">
                                         <Button asChild size="lg" className="px-7">
                                             <Link to={eventDetailPath(event)}>응모하러 가기</Link>
                                         </Button>
                                         {renderRefresh?.(event, slideIndex === safeIndex)}
                                     </div>
                                 </div>
-                                {/* 피그마 홈 — 무너 캐릭터가 배너 오른쪽 위로 살짝 걸친다 (넓은 화면만). 배너 안에 두어 넘길 때 배너와 함께 미끄러진다 */}
-                                {SHOW_MASCOT && (
-                                    <BannerMascot
-                                        active={slideIndex === safeIndex}
-                                        className="absolute -top-14 right-10 hidden w-112 xl:block"
-                                    />
-                                )}
+                                <BannerVisual imageUrl={event.bannerImageUrl} />
                             </div>
                         );
                     })}
