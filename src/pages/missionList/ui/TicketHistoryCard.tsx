@@ -47,6 +47,17 @@ export function TicketHistoryCard({ className }: { className?: string }) {
                         />
                     )
                 }
+                // 10건 뒤에도 내역이 있으면 마이페이지 응모권 내역으로 — 카드 아래에 두면 스크롤 끝이라 잘 보이지 않았다
+                action={
+                    query.hasNextPage && (
+                        <Button asChild variant="link" size="text">
+                            <Link to="/my-tickets">
+                                전체보기
+                                <ChevronRight />
+                            </Link>
+                        </Button>
+                    )
+                }
             />
             <div
                 className={cn(
@@ -101,15 +112,6 @@ export function TicketHistoryCard({ className }: { className?: string }) {
                                     </Fragment>
                                 ))}
                             </ul>
-                        )}
-                        {/* 10건 뒤에도 내역이 있으면 마이페이지 응모권 내역으로 — 기간·종류를 거르며 전부 볼 수 있다 */}
-                        {query.hasNextPage && (
-                            <Button asChild variant="secondary" className="w-full">
-                                <Link to="/my-tickets">
-                                    전체보기
-                                    <ChevronRight />
-                                </Link>
-                            </Button>
                         )}
                     </div>
                 </div>

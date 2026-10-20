@@ -12,7 +12,7 @@ import { Button } from '@shared/ui/button';
 import { Pager } from '@shared/ui/pager';
 import { Skeleton } from '@shared/ui/skeleton';
 
-import { BannerSlide } from './BannerSlide';
+import { BannerFrame, BannerSlide } from './BannerSlide';
 
 const AUTO_SLIDE_MS = 5000;
 
@@ -28,8 +28,20 @@ function ActiveRefresh({
     return event && event.status === 'open' ? render(event, true) : null;
 }
 
+/** 배너 목록 실패 안내와 다시 불러오기 */
+function BannerLoadError({ retrying, onRetry }: { retrying: boolean; onRetry: () => void }) {
+    return (
+        <div role="status" className="flex flex-wrap items-center gap-2">
+            <p className="text-body-sm text-fg-secondary">배너를 불러오지 못했습니다.</p>
+            <Button variant="secondary" size="sm" disabled={retrying} onClick={onRetry}>
+                배너 다시 불러오기
+            </Button>
+        </div>
+    );
+}
+
 /**
- * 홈 관리 배너 — 관리자가 등록한 배너(B01)를 순서대로 넘긴다.
+ * 홈 관리 배너 —관리자가 등록한 배너(B01)를 순서대로 넘긴다.
  * 자동 재생은 한 바퀴만 돌고 멈추며, 마우스·포커스가 안에 있거나 '자동 재생 정지'를 누르면 멈춘다. 동작 줄이기 설정이면 켜지 않는다.
  * 배너 아래 줄 왼쪽에는 페이지가 넣는 내용(바로가기), 오른쪽에는 갱신 표시와 넘김 화살표를 둔다
  */
@@ -115,19 +127,17 @@ export function BannerSlider({
                 if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
             }}
         >
-            {isError && (
-                <div role="status" className="flex flex-wrap items-center gap-2">
-                    <p className="text-body-sm text-fg-secondary">배너를 불러오지 못했습니다.</p>
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        disabled={isFetching}
-                        onClick={() => void refetch()}
-                    >
-                        배너 다시 불러오기
-                    </Button>
-                </div>
-            )}
+            {isError &&
+                (total === 0 ? (
+                    // 받아 둔 배너가 없으면 배너 크기의 빈 틀 안에 안내를 둔다 — 자리가 빠지면 아래 섹션이 밀려 올라온다
+                    <div className="force-light">
+                        <BannerFrame>
+                            <BannerLoadError retrying={isFetching} onRetry={() => void refetch()} />
+                        </BannerFrame>
+                    </div>
+                ) : (
+                    <BannerLoadError retrying={isFetching} onRetry={() => void refetch()} />
+                ))}
             {total > 0 && (
                 // 그림 배너라 다크 모드에서도 라이트 색을 쓴다 (tokens.css force-light) — 아래 줄은 페이지 색을 따른다
                 <div className="force-light overflow-hidden rounded-2xl">

@@ -198,3 +198,13 @@ describe('홈 관리 배너', () => {
         expect(screen.getByRole('link', { name: '일반 이벤트 상세 보기' })).toBeInTheDocument();
     });
 });
+
+describe('배너 목록 실패', () => {
+    it('받아 둔 배너가 없으면 배너 크기의 빈 틀 안에 실패 안내와 다시 불러오기를 둔다', async () => {
+        get.mockRejectedValue(new Error('network'));
+        mount();
+        const status = await screen.findByText('배너를 불러오지 못했습니다.');
+        expect(status.closest('.min-h-91\\.25')).not.toBeNull();
+        expect(screen.getByRole('button', { name: '배너 다시 불러오기' })).toBeInTheDocument();
+    });
+});

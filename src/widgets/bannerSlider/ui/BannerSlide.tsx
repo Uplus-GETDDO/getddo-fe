@@ -18,7 +18,24 @@ import bannerBackground from '../assets/banner-bg.jpg';
 const SLIDE_BOX = 'relative flex min-h-91.25 w-full flex-col overflow-hidden rounded-2xl';
 
 /**
- * 관리 배너 한 장 — 관리자가 올린 그림(B01 imageUrl)을 배경으로 통째로 깔고, 글은 연결 이벤트(E02)에서 받아 왼쪽에 얹는다.
+ * 배너를 그리지 못할 때의 빈 틀 — 노란 기본 배경을 배너 크기로 깔고 아래 왼쪽에 안내를 둔다.
+ * 배너 목록(B01)이 실패해도 홈 맨 위 자리가 통째로 빠져 아래가 밀려 올라오지 않게 한다
+ */
+export function BannerFrame({ children }: { children: ReactNode }) {
+    return (
+        <div className={`bg-play-yellow ${SLIDE_BOX}`}>
+            <div
+                aria-hidden
+                className="absolute inset-0 bg-cover bg-right-bottom"
+                style={{ backgroundImage: `url(${bannerBackground})` }}
+            />
+            <div className="relative mt-auto p-6 sm:px-12.5">{children}</div>
+        </div>
+    );
+}
+
+/**
+ * 관리 배너 한 장 —관리자가 올린 그림(B01 imageUrl)을 배경으로 통째로 깔고, 글은 연결 이벤트(E02)에서 받아 왼쪽에 얹는다.
  * 남은 시간·참여 인원은 계속 바뀌어 그림에 넣을 수 없고, 그림 속 글은 좁은 화면에서 잘리고 화면 낭독기가 읽지 못한다.
  * 그래서 그림은 왼쪽(글 자리)을 비운 템플릿으로 받는다. 그림을 못 불러오면 노란 기본 배경으로 대신한다.
  * 배너 어디를 눌러도 상세로 간다 — 버튼·캐릭터는 두지 않는다

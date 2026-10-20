@@ -1,5 +1,3 @@
-import { Gift, Ticket, UsersRound } from 'lucide-react';
-
 import { useEntryStatistics } from '@entities/entry';
 import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Badge } from '@shared/ui/badge';
@@ -32,23 +30,22 @@ export function LiveEntryStatus({
     }
 
     return (
+        // 칩은 흰 바탕 글자만 — 관리자 배너 그림 위에 얹혀 연노랑 칩은 그림 색과 섞였고, 칩마다 아이콘을 달면 장식만 늘었다.
+        // 왼쪽 위 마감 탭(Badge surface)과 같은 흰 알약이라 배너 위 표시가 한 가지 모양으로 모인다
         // 칩 줄 높이를 먼저 잡아 둔다 — 받기 전·실패해 값이 없을 때도 아래 버튼이 들썩이지 않는다.
         // 받는 중·실패 안내는 버튼 옆 갱신 표시(LiveEntryRefresh)가 맡고, 실패해도 받아 둔 수치는 그대로 둔다
-        <div className="flex min-h-6.5 flex-wrap items-center gap-2" aria-live="polite">
+        <div className="flex min-h-7 flex-wrap items-center gap-2" aria-live="polite">
             {data && (
                 <>
                     {winnerCount != null && (
-                        <Badge variant="accent" size="md" className="gap-2.5">
-                            <Gift className="size-5" />
+                        <Badge variant="surface" size="lg" className="tabular-nums">
                             당첨 {formatNumber(winnerCount)}명
                         </Badge>
                     )}
-                    <Badge variant="accent" size="md" className="gap-2.5">
-                        <UsersRound className="size-5" />
+                    <Badge variant="surface" size="lg" className="tabular-nums">
                         {formatNumber(data.participantCount)}명 참여 중
                     </Badge>
-                    <Badge variant="accent" size="md" className="gap-2.5">
-                        <Ticket className="size-5" />
+                    <Badge variant="surface" size="lg" className="tabular-nums">
                         {formatNumber(data.totalSpentTicketCount)}장 사용
                     </Badge>
                 </>

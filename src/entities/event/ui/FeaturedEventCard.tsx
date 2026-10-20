@@ -82,13 +82,14 @@ export function FeaturedEventCard({
                      * ③ 운영 시간·설명(보조색) ④ 숫자와 응모 버튼(맨 아래 한 줄)
                      */}
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                        <span className="text-body-bold text-fg-primary flex items-center gap-1.5">
+                        {/* 윗줄은 제목(20)보다 작게 — 진행중 14, 남은 시간 16. 18로 두면 제목과 크기가 겨뤄 카드 머리가 무거웠다 */}
+                        <span className="text-body-sm-bold text-fg-primary flex items-center gap-1.5">
                             <span aria-hidden className="bg-brand-primary size-2 rounded-full" />
                             진행중
                         </span>
                         {remainingMs > 0 && (
-                            <span className="text-subhead text-fg-primary flex items-center gap-1 tabular-nums">
-                                <Timer aria-hidden className="size-4.5" />
+                            <span className="text-body-bold text-fg-primary flex items-center gap-1 tabular-nums">
+                                <Timer aria-hidden className="size-4" />
                                 {formatRemaining(remainingMs)} 남음
                             </span>
                         )}
