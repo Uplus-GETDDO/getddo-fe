@@ -34,20 +34,25 @@ const ENTRIES_PAGE_SIZE = 50;
  */
 export function useMyEntries() {
     return useQuery({
+        ...pollingReadPolicy,
         queryKey: [...ENTRIES_KEY, 'me'],
-        queryFn: async () => {
-            const entries = [];
-            // 페이지는 1부터 시작한다 (spec 공통 계약)
-            for (let page = 1; ; page += 1) {
-                const { data } = await apiClient.get<unknown>(MY_ENTRIES_API_PATH, {
-                    params: { page, size: ENTRIES_PAGE_SIZE },
-                });
-                const parsed = envelopeSchema(myEntryPageSchema).parse(data).data;
-                entries.push(...parsed.items);
-                if (entries.length >= parsed.totalElements || parsed.items.length === 0) break;
-            }
-            return entries;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const entries = [];
+                // 페이지는 1부터 시작한다 (spec 공통 계약)
+                for (let page = 1; ; page += 1) {
+                    const { data } = await apiClient.get<unknown>(MY_ENTRIES_API_PATH, {
+                        params: { page, size: ENTRIES_PAGE_SIZE },
+                        signal: context.signal,
+                    });
+                    const parsed = envelopeSchema(myEntryPageSchema).parse(data).data;
+                    entries.push(...parsed.items);
+                    if (entries.length >= parsed.totalElements) break;
+                    if (parsed.items.length === 0)
+                        throw new Error('응모 전체 내역을 받지 못했습니다. 다시 조회해 주세요.');
+                }
+                return entries;
+            }),
     });
 }
 

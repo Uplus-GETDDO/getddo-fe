@@ -55,10 +55,10 @@ describe('toEvent', () => {
             ['CLOSED', 'closed'],
             ['DRAW_CONFIRMED', 'closed'],
             ['REDRAWING', 'closed'],
-            ['CANCELED', 'closed'],
+            ['CANCELED', 'canceled'],
             ['PUBLISHED', 'drawn'],
-            ['NO_ENTRANTS', 'drawn'],
-            ['NO_ELIGIBLE_ENTRANTS', 'drawn'],
+            ['NO_ENTRANTS', 'ended'],
+            ['NO_ELIGIBLE_ENTRANTS', 'ended'],
         ];
         for (const [status, expected] of cases) {
             expect(toEvent({ ...SUMMARY, status }).status).toBe(expected);

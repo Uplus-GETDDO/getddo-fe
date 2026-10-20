@@ -10,6 +10,8 @@ const STATUS_LABEL: Record<Event['status'], string> = {
     upcoming: '오픈 예정',
     closed: '응모 마감',
     drawn: '발표 완료',
+    canceled: '이벤트 취소',
+    ended: '추첨 없이 종료',
 };
 
 interface EventEntryBarProps {

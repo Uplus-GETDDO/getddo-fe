@@ -652,9 +652,9 @@ export const adminEventHandlers = [
 
         const now = mockNow();
         const previous = effectiveStatus(item, now.getTime());
-        // 이미 취소된 이벤트의 재취소는 멱등 성공 — 같은 차감분을 두 번 반환하지 않는다
+        // 이미 취소된 이벤트는 추가 반환·상태 변경 없이 현행 계약의 충돌을 반환한다.
         if (item.status === 'CANCELED') {
-            return ok(operationResult(item, previous, 0, now));
+            return fail(409, 'EVENT-017', '이미 취소된 이벤트입니다.');
         }
         const refunded = refundAndRelease(item);
         item.status = 'CANCELED';

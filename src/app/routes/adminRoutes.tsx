@@ -136,6 +136,22 @@ export const adminRoutes: RouteObject[] = [
                 ),
             },
             {
+                path: 'attendance-policies',
+                element: lazyPage(() =>
+                    import('@pages/admin/attendancePolicies/AdminAttendancePoliciesPage').then(
+                        (m) => ({ default: m.AdminAttendancePoliciesPage }),
+                    ),
+                ),
+            },
+            {
+                path: 'missions',
+                element: lazyPage(() =>
+                    import('@pages/admin/missions/AdminMissionsPage').then((m) => ({
+                        default: m.AdminMissionsPage,
+                    })),
+                ),
+            },
+            {
                 path: 'virtual-clock',
                 element: lazyPage(() =>
                     import('@pages/admin/virtualClock/AdminVirtualClockPage').then((m) => ({

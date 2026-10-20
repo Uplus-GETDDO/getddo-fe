@@ -3,7 +3,7 @@ import type { EventDetailResponse, EventSummaryResponse } from '../model/contrac
 import type { Event, EventStatus } from '../model/types';
 
 // spec의 원시 상태 → 화면 상태.
-// REDRAWING·CANCELED는 화면 상태에 대응값이 없다 — 마감 뒤 진행 상태이므로 closed로 근사한다
+// 재추첨 내부 상태는 공개하지 않으며 취소·대상 없는 종료는 발표 대기와 구분한다.
 const SCREEN_STATUS: Record<AdminEventStatus, EventStatus> = {
     SCHEDULED: 'upcoming',
     OPEN: 'open',
@@ -11,10 +11,9 @@ const SCREEN_STATUS: Record<AdminEventStatus, EventStatus> = {
     DRAW_CONFIRMED: 'closed',
     REDRAWING: 'closed',
     PUBLISHED: 'drawn',
-    NO_ENTRANTS: 'drawn',
-    // 당첨 가능한 응모가 없어 발표가 끝난 상태 — 화면에서는 발표 완료다
-    NO_ELIGIBLE_ENTRANTS: 'drawn',
-    CANCELED: 'closed',
+    NO_ENTRANTS: 'ended',
+    NO_ELIGIBLE_ENTRANTS: 'ended',
+    CANCELED: 'canceled',
 };
 
 /**

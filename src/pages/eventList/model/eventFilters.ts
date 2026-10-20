@@ -28,7 +28,7 @@ export type EventTab = (typeof EVENT_TABS)[number]['value'];
 export const TAB_STATUSES: Record<EventTab, readonly EventStatus[]> = {
     open: ['open'],
     upcoming: ['upcoming'],
-    past: ['closed', 'drawn'],
+    past: ['closed', 'drawn', 'canceled', 'ended'],
 };
 
 /**

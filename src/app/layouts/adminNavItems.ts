@@ -32,6 +32,8 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     { to: '/admin/abuse-cases', label: '어뷰징 차단 내역', icon: ShieldAlert },
     { to: '/admin/notifications', label: '알림 운영', icon: Bell },
     { to: '/admin/banners', label: '배너 관리', icon: Images },
+    { to: '/admin/attendance-policies', label: '출석 정책', icon: CalendarDays },
+    { to: '/admin/missions', label: '미션 관리', icon: ClipboardList },
     { to: '/admin/virtual-clock', label: '가상 시계', icon: Clock },
     { to: '/admin/virtual-users', label: '가상 사용자', icon: Users },
 ];

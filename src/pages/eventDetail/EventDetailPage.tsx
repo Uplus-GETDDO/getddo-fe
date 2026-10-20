@@ -74,7 +74,7 @@ export function EventDetailPage() {
     // 응모 자격은 서버 판정으로 받는다 — 진행 중일 때만 조회한다 (E07)
     const { data: eligibility } = useEntryEligibility(id, { enabled: event?.status === 'open' });
     // 발표는 마감 뒤에만 조회한다 — 진행 중에 부르면 아직 없는 결과를 계속 묻게 된다 (E08·E09)
-    const isAfterClose = event?.status === 'closed' || event?.status === 'drawn';
+    const isAfterClose = event != null && !['open', 'upcoming'].includes(event.status);
     const { data: results } = useEventResults(id, isAfterClose);
     const { data: myResult } = useMyResult(id, isAfterClose);
     const enterEvent = useEnterEvent(id);
@@ -150,7 +150,12 @@ export function EventDetailPage() {
              * 발표 영역 — 마감 뒤에만 선다. 발표 전에는 대기 카드, 공개된 뒤에는 당첨자 명단이다.
              * 겟또타임 상세와 같은 위젯을 쓴다 — 발표 전 비노출·마스킹 규칙이 갈라지면 안 된다 (ADR-022)
              */}
-            {isAfterClose && (
+            {event.status === 'canceled' && (
+                <p role="status" className="mt-6">
+                    이벤트가 취소됐습니다. 차감한 응모권은 원래 등급으로 반환됩니다.
+                </p>
+            )}
+            {isAfterClose && event.status !== 'canceled' && (
                 <div className="mt-10">
                     {results && (
                         <DrawResultSection

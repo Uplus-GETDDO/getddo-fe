@@ -17,6 +17,8 @@ const STATUS_CHIP: Partial<Record<Event['status'], string>> = {
     upcoming: '오픈 예정',
     closed: '발표 대기',
     drawn: '발표 완료',
+    canceled: '이벤트 취소',
+    ended: '추첨 없이 종료',
 };
 
 export function EventListCard({ event }: { event: Event }) {

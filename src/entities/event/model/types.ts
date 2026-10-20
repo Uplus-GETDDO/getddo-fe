@@ -2,7 +2,14 @@ import { z } from 'zod';
 
 import { eventTypeSchema, membershipRuleSchema } from './adminTypes';
 
-export const eventStatusSchema = z.enum(['upcoming', 'open', 'closed', 'drawn']);
+export const eventStatusSchema = z.enum([
+    'upcoming',
+    'open',
+    'closed',
+    'drawn',
+    'canceled',
+    'ended',
+]);
 
 /** 캠페인 비주얼의 모든 꼴이 함께 쓰는 값 (detailVisual 참고) */
 const detailVisualCommonShape = {

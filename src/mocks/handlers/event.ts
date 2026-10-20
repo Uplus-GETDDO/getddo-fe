@@ -1145,6 +1145,8 @@ const SPEC_STATUS: Record<EventStatus, AdminEventStatus> = {
     open: 'OPEN',
     closed: 'CLOSED',
     drawn: 'PUBLISHED',
+    canceled: 'CANCELED',
+    ended: 'NO_ENTRANTS',
 };
 
 /**

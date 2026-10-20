@@ -11,6 +11,7 @@ import type { Event } from '@entities/event';
  */
 export function myAwaitingResults(events: readonly Event[]): Event[] {
     return events.filter(
-        (event) => event.myEntered && (event.status === 'closed' || event.status === 'drawn'),
+        (event) =>
+            event.myEntered && ['closed', 'drawn', 'canceled', 'ended'].includes(event.status),
     );
 }
