@@ -1,10 +1,11 @@
-import { Gift, Ticket, UsersRound } from 'lucide-react';
+import { Gift, RefreshCw, Ticket, UsersRound } from 'lucide-react';
 
 import { useEntryStatistics } from '@entities/entry';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
 
@@ -75,7 +76,19 @@ export function LiveEntryStatus({
                         <UsersRound className="size-5" />
                         {formatNumber(data.participantCount)}명 참여 중
                     </Badge>
-                    <span className="text-body-sm">
+                    <Badge variant="accent" size="md" className="gap-2.5">
+                        <Ticket className="size-5" />
+                        {formatNumber(data.totalSpentTicketCount)}장 사용
+                    </Badge>
+                    {/* 칩 뒤에 작게 — 마지막으로 받은 시각. 다시 받는 중에는 같은 자리에서 아이콘만 돌아 줄이 밀리지 않는다 */}
+                    <span className="text-caption text-fg-secondary inline-flex items-center gap-1 tabular-nums">
+                        <RefreshCw
+                            aria-hidden
+                            className={cn(
+                                'size-3.5',
+                                query.isFetching && 'animate-spin motion-reduce:animate-none',
+                            )}
+                        />
                         마지막 조회{' '}
                         {formatKst(new Date(query.dataUpdatedAt), {
                             month: 'numeric',
@@ -84,15 +97,10 @@ export function LiveEntryStatus({
                             minute: '2-digit',
                             second: '2-digit',
                         })}
+                        {query.isFetching && (
+                            <span className="sr-only">응모 현황 갱신 중이에요.</span>
+                        )}
                     </span>
-                    {query.isFetching && (
-                        <span className="text-body-sm">응모 현황 갱신 중이에요.</span>
-                    )}
-
-                    <Badge variant="accent" size="md" className="gap-2.5">
-                        <Ticket className="size-5" />
-                        {formatNumber(data.totalSpentTicketCount)}장 사용
-                    </Badge>
                 </>
             )}
         </div>

@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -62,25 +62,35 @@ export function TicketEventSection({
             {isError && (
                 <p className="text-destructive text-body-sm">이벤트 목록을 불러오지 못했습니다.</p>
             )}
-            {!isPending && !isError && events.length === 0 && (
-                <p className="text-fg-tertiary text-body-sm">표시할 이벤트가 없습니다.</p>
-            )}
-            {(featured || upcomingEvents.length > 0) && (
+            {/* 진행 중·오픈 예정 두 칸은 비어도 자리를 지키고 "없어요"를 보인다 — 한쪽만 사라지면 화면이 기울어 보인다 */}
+            {!isPending && !isError && (
                 <div className="grid items-stretch gap-4 lg:grid-cols-2">
-                    {featured && <FeaturedEvent event={featured} />}
-                    {upcomingEvents.length > 0 &&
-                        (featured ? (
-                            // featured 카드가 행 높이를 결정하고 캐러셀은 그 안에서 늘어난다 — 내용물 높이가 행을 밀지 않도록 absolute로 띄운다
-                            <Card size="lg" className="relative gap-0 self-stretch py-0">
-                                <div className="absolute inset-0 flex flex-col gap-2 overflow-hidden p-(--card-spacing)">
-                                    <UpcomingEventCarousel events={upcomingEvents} fillHeight />
-                                </div>
-                            </Card>
-                        ) : (
-                            <Card size="lg" className="gap-2 p-(--card-spacing)">
-                                <UpcomingEventCarousel events={upcomingEvents} />
-                            </Card>
-                        ))}
+                    {featured ? (
+                        <FeaturedEvent event={featured} />
+                    ) : (
+                        <Card size="lg" className="min-h-72 p-(--card-spacing)">
+                            <EmptySlot
+                                title="진행 중인 겟또타임이 없어요"
+                                description={
+                                    upcomingEvents.length > 0
+                                        ? '오픈 예정 시간을 확인해 보세요.'
+                                        : '새 겟또타임이 열리면 여기에서 알려드릴게요.'
+                                }
+                            />
+                        </Card>
+                    )}
+                    {featured ? (
+                        // featured 카드가 행 높이를 결정하고 캐러셀은 그 안에서 늘어난다 — 내용물 높이가 행을 밀지 않도록 absolute로 띄운다
+                        <Card size="lg" className="relative gap-0 self-stretch py-0">
+                            <div className="absolute inset-0 flex flex-col gap-2 overflow-hidden p-(--card-spacing)">
+                                <UpcomingEventCarousel events={upcomingEvents} fillHeight />
+                            </div>
+                        </Card>
+                    ) : (
+                        <Card size="lg" className="min-h-72 gap-2 p-(--card-spacing)">
+                            <UpcomingEventCarousel events={upcomingEvents} />
+                        </Card>
+                    )}
                 </div>
             )}
         </section>
@@ -97,6 +107,17 @@ function FeaturedEvent({ event }: { event: Event }) {
             totalSpentTicketCount={statistics?.totalSpentTicketCount}
             mySpentTicketCount={statistics?.mySpentTicketCount}
         />
+    );
+}
+
+/** 칸이 비었을 때 — 가운데에 시계 아이콘과 짧은 안내. 칸 높이는 그대로 둔다 */
+function EmptySlot({ title, description }: { title: string; description: string }) {
+    return (
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 py-6 text-center">
+            <Clock aria-hidden className="text-fg-tertiary size-8" />
+            <p className="text-body-bold text-fg-primary">{title}</p>
+            <p className="text-caption text-fg-tertiary">{description}</p>
+        </div>
     );
 }
 
@@ -138,6 +159,12 @@ function UpcomingEventCarousel({
                     />
                 )}
             </div>
+            {events.length === 0 && (
+                <EmptySlot
+                    title="오픈 예정인 겟또타임이 없어요"
+                    description="새 겟또타임이 잡히면 여기에 보여드릴게요."
+                />
+            )}
             {/* 행 안쪽 여백(16)만큼 목록을 좌우로 넓혀, 썸네일이 '오픈 예정' 제목과 같은 선에서 시작하게 한다 */}
             <div className={cn('relative -mx-4', fillHeight && 'min-h-0 flex-1')}>
                 <div className={cn('overflow-hidden', fillHeight && 'h-full')}>
