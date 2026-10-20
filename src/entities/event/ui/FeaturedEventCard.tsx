@@ -11,6 +11,7 @@ import { formatNumber } from '@shared/utils/format';
 import type { Event } from '../model/types';
 
 import { eventDetailPath } from '../utils/eventPath';
+import { EnteredChip } from './EnteredChip';
 import { EventThumbnail } from './EventThumbnail';
 
 interface FeaturedEventCardProps {
@@ -25,8 +26,8 @@ interface FeaturedEventCardProps {
     mySpentTicketCount?: number;
 }
 
-/** 마감까지 남은 시간을 다시 셈하는 주기 — 분 단위로 적으니 30초면 충분하다 */
-const TICK_MS = 30 * 1000;
+/** 마감까지 남은 시간을 다시 셈하는 주기 — 배너처럼 1시간 안쪽은 분·초까지 적어 1초마다 센다 */
+const TICK_MS = 1000;
 
 function useRemainingMs(endsAt: string): number {
     const { now } = useVirtualClock();
@@ -88,9 +89,11 @@ export function FeaturedEventCard({
                         {remainingMs > 0 && (
                             <span className="text-subhead text-fg-primary flex items-center gap-1 tabular-nums">
                                 <Timer aria-hidden className="size-4.5" />
-                                {formatRemaining(remainingMs, 'minute')} 남음
+                                {formatRemaining(remainingMs)} 남음
                             </span>
                         )}
+                        {/* 이미 응모한 래플 — 마감 전이라 더 쓸 수 있으니 '끝났다'로 읽히지 않게 '참여 중'으로 적는다 */}
+                        {event.myEntered && <EnteredChip label="참여 중" />}
                     </div>
                     <div className="flex flex-col gap-1">
                         <p className="text-title-3 text-fg-primary line-clamp-2">{event.title}</p>

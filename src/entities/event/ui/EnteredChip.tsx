@@ -11,7 +11,8 @@ import { Check } from 'lucide-react';
  */
 export function EnteredChip({ label }: { label: string }) {
     return (
-        <span className="bg-status-approved border-status-approved-text text-status-approved-text text-caption inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5">
+        // 내가 한 일이라 눈에 먼저 들어오게 진한 노랑 바탕에 잉크 글자 (D-day 알약·응모 버튼과 같은 노랑)
+        <span className="bg-ticket-primary text-fg-primary text-caption inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 font-semibold">
             <Check className="size-3" aria-hidden />
             {label}
         </span>

@@ -1,25 +1,37 @@
+import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList } from '@entities/game';
 import { useMissionList } from '@entities/mission';
-import { TICKET_GRADE_IMAGE } from '@entities/ticket';
 import { hasGamePlayer } from '@features/playGame';
 import stepAttendance from '@shared/assets/step/step-attendance.png';
 import stepGame from '@shared/assets/step/step-game.png';
 import stepMission from '@shared/assets/step/step-mission.png';
 
+/** 오늘 이 바로가기의 할 일 — 남음(점)·다 함(체크)·아직 모름(받기 전) */
+type Today = 'pending' | 'done' | 'unknown';
+
 interface QuickLink {
     to: string;
     label: string;
+    /** 오늘 할 일을 다 했을 때의 이름 */
+    doneLabel: string;
     image: string;
-    /** 오늘 할 게 남았는가 — 그림 모서리에 작은 점을 찍는다 */
-    pending?: boolean;
+    today: Today;
+    /** 할 일이 남았을 때 노란 바탕으로 가장 먼저 눈에 띄게 한다 (게임) */
+    highlight?: boolean;
 }
 
+const todayOf = (known: boolean, pending: boolean): Today =>
+    !known ? 'unknown' : pending ? 'pending' : 'done';
+
 /**
- * 홈 바로가기 — 출석·퀴즈/설문·게임·내 응모권 내역을 그림 버튼 한 줄로. 그림은 미션 페이지 단계 아이콘과 같은 것을 쓴다. 할 일이 남은 곳엔 점만 찍어 단순하게 둔다 — 남은 개수·보유 장수는 들어간 화면에서 보여주고 여기엔 숫자를 두지 않는다.
- * 게임은 응모권 목록에 섞여 찾기 어렵다는 의견에 따라 노란 바탕으로 가장 먼저 눈에 띄게 한다
+ * 홈 바로가기 — 응모권을 모으는 출석·퀴즈/설문·게임 세 곳. 그림은 미션 페이지 단계 아이콘과 같은 것을 쓴다.
+ * 할 일이 남은 곳엔 점, 다 한 곳은 체크와 흐린 글자로 바꿔 '오늘 더 할 게 있는지'가 한눈에 보이게 한다.
+ * 할 일이 남은 곳을 앞으로 모은다. 게임은 응모권 목록에 섞여 찾기 어렵다는 의견에 따라 남아 있을 때 노란 바탕으로 띄운다.
+ * 응모권 내역은 '모으기'가 아니라 '확인하기'라 빼고 마이페이지·헤더 쪽에 둔다.
+ * 숫자(남은 개수·보유 장수)는 들어간 화면에서 보여주고 여기엔 두지 않는다
  */
 export function QuickLinks() {
     const { data: attendance } = useAttendanceToday();
@@ -28,72 +40,80 @@ export function QuickLinks() {
 
     // 플레이 화면이 있는 게임만 센다 — 후보·준비 중 게임은 홈 어디에도 두지 않는다
     const playable = games?.filter((game) => hasGamePlayer(game.id));
-    const gamesLeft = playable?.some((game) => game.remainingPlays > 0) ?? false;
 
-    const game: QuickLink = {
-        to: '/missions#today-games',
-        label: '게임하러 가기',
-        image: stepGame,
-        pending: gamesLeft,
-    };
     const links: QuickLink[] = [
+        {
+            to: '/missions#today-games',
+            label: '게임하러 가기',
+            doneLabel: '게임 보상 완료',
+            image: stepGame,
+            today: todayOf(!!playable, playable?.some((game) => game.remainingPlays > 0) ?? false),
+            highlight: true,
+        },
         {
             to: '/missions#today-attendance',
             label: '출석 체크',
+            doneLabel: '출석 완료',
             image: stepAttendance,
-            pending: attendance ? !attendance.attended : false,
+            today: todayOf(!!attendance, attendance ? !attendance.attended : false),
         },
         {
             to: '/missions#today-missions',
             label: '퀴즈·설문',
+            doneLabel: '퀴즈·설문 완료',
             image: stepMission,
-            pending: missions?.some((mission) => !mission.completed) ?? false,
-        },
-        {
-            to: '/my-tickets',
-            label: '내 응모권 내역',
-            image: TICKET_GRADE_IMAGE.BRONZE,
+            today: todayOf(!!missions, missions?.some((mission) => !mission.completed) ?? false),
         },
     ];
+    // 다 한 곳은 뒤로 — 같은 상태끼리는 위 순서(게임 → 출석 → 퀴즈·설문)를 지킨다
+    const ordered = [...links].sort(
+        (a, b) => Number(a.today === 'done') - Number(b.today === 'done'),
+    );
 
     return (
-        // 좁은 화면에서는 줄을 바꾸지 않고 옆으로 밀어 본다. 그림자가 잘리지 않게 여백을 두고 같은 만큼 당긴다
+        // 좁은 화면은 세 칸에 나눠 그림 위·이름 아래로, 넓은 화면은 한 줄 버튼으로 둔다. 그림자가 잘리지 않게 여백을 두고 같은 만큼 당긴다
         <nav
             aria-label="바로가기"
-            className="-m-2 flex [scrollbar-width:none] items-center gap-2 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden"
+            className="-m-2 grid grid-cols-3 gap-2 p-2 sm:flex sm:items-center"
         >
-            {/* 게임 — 진한 노랑 바탕·조금 더 큰 버튼으로 가장 먼저 */}
-            <Link
-                to={game.to}
-                className="bg-ticket-primary text-ticket-on focus-visible:ring-border-focus inline-flex h-12 shrink-0 items-center gap-2 rounded-xl px-4 shadow-md transition-[filter,transform] hover:brightness-95 focus-visible:ring-2 focus-visible:outline-none active:translate-y-px"
-            >
-                <QuickLinkIcon image={game.image} pending={game.pending} />
-                <span className="text-body-bold">{game.label}</span>
-            </Link>
-            {links.map(({ to, label, image, pending }) => (
-                <Link
-                    key={to}
-                    to={to}
-                    className="bg-surface-page border-border-default hover:bg-surface-canvas focus-visible:ring-border-focus inline-flex h-12 shrink-0 items-center gap-2 rounded-xl border px-3.5 shadow-md transition-[background-color,transform] focus-visible:ring-2 focus-visible:outline-none active:translate-y-px"
-                >
-                    <QuickLinkIcon image={image} pending={pending} />
-                    <span className="text-body-sm-bold text-fg-primary">{label}</span>
-                </Link>
+            {ordered.map((link) => (
+                <QuickLinkButton key={link.to} link={link} />
             ))}
         </nav>
     );
 }
 
-/** 바로가기 그림 — 오늘 할 게 남았으면 모서리에 브랜드색 점 하나 (글자 대신) */
-function QuickLinkIcon({ image, pending }: { image: string; pending?: boolean }) {
+function QuickLinkButton({ link }: { link: QuickLink }) {
+    const done = link.today === 'done';
+    const highlight = link.highlight && link.today === 'pending';
+    const tone = highlight
+        ? 'bg-ticket-primary text-ticket-on border-transparent hover:brightness-95 shadow-md'
+        : done
+          ? 'bg-surface-sunken text-fg-tertiary border-transparent hover:bg-surface-canvas'
+          : 'bg-surface-page text-fg-primary border-border-default hover:bg-surface-canvas shadow-md';
     return (
-        <span className="relative shrink-0">
-            <img src={image} alt="" aria-hidden className="size-6 object-contain" />
-            {pending && (
-                <span className="bg-brand-primary border-surface-page absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2">
-                    <span className="sr-only">오늘 할 일이 남았어요</span>
-                </span>
-            )}
-        </span>
+        <Link
+            to={link.to}
+            className={`${tone} focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center transition-[background-color,filter,transform] focus-visible:ring-2 focus-visible:outline-none active:translate-y-px sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
+        >
+            <span className="relative shrink-0">
+                <img
+                    src={link.image}
+                    alt=""
+                    aria-hidden
+                    className={`size-6 object-contain ${done ? 'opacity-50 grayscale' : ''}`}
+                />
+                {link.today === 'pending' && (
+                    // 오늘 할 일이 남았다는 표시 — 글자 대신 점 하나
+                    <span className="bg-brand-primary border-surface-page absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2">
+                        <span className="sr-only">오늘 할 일이 남았어요</span>
+                    </span>
+                )}
+            </span>
+            <span className="text-body-sm-bold flex items-center gap-1">
+                {done ? link.doneLabel : link.label}
+                {done && <Check aria-hidden className="size-4" />}
+            </span>
+        </Link>
     );
 }

@@ -52,16 +52,15 @@ export function TicketEventSection({
                     <span className="text-fg-tertiary text-caption">
                         모은 응모권으로 정해진 시간에만 응모할 수 있어요.
                     </span>
-                </div>
-                <div className="flex items-center gap-2">
+                    {/* 폴링 표시는 제목 쪽에 둔다 — 오른쪽 '더보기'와 붙어 있으면 링크처럼 읽혔다 */}
                     {refresh}
-                    <Button asChild variant="link" size="text">
-                        <Link to="/time-raffle">
-                            더보기
-                            <ChevronRight />
-                        </Link>
-                    </Button>
                 </div>
+                <Button asChild variant="link" size="text">
+                    <Link to="/time-raffle">
+                        더보기
+                        <ChevronRight />
+                    </Link>
+                </Button>
             </div>
             {/* 불러오는 동안 대표 카드·오픈 예정 두 칸 자리를 잡아 둔다 */}
             {isPending && (
