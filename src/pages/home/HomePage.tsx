@@ -9,6 +9,8 @@ import { LiveEntryStatus } from '@widgets/liveEntryStatus';
 import { TicketBalanceWidget } from '@widgets/ticketBalance';
 import { TicketEventSection } from '@widgets/ticketEventSection';
 
+import { myAwaitingResults } from './utils/homeSections';
+
 /** 피그마 홈 본문 폭 1200 (좌우 여백 24 포함 1248) — 헤더와 같은 폭 */
 const CONTAINER = 'mx-auto w-full max-w-312 px-6';
 
@@ -24,9 +26,7 @@ export function HomePage() {
     const freeEvents = (events ?? []).filter(
         (event) => !event.isTimeRaffle && event.requiredTickets === 0,
     );
-    const resultEvents = (events ?? []).filter(
-        (event) => event.status === 'closed' || event.status === 'drawn',
-    );
+    const resultEvents = myAwaitingResults(events ?? []);
 
     return (
         // 피그마 홈 간격 — 헤더 아래 64(UserLayout이 준다), 섹션 사이 80, 섹션 제목과 내용 24. 마지막 섹션과 푸터는 다른 화면과 같은 112(pb-28)
@@ -62,8 +62,9 @@ export function HomePage() {
                     <section className="flex flex-col gap-6">
                         <div className="flex items-center justify-between">
                             <h2 className="text-title-3 text-fg-primary">발표 대기 · 결과</h2>
+                            {/* 내 응모만 추렸으니 더 보는 곳도 이벤트 목록이 아니라 내 응모 내역이다 */}
                             <Button asChild variant="link" size="text">
-                                <Link to="/events">
+                                <Link to="/my-entries">
                                     더보기
                                     <ChevronRight />
                                 </Link>
