@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { useAttendanceToday } from '@entities/attendance';
-import { useGameList } from '@entities/game';
+import { useGameList, useGameStatisticsList } from '@entities/game';
 import { useMissionList } from '@entities/mission';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
@@ -69,6 +70,16 @@ const VALUE_PLACEHOLDER = <SkeletonText className="h-4 w-14" />;
 export function TodayRewardsBanner() {
     const { data: today } = useAttendanceToday();
     const { data: games } = useGameList();
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const playableGames = games?.filter((game) => hasGamePlayer(game.code));
+    const statistics = useGameStatisticsList(
+        (playableGames ?? []).map((game) => game.id),
+        isUser,
+    );
+    const gameRewards =
+        isUser && playableGames && statistics.every((item) => item.isSuccess)
+            ? statistics.map((item) => ({ rewardedToday: item.data?.rewardClaimedToday }))
+            : undefined;
     const { data: missions } = useMissionList();
     // 날짜·이번 달·진행 중 미션 판정 기준 시각 — 페이지를 열어 둔 채 기준일이 바뀌어도
     // 출석 상태(주기적으로 다시 받는다)와 같은 날을 보도록 1분마다 다시 읽는다
@@ -82,7 +93,7 @@ export function TodayRewardsBanner() {
     const progress = summarizeTodayRewards({
         attended: today?.attended,
         // 준비 중인 게임은 보상을 받을 수 없어 세지 않는다
-        games: games?.filter((game) => hasGamePlayer(game.id)),
+        games: gameRewards,
         // 지금 참여할 수 있는 미션만 센다 — 목록 카드는 기간이 지난 미션도 그대로 보여 준다
         missions: missions?.filter((mission) => isMissionOpen(mission, now)),
     });

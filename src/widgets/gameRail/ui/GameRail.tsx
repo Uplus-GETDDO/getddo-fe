@@ -1,4 +1,5 @@
-import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
+import { GameTicketCard, gameDetailPath, useGameList, useGameStatisticsList } from '@entities/game';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { SkeletonCard } from '@shared/ui/skeleton';
@@ -18,14 +19,21 @@ export function GameRail({
     excludeGameId?: string;
 }) {
     const { data: games, isPending, isError } = useGameList();
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const statistics = useGameStatisticsList(
+        (games ?? []).filter((game) => hasGamePlayer(game.code)).map((game) => game.id),
+        isUser,
+    );
+    const claimed = (id: string) =>
+        statistics.find((item) => item.data?.gameId === id)?.data?.rewardClaimedToday;
     const dragScroll = useDragScroll<HTMLDivElement>();
     const ordered = (games ?? [])
         .filter((game) => game.id !== excludeGameId)
         // 준비 중인 게임은 맨 뒤, 오늘 보상을 받은 게임은 그 앞으로 보낸다
         .sort(
             (a, b) =>
-                Number(!hasGamePlayer(a.id)) - Number(!hasGamePlayer(b.id)) ||
-                Number(a.rewardedToday ?? false) - Number(b.rewardedToday ?? false),
+                Number(!hasGamePlayer(a.code)) - Number(!hasGamePlayer(b.code)) ||
+                Number(claimed(a.id) ?? false) - Number(claimed(b.id) ?? false),
         );
 
     return (
@@ -58,8 +66,9 @@ export function GameRail({
                         <div key={game.id} className="shrink-0">
                             <GameTicketCard
                                 game={game}
+                                rewardedToday={claimed(game.id)}
                                 href={gameDetailPath(game.id)}
-                                ready={hasGamePlayer(game.id)}
+                                ready={hasGamePlayer(game.code)}
                             />
                         </div>
                     ))}

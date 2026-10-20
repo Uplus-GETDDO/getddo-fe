@@ -1,170 +1,282 @@
 import { http } from 'msw';
+import { z } from 'zod';
 
 import { env } from '@shared/config/env';
-import { formatYmd } from '@shared/utils/date';
+import { formatYmd, kstNextMonthStart } from '@shared/utils/date';
 
 import { mockNow } from '../now';
 import { fail, ok } from './response';
 import { drawMockTicketGrade, recordMockTicketGrant } from './ticket';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
-
-// 게임 종류는 게임 담당자 확정 전 임시 목록 (getddo-spec 게임 규칙: '타코야끼 만들기'는 후보)
-// dailyLimit은 홈 위젯 호환용, description·thumbnailUrl은 게임 카드·상세용 임시 계약
-interface GameMeta {
-    id: string;
-    title: string;
-    description: string;
-    thumbnailUrl: string | null;
-    dailyLimit: number;
-}
-
-const mockGames: GameMeta[] = [
+const definitions = [
     {
-        id: 'game-dino',
-        title: '타꼬런',
-        description: '소스병과 꼬치를 뛰어넘으며 멀리 달려요',
-        thumbnailUrl: '/images/games/takoyaki-run.jpg',
-        dailyLimit: 1,
+        code: 'COLOR_WORD',
+        name: '글자색깔 맞추기',
+        version: 'color-word',
+        minimum: 50,
+        rules: {
+            initialLives: 3,
+            pointsPerCorrect: 10,
+            initialTimeLimitMs: 3000,
+            timeLimitDecreaseMs: 80,
+            minimumTimeLimitMs: 1200,
+        },
     },
     {
-        id: 'game-takoyaki',
-        title: '타코야끼 만들기',
-        description: '타이밍 맞춰 뒤집어 노릇하게 구워요',
-        thumbnailUrl: null,
-        dailyLimit: 1,
+        code: 'TAKKO_ORDER',
+        name: '타꼬 주문',
+        version: 'takko-order',
+        minimum: 18,
+        rules: { initialLives: 3, startLength: 3, maxLength: 8 },
     },
     {
-        // 룰렛 돌리기 자리를 타꼬 타이밍 맞추기로 바꿨다 (게임 담당자 결정)
-        id: 'game-timing',
-        title: '타꼬 타이밍 맞추기',
-        description: '왔다 갔다 하는 이쑤시개로 타꼬를 딱 맞춰 꽂아요',
-        // 피그마 image 184
-        thumbnailUrl: '/images/games/takko-timing.jpg',
-        dailyLimit: 1,
+        code: 'TAKKO_RUN',
+        name: '타꼬런',
+        version: 'takko-run',
+        minimum: 400,
+        rules: { minimumRewardScore: 400, maxTicks: 72000 },
     },
     {
-        // 카드 뒤집기 자리를 글자색깔 맞추기로 바꿨다 (게임 담당자 결정)
-        id: 'game-color',
-        title: '글자색깔 맞추기',
-        description: '글자 뜻 말고 글자 색을 골라요',
-        // 피그마 image 189
-        thumbnailUrl: '/images/games/color-word.jpg',
-        dailyLimit: 1,
-    },
-    {
-        // 두더지 잡기 자리를 타꼬 주문(순서 기억)으로 바꿨다 — 다른 게임과 쓰는 능력이 겹치지 않게
-        id: 'game-order',
-        title: '타꼬 주문',
-        description: '손님 주문을 외워 순서대로 내줘요',
-        // 피그마 image 255
-        thumbnailUrl: '/images/games/takko-order.jpg',
-        dailyLimit: 1,
+        code: 'TAKKO_TIMING',
+        name: '타꼬 타이밍 맞추기',
+        version: 'takko-timing',
+        minimum: 50,
+        rules: { points: 10, perfectPoints: 20, minimumRewardScore: 50 },
     },
 ];
-
-// 플레이·보상 상태는 사용자별로 다르다 — 한 사용자의 보상 수령이 다른 사용자의 상태를 바꾸지 않는다
-interface GamePlayState {
-    bestScore?: number;
-    todayPlayCount: number;
-    rewardedToday: boolean;
-    remainingPlays: number;
-}
-
-const seedPlayState: Record<string, GamePlayState> = {
-    'game-dino': { bestScore: 0, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
-    'game-takoyaki': {
-        bestScore: 2589,
-        todayPlayCount: 0,
-        rewardedToday: false,
-        remainingPlays: 1,
-    },
-    'game-timing': { bestScore: 0, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
-    'game-color': { bestScore: 120, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
-    'game-order': { bestScore: 0, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
-};
-
-const defaultPlayState = (): GamePlayState => ({
-    todayPlayCount: 0,
-    rewardedToday: false,
-    remainingPlays: 1,
+const games = definitions.map((game, index) => ({
+    ...game,
+    id: `0199f000-0000-7000-8000-00000000010${index}`,
+    description: null,
+}));
+const summary = (game: (typeof games)[number]) => ({
+    id: game.id,
+    code: game.code,
+    name: game.name,
+    description: game.description,
 });
-
-const userIdOf = (request: Request) => request.headers.get('X-User-ID') ?? 'anonymous';
-
-interface GameHistory {
-    bestScore: number;
-    days: Map<string, GamePlayState>;
+interface Receipt {
+    playId: string;
+    status: 'VALID' | 'INVALID';
+    score: number | null;
+    completedAt: string;
+    reward: { ticketCount: number; grade: string; grantedAt: string; expiresAt: string } | null;
+}
+interface Play {
+    userId: string;
+    gameId: string;
+    playToken: string;
+    body?: string;
+    result?: Receipt;
+}
+const plays = new Map<string, Play>();
+const statistics = new Map<
+    string,
+    { bestScore: number; totalScore: number; validPlayCount: number; days: Set<string> }
+>();
+const userOf = (request: Request) => request.headers.get('X-User-ID') ?? 'anonymous';
+function stateFor(userId: string, gameId: string) {
+    const key = `${userId}:${gameId}`;
+    let state = statistics.get(key);
+    if (!state) {
+        state = { bestScore: 0, totalScore: 0, validPlayCount: 0, days: new Set() };
+        statistics.set(key, state);
+    }
+    return state;
 }
 
-const statesByUser = new Map<string, Map<string, GameHistory>>();
-
-const stateFor = (userId: string, gameId: string): GamePlayState => {
-    let states = statesByUser.get(userId);
-    if (!states) {
-        states = new Map();
-        statesByUser.set(userId, states);
+// 로컬 개발용 고정 예제만 판정한다. 실제 서버 검증을 대체하지 않는다.
+function fixtureScore(code: string, input: Record<string, unknown>): number | null {
+    if (code === 'TAKKO_TIMING' && Array.isArray(input.taps)) {
+        const taps = input.taps as { sequence: number; elapsedMs: number }[];
+        const signature = taps.map((tap) => tap.elapsedMs).join(',');
+        if (!taps.every((tap, i) => tap.sequence === i + 1)) return null;
+        return (
+            (
+                {
+                    '0': 0,
+                    '304,1240,0': 40,
+                    '304,1240,954,0': 50,
+                    '304,1240,850,0': 60,
+                    '2896,1840,954,0': 50,
+                } as Record<string, number>
+            )[signature] ?? null
+        );
     }
-    let history = states.get(gameId);
-    if (!history) {
-        history = { bestScore: seedPlayState[gameId]?.bestScore ?? 0, days: new Map() };
-        states.set(gameId, history);
+    if (code === 'TAKKO_RUN')
+        return input.endTick === 348 &&
+            JSON.stringify(input.inputs) === '[{"tick":0,"type":"press"}]'
+            ? 122
+            : null;
+    if (code === 'COLOR_WORD' && Array.isArray(input.answers)) {
+        const answers = input.answers as {
+            sequence: number;
+            answer: string | null;
+            elapsedMs: number;
+        }[];
+        return answers.length === 3 &&
+            answers.every(
+                (answer, i) =>
+                    answer.sequence === i + 1 &&
+                    answer.answer === null &&
+                    answer.elapsedMs === 3000,
+            )
+            ? 0
+            : null;
     }
-    const date = formatYmd(mockNow().toISOString());
-    let state = history.days.get(date);
-    if (!state) {
-        // 날짜별 기록을 보존해 가상 시계를 되돌려도 같은 날 보상을 다시 지급하지 않는다.
-        state = defaultPlayState();
-        history.days.set(date, state);
+    if (code === 'TAKKO_ORDER' && Array.isArray(input.rounds)) {
+        const rounds = input.rounds as { sequence: number; picks: string[] }[];
+        const success = [
+            ['scallion', 'scallion', 'shrimp'],
+            ['scallion', 'shrimp', 'scallion', 'scallion'],
+            ['scallion', 'cheese', 'shrimp', 'shrimp', 'cheese'],
+            ['shrimp', 'scallion', 'scallion', 'nori', 'scallion', 'nori'],
+        ];
+        if (
+            rounds.length === 7 &&
+            rounds.every(
+                (round, i) =>
+                    round.sequence === i + 1 &&
+                    JSON.stringify(round.picks) ===
+                        JSON.stringify(i < 4 ? success[i] : i === 5 ? ['scallion'] : ['cheese']),
+            )
+        )
+            return 18;
+        return null;
     }
-    state.bestScore = history.bestScore;
-    return state;
-};
-
+    return null;
+}
 export const gameHandlers = [
-    // G01 초안 — 목록은 배열을 data에 싣는다
-    http.get(api('/v1/games'), ({ request }) => {
-        const userId = userIdOf(request);
-        return ok(mockGames.map((game) => ({ ...game, ...stateFor(userId, game.id) })));
+    http.get(api('/v1/games'), () => ok(games.map(summary))),
+    http.get(api('/v1/games/:gameId'), ({ params }) => {
+        const game = games.find((game) => game.id === params.gameId);
+        return game
+            ? ok({
+                  ...summary(game),
+                  ruleVersion: `${game.version}-v1`,
+                  rules: game.rules,
+                  serverTime: mockNow().toISOString(),
+              })
+            : fail(404, 'GAME-002', '게임을 찾을 수 없습니다.');
     }),
-    // 플레이 결과 — 새로고침 전까지 최고점·오늘 플레이·보상 여부를 기억한다.
-    // 게임별 하루 1회 응모권 1장: 오늘 첫 유효 플레이에만 지급한다 (getddo-spec 게임 규칙)
-    // spec은 G03 plays 생성 → G04 result 제출의 두 단계지만, 게임별 검증 계약 미확정으로 최종 계약이 아니라
-    // 한 단계 제출을 유지한다 — 계약 확정 후 G03/G04로 나눈다 (features/playGame의 TODO와 연결)
-    http.post(api('/v1/games/:gameId/play'), async ({ params, request }) => {
-        const game = mockGames.find((item) => item.id === params.gameId);
-        if (!game) {
-            return fail(404, 'RESOURCE_NOT_FOUND', '게임을 찾을 수 없습니다');
-        }
-        const userId = userIdOf(request);
-
-        const { score } = (await request.json()) as { score: number };
-        const state = stateFor(userId, game.id);
-        state.bestScore = Math.max(state.bestScore ?? 0, score);
-        statesByUser.get(userId)!.get(game.id)!.bestScore = state.bestScore;
-        state.todayPlayCount += 1;
-        const ticketsGranted = state.rewardedToday ? 0 : 1;
-        // 게임 보상은 등급 응모권 1장 — 서버가 확률로 등급 하나를 결정한다 (getddo-spec ticket.md)
-        const grade = ticketsGranted > 0 ? drawMockTicketGrade() : null;
-        if (ticketsGranted > 0 && grade) {
-            state.rewardedToday = true;
-            state.remainingPlays = 0;
-            recordMockTicketGrant(userId, ticketsGranted, `${game.title} 게임 보상`, {
-                grade,
-                gameId: game.id,
-            });
-        }
+    http.get(api('/v1/games/:gameId/statistics/me'), ({ params, request }) => {
+        if (request.headers.get('X-User-Role') === 'ADMIN')
+            return fail(403, 'GAME-007', '일반 사용자만 기록을 조회할 수 있습니다.');
+        const game = games.find((game) => game.id === params.gameId);
+        if (!game) return fail(404, 'GAME-002', '게임을 찾을 수 없습니다.');
+        const now = mockNow();
+        const day = formatYmd(now.toISOString());
+        const state = stateFor(userOf(request), game.id);
+        return ok({
+            gameId: game.id,
+            bestScore: state.bestScore,
+            totalScore: state.totalScore,
+            validPlayCount: state.validPlayCount,
+            rewardDate: day,
+            rewardClaimedToday: state.days.has(day),
+            nextResetAt: new Date(`${day}T15:00:00Z`).toISOString(),
+            serverTime: now.toISOString(),
+        });
+    }),
+    http.post(api('/v1/games/:gameId/plays'), ({ params, request }) => {
+        const game = games.find((game) => game.id === params.gameId);
+        if (!game) return fail(404, 'GAME-002', '게임을 찾을 수 없습니다.');
+        const playId = crypto.randomUUID();
+        const playToken = crypto.randomUUID();
+        plays.set(playId, { gameId: game.id, userId: userOf(request), playToken });
         return ok(
             {
-                gameId: game.id,
-                score,
-                bestScore: state.bestScore,
-                todayPlayCount: state.todayPlayCount,
-                ticketsGranted,
-                // 받은 보상 — 색깔 게임 연동 계약의 reward 모양 (지급·만료 시각은 응모권 쪽 값이라 생략)
-                reward: grade ? { ticketCount: ticketsGranted, grade } : null,
+                playId,
+                playToken,
+                ruleVersion: `${game.version}-v1`,
+                startedAt: mockNow().toISOString(),
+                rules: game.rules,
+                gameData: {
+                    generatorVersion: `${game.version}-generator-v1`,
+                    seed: 1,
+                    ...(game.code === 'TAKKO_RUN' ? { tickMs: 1000 / 120 } : {}),
+                },
             },
             201,
         );
+    }),
+    http.put(api('/v1/games/:gameId/plays/:playId/result'), async ({ params, request }) => {
+        if (request.headers.get('X-User-Role') === 'ADMIN')
+            return fail(403, 'GAME-007', '관리자 체험은 저장하지 않습니다.');
+        const play = plays.get(String(params.playId));
+        const game = games.find((game) => game.id === params.gameId);
+        const raw = await request.text();
+        if (new TextEncoder().encode(raw).length > 1048576)
+            return fail(413, 'GAME-008', '입력 한도 초과');
+        let body: { playToken: string; validationData: Record<string, unknown> };
+        try {
+            const parsed: unknown = JSON.parse(raw);
+            body = z
+                .object({
+                    playToken: z.string(),
+                    validationData: z.record(z.string(), z.unknown()),
+                })
+                .parse(parsed);
+        } catch {
+            return fail(400, 'COMMON-005', '요청 형식 오류');
+        }
+        if (
+            !play ||
+            !game ||
+            play.userId !== userOf(request) ||
+            play.gameId !== game.id ||
+            play.playToken !== body.playToken
+        )
+            return fail(404, 'GAME-005', '플레이를 확인할 수 없습니다.');
+        const input = body.validationData;
+        if (!input || typeof input !== 'object') return fail(400, 'COMMON-005', '요청 형식 오류');
+        if (Object.values(input).some((value) => Array.isArray(value) && value.length > 10000))
+            return fail(413, 'GAME-008', '입력 한도 초과');
+        const normalize = (value: unknown): unknown =>
+            Array.isArray(value)
+                ? value.map(normalize)
+                : value && typeof value === 'object'
+                  ? Object.fromEntries(
+                        Object.entries(value)
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .map(([key, item]) => [key, normalize(item)]),
+                    )
+                  : value;
+        const canonical = JSON.stringify(normalize(input));
+        if (play.result)
+            return play.body === canonical
+                ? ok(play.result)
+                : fail(409, 'GAME-006', '입력 변경 충돌');
+        const score = fixtureScore(game.code, input);
+        const completedAt = mockNow().toISOString();
+        const state = stateFor(play.userId, game.id);
+        const day = formatYmd(completedAt);
+        let reward: Receipt['reward'] = null;
+        if (score !== null) {
+            state.bestScore = Math.max(state.bestScore, score);
+            state.totalScore += score;
+            state.validPlayCount += 1;
+            if (score >= game.minimum && !state.days.has(day)) {
+                const grade = drawMockTicketGrade();
+                const expiresAt = kstNextMonthStart(mockNow()).toISOString();
+                reward = { ticketCount: 1, grade, grantedAt: completedAt, expiresAt };
+                state.days.add(day);
+                recordMockTicketGrant(play.userId, 1, `${game.name} 게임 보상`, {
+                    grade,
+                    expiresAt,
+                    gameId: game.id,
+                });
+            }
+        }
+        play.body = canonical;
+        play.result = {
+            playId: String(params.playId),
+            status: score === null ? 'INVALID' : 'VALID',
+            score,
+            completedAt,
+            reward,
+        };
+        return ok(play.result);
     }),
 ];

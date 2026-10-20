@@ -6,7 +6,7 @@ import type { TicketGrade } from '@entities/ticket';
 import { Loading } from '@shared/ui/loading';
 import { formatNumber } from '@shared/utils/format';
 
-import type { GameOverHandler } from '../model/types';
+import type { GameOverHandler, GameSessionProps } from '../model/types';
 
 import newBadge from '../assets/ui/badge-new.png';
 import stage1Badge from '../assets/ui/stage/stage-1.png';
@@ -14,17 +14,14 @@ import stage2Badge from '../assets/ui/stage/stage-2.png';
 import stage3Badge from '../assets/ui/stage/stage-3.png';
 import stage4Badge from '../assets/ui/stage/stage-4.png';
 import { useLoopingBgm } from '../hooks/useLoopingBgm';
+import { FixedRun } from '../model/gameSession';
 import { PAUSE_SOUNDS } from '../model/gameSounds';
 import {
-    createRun,
     pauseRun,
-    pressJump,
     progressOf,
-    releaseJump,
     resumeRun,
     type RunPhase,
     scoreOf,
-    stepRun,
     WORLD_HEIGHT,
     WORLD_WIDTH,
 } from '../model/takkoRun';
@@ -46,8 +43,6 @@ import { VolumeControl } from './VolumeControl';
 
 /** 부딪힌 직후 누르고 있던 점프 키가 곧바로 '다시 하기'를 누르지 않도록 잠깐 막는다 */
 const RESTART_GUARD_MS = 400;
-/** 한 프레임에 진행할 최대 시간 — 탭을 다녀오는 등 오래 멈췄다 돌아와도 순간이동하지 않게 한다 */
-const MAX_STEP_SECONDS = 1 / 30;
 
 const JUMP_KEYS = new Set(['Space', 'ArrowUp']);
 const PAUSE_KEYS = new Set(['Escape', 'KeyP']);
@@ -85,10 +80,13 @@ const HUD_CHIP = 'bg-(--takko-ink)/55 text-fg-on-brand rounded-lg backdrop-blur-
  * 게임 대표 영역과 같은 840×546 비율의 캔버스에 그리고, 점수·안내·결과는 그 위에 겹친다
  */
 export function TakkoRunGame({
+    session,
+    onRestart,
+    onRecordingError,
     bestScore = 0,
     onExit,
     onGameOver,
-}: {
+}: GameSessionProps & {
     bestScore?: number;
     onExit: () => void;
     /**
@@ -104,8 +102,10 @@ export function TakkoRunGame({
     const shownScoreRef = useRef(-1);
     const progressFaceRef = useRef<HTMLDivElement>(null);
     const restartRef = useRef<HTMLButtonElement>(null);
-    const runRef = useRef(createRun());
+    const [engine] = useState(() => new FixedRun(session.gameData.seed, session.rules.maxTicks!));
+    const runRef = useRef(engine.run);
     const overAtRef = useRef(0);
+    const lastFrameAtRef = useRef(0);
     const bgm = useLoopingBgm(TAKKO_RUN_BGM);
     // 게임 시작을 누르고 게임 화면이 열리면 바로 배경 음악을 튼다 (썸네일 화면에서는 나오지 않는다).
     // 브라우저가 막으면 첫 점프 때 다시 튼다
@@ -198,7 +198,7 @@ export function TakkoRunGame({
         const play = playRef.current;
         // 저장 요청이 실패하거나 바로 오류를 던져도 게임 화면은 그대로 둔다 (실패 안내는 게임 상세 페이지가 한다)
         Promise.resolve()
-            .then(() => onGameOver?.(score))
+            .then(() => onGameOver?.(score, { endTick: engine.endTick, inputs: engine.inputs }))
             .then((result) => {
                 if (!result || playRef.current !== play || result.ticketsGranted <= 0) return;
                 setTicketsGranted(result.ticketsGranted);
@@ -227,15 +227,15 @@ export function TakkoRunGame({
         observer.observe(canvas);
 
         let frame = 0;
-        let last = performance.now();
+        lastFrameAtRef.current = performance.now();
         // 연속 프레임 오류는 첫 번째만 남긴다 — 오류가 매 프레임 반복돼도 콘솔이 도배되지 않게
         let frameErrorLogged = false;
         const tick = (now: number) => {
-            const dt = Math.min((now - last) / 1000, MAX_STEP_SECONDS);
-            last = now;
+            const dt = (now - lastFrameAtRef.current) / 1000;
+            lastFrameAtRef.current = now;
             try {
                 const run = runRef.current;
-                if (stepRun(run, dt)) finish(scoreOf(run));
+                if (engine.advance(dt)) finish(scoreOf(run));
                 if (run.stage !== stageRef.current) changeStage(run.stage);
                 if (run.jumps > jumpsRef.current) {
                     jumpsRef.current = run.jumps;
@@ -273,13 +273,22 @@ export function TakkoRunGame({
             cancelAnimationFrame(frame);
             observer.disconnect();
         };
-    }, [assets]);
+    }, [assets, engine]);
 
+    const recordInput = (type: 'press' | 'release') => {
+        try {
+            engine.input(type);
+        } catch (error) {
+            pauseRun(runRef.current);
+            onRecordingError(error instanceof Error ? error.message : '입력 기록을 중단했습니다.');
+        }
+    };
     const jump = () => {
         const run = runRef.current;
         if (!images || run.phase === 'over') return;
-        pressJump(run);
+        recordInput('press');
         if (phase === 'ready') {
+            lastFrameAtRef.current = performance.now();
             setPhase('running');
             // 첫 점프(사용자 입력) 때 배경 음악을 시작한다 — 브라우저는 입력 전 소리를 막는다
             bgm.play();
@@ -303,22 +312,7 @@ export function TakkoRunGame({
 
     const restart = () => {
         if (performance.now() - overAtRef.current < RESTART_GUARD_MS) return;
-        const run = createRun();
-        run.phase = 'running';
-        runRef.current = run;
-        setPhase('running');
-        setNewBest(false);
-        setTicketsGranted(0);
-        stageRef.current = 1;
-        setStage(1);
-        setStageBanner(null);
-        setCountdown(null);
-        milestoneRef.current = 0;
-        jumpsRef.current = 0;
-        bgm.play();
-        playRef.current += 1;
-        containerRef.current?.focus({ preventScroll: true });
-        revealGame();
+        onRestart();
     };
 
     /** 일시정지 — 달리는 중이면 멈추고 음악도 멈춘다 (카운트다운 중이면 다시 처음부터 멈춘 상태로) */
@@ -331,7 +325,7 @@ export function TakkoRunGame({
         }
         if (run.phase !== 'running') return;
         pauseRun(run);
-        releaseJump(run);
+        recordInput('release');
         setPhase('paused');
         revealGame();
         bgm.pause(PAUSE_SOUNDS.pause);
@@ -350,6 +344,7 @@ export function TakkoRunGame({
                 setCountdown(countdown - 1);
                 return;
             }
+            lastFrameAtRef.current = performance.now();
             resumeRun(runRef.current);
             setPhase('running');
             setCountdown(null);
@@ -394,7 +389,7 @@ export function TakkoRunGame({
             if (down && !event.repeat) startResume();
             return;
         }
-        if (!down) releaseJump(runRef.current);
+        if (!down) recordInput('release');
         else if (!event.repeat) jump();
     });
     useEffect(() => {
@@ -426,8 +421,8 @@ export function TakkoRunGame({
                 if (runRef.current.phase === 'paused') startResume();
                 else jump();
             }}
-            onPointerUp={() => releaseJump(runRef.current)}
-            onPointerCancel={() => releaseJump(runRef.current)}
+            onPointerUp={() => recordInput('release')}
+            onPointerCancel={() => recordInput('release')}
             style={
                 assets
                     ? ({

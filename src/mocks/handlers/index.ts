@@ -48,9 +48,7 @@ export const handlers = [
 // 테스트용 handlers 등록과 목업 시드는 그대로 유지한다.
 export const hybridHandlers = [
     ...abuseHandlers, // /v1/admin/abuse-cases — 배포 미구현(404, 2026-10-20 실측) — 계약 미확정이라 목업 유지
-    // /v1/games — 서버는 구현됐으나 목록 응답이 spec GameSummary({id,code,name,description})로
-    // FE gameSchema(title·dailyLimit·remainingPlays 필수)와 불일치. 제출도 spec의 G03/G04
-    // 두 단계가 아닌 비spec 단일 /play를 쓴다 — 게임 계약 정합화 전까지 목업 유지
-    ...gameHandlers,
+    // GD-257: 네 게임 G01~G05·서버 보상·T01/T02·ADMIN 차이를 실제 API에서 검증해 배포 등록을 해제했다.
+    // gameHandlers는 위 테스트·로컬 개발용 handlers에 유지한다.
     ...virtualUserHandlers, // /virtual-users — spec外 시연 전용 경로
 ];

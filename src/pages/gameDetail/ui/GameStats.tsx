@@ -36,14 +36,16 @@ function StatCard({
     );
 }
 
-/** 최고점 · 오늘 플레이 · 오늘 받은 응모권 — 화면에 들어올 때 차례로 올라온다 */
+/** 최고점 · 누적 유효 플레이 · 오늘 받은 응모권 — 화면에 들어올 때 차례로 올라온다 */
 export function GameStats({
     bestScore,
-    todayPlayCount,
+    totalScore,
+    validPlayCount,
     rewardedToday,
 }: {
     bestScore?: number;
-    todayPlayCount?: number;
+    totalScore?: number;
+    validPlayCount?: number;
     rewardedToday?: boolean;
 }) {
     const bestScoreDisplay = useCountUp(bestScore, { fromZero: true, durationMs: 900 });
@@ -54,11 +56,14 @@ export function GameStats({
             <StatCard label="최고점" order={0}>
                 {bestScoreDisplay == null ? '-' : `${formatNumber(bestScoreDisplay)}점`}
             </StatCard>
-            <StatCard label="오늘 플레이" order={1}>
-                {`${formatNumber(todayPlayCount ?? 0)}회`}
+            <StatCard label="누적 유효 플레이" order={1}>
+                {validPlayCount === undefined ? '-' : `${formatNumber(validPlayCount)}회`}
             </StatCard>
-            <StatCard label="오늘 받은 응모권" order={2}>
-                {rewardedToday ? DAILY_GAME_REWARD : 0}{' '}
+            <StatCard label="누적 점수" order={2}>
+                {totalScore === undefined ? '-' : `${formatNumber(totalScore)}점`}
+            </StatCard>
+            <StatCard label="오늘 받은 응모권" order={3}>
+                {rewardedToday === undefined ? '-' : rewardedToday ? DAILY_GAME_REWARD : 0}{' '}
                 <span className="text-border-strong">/ {DAILY_GAME_REWARD}장</span>
             </StatCard>
         </div>

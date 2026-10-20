@@ -6,8 +6,15 @@ import { Link } from 'react-router-dom';
 import type { Game } from '@entities/game';
 
 import { useAttendanceToday } from '@entities/attendance';
-import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
+import {
+    GameTicketCard,
+    gameDetailPath,
+    useGameList,
+    getGameContent,
+    useGameStatisticsList,
+} from '@entities/game';
 import { missionThumbnail, useMissionList } from '@entities/mission';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { Button } from '@shared/ui/button';
@@ -51,6 +58,13 @@ export function TicketBalanceWidget({
     const { data: attendance, isPending: attendancePending } = useAttendanceToday();
     const { data: missions, isPending: missionsPending } = useMissionList();
     const { data: games, isPending: gamesPending } = useGameList();
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const statistics = useGameStatisticsList(
+        (games ?? []).filter((game) => hasGamePlayer(game.code)).map((game) => game.id),
+        isUser,
+    );
+    const claimed = (id: string) =>
+        statistics.find((query) => query.data?.gameId === id)?.data?.rewardClaimedToday;
     // 셋이 모두 올 때까지 카드 자리만 잡아 둔다 — 비어 있다가 갑자기 섹션이 생기면 아래 내용이 밀리고,
     // 하나씩 도착할 때마다 그리면 순서(orderEarnCards)가 바뀌며 카드가 뒤섞여 보인다
     const loading = attendancePending || missionsPending || gamesPending;
@@ -93,14 +107,14 @@ export function TicketBalanceWidget({
         ...(games ?? []).map((game) => ({
             id: game.id,
             category: 'GAME' as const,
-            title: game.title,
-            description: `하루 최대 ${game.dailyLimit}회, 보상은 등급 추첨 응모권 1장`,
+            title: game.name,
+            description: '게임별 최소 점수로 완료하면 하루 1장, 횟수 제한 없이 플레이',
             rewardKind: '등급 응모권',
             rewardTickets: 1,
             href: gameDetailPath(game.id),
             actionLabel: '게임하러 가기',
-            completed: game.remainingPlays === 0,
-            thumbnailUrl: game.thumbnailUrl ?? null,
+            completed: claimed(game.id) ?? false,
+            thumbnailUrl: getGameContent(game).heroImage,
             thumbnailIcon: Gamepad2,
             game,
         })),
@@ -160,8 +174,9 @@ export function TicketBalanceWidget({
                                 // 미션 페이지 게임 목록과 같은 카드 — 카드 어디를 눌러도 게임으로 들어가고, 준비 중인 게임은 막는다
                                 <GameTicketCard
                                     game={card.game}
+                                    rewardedToday={claimed(card.game.id)}
                                     href={card.href}
-                                    ready={hasGamePlayer(card.game.id)}
+                                    ready={hasGamePlayer(card.game.code)}
                                     className="w-full"
                                 />
                             ) : (
