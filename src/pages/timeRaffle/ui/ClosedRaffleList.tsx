@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
+import { EnteredChip } from '@entities/event';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -150,7 +151,11 @@ function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     {/* 내 당첨 여부는 결과 화면에서 본다 — 목록에는 발표 상태만 둔다. 발표 전만 "지금" 신호 점을 찍는다 */}
-                    <StatusDot tone={isDrawn ? 'muted' : 'info'}>{statusLabel}</StatusDot>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <StatusDot tone={isDrawn ? 'muted' : 'info'}>{statusLabel}</StatusDot>
+                        {/* 마감해서 더는 응모할 수 없다 — 여기서는 '응모 완료'가 맞는 말이다 */}
+                        {event.myEntered && <EnteredChip label="응모 완료" />}
+                    </div>
                     <p className="text-body-bold text-fg-primary truncate">{event.title}</p>
                     <p className="text-caption text-fg-tertiary">{meta.join(' · ')}</p>
                 </div>
