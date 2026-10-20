@@ -3,6 +3,7 @@ import type { MissionSummary } from '@entities/mission';
 import { useMissionDetail } from '@entities/mission';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { StatusDot } from '@shared/ui/status-dot';
 import { formatKst } from '@shared/utils/date';
 
 import {
@@ -61,12 +62,13 @@ export function MissionCard({
                                 {formatKst(mission.startsAt, START_FORMAT)} 시작
                             </Badge>
                         ) : (
-                            deadline && (
-                                // 오늘 마감은 겟또타임·이벤트 카드의 D-day처럼 검정 알약, 그 밖에는 흰 바탕+테두리
-                                <Badge variant={deadline === '오늘 마감' ? 'inverse' : 'outline'}>
-                                    {deadline}
-                                </Badge>
-                            )
+                            deadline &&
+                            // 오늘 마감은 '지금' 신호(마젠타 점+글자) — 검정 알약 대신 작은 색 신호로 급한 카드만 눈에 띄게. 그 밖에는 흰 바탕+테두리
+                            (deadline === '오늘 마감' ? (
+                                <StatusDot>{deadline}</StatusDot>
+                            ) : (
+                                <Badge variant="outline">{deadline}</Badge>
+                            ))
                         ))}
                 </div>
                 <h3 className={`text-body-bold ${muted ? 'text-fg-secondary' : 'text-fg-primary'}`}>
