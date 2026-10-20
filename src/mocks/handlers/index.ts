@@ -2,6 +2,7 @@ import { abuseHandlers } from './abuse';
 import { adminEntryHandlers } from './adminEntry';
 import { adminEventHandlers } from './adminEvent';
 import { adminNotificationHandlers } from './adminNotification';
+import { adminStatsHandlers } from './adminStats';
 import { adminTicketHandlers } from './adminTicket';
 import { adminUserHandlers } from './adminUser';
 import { attendanceHandlers } from './attendance';
@@ -21,6 +22,7 @@ export const handlers = [
     ...adminEntryHandlers,
     ...adminEventHandlers,
     ...adminNotificationHandlers,
+    ...adminStatsHandlers,
     ...adminTicketHandlers,
     ...adminUserHandlers,
     ...attendanceHandlers,
@@ -39,7 +41,8 @@ export const handlers = [
 // 배포 백엔드에 아직 없는 경로만 가로채는 하이브리드 목업 — 실연동 전환 시
 // 해당 도메인을 여기서 빼면 요청이 실서버로 bypass된다 (onUnhandledRequest: 'bypass')
 // 괄호 안은 2026-10-19 실서버 실측 기준이다. 배너(B01·AB01~05)·관리자 응모권(AO03~09)은 실연동한다.
-// AS01·AM04는 미배포(404)지만 FE에서 아직 호출하지 않아 목업 핸들러도 없다.
+// 2026-10-20 실측에서 AO01·AO02·AO06·AO07·AS01도 실연동이 확인됐다 — 신규 관리자 조회는 등록하지 않는다.
+// AM04는 미배포(404)지만 FE에서 아직 호출하지 않아 목업 핸들러도 없다.
 export const hybridHandlers = [
     ...abuseHandlers, // /v1/admin/abuse-cases — 배포 미구현(404)
     ...drawHandlers, // /v1/admin/draws*·/wins/*·/cancellations/* — 배포 미구현(404)

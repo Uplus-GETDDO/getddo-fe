@@ -38,3 +38,50 @@ it('대시보드는 공통 감사 조회 없이 기존 운영 패널을 표시�
         server.events.removeListener('request:start', observe);
     }
 });
+
+it('요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 조회를 대체한다', async () => {
+    const requests: string[] = [];
+    const observe = ({ request }: { request: Request }) => {
+        requests.push(`${new URL(request.url).pathname}?${new URL(request.url).searchParams}`);
+    };
+    server.events.on('request:start', observe);
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const view = render(
+        <QueryClientProvider client={client}>
+            <VirtualClockProvider>
+                <MemoryRouter>
+                    <AdminDashboardPage />
+                </MemoryRouter>
+            </VirtualClockProvider>
+        </QueryClientProvider>,
+    );
+    try {
+        expect(await screen.findByText('오늘 어뷰징 탐지 기록')).toBeInTheDocument();
+        await waitFor(() => expect(client.isFetching()).toBe(0));
+
+        const statsCalls = requests.filter((r) => r.startsWith('/api/v1/admin/stats/daily'));
+        expect(statsCalls).toHaveLength(1);
+        // KST 날짜 양끝 포함 7일 범위를 그대로 보낸다
+        expect(statsCalls[0]).toMatch(/from=\d{4}-\d{2}-\d{2}&to=\d{4}-\d{2}-\d{2}/);
+        // 이전 구현: 날짜×출처 지급 건수 21회·사용 건수 7회·요약용 지급 2회·차단 목업 2회
+        expect(
+            requests.filter(
+                (r) => r.startsWith('/api/v1/admin/ticket-grants?') && r.includes('size=1'),
+            ),
+        ).toEqual([]);
+        expect(
+            requests.filter(
+                (r) => r.startsWith('/api/v1/admin/ticket-histories?') && r.includes('size=1'),
+            ),
+        ).toEqual([]);
+        expect(requests.filter((r) => r.startsWith('/api/v1/admin/abuse-cases'))).toEqual([]);
+        // AS01 지표가 요약·추이에 보인다 — 탐지 기록은 차단 확정 건수로 표기하지 않는다
+        expect(screen.getByText('오늘 어뷰징 탐지 기록')).toBeInTheDocument();
+        expect(screen.getByText('현재 활성 일반 사용자')).toBeInTheDocument();
+        expect(screen.getByText('참여율(활동 사용자 ÷ 현재 활성 일반 사용자)')).toBeInTheDocument();
+    } finally {
+        view.unmount();
+        client.clear();
+        server.events.removeListener('request:start', observe);
+    }
+});
