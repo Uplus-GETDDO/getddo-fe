@@ -6,6 +6,7 @@ import type { MissionSubmissionResult } from '@entities/mission';
 import type { TicketGrade } from '@entities/ticket';
 
 import { useMissionDetail } from '@entities/mission';
+import { TicketRewardChip } from '@entities/ticket';
 import { QuizForm, SurveyForm } from '@features/submitMission';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
@@ -21,7 +22,6 @@ import { Skeleton, SkeletonText } from '@shared/ui/skeleton';
 import { formatKst } from '@shared/utils/date';
 
 import { MISSION_KIND_LABEL, missionUrgentDeadline } from '../utils/missionBoard';
-import { MissionReward } from './MissionReward';
 
 const PERIOD_FORMAT: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
 
@@ -168,13 +168,19 @@ function MissionDialogBody({
                 className="border-border-strong flex shrink-0 flex-col gap-2 border-b border-dashed px-6 pt-6 pr-12 pb-5"
             >
                 <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="neutral">{MISSION_KIND_LABEL[mission.missionType]}</Badge>
+                    <Badge variant="outline">{MISSION_KIND_LABEL[mission.missionType]}</Badge>
                     {!mission.completed && !notYetOpen && !ended && deadline && (
                         // 오늘 마감은 겟또타임 D-day처럼 검정 알약, 7일 이내는 흰 바탕+테두리 (카드와 같은 규칙)
                         <Badge variant={deadline === '오늘 마감' ? 'inverse' : 'outline'}>
                             {deadline}
                         </Badge>
                     )}
+                    {/* 보상은 카드와 같은 공용 칩 — 참여를 마치면 회색 '응모권 1장 받았어요' */}
+                    <TicketRewardChip
+                        count={mission.rewardTicketCount}
+                        received={mission.completed}
+                        muted={ended}
+                    />
                 </div>
                 {/* 글자 크기는 text-xl로 — 커스텀 타이포 토큰은 공용 cn이 글자색과 같은 묶음으로 보고 지운다 */}
                 <DialogTitle className="text-xl leading-7 font-semibold">
@@ -188,13 +194,6 @@ function MissionDialogBody({
                     {formatKst(mission.startsAt, PERIOD_FORMAT)} ~{' '}
                     {formatKst(mission.endsAt, PERIOD_FORMAT)}
                     {mission.questions.length > 0 && ` · ${mission.questions.length}문항`}
-                    <span aria-hidden>·</span>
-                    <MissionReward
-                        count={mission.rewardTicketCount}
-                        received={mission.completed}
-                        muted={mission.completed}
-                        small
-                    />
                 </p>
             </header>
             {/* 문항이 많아도 모달 높이(화면의 85%) 안에서 문항 영역만 스크롤한다 */}

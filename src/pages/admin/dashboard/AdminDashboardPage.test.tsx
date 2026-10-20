@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import { server } from '@mocks/server';
 import { VirtualClockProvider } from '@shared/model/virtualClock';
@@ -88,6 +88,10 @@ it('요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 �
 });
 
 it('활성 일반 사용자가 0명이면 참여율을 계산 불가로 표시한다', async () => {
+    // 아래 7일 응답의 마지막 날(10-20)이 '오늘'이어야 한다 — 실제 날짜로 돌리면 다음 날부터 오늘 칸이 없어 실패했다.
+    // Date만 고정해 findBy의 타이머 대기는 그대로 둔다
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-20T03:00:00Z'));
     const day = (date: string) => ({
         date,
         entrantCount: 0,
@@ -132,5 +136,6 @@ it('활성 일반 사용자가 0명이면 참여율을 계산 불가로 표시�
     } finally {
         view.unmount();
         client.clear();
+        vi.useRealTimers();
     }
 });
