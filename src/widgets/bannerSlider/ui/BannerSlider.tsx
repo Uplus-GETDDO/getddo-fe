@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import type { Event } from '@entities/event';
 
-import { eventDetailPath, useEventList } from '@entities/event';
+import { eventDetailPath, useEvent, useEventList } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -23,9 +23,29 @@ const MAX_SLIDES = 5;
 /** 피그마 홈 배너의 무너 캐릭터(image 28) — 배너 이미지 대신 고정 장식으로 보여준다 */
 const SHOW_MASCOT = true;
 
+/**
+ * 배너 설명 — 목록(E01)에는 설명이 없어(spec EventSummary) 상세(E02)에서 받는다.
+ * 목업처럼 목록에 설명이 오면 그 값을 먼저 쓰고, 받는 동안은 한 줄 자리를 잡아 둔다
+ */
+function BannerDescription({ event }: { event: Event }) {
+    const { data, isPending } = useEvent(event.id);
+    const description = data?.description || event.description;
+    if (!description) {
+        return isPending ? <Skeleton className="h-6 w-80 max-w-full" /> : null;
+    }
+    return (
+        <p className="text-body text-fg-primary line-clamp-2 break-keep whitespace-pre-line">
+            {description}
+        </p>
+    );
+}
+
 export function BannerSlider({
     renderStatus,
+    footer,
 }: {
+    /** 배너 아래 줄 왼쪽에 둘 내용 — 넘김 화살표와 같은 줄에 붙여 배너와 한 덩어리로 보이게 한다 (예: 홈 바로가기) */
+    footer?: ReactNode;
     /**
      * 배너 이벤트의 실시간 현황 pill을 배너 안에 렌더링한다 — 위젯 간 참조를 피하기 위해 페이지가 슬롯으로 주입한다.
      * isActive는 지금 보이는 슬라이드인지 여부라, 보이지 않는 슬라이드의 현황 조회를 멈추는 데 쓴다
@@ -100,11 +120,18 @@ export function BannerSlider({
 
     if (isPending) {
         // 겟또타임·미션 머리처럼 배너 자리를 통으로 잡는다
-        return <Skeleton className="min-h-91.25 w-full rounded-2xl" />;
+        return (
+            <div className="flex flex-col gap-3">
+                <Skeleton className="min-h-91.25 w-full rounded-2xl" />
+                {footer}
+            </div>
+        );
     }
 
-    if (isError || slides.length === 0) {
-        return null;
+    // 다시 받기에 실패해도 받아 둔 배너는 그대로 둔다 — 처음부터 못 받았을 때만 자리를 비운다
+    if ((isError && !events) || slides.length === 0) {
+        // 배너가 없어도 아래 줄 내용(바로가기)은 남긴다
+        return footer ?? null;
     }
 
     return (
@@ -122,7 +149,8 @@ export function BannerSlider({
         >
             {/* 모든 슬라이드를 한 줄로 나열 — 트랙 높이가 가장 큰 슬라이드로 고정돼 전환 중 크기 변환이 없고 transform만 애니메이션된다 */}
             {/* 노란 그림 배너라 다크 모드에서도 라이트 색을 쓴다 (tokens.css force-light) — 아래 넘김 화살표는 페이지 색을 따른다 */}
-            <div className="force-light overflow-hidden rounded-2xl">
+            {/* 좌우만 잘라 다른 배너는 숨기고, 위아래는 열어 캐릭터가 배너 밖으로 걸칠 수 있게 한다. 둥근 모서리는 배너마다 준다 */}
+            <div className="force-light overflow-x-clip">
                 <div
                     className="flex ease-out motion-safe:transition-transform motion-safe:duration-500"
                     style={{ transform: `translateX(-${safeIndex * 100}%)` }}
@@ -135,10 +163,10 @@ export function BannerSlider({
                                 key={event.id}
                                 // 화면 밖 배너는 Tab 포커스·보조 기술에서 빼 실시간 현황 알림도 보이는 배너만 읽힌다
                                 inert={slideIndex !== safeIndex}
-                                className="bg-play-yellow relative flex min-h-91.25 w-full shrink-0 flex-col bg-cover bg-right-bottom"
+                                className="bg-play-yellow relative flex min-h-91.25 w-full shrink-0 flex-col rounded-2xl bg-cover bg-right-bottom"
                                 style={{ backgroundImage: `url(${bannerBackground})` }}
                             >
-                                {/* 마감 시간 — 배너 왼쪽 끝에 붙은 흰 탭 (공용 Badge surface xl). 시각 꼴(169:59:58) 대신 읽는 단위로 적는다 */}
+                                {/* 마감 시간 — 배너 왼쪽 끝에 붙은 브랜드색 탭 (공용 Badge surface xl). 시각 꼴(169:59:58) 대신 읽는 단위로 적는다 */}
                                 <Badge
                                     variant="surface"
                                     size="xl"
@@ -167,9 +195,7 @@ export function BannerSlider({
                                             <h2 className="text-display text-fg-primary break-keep">
                                                 {event.title}
                                             </h2>
-                                            <p className="text-body text-fg-primary line-clamp-2 break-keep whitespace-pre-line">
-                                                {event.description}
-                                            </p>
+                                            <BannerDescription event={event} />
                                             {renderStatus?.(event, slideIndex === safeIndex)}
                                         </div>
                                     </div>
@@ -178,32 +204,36 @@ export function BannerSlider({
                                         <Link to={eventDetailPath(event)}>응모하러 가기</Link>
                                     </Button>
                                 </div>
+                                {/* 피그마 홈 — 무너 캐릭터가 배너 오른쪽 위로 살짝 걸친다 (넓은 화면만). 배너 안에 두어 넘길 때 배너와 함께 미끄러진다 */}
+                                {SHOW_MASCOT && (
+                                    <img
+                                        src={bannerMascot}
+                                        alt=""
+                                        aria-hidden
+                                        className="pointer-events-none absolute -top-16.75 right-8 hidden w-125 select-none xl:block"
+                                    />
+                                )}
                             </div>
                         );
                     })}
                 </div>
             </div>
-            {/* 피그마 홈 — 배너 오른쪽에 무너 캐릭터가 배너 밖으로 살짝 걸쳐 있다 (넓은 화면만) */}
-            {slides.length > 1 && (
-                <div className="relative z-10 flex justify-end">
+            {(footer || slides.length > 1) && (
+                <div className="relative z-10 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0 flex-1">{footer}</div>
                     {/* 피그마 홈 — 원형 화살표 사이에 '01 / 04' (공용 Pager) */}
-                    <Pager
-                        current={safeIndex}
-                        total={slides.length}
-                        prevLabel="이전 이벤트"
-                        nextLabel="다음 이벤트"
-                        onPrev={goPrev}
-                        onNext={goNext}
-                    />
+                    {slides.length > 1 && (
+                        <Pager
+                            className="self-end sm:self-auto"
+                            current={safeIndex}
+                            total={slides.length}
+                            prevLabel="이전 이벤트"
+                            nextLabel="다음 이벤트"
+                            onPrev={goPrev}
+                            onNext={goNext}
+                        />
+                    )}
                 </div>
-            )}
-            {SHOW_MASCOT && (
-                <img
-                    src={bannerMascot}
-                    alt=""
-                    aria-hidden
-                    className="pointer-events-none absolute -top-16.75 right-8 hidden w-125 select-none xl:block"
-                />
             )}
         </section>
     );

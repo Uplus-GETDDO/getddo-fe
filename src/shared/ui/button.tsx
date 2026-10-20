@@ -22,6 +22,9 @@ const buttonVariants = cva(
                 // 주된 행동 — action/neutral (피그마 Button/*/active)
                 primary:
                     'bg-action-neutral text-fg-on-brand hover:bg-action-neutral-hover active:bg-action-neutral-pressed',
+                // 악센트 — 응모권 노랑 바탕에 잉크 글씨. 검정이 많아 보이지 않게 응모 진입처럼 가장 중요한 행동에만 아껴 쓴다.
+                // 노랑은 hover·pressed 토큰이 없어 밝기만 한 단계씩 낮춘다
+                accent: 'bg-ticket-primary text-ticket-on hover:brightness-95 active:brightness-90',
                 // 보조 행동 — outline (피그마 Button/*/outline). 취소 버튼도 여기라 노랑으로 채우지 않는다.
                 // 마우스를 올리면 연회색 바탕에 테두리를 한 단계 진하게 — 비활성(테두리 없음·연한 글씨)과 테두리·글자로 구분된다
                 secondary:

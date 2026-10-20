@@ -53,7 +53,7 @@ export function EventCard({ event }: { event: Event }) {
                                 {tag}
                             </Badge>
                         ))}
-                        {dDay != null && dDay >= 0 && <Badge variant="inverse">D-{dDay}</Badge>}
+                        {dDay != null && dDay >= 0 && <Badge variant="highlight">D-{dDay}</Badge>}
                     </div>
                 )}
                 <div className="flex flex-col gap-2">

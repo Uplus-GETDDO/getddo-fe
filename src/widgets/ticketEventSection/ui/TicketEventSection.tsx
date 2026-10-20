@@ -1,13 +1,16 @@
-import { ChevronRight, Clock } from 'lucide-react';
+import type { ReactNode } from 'react';
+
+import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
-import { FeaturedEventCard, UpcomingEventCard } from '@entities/event';
+import { FeaturedEventCard, UpcomingEventCard, useEvent } from '@entities/event';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
+import { EmptyState } from '@shared/ui/empty-state';
 import { Pager } from '@shared/ui/pager';
 import { SkeletonCard } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
@@ -20,10 +23,16 @@ export function TicketEventSection({
     events,
     isPending,
     isError,
+    onRetry,
+    refresh,
 }: {
     events: Event[];
     isPending?: boolean;
+    /** 보여줄 목록이 없는 실패 — 받아 둔 목록이 있으면 넘기지 않는다 */
     isError?: boolean;
+    onRetry?: () => void;
+    /** 제목 줄 오른쪽에 둘 새로고침 표시 (폴링 상태) */
+    refresh?: ReactNode;
 }) {
     const openEvents = events
         .filter((event) => event.status === 'open')
@@ -44,12 +53,15 @@ export function TicketEventSection({
                         모은 응모권으로 정해진 시간에만 응모할 수 있어요.
                     </span>
                 </div>
-                <Button asChild variant="link" size="text">
-                    <Link to="/time-raffle">
-                        더보기
-                        <ChevronRight />
-                    </Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                    {refresh}
+                    <Button asChild variant="link" size="text">
+                        <Link to="/time-raffle">
+                            더보기
+                            <ChevronRight />
+                        </Link>
+                    </Button>
+                </div>
             </div>
             {/* 불러오는 동안 대표 카드·오픈 예정 두 칸 자리를 잡아 둔다 */}
             {isPending && (
@@ -59,8 +71,21 @@ export function TicketEventSection({
                     ))}
                 </div>
             )}
+            {/* 실패해도 두 칸 높이를 지켜 아래 섹션이 올라오지 않게 한다 */}
             {isError && (
-                <p className="text-destructive text-body-sm">이벤트 목록을 불러오지 못했습니다.</p>
+                <Card size="lg" className="min-h-72 p-(--card-spacing)">
+                    <EmptyState
+                        title="겟또타임을 불러오지 못했어요"
+                        description="잠시 후 다시 시도해 주세요."
+                        action={
+                            onRetry && (
+                                <Button size="sm" variant="secondary" onClick={onRetry}>
+                                    다시 시도
+                                </Button>
+                            )
+                        }
+                    />
+                </Card>
             )}
             {/* 진행 중·오픈 예정 두 칸은 비어도 자리를 지키고 "없어요"를 보인다 — 한쪽만 사라지면 화면이 기울어 보인다 */}
             {!isPending && !isError && (
@@ -69,7 +94,7 @@ export function TicketEventSection({
                         <FeaturedEvent event={featured} />
                     ) : (
                         <Card size="lg" className="min-h-72 p-(--card-spacing)">
-                            <EmptySlot
+                            <EmptyState
                                 title="진행 중인 겟또타임이 없어요"
                                 description={
                                     upcomingEvents.length > 0
@@ -97,27 +122,20 @@ export function TicketEventSection({
     );
 }
 
-/** 대표 이벤트의 응모 현황(E03)을 조회해 카드에 내려준다 — 진행 중이므로 30초 폴링 (ADR-0007) */
+/**
+ * 대표 이벤트의 응모 현황(E03)을 조회해 카드에 내려준다 — 진행 중이므로 30초 폴링 (ADR-0007).
+ * 목록(E01)에는 설명·경품(당첨 인원)이 없어(spec EventSummary) 상세(E02)를 받아 채운다. 받기 전에는 목록 값으로 그린다
+ */
 function FeaturedEvent({ event }: { event: Event }) {
     const { data: statistics } = useEntryStatistics(event.id, { isOpen: true });
+    const { data: detail } = useEvent(event.id);
     return (
         <FeaturedEventCard
-            event={event}
+            event={detail ?? event}
             participantCount={statistics?.participantCount}
             totalSpentTicketCount={statistics?.totalSpentTicketCount}
             mySpentTicketCount={statistics?.mySpentTicketCount}
         />
-    );
-}
-
-/** 칸이 비었을 때 — 가운데에 시계 아이콘과 짧은 안내. 칸 높이는 그대로 둔다 */
-function EmptySlot({ title, description }: { title: string; description: string }) {
-    return (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 py-6 text-center">
-            <Clock aria-hidden className="text-fg-tertiary size-8" />
-            <p className="text-body-bold text-fg-primary">{title}</p>
-            <p className="text-caption text-fg-tertiary">{description}</p>
-        </div>
     );
 }
 
@@ -160,7 +178,7 @@ function UpcomingEventCarousel({
                 )}
             </div>
             {events.length === 0 && (
-                <EmptySlot
+                <EmptyState
                     title="오픈 예정인 겟또타임이 없어요"
                     description="새 겟또타임이 잡히면 여기에 보여드릴게요."
                 />

@@ -9,7 +9,7 @@ import { drawMockTicketGrade, recordMockTicketGrant } from './ticket';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
 
-// 게임 종류는 게임 담당자 확정 전 임시 목록 (getddo-spec 게임 규칙: '타코야끼 만들기'는 후보)
+// 게임 종류는 게임 담당자 확정 전 임시 목록 — 플레이 화면이 있는 게임만 둔다 ('타코야끼 만들기'는 후보라 뺐다)
 // dailyLimit은 홈 위젯 호환용, description·thumbnailUrl은 게임 카드·상세용 임시 계약
 interface GameMeta {
     id: string;
@@ -25,13 +25,6 @@ const mockGames: GameMeta[] = [
         title: '타꼬런',
         description: '소스병과 꼬치를 뛰어넘으며 멀리 달려요',
         thumbnailUrl: '/images/games/takoyaki-run.jpg',
-        dailyLimit: 1,
-    },
-    {
-        id: 'game-takoyaki',
-        title: '타코야끼 만들기',
-        description: '타이밍 맞춰 뒤집어 노릇하게 구워요',
-        thumbnailUrl: null,
         dailyLimit: 1,
     },
     {
@@ -73,12 +66,6 @@ interface GamePlayState {
 
 const seedPlayState: Record<string, GamePlayState> = {
     'game-dino': { bestScore: 0, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
-    'game-takoyaki': {
-        bestScore: 2589,
-        todayPlayCount: 0,
-        rewardedToday: false,
-        remainingPlays: 1,
-    },
     'game-timing': { bestScore: 0, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
     'game-color': { bestScore: 120, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },
     'game-order': { bestScore: 0, todayPlayCount: 0, rewardedToday: false, remainingPlays: 1 },

@@ -105,7 +105,7 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
                     event={event}
                     mySpentTicketCount={statistics?.mySpentTicketCount}
                 />
-                <Button asChild size="lg" className="mt-auto w-full">
+                <Button asChild variant="accent" size="lg" className="mt-auto w-full">
                     <Link to={`/time-raffle/${event.id}`}>응모하러 가기</Link>
                 </Button>
             </div>

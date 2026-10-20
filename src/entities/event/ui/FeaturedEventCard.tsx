@@ -76,39 +76,34 @@ export function FeaturedEventCard({
         <Card size="lg" className="gap-5 p-(--card-spacing)">
             <div className="flex gap-5">
                 <div className="flex min-w-0 flex-1 flex-col gap-3">
-                    <div className="text-body-sm flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <span className="text-fg-primary flex items-center gap-1.5">
-                            <span aria-hidden className="bg-brand-primary size-1.5 rounded-full" />
+                    {/*
+                     * 중요도 순으로 위에서 아래로 — ① 진행 중·남은 시간(가장 크게) ② 무엇을 주는지(제목)
+                     * ③ 운영 시간·설명(보조색) ④ 숫자와 응모 버튼(맨 아래 한 줄)
+                     */}
+                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                        <span className="text-body-bold text-fg-primary flex items-center gap-1.5">
+                            <span aria-hidden className="bg-brand-primary size-2 rounded-full" />
                             진행중
                         </span>
-                        {/* 남은 시간이 판단에 더 쓰이는 값이라 진하게, 운영 시간은 보조색으로 뒤에 둔다 */}
                         {remainingMs > 0 && (
-                            <span className="text-fg-primary text-body-sm-bold flex items-center gap-1 tabular-nums">
-                                <Timer aria-hidden className="size-3.5" />
+                            <span className="text-subhead text-fg-primary flex items-center gap-1 tabular-nums">
+                                <Timer aria-hidden className="size-4.5" />
                                 {formatRemaining(remainingMs, 'minute')} 남음
                             </span>
                         )}
-                        <span className="text-fg-tertiary flex items-center gap-1 tabular-nums">
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <p className="text-title-3 text-fg-primary line-clamp-2">{event.title}</p>
+                        <p className="text-body-sm text-fg-tertiary flex items-center gap-1 tabular-nums">
                             <Clock aria-hidden className="size-3.5" />
                             {formatKstTimeRange(event.startsAt, event.endsAt)}
-                        </span>
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <p className="text-title-3 text-fg-primary line-clamp-2">{event.title}</p>
-                        <p className="text-body-sm text-fg-secondary line-clamp-2 break-keep">
-                            {event.description}
                         </p>
+                        {event.description && (
+                            <p className="text-body-sm text-fg-secondary line-clamp-2 break-keep">
+                                {event.description}
+                            </p>
+                        )}
                     </div>
-                    <dl className="divide-border-default mt-1 grid grid-cols-3 divide-x">
-                        {stats.map(({ label, value }) => (
-                            <div key={label} className="flex flex-col gap-0.5 px-3 first:pl-0">
-                                <dt className="text-caption text-fg-tertiary">{label}</dt>
-                                <dd className="text-subhead text-fg-primary tabular-nums">
-                                    {value}
-                                </dd>
-                            </div>
-                        ))}
-                    </dl>
                     {mySpentTicketCount != null && mySpentTicketCount > 0 && (
                         <span className="bg-ticket-accent text-fg-primary text-caption flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1">
                             <Ticket aria-hidden className="size-3.5" />
@@ -119,13 +114,24 @@ export function FeaturedEventCard({
                 {/* 상품 그림은 1:1(DESIGN-SYSTEM '이미지 비율')이되 작게 — 크게 두면 설명이 짧을 때 왼쪽이 텅 빈다 */}
                 <EventThumbnail
                     src={event.bannerImageUrl}
-                    className="size-24 rounded-xl sm:size-36"
+                    className="size-24 rounded-xl sm:size-32"
                 />
             </div>
-            {/* 상세로 이동하는 버튼은 주 행동(검정) — 카드 아래에 붙여 글 길이가 달라도 같은 자리에 둔다 */}
-            <Button asChild size="lg" className="mt-auto w-full">
-                <Link to={eventDetailPath(event)}>응모하러 가기</Link>
-            </Button>
+            {/* 맨 아래 한 줄 — 숫자는 판단 근거라 왼쪽에 넓게, 응모 버튼은 오른쪽 끝에 보통 크기로. 글 길이가 달라도 카드 바닥에 붙는다 */}
+            <div className="border-border-default mt-auto flex flex-wrap items-end justify-between gap-4 border-t pt-4">
+                <dl className="divide-border-default grid min-w-0 flex-1 grid-cols-3 divide-x">
+                    {stats.map(({ label, value }) => (
+                        <div key={label} className="flex flex-col gap-0.5 px-3 first:pl-0">
+                            <dt className="text-caption text-fg-tertiary">{label}</dt>
+                            {/* 숫자는 판단 근거일 뿐 — 굵게 하면 위의 남은 시간·제목보다 세 보여 보통 굵기로 둔다 */}
+                            <dd className="text-body text-fg-primary tabular-nums">{value}</dd>
+                        </div>
+                    ))}
+                </dl>
+                <Button asChild variant="accent" className="px-5">
+                    <Link to={eventDetailPath(event)}>응모하러 가기</Link>
+                </Button>
+            </div>
         </Card>
     );
 }

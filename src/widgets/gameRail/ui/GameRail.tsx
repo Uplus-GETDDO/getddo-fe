@@ -20,13 +20,10 @@ export function GameRail({
     const { data: games, isPending, isError } = useGameList();
     const dragScroll = useDragScroll<HTMLDivElement>();
     const ordered = (games ?? [])
-        .filter((game) => game.id !== excludeGameId)
-        // 준비 중인 게임은 맨 뒤, 오늘 보상을 받은 게임은 그 앞으로 보낸다
-        .sort(
-            (a, b) =>
-                Number(!hasGamePlayer(a.id)) - Number(!hasGamePlayer(b.id)) ||
-                Number(a.rewardedToday ?? false) - Number(b.rewardedToday ?? false),
-        );
+        // 플레이 화면이 없는 게임(후보·준비 중)은 목록에서 뺀다
+        .filter((game) => game.id !== excludeGameId && hasGamePlayer(game.id))
+        // 오늘 보상을 받은 게임은 뒤로 보낸다
+        .sort((a, b) => Number(a.rewardedToday ?? false) - Number(b.rewardedToday ?? false));
 
     return (
         <section className="flex flex-col gap-6">

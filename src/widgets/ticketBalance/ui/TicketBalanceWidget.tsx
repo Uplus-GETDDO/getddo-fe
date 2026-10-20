@@ -90,20 +90,23 @@ export function TicketBalanceWidget({
             thumbnailUrl: missionThumbnail(mission),
             thumbnailIcon: ClipboardList,
         })),
-        ...(games ?? []).map((game) => ({
-            id: game.id,
-            category: 'GAME' as const,
-            title: game.title,
-            description: `하루 최대 ${game.dailyLimit}회, 보상은 등급 추첨 응모권 1장`,
-            rewardKind: '등급 응모권',
-            rewardTickets: 1,
-            href: gameDetailPath(game.id),
-            actionLabel: '게임하러 가기',
-            completed: game.remainingPlays === 0,
-            thumbnailUrl: game.thumbnailUrl ?? null,
-            thumbnailIcon: Gamepad2,
-            game,
-        })),
+        // 플레이 화면이 없는 게임(후보·준비 중)은 카드로 두지 않는다 — 눌러도 할 수 없는 게임이 섞여 보였다
+        ...(games ?? [])
+            .filter((game) => hasGamePlayer(game.id))
+            .map((game) => ({
+                id: game.id,
+                category: 'GAME' as const,
+                title: game.title,
+                description: `하루 최대 ${game.dailyLimit}회, 보상은 등급 추첨 응모권 1장`,
+                rewardKind: '등급 응모권',
+                rewardTickets: 1,
+                href: gameDetailPath(game.id),
+                actionLabel: '게임하러 가기',
+                completed: game.remainingPlays === 0,
+                thumbnailUrl: game.thumbnailUrl ?? null,
+                thumbnailIcon: Gamepad2,
+                game,
+            })),
     ];
     const orderedCards = orderEarnCards(cards);
 
@@ -117,7 +120,7 @@ export function TicketBalanceWidget({
                 <div className="flex flex-wrap items-center gap-3">
                     <h2 className="text-title-3 text-fg-primary">오늘 받을 수 있는 응모권</h2>
                     <span className="text-fg-tertiary text-caption">
-                        출석과 게임 보상은 매일 자정(00:00 KST)에 다시 받을 수 있어요.
+                        출석과 게임 보상은 매일 자정에 다시 받을 수 있어요.
                     </span>
                 </div>
                 {!hideMoreLink && (
