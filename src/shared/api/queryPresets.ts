@@ -68,6 +68,8 @@ export const pollingReadPolicy = {
         errorStatus(error) === 429 ? boundedPollingDelay(getPollingRetryDelay(error)) : 1000,
     // 캐시 데이터가 남은 채 종결 오류로 실패한 쿼리도 재마운트 자동 재요청을 막는다
     refetchOnMount: (query: { state: { error: unknown } }) => !stopsPolling(query.state.error),
+    // 같은 이유로 네트워크 재연결 자동 재요청도 종결 오류 캐시가 있으면 건너뛴다
+    refetchOnReconnect: (query: { state: { error: unknown } }) => !stopsPolling(query.state.error),
     // 종결 오류로 데이터 없이 실패한 쿼리는 재마운트 때도 자동 재요청하지 않는다 — 복구는 명시적 refetch()로만
     retryOnMount: false,
 };
