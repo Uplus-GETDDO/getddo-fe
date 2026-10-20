@@ -108,6 +108,14 @@ export function AdminEventDetailPage() {
                     </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                    <Button variant="secondary" asChild>
+                        <Link to={`/admin/entries?view=participants&eventId=${event.id}`}>
+                            참여자 조회
+                        </Link>
+                    </Button>
+                    <Button variant="secondary" asChild>
+                        <Link to={`/admin/entries?eventId=${event.id}`}>응모 이력 조회</Link>
+                    </Button>
                     {hasDraw && (
                         <Button variant="secondary" asChild>
                             <Link to={`/admin/draw?eventId=${event.id}`}>추첨 관리</Link>
