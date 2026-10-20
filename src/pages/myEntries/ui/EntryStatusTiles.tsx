@@ -20,8 +20,14 @@ export function EntryStatusTiles({
     tiles,
     value,
     onChange,
+    isPending = false,
+    isUnavailable = false,
+    isEntriesError = false,
 }: {
     tiles: StatusTile[];
+    isPending?: boolean;
+    isUnavailable?: boolean;
+    isEntriesError?: boolean;
     value: EntryStatusFilter;
     onChange: (value: EntryStatusFilter) => void;
 }) {
@@ -50,8 +56,24 @@ export function EntryStatusTiles({
                             className={`absolute top-4 right-4 size-4 transition-colors ${selected ? 'text-fg-primary' : 'text-fg-disabled group-hover/tile:text-fg-primary'}`}
                         />
                         <span className="text-body-sm text-fg-secondary">{tile.label}</span>
-                        <span className="text-title-2 text-fg-primary">{tile.count}건</span>
-                        <span className="text-caption text-fg-tertiary">{tile.note}</span>
+                        <span className="text-title-2 text-fg-primary">
+                            {isEntriesError
+                                ? '조회 실패'
+                                : isPending
+                                  ? '조회 중'
+                                  : isUnavailable && tile.value !== 'ALL'
+                                    ? '일부 결과 미조회'
+                                    : `${tile.count}건`}
+                        </span>
+                        <span className="text-caption text-fg-tertiary">
+                            {isEntriesError
+                                ? '응모 내역을 불러오지 못했어요'
+                                : isPending
+                                  ? '결과를 불러오고 있어요'
+                                  : isUnavailable
+                                    ? '마지막 조회 기준이에요'
+                                    : tile.note}
+                        </span>
                     </button>
                 );
             })}

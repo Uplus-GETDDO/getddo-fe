@@ -10,7 +10,7 @@ import { useSessionStore } from '@entities/user';
 import { AppearanceSettings } from '@features/appearanceSettings';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { formatKstDot } from '@shared/utils/date';
-import { latestWonAt, useMyEntryRows } from '@widgets/myEntryRows';
+import { latestWonAt, MyEntryRefreshStatus, useMyEntryRows } from '@widgets/myEntryRows';
 
 import { AccountInfoCard } from './ui/AccountInfoCard';
 import { ProfileCard } from './ui/ProfileCard';
@@ -38,7 +38,7 @@ export function MyPage() {
         to: new Date(time).toISOString(),
     });
     const daily = useTicketHistoryCounts([{ operationType: 'GRANT', ...ticketDayRange(now) }]);
-    const entries = useMyEntryRows();
+    const entries = useMyEntryRows({ selectVisibleRows: (rows) => rows.slice(0, 4) });
 
     const won = entries.rows.filter((row) => row.result === 'WON');
     const lastWonAt = latestWonAt(won);
@@ -57,11 +57,15 @@ export function MyPage() {
                         historiesError: daily.isError,
                         historiesFetching: daily.isFetching,
                         onRetryHistories: daily.refetch,
-                        entriesLoading: entries.isPending,
+                        entriesLoading: entries.isPending || entries.isResultPending,
+                        entriesFailed: entries.isError,
+                        entriesUnavailable: entries.isResultInitialError,
                         historiesLoading: daily.isPending,
                     }}
                 />
             )}
+
+            <MyEntryRefreshStatus query={entries} />
 
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24.5rem]">
                 <div className="flex flex-col gap-6">
@@ -69,7 +73,6 @@ export function MyPage() {
                         rows={entries.rows}
                         isPending={entries.isPending}
                         isError={entries.isError}
-                        isResultError={entries.isResultError}
                     />
                     <RecentTicketsCard
                         histories={historiesQuery.items}

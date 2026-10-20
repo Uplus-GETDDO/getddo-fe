@@ -11,8 +11,10 @@ import { useEvent } from '@entities/event';
 import { TicketBalanceStatus, ticketGradeSchema, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
+import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
+import { formatKst } from '@shared/utils/date';
 import {
     EntryCompleteDialog,
     EntryConfirmDialog,
@@ -42,7 +44,8 @@ const STATUS_LABEL: Record<Event['status'], string> = {
 
 export function TimeRaffleDetailPage() {
     const { id = '' } = useParams();
-    const { data: event, isPending, isError } = useEvent(id);
+    const eventQuery = useEvent(id);
+    const { data: event, isPending, isError } = eventQuery;
     const ticketsQuery = useMyTickets();
     const ticket = ticketsQuery.data;
     // 응모 자격은 서버 판정으로 받는다 — 진행 중일 때만 조회한다 (E07)
@@ -51,9 +54,11 @@ export function TimeRaffleDetailPage() {
     });
     // 마감 전에는 결과가 존재하지 않으므로 묻지 않는다
     const isAfterClose = event?.status === 'closed' || event?.status === 'drawn';
-    const { data: results } = useEventResults(id, isAfterClose);
+    const resultsQuery = useEventResults(id, isAfterClose);
+    const { data: results } = resultsQuery;
     // 본인 결과도 마감 후에만 묻는다 — 공개 전에는 서버가 PENDING으로 고정해 돌려준다
-    const { data: myResult } = useMyResult(id, isAfterClose);
+    const myResultQuery = useMyResult(id, isAfterClose);
+    const { data: myResult } = myResultQuery;
     const enterEvent = useEnterEvent(id);
     // 가중치 적용 이벤트에서 사용자가 등급별로 고르는 장수 — 브론즈 0장 사용자를 위해 0장에서 시작한다
     const [tickets, setTickets] = useState<TicketsByGrade>({
@@ -71,6 +76,24 @@ export function TimeRaffleDetailPage() {
     const [lastRemaining, setLastRemaining] = useState<number | null>(0);
     // 모달을 닫으면 방금 누른 응모 버튼으로 포커스를 되돌린다
     const entryButtonRef = useRef<HTMLButtonElement>(null);
+    const eventFailureNotice = isError && (
+        <div role="status" className="text-body-sm text-fg-secondary">
+            <p>
+                {event
+                    ? '래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'
+                    : '래플을 불러오지 못했습니다.'}
+            </p>
+            <p>{getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')}</p>
+            <Button
+                type="button"
+                variant="secondary"
+                disabled={eventQuery.isFetching}
+                onClick={() => void eventQuery.refetch()}
+            >
+                래플 정보 다시 시도
+            </Button>
+        </div>
+    );
 
     if (isPending) {
         return (
@@ -80,12 +103,8 @@ export function TimeRaffleDetailPage() {
         );
     }
 
-    if (isError) {
-        return (
-            <main className={CONTAINER}>
-                <p className="text-destructive text-body-sm">래플을 불러오지 못했습니다.</p>
-            </main>
-        );
+    if (isError && !event) {
+        return <main className={CONTAINER}>{eventFailureNotice}</main>;
     }
 
     const isOpen = event.status === 'open';
@@ -145,6 +164,7 @@ export function TimeRaffleDetailPage() {
     return (
         <main className={CONTAINER}>
             <div className="flex flex-col gap-10">
+                {eventFailureNotice}
                 {!confirmOpen && <TicketBalanceStatus query={ticketsQuery} />}
                 <RaffleDetailHero
                     event={event}
@@ -215,10 +235,75 @@ export function TimeRaffleDetailPage() {
                     }
                 />
                 {/* 발표 전에는 발표 대기 카드가, 발표 후에는 결과 영역의 배너가 본인 결과를 맡는다 */}
-                {(myResult?.result === 'PENDING' ||
-                    (event.status === 'closed' && !results?.isPublished)) && (
-                    <MyResultCard entered={myResult?.result === 'PENDING'} />
+                {isAfterClose &&
+                    (
+                        [
+                            ['공개 결과', resultsQuery],
+                            ['본인 결과', myResultQuery],
+                        ] as const
+                    ).map(([label, query]) => (
+                        <div key={label} role="status" className="text-body-sm text-fg-secondary">
+                            {!query.data && query.isPending && <p>{label}를 불러오는 중이에요.</p>}
+                            {query.data && (
+                                <p>
+                                    {label} 마지막 조회{' '}
+                                    {formatKst(new Date(query.dataUpdatedAt), {
+                                        month: 'numeric',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                    })}
+                                </p>
+                            )}
+                            {query.data && query.isFetching && <p>{label} 갱신 중이에요.</p>}
+                            {(query.isError ||
+                                getPollingRetryDelay(query.error ?? query.failureReason) > 0) && (
+                                <>
+                                    <p>
+                                        {query.data
+                                            ? `${label}를 갱신하지 못했어요. 이전 값을 표시해요.`
+                                            : `${label}를 불러오지 못했어요.`}
+                                    </p>
+                                    <p>{getErrorMessage(query.error ?? query.failureReason)}</p>
+                                    {getPollingRetryDelay(query.error ?? query.failureReason) >
+                                        0 && <p>요청이 많아요. 잠시 후 다시 시도해 주세요.</p>}
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        disabled={
+                                            query.isFetching ||
+                                            getPollingRetryDelay(
+                                                query.error ?? query.failureReason,
+                                            ) > 0
+                                        }
+                                        onClick={() => {
+                                            if (
+                                                getPollingRetryDelay(
+                                                    query.error ?? query.failureReason,
+                                                ) === 0
+                                            )
+                                                void query.refetch({ cancelRefetch: false });
+                                        }}
+                                    >
+                                        {label} 다시 시도
+                                    </Button>
+                                </>
+                            )}
+                        </div>
+                    ))}
+                {results?.displayStatus === 'CANCELED' && !results.isPublished && (
+                    <p role="status">이벤트가 취소되어 당첨자를 발표하지 않아요.</p>
                 )}
+                {results?.displayStatus === 'NO_ENTRANTS' && !results.isPublished && (
+                    <p role="status">응모자가 없어 추첨이 종료됐어요.</p>
+                )}
+                {results?.displayStatus !== 'CANCELED' &&
+                    results?.displayStatus !== 'NO_ENTRANTS' &&
+                    (myResult?.result === 'PENDING' ||
+                        (event.status === 'closed' && results && !results.isPublished)) && (
+                        <MyResultCard entered={myResult?.result === 'PENDING'} />
+                    )}
                 {results && (
                     <DrawResultSection event={event} results={results} myResult={myResult} />
                 )}

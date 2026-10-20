@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { SkeletonList } from '@shared/ui/skeleton';
 import { formatKst, formatKstDot } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
-import { latestWonAt, useMyEntryRows } from '@widgets/myEntryRows';
+import { latestWonAt, MyEntryRefreshStatus, useMyEntryRows } from '@widgets/myEntryRows';
 
 import type { StatusTile } from './ui/EntryStatusTiles';
 
@@ -64,8 +64,16 @@ export function MyEntriesPage() {
     const filters = readEntryFilters(params);
     const clock = useVirtualClock();
     const now = clock.now();
-    const { rows, isPending, isError, isResultError } = useMyEntryRows();
     const [visible, setVisible] = useState(PAGE_SIZE);
+    const entriesQuery = useMyEntryRows({
+        selectVisibleRows: (rows) =>
+            filterEntryRows(
+                scopeEntryRows(rows, filters.kind, filters.period, now),
+                filters.status,
+                filters.sort,
+            ).slice(0, visible),
+    });
+    const { rows, isPending, isError, isResultPending } = entriesQuery;
 
     const setFilter = (key: string, value: string, fallback: string) => {
         setParams(
@@ -125,13 +133,12 @@ export function MyEntriesPage() {
                 description="이벤트·겟또타임에 응모한 기록과 결과를 모두 볼 수 있어요."
             />
 
-            {isResultError && (
-                <p role="status" className="text-body-sm text-destructive">
-                    일부 응모의 결과를 불러오지 못했어요. 결과 칸 개수에서 빠졌을 수 있어요.
-                </p>
-            )}
+            <MyEntryRefreshStatus query={entriesQuery} />
 
             <EntryStatusTiles
+                isPending={isPending || isResultPending}
+                isEntriesError={entriesQuery.isError}
+                isUnavailable={entriesQuery.isResultInitialError}
                 tiles={tiles}
                 value={filters.status}
                 onChange={(value: EntryStatusFilter) => setFilter('status', value, 'ALL')}
@@ -199,13 +206,17 @@ export function MyEntriesPage() {
                         응모 내역을 불러오지 못했습니다.
                     </p>
                 )}
-                {!isPending && !isError && shown.length === 0 && (
-                    <p className="text-body-sm text-fg-tertiary py-10 text-center">
-                        {rows.length === 0
-                            ? '아직 응모한 내역이 없어요.'
-                            : '조건에 맞는 응모 내역이 없어요.'}
-                    </p>
-                )}
+                {!isPending &&
+                    !isResultPending &&
+                    !isError &&
+                    !(entriesQuery.isResultInitialError && filters.status !== 'ALL') &&
+                    shown.length === 0 && (
+                        <p className="text-body-sm text-fg-tertiary py-10 text-center">
+                            {rows.length === 0
+                                ? '아직 응모한 내역이 없어요.'
+                                : '조건에 맞는 응모 내역이 없어요.'}
+                        </p>
+                    )}
                 {byMonth(shown.slice(0, visible)).map(([month, monthRows]) => (
                     <div key={month} className="flex flex-col">
                         <h2 className="text-body-sm-bold text-fg-primary px-3 pt-3 pb-1">
