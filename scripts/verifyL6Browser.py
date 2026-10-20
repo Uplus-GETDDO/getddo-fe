@@ -15,10 +15,12 @@
 import json
 import os
 import re
+import shutil
 import socket
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -32,7 +34,26 @@ USER_A, USER_B = USERS[0], USERS[1]
 IMAGES = Path(os.environ.get('L6_IMAGE_DIR', 'docs/superpowers/plans/L6-evidence'))
 IMAGES.mkdir(parents=True, exist_ok=True)
 OUTPUT = Path('docs/superpowers/plans/L6-browser-evidence.json')
-evidence = {'kind': 'VITE_ENABLE_MSW=false 프로덕션 빌드, 로컬 preview + 실제 API 프록시', 'requests': [], 'checks': [], 'errors': []}
+COMMIT = subprocess.run(
+    ['git', 'rev-parse', 'HEAD'],
+    capture_output=True,
+    text=True,
+    encoding='utf-8',
+    errors='replace',
+).stdout.strip()
+evidence = {
+    'kind': 'VITE_ENABLE_MSW=false 프로덕션 빌드, 로컬 preview + 실제 API 프록시',
+    'checkedAt': datetime.now(timezone.utc).isoformat(),
+    'commit': COMMIT,
+    'api': API,
+    'requests': [],
+    'checks': [],
+    'errors': [],
+}
+
+# shell=True 없이 실행 파일을 직접 해석한다 — POSIX는 인수가 소실되고 Windows는 자식이 잔존한다.
+NPM = shutil.which('npm') or 'npm'
+NPX = shutil.which('npx') or 'npx'
 
 
 def save():
@@ -48,13 +69,12 @@ def run_build(users_json):
     else:
         env['VITE_VIRTUAL_USERS_JSON'] = users_json
     result = subprocess.run(
-        ['npm', 'run', 'build'],
+        [NPM, 'run', 'build'],
         env=env,
         capture_output=True,
         text=True,
         encoding='utf-8',
         errors='replace',
-        shell=True,
     )
     if result.returncode != 0:
         print(result.stdout[-3000:], result.stderr[-3000:])
@@ -74,11 +94,25 @@ def wait_port(port, timeout=20):
 
 def start_preview(port):
     proc = subprocess.Popen(
-        ['npx', 'vite', 'preview', '--port', str(port), '--strictPort', '--host', '127.0.0.1'],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True,
+        [NPX, 'vite', 'preview', '--port', str(port), '--strictPort', '--host', '127.0.0.1'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     wait_port(port)
     return proc
+
+
+def stop_preview(proc):
+    # Windows는 부모만 죽이면 vite preview 자식이 남아 다음 실행의 strictPort를 점유한다.
+    if os.name == 'nt':
+        subprocess.run(
+            ['taskkill', '/PID', str(proc.pid), '/T', '/F'],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    else:
+        proc.terminate()
 
 
 API_CTX = None  # route.fetch 대신 APIRequestContext로 실서버를 호출한다 (일부 경로의 내부 오류 우회)
@@ -238,7 +272,7 @@ try:
         save()
         browser.close()
 finally:
-    proc.terminate()
+    stop_preview(proc)
 
 # ── 빌드 2: 계정 JSON 미설정 → 설정 안내 ──
 print('build 2: missing config')
@@ -255,7 +289,7 @@ try:
         page.screenshot(path=str(IMAGES / 'L6-login-missing-config.png'), full_page=True)
         browser.close()
 finally:
-    proc.terminate()
+    stop_preview(proc)
 
 save()
 print(json.dumps({'checks': len(evidence['checks']), 'requests': len(evidence['requests']), 'errors': evidence['errors']}, ensure_ascii=False))

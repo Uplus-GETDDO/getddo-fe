@@ -4,7 +4,7 @@
 
 ## 기준
 
-- 브랜치 `feat/GD-260`(base dev `92583c3` = GD-259 PR #110 MERGED), 커밋 `a7855c1`(구현) + `2cd6d18`(이 문서). 원격 미발행 — push·PR·머지는 사용자 지시 대기다.
+- 브랜치 `feat/GD-260`(base dev `92583c3` = GD-259 PR #110 MERGED), **PR #111**, 구현·검증 커밋 `a7855c1`~`8887e6e`. 머지·배포는 사용자 지시 대기다. `8887e6e` 이후 커밋은 문서 전용이라 배포 런타임은 `a7855c1`과 동일하다.
 - 승인된 결정: 시연 계정은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기 + 모든 모드 fallback 없음 · 배포 MSW 종료 + `mockServiceWorker.js` 자동 해제 · 가상 시계 배포 비노출 · 로그아웃 UI 없이 사용자 전환으로 대체.
 - 계획: [L6 계획](2026-10-21-GD-260-L6-runtime-mock-retirement.md). 보고서: [reports/20261021-GD-260-L6.md](../../../reports/20261021-GD-260-L6.md). 운영 절차: [docs/demo-operations.md](../../demo-operations.md).
 
@@ -33,22 +33,22 @@
 
 ## 배포 후보와 실행안 (승인 대기)
 
-배포 후보: `feat/GD-260`(`a7855c1`+`2cd6d18`) → dev 머지 → Vercel 배포.
+배포 후보: PR #111(head `8887e6e` 이후 문서 커밋 포함) → dev 스쿼시 머지 → Vercel 배포.
 
-1. Vercel 환경변수 `VITE_VIRTUAL_USERS_JSON`에 **실제 등록 계정 JSON** 설정(USER 여럿·ADMIN·INACTIVE, `id`는 DB UUID) — 사용자 제공 필요
-2. `feat/GD-260` push → PR → CI 통과 → dev 스쿼시 머지
+1. Vercel 환경변수 `VITE_VIRTUAL_USERS_JSON`에 **실제 등록 계정 JSON** 설정(USER 여럿·ADMIN·INACTIVE, `id`는 DB UUID) — `.env.example`에 사용자 제공 6계정 예시가 있다
+2. PR #111 CI 통과 → dev 스쿼시 머지
 3. Vercel 배포 → 즉시 확인: 로그인 계정 목록, Service Worker 없음, 계정 선택 후 실서버 응답
 4. 실패 시 복귀: 대시보드에서 이전 배포 Promote — [demo-operations.md](../../demo-operations.md) 4절
 
 ## 남은 사용자 결정·외부 입력
 
-| 항목                           | 필요한 것                                                                                         |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- |
-| 머지·배포                      | `feat/GD-260` push·PR·머지 지시 + Vercel `VITE_VIRTUAL_USERS_JSON`에 실계정 6개 JSON 입력 후 배포 |
-| 전체 인수 시나리오             | 격리 이벤트 데이터(C1~C6), 서버 마감·추첨·발표 일정, INACTIVE 계정                                |
-| AR01/AR02                      | 계약 확정 — `/admin/abuse-cases`가 실서버 404이므로 계약 없이는 미구현 상태로 남는다              |
-| L3 격리 배너 CRUD·L5 격리 쓰기 | 격리 환경·계정 입력 — L6 구현과 무관하게 미검증 유지                                              |
-| 성능 측정                      | p95 목표의 측정 조건 합의 — 미측정 유지                                                           |
+| 항목                           | 필요한 것                                                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| 머지·배포                      | PR #111 리뷰·CI 통과 후 머지 지시 + Vercel `VITE_VIRTUAL_USERS_JSON`에 실계정 6개 JSON 입력 후 배포 |
+| 전체 인수 시나리오             | 격리 이벤트 데이터(C1~C6), 서버 마감·추첨·발표 일정, INACTIVE 계정                                  |
+| AR01/AR02                      | 계약 확정 — `/admin/abuse-cases`가 실서버 404이므로 계약 없이는 미구현 상태로 남는다                |
+| L3 격리 배너 CRUD·L5 격리 쓰기 | 격리 환경·계정 입력 — L6 구현과 무관하게 미검증 유지                                                |
+| 성능 측정                      | p95 목표의 측정 조건 합의 — 미측정 유지                                                             |
 
 ## 배포 후 검증 절차
 

@@ -16,7 +16,10 @@ async function prepareRuntime() {
         await worker.start({ onUnhandledRequest: 'bypass' });
         return;
     }
-    await unregisterMockServiceWorker();
+    // Worker 해제 실패가 렌더링을 막지 않도록 최선 노력으로만 처리한다.
+    await unregisterMockServiceWorker().catch((error: unknown) => {
+        console.warn('목업 서비스워커 해제 실패:', error);
+    });
 }
 
 void prepareRuntime()
