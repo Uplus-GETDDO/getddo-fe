@@ -106,17 +106,23 @@ function adminSeed(
 // 관리자 전용 시드 — 시간만으로는 나오지 않는 운영 상태(취소·재추첨·대상 없음 종료)를 시연용으로 채운다
 const extraSeeds: MockAdminEvent[] = [
     adminSeed({
-        id: 'adm-902',
+        id: '20000000-0000-4000-8000-000000000902',
         title: '취소된 오픈 기념 이벤트',
         description: '경품 수급 문제로 취소된 이벤트.',
-        startsAt: sessionFixedTime('adm-902-starts', -72 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-902-ends', -24 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000902-starts',
+            -72 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000902-ends', -24 * 60 * MINUTE),
         status: 'CANCELED',
-        canceledAt: sessionFixedTime('adm-902-canceled', -36 * 60 * MINUTE),
+        canceledAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000902-canceled',
+            -36 * 60 * MINUTE,
+        ),
         entryCount: 45,
         prizes: [
             {
-                id: 'adm-902-p1',
+                id: '20000000-0000-4000-8000-000000000902-p1',
                 rank: 1,
                 name: '스타벅스 e카드',
                 description: null,
@@ -126,15 +132,18 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-903',
+        id: '20000000-0000-4000-8000-000000000903',
         title: '응모자 없이 종료된 이벤트',
         description: '마감까지 응모가 없어 자동 종료된 이벤트.',
-        startsAt: sessionFixedTime('adm-903-starts', -50 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-903-ends', -26 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000903-starts',
+            -50 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000903-ends', -26 * 60 * MINUTE),
         status: 'NO_ENTRANTS',
         prizes: [
             {
-                id: 'adm-903-p1',
+                id: '20000000-0000-4000-8000-000000000903-p1',
                 rank: 1,
                 name: '무너 스티커 팩',
                 description: null,
@@ -144,17 +153,20 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-904',
+        id: '20000000-0000-4000-8000-000000000904',
         title: '재추첨 진행 중인 래플',
         description: '당첨 취소에 따른 재추첨이 진행 중인 이벤트.',
-        startsAt: sessionFixedTime('adm-904-starts', -80 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-904-ends', -30 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000904-starts',
+            -80 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000904-ends', -30 * 60 * MINUTE),
         status: 'REDRAWING',
         entryCount: 800,
         usedTicketTotal: 1600,
         prizes: [
             {
-                id: 'adm-904-p1',
+                id: '20000000-0000-4000-8000-000000000904-p1',
                 rank: 1,
                 name: '닌텐도 스위치 2',
                 description: null,
@@ -164,17 +176,20 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-905',
+        id: '20000000-0000-4000-8000-000000000905',
         title: '발표 대기 중인 이벤트',
         description: '추첨이 확정되고 공개 명단 갱신을 기다리는 이벤트.',
-        startsAt: sessionFixedTime('adm-905-starts', -70 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-905-ends', -20 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000905-starts',
+            -70 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000905-ends', -20 * 60 * MINUTE),
         status: 'DRAW_CONFIRMED',
         entryCount: 540,
         usedTicketTotal: 1080,
         prizes: [
             {
-                id: 'adm-905-p1',
+                id: '20000000-0000-4000-8000-000000000905-p1',
                 rank: 1,
                 name: '에어팟 4',
                 description: null,
@@ -184,17 +199,20 @@ const extraSeeds: MockAdminEvent[] = [
         ],
     }),
     adminSeed({
-        id: 'adm-906',
+        id: '20000000-0000-4000-8000-000000000906',
         title: '최초 추첨이 실패한 래플',
         description: '최초 추첨 선정 중 오류가 나 재개를 기다리는 이벤트.',
-        startsAt: sessionFixedTime('adm-906-starts', -70 * 60 * MINUTE),
-        endsAt: sessionFixedTime('adm-906-ends', -20 * 60 * MINUTE),
+        startsAt: sessionFixedTime(
+            '20000000-0000-4000-8000-000000000906-starts',
+            -70 * 60 * MINUTE,
+        ),
+        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000906-ends', -20 * 60 * MINUTE),
         status: 'DRAW_CONFIRMED',
         entryCount: 420,
         usedTicketTotal: 840,
         prizes: [
             {
-                id: 'adm-906-p1',
+                id: '20000000-0000-4000-8000-000000000906-p1',
                 rank: 1,
                 name: '갤럭시 버즈',
                 description: null,
@@ -442,6 +460,10 @@ const readReason = async (request: Request) => {
 /** 취소된 이벤트 신규 연결을 배너 목업에서 거절할 때 쓴다. */
 export const mockAdminEventIsCanceled = (eventId: string): boolean =>
     mockAdminEvents.some((event) => event.id === eventId && event.status === 'CANCELED');
+
+/** 목업 이벤트 존재 여부 — AO07 등 다른 관리자 목업의 404 판정에 쓴다 */
+export const mockAdminEventExists = (eventId: string): boolean =>
+    mockAdminEvents.some((event) => event.id === eventId);
 
 export const adminEventHandlers = [
     // AE01 — 목록: keyword/status/eventType/from/to 필터 + Page<AdminEvent> 봉투 (페이지는 1부터)

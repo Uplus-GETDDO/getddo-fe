@@ -76,12 +76,12 @@ const call = <T = unknown>(
 
 // evt-009는 오래전에 마감돼 최초 발표가 끝난 시드 이벤트다 (당첨 30명 / 후보 33명)
 const EVENT = 'evt-009';
-// 발표 전(adm-905), 취소됨(adm-902), 재추첨 실패(adm-904) 시드
-const UNPUBLISHED_EVENT = 'adm-905';
-const CANCELED_EVENT = 'adm-902';
-const FAILED_EVENT = 'adm-904';
+// 발표 전(20000000-0000-4000-8000-000000000905), 취소됨(20000000-0000-4000-8000-000000000902), 재추첨 실패(20000000-0000-4000-8000-000000000904) 시드
+const UNPUBLISHED_EVENT = '20000000-0000-4000-8000-000000000905';
+const CANCELED_EVENT = '20000000-0000-4000-8000-000000000902';
+const FAILED_EVENT = '20000000-0000-4000-8000-000000000904';
 // 최초 추첨이 실패한 시드 (GD-87 재개 시연)
-const FAILED_INITIAL_EVENT = 'adm-906';
+const FAILED_INITIAL_EVENT = '20000000-0000-4000-8000-000000000906';
 
 async function firstRun(eventId: string) {
     const list = await call<Page<RunBody>>('get', `/v1/admin/events/${eventId}/draws`);

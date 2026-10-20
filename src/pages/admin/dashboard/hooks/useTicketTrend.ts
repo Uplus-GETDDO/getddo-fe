@@ -1,12 +1,9 @@
+import type { DailyStatsDay } from '@entities/adminStats';
 import type { TicketSourceType } from '@entities/ticket';
-
-import { useAdminTicketGrantCounts, useAdminTicketHistoryCounts } from '@entities/ticket';
-import { useVirtualClock } from '@shared/model/virtualClock';
-import { recentKstDays } from '@shared/utils/date';
 
 export const TREND_SOURCES: readonly TicketSourceType[] = ['ATTENDANCE', 'MISSION', 'GAME'];
 
-/** 대시보드 그래프 기간 — 최근 7일 고정. 집계 API가 없어 날짜×출처마다 건수를 따로 불러온다 */
+/** 대시보드 그래프 기간 — 최근 7일 고정. AS01 한 번의 조회로 가져온다 */
 export const TREND_DAYS = 7;
 
 export interface TrendRow {
@@ -18,7 +15,7 @@ export interface TrendRow {
     GAME: number;
     /** 그날 지급 합계 */
     granted: number;
-    /** 그날 응모에 쓴 응모권 수 (USE 이력) */
+    /** 그날 응모에 쓴 응모권 수 — 반환을 빼지 않은 총사용량 (AS01 usedTickets) */
     used: number;
 }
 
@@ -27,46 +24,18 @@ const axisLabel = (ymd: string) => {
     return `${Number(month)}/${Number(day)}`;
 };
 
-/**
- * 최근 days일(KST)의 날짜별 지급(출처별)·응모 건수.
- * 가상 시계 기준 오늘까지 센다 — 조건별 건수 조회를 모아 만든 값이다
- */
-export function useTicketTrend(days = TREND_DAYS) {
-    const ranges = recentKstDays(useVirtualClock().now(), days);
-
-    const grants = useAdminTicketGrantCounts(
-        ranges.flatMap(({ from, to }) =>
-            TREND_SOURCES.map((sourceType) => ({ sourceType, from, to })),
-        ),
-    );
-    const uses = useAdminTicketHistoryCounts(
-        ranges.map(({ from, to }) => ({ operationType: 'USE', from, to })),
-    );
-
-    const rows: TrendRow[] = ranges.map(({ ymd }, index) => {
-        const [attendance = 0, mission = 0, game = 0] = TREND_SOURCES.map(
-            (_, sourceIndex) => grants.counts[index * TREND_SOURCES.length + sourceIndex] ?? 0,
-        );
+// AS01 days → 차트 행. 지급 장수는 세 지급 근거의 합계다 (건수가 아니라 장수)
+export function toTrendRows(days: DailyStatsDay[]): TrendRow[] {
+    return days.map((day) => {
+        const { ATTENDANCE, MISSION, GAME } = day.grantedTickets;
         return {
-            ymd,
-            label: axisLabel(ymd),
-            ATTENDANCE: attendance,
-            MISSION: mission,
-            GAME: game,
-            granted: attendance + mission + game,
-            used: uses.counts[index] ?? 0,
+            ymd: day.date,
+            label: axisLabel(day.date),
+            ATTENDANCE,
+            MISSION,
+            GAME,
+            granted: ATTENDANCE + MISSION + GAME,
+            used: day.usedTickets,
         };
     });
-
-    return {
-        rows,
-        trend: {
-            isPending: grants.isPending || uses.isPending,
-            isError: grants.isError || uses.isError,
-            refetch: () => {
-                grants.refetch();
-                uses.refetch();
-            },
-        },
-    };
 }

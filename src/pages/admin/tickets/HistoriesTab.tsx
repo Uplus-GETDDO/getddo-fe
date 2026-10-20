@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import {
@@ -11,6 +11,8 @@ import { Button } from '@shared/ui/button';
 import { DateRangeFilter, OptionFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/utils/date';
+
+import { useLinkedUserId } from './hooks/useLinkedUserId';
 
 const OPERATION_OPTIONS = [
     { value: ALL, label: '전체 처리' },
@@ -25,8 +27,10 @@ export function HistoriesTab() {
     const [searchParams] = useSearchParams();
     const linkedDate = parseYmd(searchParams.get('date'));
     const linkedOperation = searchParams.get('operationType');
+    const linkedUserId = searchParams.get('userId');
     const initial = {
         ...EMPTY,
+        ...(linkedUserId && { userId: linkedUserId }),
         ...(linkedDate && { from: linkedDate, to: linkedDate }),
         ...(linkedOperation &&
             OPERATION_OPTIONS.some((option) => option.value === linkedOperation) && {
@@ -37,6 +41,26 @@ export function HistoriesTab() {
     const [draft, setDraft] = useState(initial);
     const [applied, setApplied] = useState(initial);
     const [rangeError, setRangeError] = useState(false);
+    // 같은 화면에서 ?date= · ?operationType= 이 바뀌면 이전 링크의 조건이 남지 않게 URL 기준으로 덮는다
+    const linkedKey = `${linkedDate ?? ''}|${linkedOperation ?? ''}`;
+    const [prevLinkedKey, setPrevLinkedKey] = useState(linkedKey);
+    if (prevLinkedKey !== linkedKey) {
+        setPrevLinkedKey(linkedKey);
+        const validOperation =
+            linkedOperation && OPERATION_OPTIONS.some((option) => option.value === linkedOperation)
+                ? linkedOperation
+                : ALL;
+        const patchLinked = (d: typeof EMPTY) => ({
+            ...d,
+            from: linkedDate ?? '',
+            to: linkedDate ?? '',
+            operationType: validOperation,
+        });
+        setDraft(patchLinked);
+        setApplied(patchLinked);
+        setRangeError(false);
+        setPage(1);
+    }
     const hasPendingDraft = JSON.stringify(draft) !== JSON.stringify(applied);
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
     const resetFilters = () => {
@@ -46,6 +70,13 @@ export function HistoriesTab() {
         setPage(1);
     };
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
+    useLinkedUserId(
+        useCallback((userId) => {
+            setDraft((d) => ({ ...d, userId: userId ?? '' }));
+            setApplied((d) => ({ ...d, userId: userId ?? '' }));
+            setPage(1);
+        }, []),
+    );
 
     const query = useAdminTicketHistories({
         page,

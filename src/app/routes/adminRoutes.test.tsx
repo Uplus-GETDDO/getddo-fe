@@ -84,6 +84,29 @@ describe('제외된 공통 감사 경로', () => {
         router.dispose();
     });
 
+    it.each([
+        ['/admin/users', '사용자 조회'],
+        ['/admin/entries', '응모 조회'],
+    ])('%s는 관리자 메뉴에서 %s 화면을 연다', async (path, heading) => {
+        const { client, router } = renderRoute(path);
+        try {
+            expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument();
+            for (const nav of screen.getAllByRole('navigation')) {
+                expect(within(nav).getByRole('link', { name: '사용자 조회' })).toHaveAttribute(
+                    'href',
+                    '/admin/users',
+                );
+                expect(within(nav).getByRole('link', { name: '응모 조회' })).toHaveAttribute(
+                    'href',
+                    '/admin/entries',
+                );
+            }
+        } finally {
+            client.clear();
+            router.dispose();
+        }
+    });
+
     it('일반 사용자는 사용자 홈으로 이동한다', async () => {
         useSessionStore.getState().selectUser({
             id: 'user-audit-cleanup',

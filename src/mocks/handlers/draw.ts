@@ -56,21 +56,33 @@ const EXTRA_EVENTS: Record<
     { endsAtOffsetMin: number; prizes: MockPrize[]; canceled?: boolean }
 > = {
     // 취소된 이벤트 — AD06·AD05의 이벤트 취소 409 시연용
-    'adm-902': {
+    '20000000-0000-4000-8000-000000000902': {
         endsAtOffsetMin: -24 * 60,
         canceled: true,
-        prizes: [{ id: 'adm-902-p1', rank: 1, winnerCount: 30 }],
+        prizes: [{ id: '20000000-0000-4000-8000-000000000902-p1', rank: 1, winnerCount: 30 }],
     },
     // 재추첨이 실패해 재개를 기다리는 이벤트
-    'adm-904': { endsAtOffsetMin: -30, prizes: [{ id: 'adm-904-p1', rank: 1, winnerCount: 1 }] },
+    '20000000-0000-4000-8000-000000000904': {
+        endsAtOffsetMin: -30,
+        prizes: [{ id: '20000000-0000-4000-8000-000000000904-p1', rank: 1, winnerCount: 1 }],
+    },
     // 추첨은 확정됐지만 최초 발표 전인 이벤트 — 최초 공개 전 재추첨 확인(정책 미확정) 시연용
-    'adm-905': { endsAtOffsetMin: -20, prizes: [{ id: 'adm-905-p1', rank: 1, winnerCount: 3 }] },
+    '20000000-0000-4000-8000-000000000905': {
+        endsAtOffsetMin: -20,
+        prizes: [{ id: '20000000-0000-4000-8000-000000000905-p1', rank: 1, winnerCount: 3 }],
+    },
     // 최초 추첨이 실패해 재개를 기다리는 이벤트 — POST /admin/draws/{runId}/resume 시연용 (GD-87)
-    'adm-906': { endsAtOffsetMin: -20, prizes: [{ id: 'adm-906-p1', rank: 1, winnerCount: 3 }] },
+    '20000000-0000-4000-8000-000000000906': {
+        endsAtOffsetMin: -20,
+        prizes: [{ id: '20000000-0000-4000-8000-000000000906-p1', rank: 1, winnerCount: 3 }],
+    },
 };
 // 최초 추첨이 확정되지 않았거나 확인 대기인 이벤트는 시계가 지나도 최초 발표하지 않는다
-const HELD_BEFORE_PUBLICATION = new Set(['adm-905', 'adm-906']);
-const FAILED_INITIAL_EVENT = 'adm-906';
+const HELD_BEFORE_PUBLICATION = new Set([
+    '20000000-0000-4000-8000-000000000905',
+    '20000000-0000-4000-8000-000000000906',
+]);
+const FAILED_INITIAL_EVENT = '20000000-0000-4000-8000-000000000906';
 
 interface MockRun {
     detail: DrawRunDetail;
@@ -435,7 +447,7 @@ function getStore(eventId: string): DrawStore | null {
     };
     store.runs.push(drawFirstRun(store, info.endsAt));
     if (isPublishedByClock(eventId, info.endsAt, now)) markFirstPublication(store);
-    if (eventId === 'adm-904') seedFailedRedraw(store);
+    if (eventId === '20000000-0000-4000-8000-000000000904') seedFailedRedraw(store);
     if (eventId === FAILED_INITIAL_EVENT) seedFailedInitialRun(store);
     stores.set(eventId, store);
     return store;

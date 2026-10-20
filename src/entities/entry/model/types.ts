@@ -80,3 +80,17 @@ export type EntryIneligibilityReason = z.infer<typeof entryIneligibilityReasonSc
 export type EntryEligibility = z.infer<typeof entryEligibilitySchema>;
 export type EntryStatus = z.infer<typeof entryStatusSchema>;
 export type Entry = z.infer<typeof entrySchema>;
+
+export const adminEntrySchema = entrySchema.extend({
+    userId: z.uuid(),
+    participantId: z.uuid().nullable(),
+});
+export const adminParticipantSchema = z.object({
+    id: z.uuid(),
+    eventId: z.uuid(),
+    userId: z.uuid(),
+    usedTicketCount: z.number().int().nonnegative(),
+    createdAt: z.iso.datetime(),
+});
+export type AdminEntry = z.infer<typeof adminEntrySchema>;
+export type AdminParticipant = z.infer<typeof adminParticipantSchema>;

@@ -20,6 +20,7 @@ function PagedResult<T>({
     onPageChange,
     emptyText,
     errorText,
+    countUnit = '건',
     onRetry,
     emptyAction,
     loadingContent,
@@ -34,6 +35,8 @@ function PagedResult<T>({
     onPageChange: (page: number) => void;
     emptyText: string;
     errorText: string;
+    /** 총 건수 표시의 단위 — 참여자처럼 사람 수를 셀 때 '명'을 넘긴다 */
+    countUnit?: string;
     /** 조회 실패 시 '다시 시도' 버튼 — 생략하면 문구만 표시 */
     onRetry?: () => void;
     /** 빈 결과 아래에 붙는 다음 행동 — 예: 검색 조건 초기화 */
@@ -77,7 +80,8 @@ function PagedResult<T>({
             {data && data.totalElements > 0 && (
                 <div className="flex items-center justify-between">
                     <span className="text-body-sm text-fg-secondary" aria-live="polite">
-                        총 {data.totalElements}건
+                        총 {data.totalElements}
+                        {countUnit}
                     </span>
                     <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
                 </div>
