@@ -61,6 +61,8 @@ export {
     useTicketConsistency,
     useTicketInconsistencies,
 } from './api/admin';
+export { useAdminTicketGrantUserCounts } from './api/adminGrantUsers';
+export type { GrantUserCount } from './api/adminGrantUsers';
 export {
     AdminTicketHistoryTable,
     TicketGrantTable,

@@ -2,6 +2,7 @@ import { abuseHandlers } from './abuse';
 import { adminEventHandlers } from './adminEvent';
 import { adminNotificationHandlers } from './adminNotification';
 import { adminTicketHandlers } from './adminTicket';
+import { adminUserHandlers } from './adminUser';
 import { attendanceHandlers } from './attendance';
 import { auditHandlers } from './audit';
 import { bannerHandlers } from './banner';
@@ -20,6 +21,7 @@ export const handlers = [
     ...adminEventHandlers,
     ...adminNotificationHandlers,
     ...adminTicketHandlers,
+    ...adminUserHandlers,
     ...attendanceHandlers,
     ...auditHandlers,
     ...bannerHandlers,

@@ -1,77 +1,25 @@
 import type { LucideIcon } from 'lucide-react';
 
-import {
-    BellOff,
-    ChevronRight,
-    CircleCheck,
-    Hourglass,
-    Megaphone,
-    TriangleAlert,
-} from 'lucide-react';
+import { BellOff, ChevronRight, Hourglass, Megaphone, Shuffle, TriangleAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useAdminNotificationJobs } from '@entities/adminNotification';
-import { useAdminEvents } from '@entities/event';
+import { useAdminEventStatusCounts, useAdminEvents } from '@entities/event';
 import { useTicketInconsistencies } from '@entities/ticket';
 import { formatRemaining } from '@shared/lib/date';
 import { formatNumber } from '@shared/lib/format';
+import { cn } from '@shared/lib/utils';
 import { useVirtualClock } from '@shared/lib/virtualClock';
-import { Button } from '@shared/ui/button';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 
 import { DashboardPanel } from './DashboardPanel';
 
-const PUBLISH_PREVIEW = 3;
+/** 추첨 관리에서 당첨자를 정해야 하는 상태 */
+const DRAW_NEEDED_STATUSES = ['CLOSED', 'REDRAWING'] as const;
 /** 이 시간 안에 마감하는 진행 중 이벤트를 '곧 마감'으로 본다 */
 const CLOSING_SOON_MS = 24 * 60 * 60 * 1000;
 /** 진행 중 이벤트는 한 번에 최대치(100)로 받아 마감 순으로 고른다 */
 const OPEN_EVENTS_SIZE = 100;
-
-/**
- * 결과 발표 대기 — 이제 결과는 관리자가 직접 발표하므로(ADR-022) 가장 먼저 처리할 일로 진하게 띄운다.
- * 이벤트를 누르면 추첨 관리에서 그 이벤트가 열린 채로 간다
- */
-function PublishWaitingCard({ query }: { query: ReturnType<typeof useAdminEvents> }) {
-    const total = query.data?.totalElements ?? 0;
-
-    return (
-        <div className="bg-surface-inverse text-fg-inverse flex flex-col gap-3 rounded-xl p-4">
-            <div className="flex items-center gap-2">
-                <Megaphone aria-hidden className="size-4" />
-                <span className="text-body-sm-bold">결과 발표 대기</span>
-                <span className="text-title-3 ml-auto tabular-nums">
-                    {query.isPending ? '—' : query.isError ? '!' : `${formatNumber(total)}건`}
-                </span>
-            </div>
-            {query.isError ? (
-                <button
-                    type="button"
-                    className="text-caption text-fg-inverse/70 self-start underline"
-                    onClick={() => void query.refetch()}
-                >
-                    불러오지 못했어요 · 다시 시도
-                </button>
-            ) : (
-                <ul className="flex flex-col gap-1">
-                    {query.data?.items.map((event) => (
-                        <li key={event.id}>
-                            <Link
-                                to={`/admin/draw?eventId=${encodeURIComponent(event.id)}`}
-                                className="text-body-sm hover:bg-surface-inverse-muted focus-visible:ring-fg-inverse -mx-2 flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-                            >
-                                <span className="truncate">{event.title}</span>
-                                <ChevronRight aria-hidden className="ml-auto size-4 shrink-0" />
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
-            <Button size="sm" variant="secondary" asChild className="self-stretch">
-                <Link to="/admin/draw">추첨 관리로 가기</Link>
-            </Button>
-        </div>
-    );
-}
 
 function QueueRow({
     icon: Icon,
@@ -88,6 +36,7 @@ function QueueRow({
     unit: string;
     to: string;
 }) {
+    const idle = count === 0;
     return (
         <li>
             <Link
@@ -95,12 +44,30 @@ function QueueRow({
                 className="group hover:bg-surface-sunken focus-visible:ring-border-focus -mx-2 flex items-center gap-3 rounded-xl px-2 py-3 transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
                 {/* 아이콘은 바탕 없이 선 아이콘만 — 색 원은 장식이 과해 보여 뺐다 */}
-                <Icon aria-hidden className="text-fg-secondary size-5 shrink-0" />
+                <Icon
+                    aria-hidden
+                    className={cn(
+                        'size-5 shrink-0',
+                        idle ? 'text-fg-tertiary' : 'text-fg-secondary',
+                    )}
+                />
                 <span className="flex min-w-0 flex-col">
-                    <span className="text-body-sm-bold text-fg-primary">{label}</span>
+                    <span
+                        className={cn(
+                            'text-body-sm-bold',
+                            idle ? 'text-fg-tertiary' : 'text-fg-primary',
+                        )}
+                    >
+                        {label}
+                    </span>
                     <span className="text-caption text-fg-tertiary truncate">{detail}</span>
                 </span>
-                <span className="text-body-bold text-fg-primary ml-auto tabular-nums">
+                <span
+                    className={cn(
+                        'text-body-bold ml-auto tabular-nums',
+                        idle ? 'text-fg-tertiary' : 'text-fg-primary',
+                    )}
+                >
                     {formatNumber(count)}
                     {unit}
                 </span>
@@ -115,16 +82,14 @@ function QueueRow({
 }
 
 /**
- * 지금 처리할 일 — 발표 대기를 맨 위에, 그 아래 실패 알림·정합성 불일치·곧 마감을 건수와 함께 모은다.
- * 0건인 일은 접어 숨기고, 모두 0건이면 "처리할 일이 없어요" 한 줄만 둔다 — 할 일이 있을 때만 눈에 띄게
+ * 지금 처리할 일 — 추첨 필요·발표 대기·곧 마감·실패한 알림·정합성 불일치를 늘 같은 순서로 건수와 함께 보인다.
+ * 0건인 일도 줄을 지우지 않고 흐리게 둬 칸이 들썩이지 않고, 할 일이 있는 줄만 진하게 읽힌다
  */
 export function ActionQueuePanel() {
     const now = useVirtualClock().now();
-    const publishWaiting = useAdminEvents({
-        page: 1,
-        size: PUBLISH_PREVIEW,
-        status: 'DRAW_CONFIRMED',
-    });
+    const publishWaiting = useAdminEvents({ page: 1, size: 1, status: 'DRAW_CONFIRMED' });
+    // 마감했지만 아직 당첨자를 확정하지 않은 이벤트 — 마감(CLOSED)과 재추첨 중(REDRAWING)
+    const drawNeeded = useAdminEventStatusCounts(DRAW_NEEDED_STATUSES);
     const failedJobs = useAdminNotificationJobs({ page: 1, size: 1, status: 'FAILED' });
     const mismatches = useTicketInconsistencies({ page: 1, size: 1 });
     const openEvents = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
@@ -135,12 +100,37 @@ export function ActionQueuePanel() {
         .sort((a, b) => a.remainingMs - b.remainingMs);
     const nearest = closingSoon[0];
 
-    const queries = [failedJobs, mismatches, openEvents];
-    const isPending = queries.some((query) => query.isPending) || publishWaiting.isPending;
-    const isError = queries.some((query) => query.isError);
-    const publishCount = publishWaiting.data?.totalElements ?? 0;
+    const queries = [publishWaiting, failedJobs, mismatches, openEvents];
+    const isPending = queries.some((query) => query.isPending) || drawNeeded.isPending;
+    const isError = queries.some((query) => query.isError) || drawNeeded.isError;
 
     const rows = [
+        {
+            icon: Shuffle,
+            label: '추첨 필요',
+            detail: '마감됐지만 당첨자를 아직 정하지 않았어요',
+            count: drawNeeded.counts.reduce<number>((sum, count) => sum + (count ?? 0), 0),
+            unit: '건',
+            to: '/admin/draw',
+        },
+        {
+            icon: Megaphone,
+            label: '결과 발표 대기',
+            detail: '추첨이 확정돼 발표만 남았어요',
+            count: publishWaiting.data?.totalElements ?? 0,
+            unit: '건',
+            to: '/admin/draw',
+        },
+        {
+            icon: Hourglass,
+            label: '24시간 안에 마감',
+            detail: nearest
+                ? `${nearest.event.title} · ${formatRemaining(nearest.remainingMs, 'minute')} 남음`
+                : '곧 마감하는 이벤트가 없어요',
+            count: closingSoon.length,
+            unit: '개',
+            to: '/admin/events?status=OPEN',
+        },
         {
             icon: BellOff,
             label: '실패한 알림 작업',
@@ -157,21 +147,8 @@ export function ActionQueuePanel() {
             unit: '장',
             to: '/admin/tickets?tab=consistency',
         },
-        {
-            icon: Hourglass,
-            label: '24시간 안에 마감',
-            detail: nearest
-                ? `${nearest.event.title} · ${formatRemaining(nearest.remainingMs, 'minute')} 남음`
-                : '',
-            count: closingSoon.length,
-            unit: '개',
-            to: '/admin/events?status=OPEN',
-        },
-    ].filter((row) => row.count > 0);
-    // 요약 문구용 — 발표 대기와 남은 줄의 가짓수
-    const pendingKinds = (publishCount > 0 ? 1 : 0) + rows.length;
-    const allClear =
-        !isPending && publishCount === 0 && !publishWaiting.isError && rows.length === 0;
+    ];
+    const pendingKinds = rows.filter((row) => row.count > 0).length;
 
     return (
         <DashboardPanel
@@ -179,35 +156,27 @@ export function ActionQueuePanel() {
             caption={
                 isPending
                     ? '확인할 일을 모으는 중이에요'
-                    : allClear
+                    : pendingKinds === 0
                       ? '지금은 모두 처리됐어요'
                       : `확인이 필요한 일 ${pendingKinds}가지`
             }
             error={isError}
-            onRetry={() => [...queries, publishWaiting].forEach((query) => void query.refetch())}
+            hasData={queries.some((query) => query.data !== undefined) || drawNeeded.hasData}
+            onRetry={() => {
+                queries.forEach((query) => void query.refetch());
+                drawNeeded.refetch();
+            }}
         >
             {isPending ? (
                 <LoadingBlock>
-                    <SkeletonRows rows={3} />
+                    <SkeletonRows rows={5} />
                 </LoadingBlock>
-            ) : allClear ? (
-                <p className="text-body-sm text-fg-secondary flex flex-1 flex-col items-center justify-center gap-2 py-8">
-                    <CircleCheck aria-hidden className="text-semantic-success size-8" />
-                    처리할 일이 없어요
-                </p>
             ) : (
-                <>
-                    {(publishCount > 0 || publishWaiting.isError) && (
-                        <PublishWaitingCard query={publishWaiting} />
-                    )}
-                    {rows.length > 0 && (
-                        <ul className="flex flex-col">
-                            {rows.map((row) => (
-                                <QueueRow key={row.label} {...row} />
-                            ))}
-                        </ul>
-                    )}
-                </>
+                <ul className="flex flex-col">
+                    {rows.map((row) => (
+                        <QueueRow key={row.label} {...row} />
+                    ))}
+                </ul>
             )}
         </DashboardPanel>
     );

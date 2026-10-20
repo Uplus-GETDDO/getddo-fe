@@ -17,24 +17,23 @@ import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';
 
 /**
- * 단계 색 — 관리자 분포 그래프 계열색(마젠타 한 계열). 손이 가야 하는 단계일수록 진하게
- * (발표 대기 > 추첨 필요 > 진행 중 > 예정 > 종료). 올린 칸만 프라이머리로 바꿔 지금 보는 칸이 바로 읽히게 한다
+ * 단계 색 — 응모를 받는 "진행 중"을 브랜드 색으로 두고, 나머지는 같은 마젠타 계열에서 흐름대로 고른다.
+ * 손이 가야 하는 추첨 필요는 가장 진하게, 발표 대기·진행 예정은 옅게, 끝난 이벤트는 회색으로 물러나게 한다
  */
 const STAGE_FILL: Record<EventStageKey, string> = {
-    publish: 'var(--color-chart-series-1)',
-    draw: 'var(--color-chart-series-2)',
-    open: 'var(--color-chart-series-3)',
     scheduled: 'var(--color-chart-series-4)',
+    open: 'var(--color-brand-primary)',
+    draw: 'var(--color-chart-series-1)',
+    publish: 'var(--color-chart-series-3)',
     done: 'var(--color-chart-series-5)',
 };
 const STAGE_DOT: Record<EventStageKey, string> = {
-    publish: 'bg-chart-series-1',
-    draw: 'bg-chart-series-2',
-    open: 'bg-chart-series-3',
     scheduled: 'bg-chart-series-4',
+    open: 'bg-brand-primary',
+    draw: 'bg-chart-series-1',
+    publish: 'bg-chart-series-3',
     done: 'bg-chart-series-5',
 };
-const ACTIVE_FILL = 'var(--color-brand-primary)';
 /** 올린 칸이 바깥으로 튀어나오는 길이 */
 const POP_OUT = 8;
 
@@ -45,7 +44,7 @@ const POP_OUT = 8;
 export function EventStagePanel() {
     const reduceMotion = useReducedMotion() === true;
     const navigate = useNavigate();
-    const { stages, isPending, isError, refetch } = useEventStageCounts();
+    const { stages, isPending, isError, hasData, refetch } = useEventStageCounts();
     const [hovered, setHovered] = useState<number | null>(null);
     const total = stages.reduce((sum, stage) => sum + stage.count, 0);
     const active = hovered == null ? undefined : stages[hovered];
@@ -59,7 +58,7 @@ export function EventStagePanel() {
             outerRadius={(props.outerRadius ?? 0) + POP_OUT}
             startAngle={props.startAngle}
             endAngle={props.endAngle}
-            fill={ACTIVE_FILL}
+            fill={props.fill}
             stroke="var(--color-surface-page)"
             strokeWidth={2}
         />
@@ -71,6 +70,7 @@ export function EventStagePanel() {
             caption="전체 이벤트를 다음에 할 일 기준으로 묶었어요"
             actions={<ViewAllLink to="/admin/events" />}
             error={isError}
+            hasData={hasData}
             onRetry={refetch}
         >
             {isPending ? (
@@ -118,11 +118,11 @@ export function EventStagePanel() {
                                     className="cursor-pointer"
                                     isAnimationActive={!reduceMotion}
                                 >
-                                    {/* 범례에 올려도 같은 칸이 프라이머리로 바뀐다 */}
+                                    {/* 범례에 올려도 같은 칸이 튀어나오고 나머지는 흐려진다 */}
                                     {stages.map(({ key }, index) => (
                                         <Cell
                                             key={key}
-                                            fill={index === hovered ? ACTIVE_FILL : STAGE_FILL[key]}
+                                            fill={STAGE_FILL[key]}
                                             // 한 칸을 올리면 나머지는 흐려져 같은 계열 안에서도 올린 칸이 떠오른다
                                             fillOpacity={
                                                 hovered == null || index === hovered ? 1 : 0.35
@@ -157,10 +157,8 @@ export function EventStagePanel() {
                                 >
                                     <span
                                         className={cn(
-                                            'size-2.5 shrink-0 rounded-full transition-colors',
-                                            index === hovered
-                                                ? 'bg-brand-primary'
-                                                : STAGE_DOT[stage.key],
+                                            'size-2.5 shrink-0 rounded-full',
+                                            STAGE_DOT[stage.key],
                                         )}
                                     />
                                     <span className="text-body-sm text-fg-primary">

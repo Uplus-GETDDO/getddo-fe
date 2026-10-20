@@ -62,7 +62,8 @@ describe('AdminTicketsPage', () => {
         const user = userEvent.setup();
         renderPage('/admin/tickets?tab=grants');
         expect(screen.getByRole('tab', { name: '지급 이력', selected: true })).toBeInTheDocument();
-        expect((await screen.findAllByText('김도윤')).length).toBeGreaterThan(0);
+        // 최근 지급이 맨 위라 첫 쪽 사용자는 날마다 다르다 — 이름 대신 표에 행이 찼는지 본다
+        expect((await screen.findAllByRole('row')).length).toBeGreaterThan(1);
         await user.click(screen.getByRole('tab', { name: '반환 이력' }));
         expect(screen.getByRole('tab', { name: '반환 이력', selected: true })).toBeInTheDocument();
         expect((await screen.findAllByText('이벤트 취소')).length).toBeGreaterThan(0);
