@@ -6,16 +6,16 @@ import { toast } from 'sonner';
 import { EVENT_TYPE_LABEL, MEMBERSHIP_LABEL, useAdminEvent } from '@entities/event';
 import { useCreateEvent, useUpdateEvent } from '@features/manageEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { utcIsoToKstInput } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { utcIsoToKstInput } from '@shared/utils/date';
 
-import type { EventFormInput, EventFormValues } from './lib/eventFormValues';
+import type { EventFormInput, EventFormValues } from './utils/eventFormValues';
 
-import { eventFormSchema, eventFormToRequest, eventToFormValues } from './lib/eventFormValues';
+import { eventFormSchema, eventFormToRequest, eventToFormValues } from './utils/eventFormValues';
 
 const FIELD_LABEL = 'text-body-bold text-fg-primary';
 const FIELD_ERROR = 'text-semantic-error-strong text-caption';

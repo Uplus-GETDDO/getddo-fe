@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { Prize } from '@entities/drawResult';
 
 import { useSessionStore } from '@entities/user';
-import { maskName } from '@shared/lib/format';
 import { Button } from '@shared/ui/button';
+import { maskName } from '@shared/utils/format';
 
 import type { Burst } from './ConfettiBurst';
 

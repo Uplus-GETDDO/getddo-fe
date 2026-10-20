@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useEventList } from '@entities/event';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { LoadingBlock, Skeleton, SkeletonCard, SkeletonHeading } from '@shared/ui/skeleton';
 

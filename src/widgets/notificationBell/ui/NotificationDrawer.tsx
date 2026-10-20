@@ -7,7 +7,7 @@ import {
     useMarkAllNotificationsRead,
     useMarkNotificationRead,
 } from '@features/markNotificationRead';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import {
     Sheet,
@@ -19,8 +19,8 @@ import {
 } from '@shared/ui/sheet';
 import { SkeletonList } from '@shared/ui/skeleton';
 
-import { groupNotifications } from '../lib/groupNotifications';
-import { toInternalPath } from '../lib/toInternalPath';
+import { groupNotifications } from '../utils/groupNotifications';
+import { toInternalPath } from '../utils/toInternalPath';
 import { NotificationEmpty, NotificationGroupList } from './NotificationGroupList';
 
 const FOCUS =
@@ -38,7 +38,7 @@ export function NotificationDrawer() {
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
                 aria-label="알림 전체 보기"
-                className={`text-fg-primary flex size-6 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
+                className={`text-fg-primary flex min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
             >
                 <List className="size-6" />
             </SheetTrigger>

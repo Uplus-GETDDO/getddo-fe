@@ -1,4 +1,4 @@
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
 
 import { ArrowRight } from 'lucide-react';
 
@@ -26,6 +26,8 @@ interface EntryConfirmDialogProps {
     onConfirm: () => void;
     /** 접수 요청이 진행 중이면 버튼을 잠근다 — 연타로 중복 요청이 나가지 않게 한다 */
     pending?: boolean;
+    disabled?: boolean;
+    notice?: ReactNode;
     /** 닫은 뒤 포커스를 되돌릴 요소 — 트리거 없이 상태로 여는 모달이라 Radix가 포커스를 body로 떨어뜨린다 */
     returnFocusTo?: RefObject<HTMLElement | null>;
 }
@@ -38,6 +40,8 @@ export function EntryConfirmDialog({
     balance,
     onConfirm,
     pending = false,
+    disabled = false,
+    notice,
     returnFocusTo,
 }: EntryConfirmDialogProps) {
     const used = ticketGradeSchema.options.filter((grade) => (tickets[grade] ?? 0) > 0);
@@ -127,13 +131,14 @@ export function EntryConfirmDialog({
                     </DialogDescription>
                 </div>
 
+                {notice}
                 <div className="flex gap-4">
                     <DialogClose asChild>
                         <Button variant="secondary" className="flex-1">
                             취소
                         </Button>
                     </DialogClose>
-                    <Button className="flex-1" disabled={pending} onClick={onConfirm}>
+                    <Button className="flex-1" disabled={pending || disabled} onClick={onConfirm}>
                         {pending ? '처리 중…' : '응모하기'}
                     </Button>
                 </div>

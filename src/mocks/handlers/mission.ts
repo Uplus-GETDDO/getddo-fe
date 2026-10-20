@@ -9,7 +9,7 @@ import type {
 } from '@entities/mission';
 
 import { env } from '@shared/config/env';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 import { mockNow } from '../now';
 import { fail, failBody, ok, okBody } from './response';

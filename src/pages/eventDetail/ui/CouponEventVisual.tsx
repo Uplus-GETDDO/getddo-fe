@@ -1,7 +1,7 @@
 import type { Event } from '@entities/event';
 
-import { formatYmd } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
+import { formatYmd } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 type CouponVisual = Extract<NonNullable<Event['detailVisual']>, { template: 'coupon' }>;
 

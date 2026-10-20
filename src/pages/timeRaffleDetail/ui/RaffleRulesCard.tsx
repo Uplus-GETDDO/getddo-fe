@@ -6,8 +6,8 @@ import {
     TICKET_GRADE_WEIGHT,
     TICKET_GRADES,
 } from '@entities/ticket';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
 import { BulletList } from '@shared/ui/bullet-list';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 
 // 운영 정책 고지 — 모든 래플에 공통이라 이벤트 안내 아래에 작게 둔다
 const POLICY_RULES = [

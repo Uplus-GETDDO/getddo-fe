@@ -28,9 +28,9 @@ export {
     useMissionList,
 } from './api/queries';
 export type { MissionSubmissionOutcome } from './api/queries';
-export { buildMissionAnswers, findMissingRequired } from './lib/missionAnswers';
-export { missionThumbnail } from './lib/missionThumbnail';
-export type { MissionAnswerDraft } from './lib/missionAnswers';
+export { buildMissionAnswers, findMissingRequired } from './utils/missionAnswers';
+export { missionThumbnail } from './utils/missionThumbnail';
+export type { MissionAnswerDraft } from './utils/missionAnswers';
 export { MissionQuestionField } from './ui/MissionQuestionField';
 export { MissionResultPanel } from './ui/MissionResultPanel';
 export { MissionRewardDialog } from './ui/MissionRewardDialog';

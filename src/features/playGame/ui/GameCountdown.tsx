@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-import { PIXEL_FONT } from '../lib/pixelFont';
+import { PIXEL_FONT } from '../model/pixelFont';
 
 /** 시작·이어 하기 전 3, 2, 1 — 숫자가 바뀔 때마다 톡 튀어나온다 (타꼬런·글자색깔 맞추기 공용) */
 export function GameCountdown({ value }: { value: number }) {

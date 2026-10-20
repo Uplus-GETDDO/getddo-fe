@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
-import { formatNumber } from '@shared/lib/format';
-import { useCountUp } from '@shared/lib/useCountUp';
+import { useCountUp } from '@shared/hooks/useCountUp';
+import { formatNumber } from '@shared/utils/format';
 
 /** 게임 보상은 게임별 하루 1회 응모권 1장 (getddo-spec 게임 규칙) */
 const DAILY_GAME_REWARD = 1;

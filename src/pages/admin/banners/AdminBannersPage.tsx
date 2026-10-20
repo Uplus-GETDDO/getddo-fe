@@ -39,7 +39,8 @@ export function AdminBannersPage() {
     );
     // 조회 중·실패는 실제 미확인(삭제)과 구분한다 — 조회 실패는 이벤트 ID를 그대로 보여준다
     const eventTitleOf = useCallback(
-        (eventId: string) => {
+        (eventId: string | null) => {
+            if (eventId === null) return '(미연결 배너)';
             const title = events.find((event) => event.id === eventId)?.title;
             if (title) return title;
             if (eventsPending) return '이벤트 확인 중…';
@@ -66,9 +67,10 @@ export function AdminBannersPage() {
     const count = banners?.length ?? 0;
     const full = count >= BANNER_MAX_COUNT;
     const editing = formTarget !== null && formTarget !== 'new' ? formTarget : null;
-    const nextDisplayOrder = banners?.length
-        ? Math.max(...banners.map((banner) => banner.displayOrder)) + 1
-        : 0;
+    // 쓰기 순서는 보존된 이전 값이 아닌 현재 목록의 1기반 위치다.
+    const displayOrder = editing
+        ? (banners ?? []).findIndex((banner) => banner.id === editing.id) + 1
+        : count + 1;
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
@@ -145,7 +147,7 @@ export function AdminBannersPage() {
                 eventsPending={eventsPending}
                 eventsError={eventsError}
                 onEventsRetry={() => void refetchEvents()}
-                nextDisplayOrder={nextDisplayOrder}
+                displayOrder={displayOrder}
             />
             <DeleteBannerDialog
                 banner={deleteTarget}

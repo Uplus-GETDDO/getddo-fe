@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 import { useResultChanges } from '@entities/winner';
-import { formatKst } from '@shared/lib/date';
 import { Button } from '@shared/ui/button';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
+import { formatKst } from '@shared/utils/date';
 
 import { PagedFooter } from './PagedFooter';
 

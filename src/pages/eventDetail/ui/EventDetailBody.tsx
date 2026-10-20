@@ -1,8 +1,8 @@
 import type { Event } from '@entities/event';
 
-import { KST_HOUR_MINUTE, formatKst, formatYmd } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
 import { BulletList } from '@shared/ui/bullet-list';
+import { KST_HOUR_MINUTE, formatKst, formatYmd } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 /** 멤버십 자격 문구 — 이벤트마다 최소 등급이 다르다 */
 const MEMBERSHIP_NOTE: Record<Event['membershipRule'], string> = {

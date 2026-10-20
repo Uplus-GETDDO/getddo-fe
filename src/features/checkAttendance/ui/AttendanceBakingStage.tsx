@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
 import bakingSprite from '../assets/baking-sprite.webp';
 import bakingSteam from '../assets/baking-steam.webp';

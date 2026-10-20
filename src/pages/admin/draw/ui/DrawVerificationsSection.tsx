@@ -4,11 +4,11 @@ import { toast } from 'sonner';
 import { useDrawVerifications } from '@entities/drawResult';
 import { useVerifyDraw } from '@features/runDraw';
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { formatKst } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
 import { PagedFooter } from './PagedFooter';
 

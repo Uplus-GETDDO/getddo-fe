@@ -44,6 +44,8 @@
     --color-grade-silver-soft: #eceff4;
     --color-grade-gold: #d9a92e;
     --color-grade-gold-soft: #faf0d2;
+    --color-grade-platinum: #3e5c76;
+    --color-grade-platinum-soft: #dde6ee;
 
     /* Surface — 배경 레이어 */
     --color-surface-page: #ffffff;

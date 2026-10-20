@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 
 import { useAttendanceMonth, useAttendanceToday } from '@entities/attendance';
-import { cn } from '@shared/lib/utils';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { SkeletonList } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
 
 import { useCheckAttendance } from '../api/queries';
 import {
@@ -16,8 +16,8 @@ import {
     claimedStreakBonuses,
     countMonthlyAttendance,
     toAttendanceDate,
-} from '../lib/attendanceWeek';
-import { nextStreakMilestone } from '../lib/nextStreakMilestone';
+} from '../utils/attendanceWeek';
+import { nextStreakMilestone } from '../utils/nextStreakMilestone';
 import { AttendanceBakingStage, BAKING_SPRITE_SRC } from './AttendanceBakingStage';
 import { AttendanceMonthGrid } from './AttendanceMonthGrid';
 import { AttendanceStreakTrack } from './AttendanceStreakTrack';

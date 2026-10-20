@@ -6,7 +6,7 @@ import { useMissionList } from '@entities/mission';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { SkeletonText } from '@shared/ui/skeleton';
 import { StepTile } from '@shared/ui/step-tile';
 import { TicketWallet } from '@widgets/ticketWallet';
@@ -20,9 +20,9 @@ import itemSkewer from '../assets/item-skewer.png';
 import stepAttendance from '../assets/step-attendance.png';
 import stepGame from '../assets/step-game.png';
 import stepMission from '../assets/step-mission.png';
-import { isMissionOpen, summarizeTodayRewards } from '../lib/todayRewards';
-import { useSlotNumber } from '../lib/useSlotNumber';
+import { useSlotNumber } from '../hooks/useSlotNumber';
 import { MISSION_SECTION_IDS } from '../model/sectionIds';
+import { isMissionOpen, summarizeTodayRewards } from '../utils/todayRewards';
 
 /** 기준 시각을 다시 읽는 간격 */
 const NOW_REFRESH_MS = 60_000;

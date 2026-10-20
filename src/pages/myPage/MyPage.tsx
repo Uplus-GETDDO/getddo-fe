@@ -1,9 +1,16 @@
-import { groupTicketHistories, useMyTickets, useTicketHistories } from '@entities/ticket';
+import { useState } from 'react';
+
+import {
+    ticketDayRange,
+    useTicketHistoryCounts,
+    useMyTickets,
+    useTicketHistories,
+} from '@entities/ticket';
 import { useSessionStore } from '@entities/user';
 import { AppearanceSettings } from '@features/appearanceSettings';
-import { formatKstDot, isSameKstDate } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
-import { latestWonAt, useMyEntryRows } from '@widgets/myEntryRows';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { formatKstDot } from '@shared/utils/date';
+import { latestWonAt, MyEntryRefreshStatus, useMyEntryRows } from '@widgets/myEntryRows';
 
 import { AccountInfoCard } from './ui/AccountInfoCard';
 import { ProfileCard } from './ui/ProfileCard';
@@ -21,17 +28,18 @@ export function MyPage() {
     const user = useSessionStore((state) => state.user);
     const clock = useVirtualClock();
     const now = clock.now();
-    const { data: tickets } = useMyTickets();
-    const historiesQuery = useTicketHistories();
-    const entries = useMyEntryRows();
+    const ticketsQuery = useMyTickets();
+    const anchorKey = `${clock.override?.toISOString() ?? 'real'}:${ticketDayRange(now).from}`;
+    const [anchor, setAnchor] = useState({ key: anchorKey, time: now.getTime() });
+    const time = anchor.key === anchorKey ? anchor.time : now.getTime();
+    if (anchor.key !== anchorKey) setAnchor({ key: anchorKey, time });
+    const historiesQuery = useTicketHistories({
+        from: new Date(time - WEEK_MS).toISOString(),
+        to: new Date(time).toISOString(),
+    });
+    const daily = useTicketHistoryCounts([{ operationType: 'GRANT', ...ticketDayRange(now) }]);
+    const entries = useMyEntryRows({ selectVisibleRows: (rows) => rows.slice(0, 4) });
 
-    const groups = groupTicketHistories(historiesQuery.data ?? []);
-    const recentHistories = [...(historiesQuery.data ?? [])]
-        .filter((item) => now.getTime() - new Date(item.createdAt).getTime() <= WEEK_MS)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    const todayGranted = groups
-        .filter((group) => group.operationType === 'GRANT' && isSameKstDate(group.createdAt, now))
-        .reduce((sum, group) => sum + group.count, 0);
     const won = entries.rows.filter((row) => row.result === 'WON');
     const lastWonAt = latestWonAt(won);
 
@@ -40,17 +48,24 @@ export function MyPage() {
             {user && (
                 <ProfileCard
                     user={user}
-                    tickets={tickets}
+                    ticketsQuery={ticketsQuery}
                     stats={{
                         pendingCount: entries.rows.filter((row) => row.result === 'PENDING').length,
                         wonCount: won.length,
                         lastWonLabel: lastWonAt ? formatKstDot(lastWonAt) : null,
-                        todayGranted,
-                        entriesLoading: entries.isPending,
-                        historiesLoading: historiesQuery.isPending,
+                        todayGranted: daily.counts[0],
+                        historiesError: daily.isError,
+                        historiesFetching: daily.isFetching,
+                        onRetryHistories: daily.refetch,
+                        entriesLoading: entries.isPending || entries.isResultPending,
+                        entriesFailed: entries.isError,
+                        entriesUnavailable: entries.isResultInitialError,
+                        historiesLoading: daily.isPending,
                     }}
                 />
             )}
+
+            <MyEntryRefreshStatus query={entries} />
 
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24.5rem]">
                 <div className="flex flex-col gap-6">
@@ -58,12 +73,13 @@ export function MyPage() {
                         rows={entries.rows}
                         isPending={entries.isPending}
                         isError={entries.isError}
-                        isResultError={entries.isResultError}
                     />
                     <RecentTicketsCard
-                        histories={recentHistories}
+                        histories={historiesQuery.items}
                         isPending={historiesQuery.isPending}
-                        isError={historiesQuery.isError}
+                        isError={historiesQuery.isError || historiesQuery.cursorError}
+                        isFetching={historiesQuery.isFetching}
+                        onRetry={() => void historiesQuery.refetch()}
                     />
                 </div>
                 {/* 화면 설정·계정 정보는 스크롤해도 헤더(76) 아래 20 자리에 붙어 따라온다 — 넓은 화면(두 칸)에서만 */}

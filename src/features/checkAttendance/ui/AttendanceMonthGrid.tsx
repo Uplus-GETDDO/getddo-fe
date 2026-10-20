@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
-import type { AttendanceMonthDay } from '../lib/attendanceWeek';
+import type { AttendanceMonthDay } from '../utils/attendanceWeek';
 import type { TodayRevealStage } from './AttendanceTodayReveal';
 
 import { REVEAL_BAKE_MS, REVEAL_LAND_MS } from '../model/attendanceMotion';

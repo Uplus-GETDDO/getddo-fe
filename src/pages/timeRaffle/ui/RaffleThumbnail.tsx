@@ -1,4 +1,4 @@
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
 interface RaffleThumbnailProps {
     src: string | null | undefined;

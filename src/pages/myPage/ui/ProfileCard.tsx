@@ -6,14 +6,19 @@ import { Link } from 'react-router-dom';
 import type { VirtualUser } from '@entities/user';
 
 import { MEMBERSHIP_LABEL } from '@entities/event';
-import { TICKET_GRADES, TicketGradePill, type MyTickets } from '@entities/ticket';
+import {
+    TICKET_GRADES,
+    TicketGradePill,
+    TicketBalanceStatus,
+    type useMyTickets,
+} from '@entities/ticket';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar.png';
-import { formatNumber } from '@shared/lib/format';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { SkeletonText } from '@shared/ui/skeleton';
 import { TICKET_OUTLINE_FILTER } from '@shared/ui/ticket-card';
+import { formatNumber } from '@shared/utils/format';
 
 export interface ProfileStats {
     /** 응모 중 — 발표를 기다리는 접수 건 */
@@ -22,9 +27,15 @@ export interface ProfileStats {
     /** 가장 최근 당첨 응모의 날짜 표기 (없으면 null) */
     lastWonLabel: string | null;
     /** 오늘 받은 응모권 장수 */
-    todayGranted: number;
+    todayGranted: number | undefined;
+    historiesError?: boolean;
+    historiesFetching?: boolean;
+    onRetryHistories?: () => void;
     /** 응모 내역(응모 중·당첨)을 불러오는 중 — 0건으로 잘못 보이지 않게 글줄 스켈레톤을 둔다 */
     entriesLoading: boolean;
+    /** 응모 내역(E06) 자체가 실패해 건수를 알 수 없는 상태 — 일부 결과 미조회와 구분한다 */
+    entriesFailed?: boolean;
+    entriesUnavailable?: boolean;
     /** 응모권 내역(오늘 적립)을 불러오는 중 */
     historiesLoading: boolean;
 }
@@ -81,13 +92,14 @@ function StatTile({
  */
 export function ProfileCard({
     user,
-    tickets,
+    ticketsQuery,
     stats,
 }: {
     user: VirtualUser;
-    tickets: MyTickets | undefined;
+    ticketsQuery: ReturnType<typeof useMyTickets>;
     stats: ProfileStats;
 }) {
+    const tickets = ticketsQuery.data;
     return (
         <section className="bg-surface-page border-border-default flex flex-col gap-6 rounded-2xl border p-6 shadow-md">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -123,7 +135,13 @@ export function ProfileCard({
                 <StatTile
                     to="/my-tickets"
                     label="응모권"
-                    value={tickets ? `${formatNumber(tickets.availableCount)}장` : VALUE_SKELETON}
+                    value={
+                        tickets
+                            ? `${formatNumber(tickets.availableCount)}장`
+                            : ticketsQuery.isPending
+                              ? VALUE_SKELETON
+                              : '조회 실패'
+                    }
                 >
                     {tickets && (
                         <span className="flex flex-wrap gap-1">
@@ -144,16 +162,24 @@ export function ProfileCard({
                     value={
                         stats.entriesLoading
                             ? VALUE_SKELETON
-                            : `${formatNumber(stats.pendingCount)}건`
+                            : stats.entriesFailed
+                              ? '조회 실패'
+                              : stats.entriesUnavailable
+                                ? '일부 결과 미조회'
+                                : `${formatNumber(stats.pendingCount)}건`
                     }
                 >
                     {stats.entriesLoading ? (
                         CAPTION_SKELETON
                     ) : (
                         <span className="text-caption text-fg-tertiary">
-                            {stats.pendingCount > 0
-                                ? '결과 발표를 기다리고 있어요'
-                                : '발표를 기다리는 응모가 없어요'}
+                            {stats.entriesFailed
+                                ? '응모 내역을 불러오지 못했어요'
+                                : stats.entriesUnavailable
+                                  ? '마지막 조회 기준이에요'
+                                  : stats.pendingCount > 0
+                                    ? '결과 발표를 기다리고 있어요'
+                                    : '발표를 기다리는 응모가 없어요'}
                         </span>
                     )}
                 </StatTile>
@@ -161,16 +187,26 @@ export function ProfileCard({
                     to="/my-entries?status=WON"
                     label="당첨"
                     value={
-                        stats.entriesLoading ? VALUE_SKELETON : `${formatNumber(stats.wonCount)}건`
+                        stats.entriesLoading
+                            ? VALUE_SKELETON
+                            : stats.entriesFailed
+                              ? '조회 실패'
+                              : stats.entriesUnavailable
+                                ? '일부 결과 미조회'
+                                : `${formatNumber(stats.wonCount)}건`
                     }
                 >
                     {stats.entriesLoading ? (
                         CAPTION_SKELETON
                     ) : (
                         <span className="text-caption text-fg-tertiary">
-                            {stats.lastWonLabel
-                                ? `최근 당첨 ${stats.lastWonLabel}`
-                                : '아직 당첨이 없어요'}
+                            {stats.entriesFailed
+                                ? '응모 내역을 불러오지 못했어요'
+                                : stats.entriesUnavailable
+                                  ? '마지막 조회 기준이에요'
+                                  : stats.lastWonLabel
+                                    ? `최근 당첨 ${stats.lastWonLabel}`
+                                    : '아직 당첨이 없어요'}
                         </span>
                     )}
                 </StatTile>
@@ -180,7 +216,9 @@ export function ProfileCard({
                     value={
                         stats.historiesLoading
                             ? VALUE_SKELETON
-                            : `+${formatNumber(stats.todayGranted)}장`
+                            : stats.todayGranted === undefined
+                              ? '조회 실패'
+                              : `+${formatNumber(stats.todayGranted)}장`
                     }
                 >
                     <span className="text-caption text-fg-tertiary">
@@ -188,6 +226,19 @@ export function ProfileCard({
                     </span>
                 </StatTile>
             </div>
+            {stats.historiesError && (
+                <div role="alert">
+                    <span>오늘 적립 합계를 불러오지 못했습니다.</span>
+                    <Button
+                        variant="secondary"
+                        disabled={stats.historiesFetching}
+                        onClick={stats.onRetryHistories}
+                    >
+                        오늘 적립 다시 시도
+                    </Button>
+                </div>
+            )}
+            <TicketBalanceStatus query={ticketsQuery} />
         </section>
     );
 }

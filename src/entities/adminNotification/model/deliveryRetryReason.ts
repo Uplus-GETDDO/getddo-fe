@@ -1,4 +1,4 @@
-import { formatKst } from '@shared/lib/date';
+import { formatKst } from '@shared/utils/date';
 
 import type { AdminNotification } from './types';
 

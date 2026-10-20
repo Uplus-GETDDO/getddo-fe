@@ -104,14 +104,6 @@ export const adminRoutes: RouteObject[] = [
                 ),
             },
             {
-                path: 'audit',
-                element: lazyPage(() =>
-                    import('@pages/admin/audit/AdminAuditPage').then((m) => ({
-                        default: m.AdminAuditPage,
-                    })),
-                ),
-            },
-            {
                 path: 'notifications',
                 element: lazyPage(() =>
                     import('@pages/admin/notifications/AdminNotificationsPage').then((m) => ({

@@ -1,10 +1,10 @@
 import { ApiError } from '@shared/api/client';
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { formatKst } from '@shared/lib/date';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
+import { formatKst } from '@shared/utils/date';
 
 import { useAdminTicketHistories, useTicketConsistency } from '../api/admin';
 import { TICKET_OPERATION_LABEL, TICKET_STATUS_LABEL } from '../model/admin';

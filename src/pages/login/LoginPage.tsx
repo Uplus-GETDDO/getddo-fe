@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import type { VirtualUser } from '@entities/user';
 
 import { useSessionStore, useVirtualUsers } from '@entities/user';
-import { cn } from '@shared/lib/utils';
 import { SkeletonList } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
 
 export function LoginPage() {
     const navigate = useNavigate();

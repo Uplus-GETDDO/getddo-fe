@@ -1,8 +1,12 @@
 import { Gift, Ticket, UsersRound } from 'lucide-react';
 
 import { useEntryStatistics } from '@entities/entry';
-import { formatNumber } from '@shared/lib/format';
+import { getErrorMessage } from '@shared/api/errorMessage';
+import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Badge } from '@shared/ui/badge';
+import { Button } from '@shared/ui/button';
+import { formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 interface LiveEntryStatusProps {
     eventId: string;
@@ -22,29 +26,75 @@ export function LiveEntryStatus({
     enabled = true,
     winnerCount,
 }: LiveEntryStatusProps) {
-    const { data } = useEntryStatistics(eventId, { isOpen, enabled });
+    const query = useEntryStatistics(eventId, { isOpen, enabled });
+    const { data } = query;
+    const error = query.error ?? query.failureReason;
+    const rateLimited = getPollingRetryDelay(error) > 0;
 
-    if (!data) {
+    if (!enabled) {
         return null;
     }
 
     return (
         // 폴링으로 수치가 바뀌면 보조 기술에 조용히 알린다
         <div className="flex flex-wrap items-center gap-2" aria-live="polite">
-            {winnerCount != null && (
-                <Badge variant="accent" size="md" className="gap-2.5">
-                    <Gift className="size-5" />
-                    당첨 {formatNumber(winnerCount)}명
-                </Badge>
+            {!data && query.isPending && !rateLimited && (
+                <span>응모 현황을 불러오는 중이에요.</span>
             )}
-            <Badge variant="accent" size="md" className="gap-2.5">
-                <UsersRound className="size-5" />
-                {formatNumber(data.participantCount)}명 참여 중
-            </Badge>
-            <Badge variant="accent" size="md" className="gap-2.5">
-                <Ticket className="size-5" />
-                {formatNumber(data.totalSpentTicketCount)}장 사용
-            </Badge>
+            {(query.isError || rateLimited) && (
+                <div role="status" className="text-body-sm">
+                    <p>
+                        {data
+                            ? '응모 현황을 갱신하지 못했어요. 이전 값을 표시해요.'
+                            : '응모 현황을 불러오지 못했어요.'}
+                    </p>
+                    <p>{getErrorMessage(error)}</p>
+                    {rateLimited && <p>요청이 많아요. 잠시 후 다시 시도해 주세요.</p>}
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={query.isFetching || rateLimited}
+                        onClick={() => {
+                            if (getPollingRetryDelay(error) === 0)
+                                void query.refetch({ cancelRefetch: false });
+                        }}
+                    >
+                        응모 현황 다시 시도
+                    </Button>
+                </div>
+            )}
+            {data && (
+                <>
+                    {winnerCount != null && (
+                        <Badge variant="accent" size="md" className="gap-2.5">
+                            <Gift className="size-5" />
+                            당첨 {formatNumber(winnerCount)}명
+                        </Badge>
+                    )}
+                    <Badge variant="accent" size="md" className="gap-2.5">
+                        <UsersRound className="size-5" />
+                        {formatNumber(data.participantCount)}명 참여 중
+                    </Badge>
+                    <span className="text-body-sm">
+                        마지막 조회{' '}
+                        {formatKst(new Date(query.dataUpdatedAt), {
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        })}
+                    </span>
+                    {query.isFetching && (
+                        <span className="text-body-sm">응모 현황 갱신 중이에요.</span>
+                    )}
+
+                    <Badge variant="accent" size="md" className="gap-2.5">
+                        <Ticket className="size-5" />
+                        {formatNumber(data.totalSpentTicketCount)}장 사용
+                    </Badge>
+                </>
+            )}
         </div>
     );
 }

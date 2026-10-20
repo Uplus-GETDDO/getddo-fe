@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 
-import { formatNumber } from '@shared/lib/format';
 import { Button } from '@shared/ui/button';
 import { Pagination } from '@shared/ui/pagination';
 import { RefreshStatus } from '@shared/ui/refresh-status';
 import { LoadingBlock, TableSkeleton } from '@shared/ui/skeleton';
+import { formatNumber } from '@shared/utils/format';
 
 interface PageData<T> {
     items: T[];

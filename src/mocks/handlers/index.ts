@@ -4,7 +4,6 @@ import { adminNotificationHandlers } from './adminNotification';
 import { adminTicketHandlers } from './adminTicket';
 import { adminUserHandlers } from './adminUser';
 import { attendanceHandlers } from './attendance';
-import { auditHandlers } from './audit';
 import { bannerHandlers } from './banner';
 import { drawHandlers } from './draw';
 import { drawResultHandlers } from './drawResult';
@@ -23,7 +22,6 @@ export const handlers = [
     ...adminTicketHandlers,
     ...adminUserHandlers,
     ...attendanceHandlers,
-    ...auditHandlers,
     ...bannerHandlers,
     ...drawHandlers,
     ...drawResultHandlers,
@@ -38,12 +36,14 @@ export const handlers = [
 
 // 배포 백엔드에 아직 없는 경로만 가로채는 하이브리드 목업 — 실연동 전환 시
 // 해당 도메인을 여기서 빼면 요청이 실서버로 bypass된다 (onUnhandledRequest: 'bypass')
+// 괄호 안은 2026-10-19 실서버 실측 기준이다. 배너(B01·AB01~05)·관리자 응모권(AO03~09)은 실연동한다.
+// AS01·AM04는 미배포(404)지만 FE에서 아직 호출하지 않아 목업 핸들러도 없다.
 export const hybridHandlers = [
-    ...abuseHandlers, // /v1/admin/abuse-cases — 배포 미구현
-    ...adminTicketHandlers, // /v1/admin/ticket-* — 배포 미구현
-    ...auditHandlers, // /v1/admin/audit-logs — 이번 버전 제외(ADR-024)
-    ...bannerHandlers, // /v1/banners, /v1/admin/banners — 배포 미구현
-    ...drawResultHandlers, // /v1/events/{id}/results, /my-result — 배포 미구현
-    ...gameHandlers, // /v1/games — 배포 미구현
+    ...abuseHandlers, // /v1/admin/abuse-cases — 배포 미구현(404)
+    ...drawHandlers, // /v1/admin/draws*·/wins/*·/cancellations/* — 배포 미구현(404)
+    // /v1/games — 서버는 구현됐으나 목록 응답이 spec GameSummary({id,code,name,description})로
+    // FE gameSchema(title·dailyLimit·remainingPlays 필수)와 불일치. 제출도 spec의 G03/G04
+    // 두 단계가 아닌 비spec 단일 /play를 쓴다 — 게임 계약 정합화 전까지 목업 유지
+    ...gameHandlers,
     ...virtualUserHandlers, // /virtual-users — spec外 시연 전용 경로
 ];

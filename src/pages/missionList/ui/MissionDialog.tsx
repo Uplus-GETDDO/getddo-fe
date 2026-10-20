@@ -7,8 +7,7 @@ import type { TicketGrade } from '@entities/ticket';
 
 import { useMissionDetail } from '@entities/mission';
 import { QuizForm, SurveyForm } from '@features/submitMission';
-import { formatKst } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import {
@@ -19,8 +18,9 @@ import {
     DialogTitle,
 } from '@shared/ui/dialog';
 import { Skeleton, SkeletonText } from '@shared/ui/skeleton';
+import { formatKst } from '@shared/utils/date';
 
-import { MISSION_KIND_LABEL, missionUrgentDeadline } from '../lib/missionBoard';
+import { MISSION_KIND_LABEL, missionUrgentDeadline } from '../utils/missionBoard';
 import { MissionReward } from './MissionReward';
 
 const PERIOD_FORMAT: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };

@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 
 import { useEventDraws } from '@entities/drawResult';
 import { ADMIN_STATUS_META, useAdminEvent } from '@entities/event';
-import { formatKst } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { ChipTabs } from '@shared/ui/chip-tabs';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
 import { DrawRunDetail } from './DrawRunDetail';
 import { DRAW_RUN_PAGE_SIZE, DrawRunList } from './DrawRunList';

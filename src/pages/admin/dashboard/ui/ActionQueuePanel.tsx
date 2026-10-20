@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 import { useAdminNotificationJobs } from '@entities/adminNotification';
 import { useAdminEventStatusCounts, useAdminEvents } from '@entities/event';
 import { useTicketInconsistencies } from '@entities/ticket';
-import { formatRemaining } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { cn } from '@shared/lib/utils';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { formatRemaining } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import { DashboardPanel } from './DashboardPanel';
 

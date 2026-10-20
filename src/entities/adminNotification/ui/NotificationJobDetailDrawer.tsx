@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
-import { formatKst } from '@shared/lib/date';
 import { Button } from '@shared/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
+import { formatKst } from '@shared/utils/date';
 
 import type { NotificationJob } from '../model/types';
 

@@ -1,11 +1,11 @@
 import { http } from 'msw';
+import { z } from 'zod';
 
 import type { AdminEventStatus, AdminPrize, MembershipRule } from '@entities/event';
 
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
-import { removeMockBannersOfEvent } from './banner';
 import { mockEntryTicketTotals, mockEventHasEntries } from './entry';
 import { entryRuleOf, mockEvents, sessionFixedTime } from './event';
 import { fail, ok } from './response';
@@ -440,6 +440,10 @@ const readReason = async (request: Request) => {
     return typeof body?.reason === 'string' ? body.reason.trim() : '';
 };
 
+/** 취소된 이벤트 신규 연결을 배너 목업에서 거절할 때 쓴다. */
+export const mockAdminEventIsCanceled = (eventId: string): boolean =>
+    mockAdminEvents.some((event) => event.id === eventId && event.status === 'CANCELED');
+
 export const adminEventHandlers = [
     // AE01 — 목록: keyword/status/eventType/from/to 필터 + Page<AdminEvent> 봉투 (페이지는 1부터)
     http.get(api('/v1/admin/events'), ({ request }) => {
@@ -452,6 +456,28 @@ export const adminEventHandlers = [
         const eventType = url.searchParams.get('eventType');
         const from = url.searchParams.get('from');
         const to = url.searchParams.get('to');
+        const sort = url.searchParams.get('sort') ?? 'createdAt,desc';
+        const sortMatch = /^(createdAt|startsAt|endsAt|title),(asc|desc)$/.exec(sort);
+        const createdFrom = url.searchParams.get('createdFrom');
+        const createdTo = url.searchParams.get('createdTo');
+        if (
+            !sortMatch ||
+            [createdFrom, createdTo].some(
+                (date) => date !== null && !z.iso.date().safeParse(date).success,
+            ) ||
+            (createdFrom !== null && createdTo !== null && createdFrom > createdTo)
+        ) {
+            return fail(400, 'EVENT-008', '검색 조건을 확인해 주세요.');
+        }
+        const sortField = sortMatch[1] as 'createdAt' | 'startsAt' | 'endsAt' | 'title';
+        const direction = sortMatch[2] === 'asc' ? 1 : -1;
+        const weightingEnabled = url.searchParams.get('weightingEnabled');
+        const createdStart =
+            createdFrom === null ? null : new Date(`${createdFrom}T00:00:00+09:00`).getTime();
+        const createdEnd =
+            createdTo === null
+                ? null
+                : new Date(`${createdTo}T00:00:00+09:00`).getTime() + 86_400_000;
 
         const filtered = mockAdminEvents
             .filter((item) => {
@@ -463,12 +489,23 @@ export const adminEventHandlers = [
                 ) {
                     return false;
                 }
+                if (weightingEnabled === 'true' && !item.weightingEnabled) return false;
+                if (weightingEnabled === 'false' && item.weightingEnabled) return false;
+                const createdAt = new Date(item.createdAt).getTime();
+                if (createdStart !== null && createdAt < createdStart) return false;
+                if (createdEnd !== null && createdAt >= createdEnd) return false;
                 // 기간 필터 [from, to)는 응모 시작 시각 기준으로 해석한다
                 if (from && new Date(item.startsAt) < new Date(from)) return false;
                 if (to && new Date(item.startsAt) >= new Date(to)) return false;
                 return true;
             })
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
+            .sort((a, b) => {
+                const primary =
+                    sortField === 'title'
+                        ? a.title.localeCompare(b.title)
+                        : new Date(a[sortField]).getTime() - new Date(b[sortField]).getTime();
+                return direction * (primary || a.id.localeCompare(b.id));
+            });
 
         return ok({
             items: filtered
@@ -513,8 +550,7 @@ export const adminEventHandlers = [
         if (item.entryCount > 0 || mockEventHasEntries(item.id)) {
             return fail(409, 'STATE_CONFLICT', '응모 이력이 있는 이벤트는 삭제할 수 없습니다');
         }
-        // 도메인 규칙: 연결된 배너도 함께 삭제한다
-        removeMockBannersOfEvent(item.id);
+        // 연결 배너는 관리자 목록에 보존하고 B01에서만 숨긴다.
         mockAdminEvents.splice(mockAdminEvents.indexOf(item), 1);
         removeUserProjection(item.id);
         return ok(null);

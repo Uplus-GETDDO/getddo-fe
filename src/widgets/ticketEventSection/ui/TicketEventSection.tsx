@@ -6,11 +6,11 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { FeaturedEventCard, UpcomingEventCard } from '@entities/event';
-import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
 import { Pager } from '@shared/ui/pager';
 import { SkeletonCard } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
 
 /**
  * 홈 '타임 래플 · 응모권 사용' 섹션 — 좌측에 대표 진행 이벤트 카드,

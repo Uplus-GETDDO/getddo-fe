@@ -6,9 +6,9 @@ import type { Event } from '@entities/event';
 
 import { useEventList } from '@entities/event';
 import { useSessionStore } from '@entities/user';
-import { KST_HOUR_MINUTE, formatKst, kstDayDiff } from '@shared/lib/date';
-import { formatNumber, maskName } from '@shared/lib/format';
 import { Button } from '@shared/ui/button';
+import { KST_HOUR_MINUTE, formatKst, kstDayDiff } from '@shared/utils/date';
+import { formatNumber, maskName } from '@shared/utils/format';
 
 import loseBg from '../assets/lose-bg.webp';
 import loseDeco from '../assets/lose-deco-right.webp';

@@ -1,9 +1,9 @@
 import { Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 
-import { formatCloseCountdown } from '../lib/raffleFormat';
+import { formatCloseCountdown } from '../utils/raffleFormat';
 
 /** 이 시간보다 적게 남으면 칩을 검게 채운다 — 곧 끝난다는 신호를 색으로 준다 */
 const URGENT_MS = 10 * 60 * 1000;

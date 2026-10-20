@@ -1,9 +1,9 @@
 import { createColumnHelper, flexRender, tableFeatures, useTable } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
-import { cn } from '@shared/lib/utils';
 import { badgeVariants } from '@shared/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
+import { cn } from '@shared/utils/cn';
 
 import type { UserRole, VirtualUser } from '../model/types';
 

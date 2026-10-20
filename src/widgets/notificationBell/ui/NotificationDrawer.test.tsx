@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Notification } from '@entities/notification';
 
 import { apiClient } from '@shared/api/client';
-import { VirtualClockProvider } from '@shared/lib/virtualClock';
+import { VirtualClockProvider } from '@shared/model/virtualClock';
 
 import { NotificationDrawer } from './NotificationDrawer';
 

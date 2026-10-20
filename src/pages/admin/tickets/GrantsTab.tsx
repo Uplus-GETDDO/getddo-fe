@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { TICKET_GRADE_LABEL, TicketGrantTable, useAdminTicketGrants } from '@entities/ticket';
-import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/lib/date';
-import { ALL, isDateRangeOrdered, orUndefined, PAGE_SIZE } from '@shared/lib/filterConstants';
+import { ALL, isDateRangeOrdered, orUndefined, PAGE_SIZE } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
 import { DateRangeFilter, OptionFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
+import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/utils/date';
 
 const SOURCE_OPTIONS = [
     { value: ALL, label: '전체 구분' },

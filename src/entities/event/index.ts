@@ -1,5 +1,5 @@
-export { eventDetailPath } from './lib/eventPath';
-export { toEvent } from './lib/toEvent';
+export { eventDetailPath } from './utils/eventPath';
+export { toEvent } from './utils/toEvent';
 export { eventSchema, eventStatusSchema } from './model/types';
 export type { Event, EventStatus } from './model/types';
 export {
@@ -16,6 +16,7 @@ export {
     eventTypeSchema,
     membershipRuleSchema,
 } from './model/adminTypes';
+export { isFinalEventStatus } from './model/eventStatus';
 export type {
     AdminEvent,
     AdminEventStatus,
@@ -50,6 +51,7 @@ export {
     MEMBERSHIP_LABEL,
 } from './model/adminStatusMeta';
 export { AdminEventTable } from './ui/AdminEventTable';
+export { EnteredChip } from './ui/EnteredChip';
 export { EventCard } from './ui/EventCard';
 export { EventResultRow } from './ui/EventResultRow';
 export { FeaturedEventCard } from './ui/FeaturedEventCard';

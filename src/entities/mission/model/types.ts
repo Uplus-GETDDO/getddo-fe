@@ -56,8 +56,8 @@ export const missionAnswerSchema = z
 export const rewardReceiptSchema = z.object({
     claimId: z.string(),
     ticketCount: z.number().int(),
-    /** 받은 응모권 등급 — 게임·미션 보상은 서버가 추첨한다 (BRONZE·SILVER·GOLD, getddo-spec 응모권 등급 추첨) */
-    grade: z.enum(['BRONZE', 'SILVER', 'GOLD']).nullish(),
+    /** 받은 응모권 등급 — 게임·미션 보상은 서버가 추첨한다 (BRONZE·SILVER·GOLD·PLATINUM, getddo-spec 응모권 등급 추첨) */
+    grade: z.enum(['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']).nullish(),
     grantedAt: z.string().nullish(),
     expiresAt: z.string().nullish(),
 });

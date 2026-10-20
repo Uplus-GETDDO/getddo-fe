@@ -15,16 +15,16 @@ import gaugeSparkle from '../assets/takkoTiming/gauge-sparkle.png';
 import gaugeTrack from '../assets/takkoTiming/gauge-track.png';
 import gaugeZone from '../assets/takkoTiming/gauge-zone.png';
 import toothpick from '../assets/takkoTiming/toothpick.png';
-import { PAUSE_SOUNDS } from '../lib/gameSounds';
-import { isInteractive } from '../lib/isInteractive';
-import { TAKKO_TIMING_BGM, TAKKO_TIMING_SOUNDS } from '../lib/takkoTimingAssets';
-import { useLoopingBgm } from '../lib/useLoopingBgm';
+import { useLoopingBgm } from '../hooks/useLoopingBgm';
+import { PAUSE_SOUNDS } from '../model/gameSounds';
 import {
     createTakkoTimingRound,
     judgeTakkoTiming,
     takkoTimingPoints,
     takkoTimingPosition,
 } from '../model/takkoTiming';
+import { TAKKO_TIMING_BGM, TAKKO_TIMING_SOUNDS } from '../model/takkoTimingAssets';
+import { isInteractive } from '../utils/isInteractive';
 import { GameBoardButton } from './GameBoardButton';
 import { GameCountdown } from './GameCountdown';
 import { GameImageButton } from './GameImageButton';

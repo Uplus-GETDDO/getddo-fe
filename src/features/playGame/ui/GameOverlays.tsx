@@ -2,7 +2,7 @@ import type { ReactNode, Ref } from 'react';
 
 import { motion } from 'framer-motion';
 
-import { formatNumber } from '@shared/lib/format';
+import { formatNumber } from '@shared/utils/format';
 
 import heartEmpty from '../assets/colorWord/heart-empty.png';
 import heartFull from '../assets/colorWord/heart-full.png';

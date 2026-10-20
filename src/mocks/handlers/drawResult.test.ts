@@ -4,8 +4,8 @@ import type { MyResult, PublicResults } from '@entities/drawResult';
 
 import { myResultSchema, publicResultsSchema } from '@entities/drawResult';
 import { apiClient } from '@shared/api/client';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
-import { VIRTUAL_CLOCK_STORAGE_KEY } from '@shared/lib/virtualClock';
+import { VIRTUAL_CLOCK_STORAGE_KEY } from '@shared/model/virtualClock';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 async function results(eventId: string): Promise<PublicResults> {
     const { data } = await apiClient.get<unknown>(`/v1/events/${eventId}/results`);

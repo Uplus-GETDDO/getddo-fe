@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
-import { formatKst } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
 import { badgeVariants } from '@shared/ui/badge';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
 import type { AdminNotification, MockDeliveryStatus } from '../model/types';
 

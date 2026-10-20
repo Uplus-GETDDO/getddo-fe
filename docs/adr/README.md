@@ -1,7 +1,7 @@
 # ADR — 아키텍처 결정 기록
 
 "왜 이렇게 했는가"를 남기는 문서다. 기존 결정을 바꾸는 작업을 하기 전에 해당 ADR을 먼저 읽는다.
-새 결정을 내리면 번호를 이어붙인다 (`ADR-0006-*.md`). 상태값: `proposed` | `accepted` | `deprecated` | `superseded by ADR-XXXX`.
+새 결정을 내리면 번호를 이어붙인다 (`ADR-0011-*.md`부터). 상태값: `proposed` | `accepted` | `deprecated` | `superseded by ADR-XXXX`.
 
 | 번호                                                 | 결정                                          | 상태     |
 | ---------------------------------------------------- | --------------------------------------------- | -------- |
@@ -14,3 +14,4 @@
 | [ADR-0007](./ADR-0007-live-entry-status-refresh.md)  | 실시간 응모 현황 갱신 (E03 전용 훅 폴링)      | accepted |
 | [ADR-0008](./ADR-0008-api-error-message-mapping.md)  | API 오류 문구 결정 순서                       | accepted |
 | [ADR-0009](./ADR-0009-list-pagination-ui.md)         | 목록 페이지네이션 UI 패턴                     | accepted |
+| [ADR-0010](./ADR-0010-segment-hooks-utils.md)        | `lib` 폐기 — `hooks`/`utils`/`model` 3분리    | accepted |

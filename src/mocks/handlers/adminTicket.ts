@@ -14,7 +14,7 @@ import type {
 
 import { adminTicketHistorySchema } from '@entities/ticket';
 import { env } from '@shared/config/env';
-import { recentKstDays } from '@shared/lib/date';
+import { recentKstDays } from '@shared/utils/date';
 
 import { mockNow } from '../now';
 import { MOCK_GENERATED_USERS } from './mockUsers';
@@ -222,7 +222,13 @@ const TREND_USERS: readonly { id: string; name: string }[] = [
 ];
 // 출석은 브론즈만(ADR-016), 미션·게임은 등급 추첨 확률(TICKET_GRADE_ODDS 80 : 18 : 2)대로
 const trendGrade = (source: TicketSourceType, r: number): TicketGrade =>
-    source === 'ATTENDANCE' || r < 0.8 ? 'BRONZE' : r < 0.98 ? 'SILVER' : 'GOLD';
+    source === 'ATTENDANCE' || r < 0.7998
+        ? 'BRONZE'
+        : r < 0.9798
+          ? 'SILVER'
+          : r < 0.9998
+            ? 'GOLD'
+            : 'PLATINUM';
 
 function dayRandom(ymd: string) {
     // 날짜 숫자를 그대로 씨앗으로 쓰면 이웃한 날의 첫 값이 거의 같아 매일 같은 수가 나온다 — 곱해서 흩는다

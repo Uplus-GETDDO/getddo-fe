@@ -5,13 +5,13 @@ import type { AdminEvent } from '@entities/event';
 
 import { useEntryStatisticsList } from '@entities/entry';
 import { useAdminEvents } from '@entities/event';
-import { formatKstDot, formatRemaining } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { cn } from '@shared/lib/utils';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { badgeVariants } from '@shared/ui/badge';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
+import { cn } from '@shared/utils/cn';
+import { formatKstDot, formatRemaining } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';

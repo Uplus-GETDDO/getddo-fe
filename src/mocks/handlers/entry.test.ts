@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { apiClient } from '@shared/api/client';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
+
+import { recordMockTicketGrant } from './ticket';
 
 // 목업은 모듈 수준 상태를 들고 있어 테스트끼리 영향을 준다.
 // 한 이벤트·사용자 조합은 한 번만 접수되므로 테스트마다 새 사용자를 쓰고,
@@ -24,7 +26,7 @@ const VIP_EVENT_ID = 'evt-010';
 /** vip 이상만 응모할 수 있는 진행 중 이벤트 — 우수 등급은 ENTRY-003, vip 이상은 정상 접수된다 */
 const VIP_OPEN_EVENT_ID = 'evt-014';
 
-type Grade = 'BRONZE' | 'SILVER' | 'GOLD';
+type Grade = 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM';
 type GradeMap = Record<Grade, number>;
 
 interface EntryReceipt {
@@ -133,6 +135,29 @@ async function createOpenEvent(over: Record<string, unknown> = {}) {
 }
 
 describe('응모 목업 핸들러', () => {
+    it('플래티넘은 가중치 이벤트에서 차감하고 브론즈 전용 이벤트에서는 거절한다', async () => {
+        const user = uniqueUser('platinum');
+        recordMockTicketGrant(user, 2, '플래티넘 테스트', { grade: 'PLATINUM' });
+        const accepted = await enter(
+            uniqueKey('platinum'),
+            { PLATINUM: 1 },
+            WEIGHTED_EVENT_ID,
+            user,
+        );
+        expect(accepted.status).toBe(201);
+        const receipt = (accepted.data as Envelope<EntryReceipt>).data;
+        expect(receipt.deductedTicketCount).toBe(1);
+        expect(receipt.deductedTicketsByGrade.PLATINUM).toBe(1);
+        const rejected = await enter(
+            uniqueKey('platinum-bronze'),
+            { BRONZE: 1, PLATINUM: 1 },
+            BRONZE_ONLY_EVENT_ID,
+            user,
+        );
+        expect(rejected.status).toBe(409);
+        expect(rejected.data).toHaveProperty('code', 'ENTRY-008');
+    });
+
     it('같은 멱등키로 다시 내면 응모권을 또 차감하지 않는다', async () => {
         const key = uniqueKey('retry');
         const userId = uniqueUser('retry');
@@ -224,8 +249,18 @@ describe('응모 목업 핸들러', () => {
         expect(receipt.requestedTicketCount).toBe(2);
         expect(receipt.deductedTicketCount).toBe(2);
         // 등급 맵은 0인 등급도 모두 포함한다 (spec EntryReceipt)
-        expect(receipt.requestedTicketsByGrade).toEqual({ BRONZE: 1, SILVER: 1, GOLD: 0 });
-        expect(receipt.deductedTicketsByGrade).toEqual({ BRONZE: 1, SILVER: 1, GOLD: 0 });
+        expect(receipt.requestedTicketsByGrade).toEqual({
+            BRONZE: 1,
+            SILVER: 1,
+            GOLD: 0,
+            PLATINUM: 0,
+        });
+        expect(receipt.deductedTicketsByGrade).toEqual({
+            BRONZE: 1,
+            SILVER: 1,
+            GOLD: 0,
+            PLATINUM: 0,
+        });
 
         const after = await myEntries(userId);
         expect(after.length).toBe(before.length + 1);
@@ -302,7 +337,7 @@ describe('응모 목업 핸들러', () => {
 
         const response = await enter(
             uniqueKey('unlimited'),
-            { BRONZE: 7, SILVER: 2, GOLD: 1 },
+            { BRONZE: 7, SILVER: 2, GOLD: 1, PLATINUM: 0 },
             eventId,
             userId,
         );
@@ -329,7 +364,12 @@ describe('응모 목업 핸들러', () => {
         const ok = await enter(uniqueKey('bronze-ok'), { BRONZE: 1 }, BRONZE_ONLY_EVENT_ID, userA);
         expect(ok.status).toBe(201);
         const receipt = (ok.data as Envelope<EntryReceipt>).data;
-        expect(receipt.requestedTicketsByGrade).toEqual({ BRONZE: 1, SILVER: 0, GOLD: 0 });
+        expect(receipt.requestedTicketsByGrade).toEqual({
+            BRONZE: 1,
+            SILVER: 0,
+            GOLD: 0,
+            PLATINUM: 0,
+        });
 
         // 미적용 이벤트도 사용자당 한 번만 접수된다
         const again = await enter(
@@ -470,7 +510,12 @@ describe('응모 목업 핸들러', () => {
         const first = await enter(uniqueKey('free1'), {}, FREE_EVENT_ID, userId);
         expect(first.status).toBe(201);
         const receipt = (first.data as Envelope<EntryReceipt>).data;
-        expect(receipt.requestedTicketsByGrade).toEqual({ BRONZE: 0, SILVER: 0, GOLD: 0 });
+        expect(receipt.requestedTicketsByGrade).toEqual({
+            BRONZE: 0,
+            SILVER: 0,
+            GOLD: 0,
+            PLATINUM: 0,
+        });
 
         const second = await enter(uniqueKey('free2'), {}, FREE_EVENT_ID, userId);
         expect(second.status).toBe(409);
@@ -507,10 +552,10 @@ describe('응모 목업 핸들러', () => {
                 eventId: WEIGHTED_EVENT_ID,
                 status: 'REJECTED',
                 requestedTicketCount: 2,
-                requestedTicketsByGrade: { BRONZE: 0, SILVER: 0, GOLD: 2 },
+                requestedTicketsByGrade: { BRONZE: 0, SILVER: 0, GOLD: 2, PLATINUM: 0 },
                 // 거절은 응모권을 차감하지 않는다 (spec EntryReceipt)
                 deductedTicketCount: 0,
-                deductedTicketsByGrade: { BRONZE: 0, SILVER: 0, GOLD: 0 },
+                deductedTicketsByGrade: { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 },
                 acceptedAt: null,
                 rejectionCode: 'TICKET-006',
             });

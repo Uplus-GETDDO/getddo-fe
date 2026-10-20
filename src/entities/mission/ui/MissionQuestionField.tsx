@@ -1,10 +1,10 @@
-import { cn } from '@shared/lib/utils';
 import { Input } from '@shared/ui/input';
 import { RadioGroup, RadioGroupItem } from '@shared/ui/radio-group';
 import { Textarea } from '@shared/ui/textarea';
+import { cn } from '@shared/utils/cn';
 
-import type { MissionAnswerDraft } from '../lib/missionAnswers';
 import type { MissionQuestion } from '../model/types';
+import type { MissionAnswerDraft } from '../utils/missionAnswers';
 
 /** 선택 칸 공통 — 테두리 대신 옅은 회색으로 채워 누를 수 있는 칸으로 보이게 한다. 고른 칸은 Radix 라디오의 data-state로 판단한다 */
 const FILLED_CHOICE =
@@ -39,7 +39,7 @@ interface MissionQuestionFieldProps {
  * 설문은 고른 칸을 진한 테두리로, 퀴즈는 노랑 채움으로 표시한다.
  * 문항끼리는 테두리 상자 대신 구분선으로 나눈다 — 모달 안에 상자가 겹겹이 보이지 않게.
  * 필수 문항은 문항 글 옆에 별표(*), 선택 문항은 번호 옆에 "· 선택"을 붙인다.
- * 제출 변환·검증은 lib/missionAnswers가 담당하고, 여기는 표시와 입력만 한다.
+ * 제출 변환·검증은 utils/missionAnswers가 담당하고, 여기는 표시와 입력만 한다.
  */
 export function MissionQuestionField({
     question,

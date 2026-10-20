@@ -1,6 +1,6 @@
 import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
 import { hasGamePlayer } from '@features/playGame';
-import { useDragScroll } from '@shared/lib/useDragScroll';
+import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { SkeletonCard } from '@shared/ui/skeleton';
 
 /**

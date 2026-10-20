@@ -4,7 +4,7 @@ import { GAMES_KEY, gamePlayApiPath } from '@entities/game';
 import { TICKETS_KEY } from '@entities/ticket';
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
-import { createIdempotencyKey, IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { createIdempotencyKey, IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 import { playResultSchema } from '../model/types';
 

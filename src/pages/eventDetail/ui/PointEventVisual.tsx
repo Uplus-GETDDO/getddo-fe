@@ -3,8 +3,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import type { Event } from '@entities/event';
 
 import { MEMBERSHIP_LABEL } from '@entities/event';
-import { KST_HOUR_MINUTE, formatKst, formatYmd } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
+import { KST_HOUR_MINUTE, formatKst, formatYmd } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 type PointVisual = Extract<NonNullable<Event['detailVisual']>, { template: 'point' }>;
 

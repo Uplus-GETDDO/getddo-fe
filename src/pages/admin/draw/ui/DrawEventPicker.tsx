@@ -3,9 +3,9 @@ import { ChevronRight } from 'lucide-react';
 import type { AdminEvent } from '@entities/event';
 
 import { ADMIN_STATUS_META } from '@entities/event';
-import { formatKst } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
 import { badgeVariants } from '@shared/ui/badge';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
 /**
  * 이벤트를 고르기 전 첫 화면 — 추첨 관리 대상 이벤트를 카드로 바로 보여 고르는 단계를 줄인다.

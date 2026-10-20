@@ -8,7 +8,7 @@ import type { TicketGrade } from '@entities/ticket';
 
 import { GradeTicketSteppers } from './GradeTicketSteppers';
 
-const OWNED: Record<TicketGrade, number> = { BRONZE: 7, SILVER: 2, GOLD: 1 };
+const OWNED: Record<TicketGrade, number> = { BRONZE: 7, SILVER: 2, GOLD: 1, PLATINUM: 0 };
 
 function setup({
     availableByGrade = OWNED,
@@ -18,7 +18,12 @@ function setup({
     remainingLimit?: number | null;
 } = {}) {
     function Harness() {
-        const [value, setValue] = useState<TicketsByGrade>({ BRONZE: 0, SILVER: 0, GOLD: 0 });
+        const [value, setValue] = useState<TicketsByGrade>({
+            BRONZE: 0,
+            SILVER: 0,
+            GOLD: 0,
+            PLATINUM: 0,
+        });
         return (
             <GradeTicketSteppers
                 value={value}
@@ -32,6 +37,14 @@ function setup({
 }
 
 describe('GradeTicketSteppers', () => {
+    it('플래티넘도 합계와 10배 가중치에 반영한다', async () => {
+        const user = userEvent.setup();
+        setup({ availableByGrade: { ...OWNED, PLATINUM: 1 } });
+        await user.click(screen.getByRole('button', { name: '플래티넘 응모 수량 늘리기' }));
+        expect(screen.getByText('합계 1장')).toBeInTheDocument();
+        expect(screen.getByText('추첨에 브론즈 10장만큼 들어가요')).toBeInTheDocument();
+    });
+
     it('등급별 라벨과 보유 장수를 보여준다', () => {
         setup();
 

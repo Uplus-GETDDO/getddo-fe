@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 import { motion } from 'framer-motion';
 
-import { PIXEL_FONT } from '../lib/pixelFont';
+import { PIXEL_FONT } from '../model/pixelFont';
 
 /**
  * 결과 말풍선 — 캐릭터 머리 위에 뜨는 도트 말풍선 (타꼬 타이밍·글자색깔 맞추기 공용).

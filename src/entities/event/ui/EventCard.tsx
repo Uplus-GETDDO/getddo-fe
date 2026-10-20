@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { toKst } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { Card } from '@shared/ui/card';
+import { toKst } from '@shared/utils/date';
 
 import type { Event } from '../model/types';
 

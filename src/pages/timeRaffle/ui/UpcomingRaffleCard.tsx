@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 
 import type { Event } from '@entities/event';
 
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
 import { Button } from '@shared/ui/button';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 
-import { formatEntryRule, formatOpenChip } from '../lib/raffleFormat';
+import { formatEntryRule, formatOpenChip } from '../utils/raffleFormat';
 import { RaffleThumbnail } from './RaffleThumbnail';
 
 /** 이 시간 안에 열리면 '곧 오픈'으로 마젠타 점을 찍는다 — "지금" 신호 (DESIGN-SYSTEM 13절) */

@@ -7,11 +7,11 @@ import type { Event } from '@entities/event';
 
 import { useEntryEligibility } from '@entities/entry';
 import { useEvent } from '@entities/event';
-import { useMyTickets } from '@entities/ticket';
+import { TicketBalanceStatus, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { formatYmd } from '@shared/lib/date';
 import { Loading } from '@shared/ui/loading';
+import { formatYmd } from '@shared/utils/date';
 import {
     EntryCompleteDialog,
     EntryConfirmDialog,
@@ -67,7 +67,8 @@ function CampaignVisual({
 export function EventDetailPage() {
     const { id = '' } = useParams();
     const { data: event, isPending, isError } = useEvent(id);
-    const { data: ticket } = useMyTickets();
+    const ticketsQuery = useMyTickets();
+    const ticket = ticketsQuery.data;
     // 응모 자격은 서버 판정으로 받는다 — 진행 중일 때만 조회한다 (E07)
     const { data: eligibility } = useEntryEligibility(id, { enabled: event?.status === 'open' });
     const enterEvent = useEnterEvent(id);
@@ -101,10 +102,13 @@ export function EventDetailPage() {
     // 요청에 실을 장수 맵 — 미사용은 빈 맵, 쓰는 이벤트는 브론즈 1장 고정
     const requestedTickets: EntryTickets = isFree ? {} : { BRONZE: 1 };
     const balance = ticket?.availableCount ?? null;
-    // 잔액을 아직 못 받았으면 부족하다고 단정하지 않고 확인 모달로 보낸다 (최종 판정은 서버 응답).
-    // 서버가 이미 부족을 판정했으면 로컬 잔액과 무관하게 부족 안내로 보낸다
+    const balanceBlocked = !isFree && (!ticket || ticketsQuery.isError || ticketsQuery.isFetching);
+    const balanceLabel = ticketsQuery.isError
+        ? '응모권 잔액을 다시 조회해 주세요'
+        : '응모권 잔액을 확인하는 중이에요';
+    const canEnter = event.status === 'open' && !completed && !forbidden;
     const hasEnoughTickets =
-        !lacking && (isFree || ticket == null || ticket.countByGrade.BRONZE >= 1);
+        !lacking && (isFree || (ticket != null && ticket.countByGrade.BRONZE >= 1));
 
     return (
         <main className={CONTAINER}>
@@ -149,12 +153,18 @@ export function EventDetailPage() {
                 </>
             )}
 
+            {!isFree && !confirmOpen && <TicketBalanceStatus query={ticketsQuery} />}
             <EventEntryBar
                 event={event}
                 completed={completed}
                 forbidden={forbidden}
                 buttonRef={entryButtonRef}
-                onEnter={() => (hasEnoughTickets ? setConfirmOpen(true) : setShortfallOpen(true))}
+                balanceBlocked={balanceBlocked || enterEvent.isPending}
+                balanceLabel={balanceLabel}
+                onEnter={() =>
+                    !balanceBlocked &&
+                    (hasEnoughTickets ? setConfirmOpen(true) : setShortfallOpen(true))
+                }
             />
 
             <EntryConfirmDialog
@@ -165,7 +175,24 @@ export function EventDetailPage() {
                 balance={balance}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
+                disabled={balanceBlocked || !canEnter || !hasEnoughTickets}
+                notice={
+                    !isFree && (
+                        <>
+                            <TicketBalanceStatus query={ticketsQuery} />
+                            {!balanceBlocked && !hasEnoughTickets && (
+                                <p
+                                    role="status"
+                                    className="text-body-sm text-semantic-error-strong"
+                                >
+                                    브론즈 응모권이 부족해요. 취소한 뒤 잔액을 확인해 주세요.
+                                </p>
+                            )}
+                        </>
+                    )
+                }
                 onConfirm={() => {
+                    if (balanceBlocked || !canEnter || !hasEnoughTickets) return;
                     enterEvent.mutate(requestedTickets, {
                         onSuccess: (entry) => {
                             setConfirmOpen(false);

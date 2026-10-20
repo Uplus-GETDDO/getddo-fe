@@ -3,7 +3,7 @@ import { http } from 'msw';
 import type { AttendanceMilestone, AttendanceReceipt, RewardReceipt } from '@entities/attendance';
 
 import { env } from '@shared/config/env';
-import { kstNextMonthStart } from '@shared/lib/date';
+import { kstNextMonthStart } from '@shared/utils/date';
 
 import { mockNow } from '../now';
 import { fail, ok } from './response';

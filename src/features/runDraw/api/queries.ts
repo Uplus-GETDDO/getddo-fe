@@ -10,7 +10,7 @@ import {
 import { awardCancellationResultSchema, winCancellationsApiPath } from '@entities/winner';
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 // AD04 — 저장된 추첨 결과의 정합성 검증. 난수를 다시 돌리는 작업이 아니라 본문이 없다
 export function useVerifyDraw() {

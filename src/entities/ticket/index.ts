@@ -21,7 +21,8 @@ export {
     TICKETS_KEY,
     useMyTickets,
 } from './api/queries';
-export { useTicketHistories } from './api/history';
+export { useTicketHistories, useTicketHistoryCounts } from './api/history';
+export { ticketDayRange, ticketMonthRange } from './utils/historyPeriod';
 export { TicketHistoryItem } from './ui/TicketHistoryItem';
 export { TicketGradeReveal } from './ui/TicketGradeReveal';
 export {
@@ -72,6 +73,7 @@ export {
 export { TicketConsistencyDrawer } from './ui/TicketConsistencyDrawer';
 export { GradeTicketTiles } from './ui/GradeTicketTiles';
 export { TicketGradePill } from './ui/TicketGradePill';
-export { groupTicketHistories } from './lib/groupHistories';
-export type { TicketHistoryGroup } from './lib/groupHistories';
+export { TicketBalanceStatus } from './ui/TicketBalanceStatus';
+export { groupTicketHistories } from './utils/groupHistories';
+export type { TicketHistoryGroup } from './utils/groupHistories';
 export { TicketHistoryRow } from './ui/TicketHistoryRow';

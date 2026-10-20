@@ -2,7 +2,7 @@ import type { Notification } from '@entities/notification';
 
 import { NotificationItem } from '@entities/notification';
 
-import type { NotificationGroup } from '../lib/groupNotifications';
+import type { NotificationGroup } from '../utils/groupNotifications';
 
 import emptyCharacter from '../assets/empty-character.png';
 

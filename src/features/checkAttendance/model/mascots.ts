@@ -5,7 +5,7 @@ import mascotBonusRiceball from '../assets/mascot-bonus-riceball.png';
 import mascotBonusVegetable from '../assets/mascot-bonus-vegetable.png';
 import mascotDizzy from '../assets/mascot-dizzy.png';
 import steam from '../assets/steam.webp';
-import { isStreakBonusDate, pickBonusMascotIndex } from '../lib/attendanceWeek';
+import { isStreakBonusDate, pickBonusMascotIndex } from '../utils/attendanceWeek';
 
 /** 이미지는 캐릭터 경계에 맞춰 잘라 둔 정사각형이라, 같은 크기 상자에 넣으면 모두 가운데에 같은 크기로 보인다 */
 export interface Mascot {

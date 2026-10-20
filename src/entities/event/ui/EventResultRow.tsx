@@ -1,12 +1,12 @@
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import { toKst } from '@shared/lib/date';
 import { StatusDot } from '@shared/ui/status-dot';
+import { toKst } from '@shared/utils/date';
 
 import type { Event } from '../model/types';
 
-import { eventDetailPath } from '../lib/eventPath';
+import { eventDetailPath } from '../utils/eventPath';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 

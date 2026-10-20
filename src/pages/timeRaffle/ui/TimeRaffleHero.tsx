@@ -2,16 +2,16 @@ import type { Event } from '@entities/event';
 
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
 import { StepTile } from '@shared/ui/step-tile';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 import { TicketWallet } from '@widgets/ticketWallet';
 
 import itemGift from '../assets/item-gift.webp';
 import itemGumball from '../assets/item-gumball.webp';
 import itemTickets from '../assets/item-tickets.webp';
-import { kstDateHeadline } from '../lib/raffleFormat';
 import { RAFFLE_SECTION_IDS } from '../model/sectionIds';
+import { kstDateHeadline } from '../utils/raffleFormat';
 
 interface TimeRaffleHeroProps {
     live: Event[];

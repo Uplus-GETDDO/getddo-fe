@@ -8,7 +8,6 @@ import {
     awardCancellationRequestSchema,
 } from '@entities/winner';
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { createIdempotencyKey } from '@shared/lib/idempotencyKey';
 import { Button } from '@shared/ui/button';
 import {
     Dialog,
@@ -19,6 +18,7 @@ import {
     DialogTitle,
 } from '@shared/ui/dialog';
 import { Textarea } from '@shared/ui/textarea';
+import { createIdempotencyKey } from '@shared/utils/idempotencyKey';
 
 import { useCancelWin } from '../api/queries';
 

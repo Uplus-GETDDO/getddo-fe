@@ -1,13 +1,13 @@
 import { Clock, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { formatKst, formatYmd, kstNextDateStartUtcIso } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui/card';
 import { Input } from '@shared/ui/input';
+import { cn } from '@shared/utils/cn';
+import { formatKst, formatYmd, kstNextDateStartUtcIso } from '@shared/utils/date';
 
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 

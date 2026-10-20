@@ -5,7 +5,7 @@ import {
     TicketInconsistencyTable,
     useTicketInconsistencies,
 } from '@entities/ticket';
-import { PAGE_SIZE } from '@shared/lib/filterConstants';
+import { PAGE_SIZE } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
 import { TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';

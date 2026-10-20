@@ -1,8 +1,8 @@
 import { Moon, Sun, SunMoon } from 'lucide-react';
 
-import { useUiSettingsStore, type Theme } from '@shared/lib/uiSettings';
-import { cn } from '@shared/lib/utils';
+import { useUiSettingsStore, type Theme } from '@shared/model/uiSettings';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
+import { cn } from '@shared/utils/cn';
 
 const THEME_OPTIONS = [
     { value: 'system', label: '시스템 설정', icon: SunMoon },

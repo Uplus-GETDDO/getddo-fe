@@ -5,10 +5,10 @@ import type { MyEntryRow } from '@widgets/myEntryRows';
 
 import { MyResultBadge } from '@entities/drawResult';
 import { EventThumbnail } from '@entities/event';
-import { formatKstDot } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
 import { Badge } from '@shared/ui/badge';
 import { SkeletonList } from '@shared/ui/skeleton';
+import { formatKstDot } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import { SectionCard } from './SectionCard';
 

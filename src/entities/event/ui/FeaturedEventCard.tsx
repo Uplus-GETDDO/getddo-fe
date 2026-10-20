@@ -2,15 +2,15 @@ import { Clock, Ticket, Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { formatKstTimeRange, formatRemaining } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
+import { formatKstTimeRange, formatRemaining } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import type { Event } from '../model/types';
 
-import { eventDetailPath } from '../lib/eventPath';
+import { eventDetailPath } from '../utils/eventPath';
 import { EventThumbnail } from './EventThumbnail';
 
 interface FeaturedEventCardProps {

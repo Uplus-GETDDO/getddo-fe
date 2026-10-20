@@ -1,7 +1,9 @@
 import { http } from 'msw';
 
 import { env } from '@shared/config/env';
+import { formatYmd } from '@shared/utils/date';
 
+import { mockNow } from '../now';
 import { fail, ok } from './response';
 import { drawMockTicketGrade, recordMockTicketGrant } from './ticket';
 
@@ -90,7 +92,12 @@ const defaultPlayState = (): GamePlayState => ({
 
 const userIdOf = (request: Request) => request.headers.get('X-User-ID') ?? 'anonymous';
 
-const statesByUser = new Map<string, Map<string, GamePlayState>>();
+interface GameHistory {
+    bestScore: number;
+    days: Map<string, GamePlayState>;
+}
+
+const statesByUser = new Map<string, Map<string, GameHistory>>();
 
 const stateFor = (userId: string, gameId: string): GamePlayState => {
     let states = statesByUser.get(userId);
@@ -98,12 +105,19 @@ const stateFor = (userId: string, gameId: string): GamePlayState => {
         states = new Map();
         statesByUser.set(userId, states);
     }
-    let state = states.get(gameId);
-    if (!state) {
-        // 시연 첫 진입 시드 — 사용자마다 독립 복사본을 둔다
-        state = { ...(seedPlayState[gameId] ?? defaultPlayState()) };
-        states.set(gameId, state);
+    let history = states.get(gameId);
+    if (!history) {
+        history = { bestScore: seedPlayState[gameId]?.bestScore ?? 0, days: new Map() };
+        states.set(gameId, history);
     }
+    const date = formatYmd(mockNow().toISOString());
+    let state = history.days.get(date);
+    if (!state) {
+        // 날짜별 기록을 보존해 가상 시계를 되돌려도 같은 날 보상을 다시 지급하지 않는다.
+        state = defaultPlayState();
+        history.days.set(date, state);
+    }
+    state.bestScore = history.bestScore;
     return state;
 };
 
@@ -123,10 +137,11 @@ export const gameHandlers = [
             return fail(404, 'RESOURCE_NOT_FOUND', '게임을 찾을 수 없습니다');
         }
         const userId = userIdOf(request);
-        const state = stateFor(userId, game.id);
 
         const { score } = (await request.json()) as { score: number };
+        const state = stateFor(userId, game.id);
         state.bestScore = Math.max(state.bestScore ?? 0, score);
+        statesByUser.get(userId)!.get(game.id)!.bestScore = state.bestScore;
         state.todayPlayCount += 1;
         const ticketsGranted = state.rewardedToday ? 0 : 1;
         // 게임 보상은 등급 응모권 1장 — 서버가 확률로 등급 하나를 결정한다 (getddo-spec ticket.md)

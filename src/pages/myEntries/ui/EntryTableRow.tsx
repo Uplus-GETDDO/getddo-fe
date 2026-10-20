@@ -7,8 +7,8 @@ import { MyResultBadge } from '@entities/drawResult';
 import { EventThumbnail } from '@entities/event';
 import { TICKET_GRADE_DOT, TICKET_GRADE_LABEL, TICKET_GRADES } from '@entities/ticket';
 import { getErrorCodeMessage } from '@shared/api/errorMessage';
-import { formatKstDot } from '@shared/lib/date';
 import { Badge } from '@shared/ui/badge';
+import { formatKstDot } from '@shared/utils/date';
 
 /** 표 칸 너비 — 머리줄(EntryTableHead)과 줄이 같은 값을 쓴다 */
 export const ENTRY_GRID = 'md:grid-cols-[minmax(0,1fr)_10.5rem_5.5rem_1.25rem]';

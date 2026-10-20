@@ -2,9 +2,9 @@ import { createColumnHelper, flexRender, tableFeatures, useTable } from '@tansta
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { formatKst } from '@shared/lib/date';
 import { Button } from '@shared/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
+import { formatKst } from '@shared/utils/date';
 
 import type { AdminBanner } from '../model/types';
 
@@ -36,7 +36,7 @@ function BannerThumbnail({ src, label }: { src: string; label: string }) {
 interface AdminBannerTableProps {
     banners: AdminBanner[];
     /** 연결 이벤트 제목 — 배너 응답은 eventId만 주므로 호출부가 이벤트 목록으로 해석해 넘긴다 */
-    eventTitleOf: (eventId: string) => string;
+    eventTitleOf: (eventId: string | null) => string;
     onMove: (banner: AdminBanner, direction: 'up' | 'down') => void;
     onEdit: (banner: AdminBanner) => void;
     onDelete: (banner: AdminBanner) => void;
@@ -60,7 +60,9 @@ export function AdminBannerTable({
                     id: 'order',
                     header: '순서',
                     cell: ({ row }) => (
-                        <span className="text-body-bold text-fg-primary">{row.index + 1}</span>
+                        <span className="text-body-bold text-fg-primary">
+                            {row.original.displayOrder}
+                        </span>
                     ),
                 }),
                 helper.accessor('imageUrl', {

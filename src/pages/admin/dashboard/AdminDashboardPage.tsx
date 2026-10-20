@@ -1,17 +1,16 @@
 import { RefreshStatus } from '@shared/ui/refresh-status';
 import { AdminStatSummary } from '@widgets/adminStatSummary';
 
-import { useDashboardRefresh } from './model/useDashboardRefresh';
-import { useParticipationTrend } from './model/useParticipationTrend';
+import { useDashboardRefresh } from './hooks/useDashboardRefresh';
+import { useParticipationTrend } from './hooks/useParticipationTrend';
 import { ActionQueuePanel } from './ui/ActionQueuePanel';
 import { EventStagePanel } from './ui/EventStagePanel';
 import { OpenEventsPanel } from './ui/OpenEventsPanel';
 import { ParticipationTrendPanel } from './ui/ParticipationTrendPanel';
-import { RecentAuditLogsPanel } from './ui/RecentAuditLogsPanel';
 
 /**
  * 관리자 대시보드 — 위에 오늘 숫자, 가운데 활동 참여율 추이와 지금 처리할 일, 그 아래 운영 단계 분포·이벤트 응모 현황 표,
- * 맨 아래 최근 운영 기록. 그래프는 최근 7일 고정이다
+ * 그래프는 최근 7일 고정이다
  */
 export function AdminDashboardPage() {
     const { rows, total, trend } = useParticipationTrend();
@@ -48,7 +47,6 @@ export function AdminDashboardPage() {
                 <EventStagePanel />
                 <OpenEventsPanel className="lg:col-span-2" />
             </div>
-            <RecentAuditLogsPanel />
         </div>
     );
 }

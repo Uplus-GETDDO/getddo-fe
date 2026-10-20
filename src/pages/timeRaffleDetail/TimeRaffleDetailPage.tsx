@@ -8,11 +8,13 @@ import type { Event } from '@entities/event';
 import { useEventResults, useMyResult } from '@entities/drawResult';
 import { useEntryEligibility } from '@entities/entry';
 import { useEvent } from '@entities/event';
-import { ticketGradeSchema, useMyTickets } from '@entities/ticket';
+import { TicketBalanceStatus, ticketGradeSchema, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
+import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
+import { formatKst } from '@shared/utils/date';
 import {
     EntryCompleteDialog,
     EntryConfirmDialog,
@@ -42,20 +44,29 @@ const STATUS_LABEL: Record<Event['status'], string> = {
 
 export function TimeRaffleDetailPage() {
     const { id = '' } = useParams();
-    const { data: event, isPending, isError } = useEvent(id);
-    const { data: ticket } = useMyTickets();
+    const eventQuery = useEvent(id);
+    const { data: event, isPending, isError } = eventQuery;
+    const ticketsQuery = useMyTickets();
+    const ticket = ticketsQuery.data;
     // 응모 자격은 서버 판정으로 받는다 — 진행 중일 때만 조회한다 (E07)
     const { data: eligibility } = useEntryEligibility(id, {
         enabled: event?.status === 'open',
     });
     // 마감 전에는 결과가 존재하지 않으므로 묻지 않는다
     const isAfterClose = event?.status === 'closed' || event?.status === 'drawn';
-    const { data: results } = useEventResults(id, isAfterClose);
+    const resultsQuery = useEventResults(id, isAfterClose);
+    const { data: results } = resultsQuery;
     // 본인 결과도 마감 후에만 묻는다 — 공개 전에는 서버가 PENDING으로 고정해 돌려준다
-    const { data: myResult } = useMyResult(id, isAfterClose);
+    const myResultQuery = useMyResult(id, isAfterClose);
+    const { data: myResult } = myResultQuery;
     const enterEvent = useEnterEvent(id);
     // 가중치 적용 이벤트에서 사용자가 등급별로 고르는 장수 — 브론즈 0장 사용자를 위해 0장에서 시작한다
-    const [tickets, setTickets] = useState<TicketsByGrade>({ BRONZE: 0, SILVER: 0, GOLD: 0 });
+    const [tickets, setTickets] = useState<TicketsByGrade>({
+        BRONZE: 0,
+        SILVER: 0,
+        GOLD: 0,
+        PLATINUM: 0,
+    });
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [shortfallOpen, setShortfallOpen] = useState(false);
     const [completeOpen, setCompleteOpen] = useState(false);
@@ -65,6 +76,24 @@ export function TimeRaffleDetailPage() {
     const [lastRemaining, setLastRemaining] = useState<number | null>(0);
     // 모달을 닫으면 방금 누른 응모 버튼으로 포커스를 되돌린다
     const entryButtonRef = useRef<HTMLButtonElement>(null);
+    const eventFailureNotice = isError && (
+        <div role="status" className="text-body-sm text-fg-secondary">
+            <p>
+                {event
+                    ? '래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'
+                    : '래플을 불러오지 못했습니다.'}
+            </p>
+            <p>{getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')}</p>
+            <Button
+                type="button"
+                variant="secondary"
+                disabled={eventQuery.isFetching}
+                onClick={() => void eventQuery.refetch()}
+            >
+                래플 정보 다시 시도
+            </Button>
+        </div>
+    );
 
     if (isPending) {
         return (
@@ -74,18 +103,14 @@ export function TimeRaffleDetailPage() {
         );
     }
 
-    if (isError) {
-        return (
-            <main className={CONTAINER}>
-                <p className="text-destructive text-body-sm">래플을 불러오지 못했습니다.</p>
-            </main>
-        );
+    if (isError && !event) {
+        return <main className={CONTAINER}>{eventFailureNotice}</main>;
     }
 
     const isOpen = event.status === 'open';
     const isFree = event.eventType === 'NO_TICKET';
     const isWeighted = event.eventType === 'TICKET' && event.weightingEnabled;
-    const selectedTotal = tickets.BRONZE + tickets.SILVER + tickets.GOLD;
+    const selectedTotal = tickets.BRONZE + tickets.SILVER + tickets.GOLD + tickets.PLATINUM;
 
     // 자격 판정이 아직 안 왔으면 이벤트 카운터로 근사한다 — 서버 판정(E07)이 오면 그 값을 따른다
     const alreadyUsed =
@@ -111,24 +136,36 @@ export function TimeRaffleDetailPage() {
     const requestedTickets: EntryTickets = isFree ? {} : isWeighted ? tickets : { BRONZE: 1 };
     // 가중치 이벤트에서 아무 등급도 고르지 않으면 보낼 요청이 없다
     const needsSelection = isWeighted && selectedTotal < 1;
+    const balanceBlocked = !isFree && (!ticket || ticketsQuery.isError || ticketsQuery.isFetching);
+    const invalidSelection =
+        isWeighted &&
+        ticket != null &&
+        (ticketGradeSchema.options.some((grade) => tickets[grade] > ticket.countByGrade[grade]) ||
+            (remainingLimit !== null && selectedTotal > remainingLimit));
+    const balanceLabel = ticketsQuery.isError
+        ? '응모권 잔액을 다시 조회해 주세요'
+        : '응모권 잔액을 확인하는 중이에요';
 
-    // 잔액을 아직 못 받았으면 부족하다고 단정하지 않고 확인 모달로 보낸다 (최종 판정은 서버 응답).
-    // 서버가 이미 부족을 판정했으면 로컬 잔액과 무관하게 부족 안내로 보낸다
+    // 조회에 성공한 잔액만 부족 판정에 쓴다. 장애 중에는 확인·제출 모두 차단한다.
     const hasEnoughTickets =
         !lacking &&
-        (ticket == null ||
-            isFree ||
-            (isWeighted
-                ? ticketGradeSchema.options.every(
-                      (grade) => tickets[grade] <= ticket.countByGrade[grade],
-                  )
-                : ticket.countByGrade.BRONZE >= 1));
+        (isFree ||
+            (ticket != null &&
+                (isWeighted
+                    ? ticketGradeSchema.options.every(
+                          (grade) => tickets[grade] <= ticket.countByGrade[grade],
+                      )
+                    : ticket.countByGrade.BRONZE >= 1)));
     // 확인 모달은 응모 후 남는 전체 응모권을 보인다 — 브론즈만 쓰는 래플이어도 전체에서 그만큼 줄어든다
     const dialogBalance = ticket?.availableCount ?? null;
+    const submitBlocked =
+        balanceBlocked || needsSelection || invalidSelection || !canEnter || !hasEnoughTickets;
 
     return (
         <main className={CONTAINER}>
             <div className="flex flex-col gap-10">
+                {eventFailureNotice}
+                {!confirmOpen && <TicketBalanceStatus query={ticketsQuery} />}
                 <RaffleDetailHero
                     event={event}
                     quantityControl={
@@ -140,12 +177,14 @@ export function TimeRaffleDetailPage() {
                                     remainingLimit={remainingLimit}
                                 />
                                 {isWeighted ? (
-                                    <GradeTicketSteppers
-                                        value={tickets}
-                                        onChange={setTickets}
-                                        availableByGrade={ticket?.countByGrade ?? null}
-                                        remainingLimit={remainingLimit}
-                                    />
+                                    <fieldset disabled={balanceBlocked} className="min-w-0">
+                                        <GradeTicketSteppers
+                                            value={tickets}
+                                            onChange={setTickets}
+                                            availableByGrade={ticket?.countByGrade ?? null}
+                                            remainingLimit={remainingLimit}
+                                        />
+                                    </fieldset>
                                 ) : (
                                     // 등급 미반영 래플은 브론즈 1장 고정이라 고를 수량이 없다
                                     <BronzeOnlyTicket owned={ticket?.countByGrade.BRONZE ?? null} />
@@ -158,9 +197,18 @@ export function TimeRaffleDetailPage() {
                             <Button
                                 ref={entryButtonRef}
                                 size="lg"
-                                disabled={!canEnter || needsSelection}
+                                disabled={
+                                    !canEnter ||
+                                    balanceBlocked ||
+                                    needsSelection ||
+                                    invalidSelection ||
+                                    enterEvent.isPending
+                                }
                                 onClick={() =>
-                                    hasEnoughTickets ? setConfirmOpen(true) : setShortfallOpen(true)
+                                    !balanceBlocked &&
+                                    (hasEnoughTickets
+                                        ? setConfirmOpen(true)
+                                        : setShortfallOpen(true))
                                 }
                                 className="w-full"
                             >
@@ -168,11 +216,15 @@ export function TimeRaffleDetailPage() {
                                     ? '응모 완료'
                                     : forbidden
                                       ? '응모할 수 없어요'
-                                      : needsSelection
-                                        ? '응모권을 골라주세요'
-                                        : alreadyUsed > 0
-                                          ? '추가 응모하기'
-                                          : '응모하기'}
+                                      : balanceBlocked
+                                        ? balanceLabel
+                                        : invalidSelection
+                                          ? '응모 수량을 다시 확인해 주세요'
+                                          : needsSelection
+                                            ? '응모권을 골라주세요'
+                                            : alreadyUsed > 0
+                                              ? '추가 응모하기'
+                                              : '응모하기'}
                             </Button>
                         ) : (
                             // 진행 중이 아니면 상태를 비활성 버튼으로 알린다 — 발표가 끝난 래플도 시안처럼 '발표 완료'를 둔다
@@ -183,10 +235,75 @@ export function TimeRaffleDetailPage() {
                     }
                 />
                 {/* 발표 전에는 발표 대기 카드가, 발표 후에는 결과 영역의 배너가 본인 결과를 맡는다 */}
-                {(myResult?.result === 'PENDING' ||
-                    (event.status === 'closed' && !results?.isPublished)) && (
-                    <MyResultCard entered={myResult?.result === 'PENDING'} />
+                {isAfterClose &&
+                    (
+                        [
+                            ['공개 결과', resultsQuery],
+                            ['본인 결과', myResultQuery],
+                        ] as const
+                    ).map(([label, query]) => (
+                        <div key={label} role="status" className="text-body-sm text-fg-secondary">
+                            {!query.data && query.isPending && <p>{label}를 불러오는 중이에요.</p>}
+                            {query.data && (
+                                <p>
+                                    {label} 마지막 조회{' '}
+                                    {formatKst(new Date(query.dataUpdatedAt), {
+                                        month: 'numeric',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                    })}
+                                </p>
+                            )}
+                            {query.data && query.isFetching && <p>{label} 갱신 중이에요.</p>}
+                            {(query.isError ||
+                                getPollingRetryDelay(query.error ?? query.failureReason) > 0) && (
+                                <>
+                                    <p>
+                                        {query.data
+                                            ? `${label}를 갱신하지 못했어요. 이전 값을 표시해요.`
+                                            : `${label}를 불러오지 못했어요.`}
+                                    </p>
+                                    <p>{getErrorMessage(query.error ?? query.failureReason)}</p>
+                                    {getPollingRetryDelay(query.error ?? query.failureReason) >
+                                        0 && <p>요청이 많아요. 잠시 후 다시 시도해 주세요.</p>}
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        disabled={
+                                            query.isFetching ||
+                                            getPollingRetryDelay(
+                                                query.error ?? query.failureReason,
+                                            ) > 0
+                                        }
+                                        onClick={() => {
+                                            if (
+                                                getPollingRetryDelay(
+                                                    query.error ?? query.failureReason,
+                                                ) === 0
+                                            )
+                                                void query.refetch({ cancelRefetch: false });
+                                        }}
+                                    >
+                                        {label} 다시 시도
+                                    </Button>
+                                </>
+                            )}
+                        </div>
+                    ))}
+                {results?.displayStatus === 'CANCELED' && !results.isPublished && (
+                    <p role="status">이벤트가 취소되어 당첨자를 발표하지 않아요.</p>
                 )}
+                {results?.displayStatus === 'NO_ENTRANTS' && !results.isPublished && (
+                    <p role="status">응모자가 없어 추첨이 종료됐어요.</p>
+                )}
+                {results?.displayStatus !== 'CANCELED' &&
+                    results?.displayStatus !== 'NO_ENTRANTS' &&
+                    (myResult?.result === 'PENDING' ||
+                        (event.status === 'closed' && results && !results.isPublished)) && (
+                        <MyResultCard entered={myResult?.result === 'PENDING'} />
+                    )}
                 {results && (
                     <DrawResultSection event={event} results={results} myResult={myResult} />
                 )}
@@ -203,7 +320,24 @@ export function TimeRaffleDetailPage() {
                 balance={dialogBalance}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
+                disabled={submitBlocked}
+                notice={
+                    !isFree && (
+                        <>
+                            <TicketBalanceStatus query={ticketsQuery} />
+                            {!balanceBlocked && (invalidSelection || !hasEnoughTickets) && (
+                                <p
+                                    role="status"
+                                    className="text-body-sm text-semantic-error-strong"
+                                >
+                                    응모 수량을 다시 확인해 주세요. 취소한 뒤 수량을 조정해 주세요.
+                                </p>
+                            )}
+                        </>
+                    )
+                }
                 onConfirm={() => {
+                    if (submitBlocked) return;
                     enterEvent.mutate(requestedTickets, {
                         onSuccess: (entry) => {
                             setConfirmOpen(false);
@@ -222,7 +356,7 @@ export function TimeRaffleDetailPage() {
                                       : Math.max(0, remainingLimit - entry.deductedTicketCount),
                             );
                             // 한도가 줄어들어 지금 선택이 범위를 벗어날 수 있으므로 되돌린다
-                            setTickets({ BRONZE: 0, SILVER: 0, GOLD: 0 });
+                            setTickets({ BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 });
                             setCompleteOpen(true);
                         },
                         onError: (error) => {

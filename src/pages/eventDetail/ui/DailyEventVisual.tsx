@@ -1,11 +1,11 @@
 import type { Event } from '@entities/event';
 
 import { useMyEntries } from '@entities/entry';
-import { formatYmd } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { formatYmd } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
-import { buildEntryCalendar } from '../lib/entryCalendar';
+import { buildEntryCalendar } from '../utils/entryCalendar';
 
 type DailyVisual = Extract<NonNullable<Event['detailVisual']>, { template: 'daily' }>;
 

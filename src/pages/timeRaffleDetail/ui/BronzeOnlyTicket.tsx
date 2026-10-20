@@ -12,7 +12,7 @@ export function BronzeOnlyTicket({ owned }: { owned: number | null }) {
                 <span className="text-body-bold text-fg-primary">브론즈 1장 사용</span>
             </span>
             <span className="text-body-sm text-fg-tertiary">
-                보유 {owned === null ? '-' : `${owned}장`}
+                {owned === null ? '보유 수량 확인 필요' : `보유 ${owned}장`}
             </span>
         </div>
     );

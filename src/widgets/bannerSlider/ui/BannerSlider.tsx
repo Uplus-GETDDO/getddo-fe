@@ -8,12 +8,12 @@ import { Link } from 'react-router-dom';
 import type { Event } from '@entities/event';
 
 import { eventDetailPath, useEventList } from '@entities/event';
-import { formatRemaining } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { Pager } from '@shared/ui/pager';
 import { Skeleton } from '@shared/ui/skeleton';
+import { formatRemaining } from '@shared/utils/date';
 
 import bannerBackground from '../assets/banner-bg.jpg';
 import bannerMascot from '../assets/banner-mascot.webp';

@@ -24,6 +24,22 @@ async function events() {
 }
 
 describe('이벤트 목업 핸들러', () => {
+    it('목록의 myEntered는 접수 기록을 따르고 관리자·헤더 없음은 false다', async () => {
+        for (const role of ['USER', 'ADMIN']) {
+            const { data } = await apiClient.get<{
+                data: { items: (EventResponse & { myEntered: boolean })[] };
+            }>('/v1/events?size=100', {
+                headers: { 'X-User-ID': 'my-entered-test', 'X-User-Role': role },
+            });
+            const items = data.data.items as (EventResponse & { myEntered: boolean })[];
+            expect(items.find((event) => event.id === 'evt-001')?.myEntered).toBe(role === 'USER');
+            expect(items.find((event) => event.id === 'evt-107')?.myEntered).toBe(false);
+        }
+        for (const event of await events()) expect(event).toHaveProperty('myEntered', false);
+        const { data } = await apiClient.get<{ data: EventResponse }>('/v1/events/evt-001');
+        expect(data.data).not.toHaveProperty('myEntered');
+    });
+
     it('상태를 기간에서 다시 계산해 spec 원시 enum으로 돌려준다 — 적어 둔 status와 어긋나지 않는다', async () => {
         const now = Date.now();
 

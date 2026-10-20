@@ -1,6 +1,6 @@
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
-import type { AttendanceDay } from '../lib/attendanceWeek';
+import type { AttendanceDay } from '../utils/attendanceWeek';
 
 import { getAttendanceMascot } from '../model/mascots';
 

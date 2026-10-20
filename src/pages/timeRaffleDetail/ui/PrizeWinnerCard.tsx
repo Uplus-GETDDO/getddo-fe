@@ -3,8 +3,8 @@ import { useState } from 'react';
 
 import type { PublishedPrize } from '@entities/drawResult';
 
-import { formatNumber } from '@shared/lib/format';
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
+import { formatNumber } from '@shared/utils/format';
 
 /** 이 인원 이하면 넓은 카드를 한 줄로 줄인다 — 사진·경품·명단을 가로로 두어 빈 칸이 생기지 않게 */
 const COMPACT_MAX = 3;

@@ -1,7 +1,7 @@
 import { ChevronRight, X } from 'lucide-react';
 
-import { formatRelativeFromNow } from '@shared/lib/date';
 import { Button } from '@shared/ui/button';
+import { formatRelativeFromNow } from '@shared/utils/date';
 
 import type { Notification } from '../model/types';
 

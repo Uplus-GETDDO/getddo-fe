@@ -3,9 +3,9 @@ import { useState, type ReactNode } from 'react';
 
 import { useSessionStore, useVirtualUsers } from '@entities/user';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
-import { cn } from '@shared/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { SkeletonList } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
 
 interface VirtualUserSwitcherProps {
     /** 트리거를 바꾸고 싶을 때 넘긴다 (기본: 프로필 아이콘 버튼) */
@@ -23,20 +23,28 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger
                 asChild={!!trigger}
-                aria-label="가상 사용자 전환"
+                aria-label={
+                    current ? `가상 사용자 전환, 현재 사용자 ${current.name}` : '가상 사용자 전환'
+                }
                 className={
                     trigger
                         ? undefined
-                        : 'text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page relative flex size-6 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none'
+                        : 'text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page relative flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none'
                 }
             >
                 {trigger ?? <CircleUserRound className="size-6" />}
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-80">
-                <div className="flex items-center justify-between">
+            <PopoverContent
+                align="end"
+                collisionPadding={16}
+                className="w-80 max-w-[calc(100vw-2rem)]"
+            >
+                <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-body-sm-bold text-fg-primary">가상 사용자 전환</p>
                     {current && (
-                        <p className="text-fg-tertiary text-caption">현재: {current.name}</p>
+                        <p className="text-fg-tertiary text-caption min-w-0 break-all">
+                            현재: {current.name}
+                        </p>
                     )}
                 </div>
                 <div className="border-border-default border-t" />
@@ -86,16 +94,16 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
                                         className="size-7 shrink-0 rounded-full"
                                     />
                                 )}
-                                <div className="flex flex-1 flex-col">
-                                    <span className="text-body-sm-bold text-fg-primary flex items-center gap-1.5">
-                                        {user.name}
+                                <div className="flex min-w-0 flex-1 flex-col">
+                                    <span className="text-body-sm-bold text-fg-primary flex flex-wrap items-center gap-1.5">
+                                        <span className="min-w-0 break-all">{user.name}</span>
                                         {user.role === 'ADMIN' && (
                                             <span className="bg-brand-primary text-fg-on-brand rounded px-1.5 py-0.5 text-xs font-medium">
                                                 관리자
                                             </span>
                                         )}
                                     </span>
-                                    <span className="text-fg-secondary text-caption">
+                                    <span className="text-fg-secondary text-caption break-all">
                                         {user.personaLabel ?? '시스템 관리 계정'}
                                     </span>
                                 </div>

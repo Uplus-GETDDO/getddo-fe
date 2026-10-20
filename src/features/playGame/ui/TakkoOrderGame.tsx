@@ -6,20 +6,8 @@ import type { TicketGrade } from '@entities/ticket';
 import type { TakkoOrderItemId } from '../model/takkoOrder';
 import type { GameOverHandler } from '../model/types';
 
-import { isInteractive } from '../lib/isInteractive';
-import { PIXEL_FONT } from '../lib/pixelFont';
-import {
-    TAKKO_ORDER_BGM,
-    TAKKO_ORDER_CUSTOMERS,
-    TAKKO_ORDER_IMAGES,
-    TAKKO_ORDER_WRONG_IMAGE,
-    TAKKO_ORDER_PROPS,
-    TAKKO_ORDER_SCENE,
-    TAKKO_ORDER_SOUNDS,
-    TAKKO_ORDER_STEAM,
-    TAKKO_ORDER_WALL,
-} from '../lib/takkoOrderAssets';
-import { useLoopingBgm } from '../lib/useLoopingBgm';
+import { useLoopingBgm } from '../hooks/useLoopingBgm';
+import { PIXEL_FONT } from '../model/pixelFont';
 import {
     TAKKO_ORDER_LIVES,
     TAKKO_ORDER_MENU,
@@ -31,6 +19,18 @@ import {
     takkoOrderCustomerLabel,
     takkoOrderShowMs,
 } from '../model/takkoOrder';
+import {
+    TAKKO_ORDER_BGM,
+    TAKKO_ORDER_CUSTOMERS,
+    TAKKO_ORDER_IMAGES,
+    TAKKO_ORDER_WRONG_IMAGE,
+    TAKKO_ORDER_PROPS,
+    TAKKO_ORDER_SCENE,
+    TAKKO_ORDER_SOUNDS,
+    TAKKO_ORDER_STEAM,
+    TAKKO_ORDER_WALL,
+} from '../model/takkoOrderAssets';
+import { isInteractive } from '../utils/isInteractive';
 import { GameCountdown } from './GameCountdown';
 import { GameImageButton } from './GameImageButton';
 import { GameKey } from './GameKey';

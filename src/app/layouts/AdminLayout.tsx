@@ -2,8 +2,8 @@ import { House } from 'lucide-react';
 import { NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 
 import { VirtualClockTicker } from '@features/controlVirtualClock';
-import { cn } from '@shared/lib/utils';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
+import { cn } from '@shared/utils/cn';
 
 import { ADMIN_NAV_ITEMS } from './adminNavItems';
 

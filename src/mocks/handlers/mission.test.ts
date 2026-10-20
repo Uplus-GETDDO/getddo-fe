@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { apiClient } from '@shared/api/client';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 // 목업은 모듈 수준 상태를 들고 있어 테스트끼리 영향을 준다 — 테스트마다 다른 사용자를 쓴다
 const SURVEY_ID = 'msn-survey-1';

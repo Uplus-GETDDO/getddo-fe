@@ -3,7 +3,12 @@ import { z } from 'zod';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
-import { queryPresets } from '@shared/api/queryPresets';
+import {
+    pollingReadInterval,
+    pollingReadPolicy,
+    queryPresets,
+    withPollingReadGuard,
+} from '@shared/api/queryPresets';
 
 import type { EntryStatistics } from '../model/types';
 
@@ -51,8 +56,8 @@ export const entryEligibilityApiPath = (eventId: string) => `/v1/events/${eventI
 
 // 응모 현황 조회·키 — 단건 훅과 여러 건 훅이 같은 키로 캐시를 나눠 쓴다
 const entryStatisticsKey = (eventId: string) => [...ENTRIES_KEY, 'statistics', eventId] as const;
-const fetchEntryStatistics = async (eventId: string) => {
-    const { data } = await apiClient.get<unknown>(entryStatisticsApiPath(eventId));
+const fetchEntryStatistics = async (eventId: string, signal: AbortSignal) => {
+    const { data } = await apiClient.get<unknown>(entryStatisticsApiPath(eventId), { signal });
     return envelopeSchema(entryStatisticsSchema).parse(data).data;
 };
 
@@ -73,10 +78,12 @@ export function useEntryStatistics(
 ) {
     return useQuery({
         ...queryPresets.realtime,
+        ...pollingReadPolicy,
         queryKey: entryStatisticsKey(eventId),
-        queryFn: () => fetchEntryStatistics(eventId),
+        queryFn: (context) =>
+            withPollingReadGuard(context, () => fetchEntryStatistics(eventId, context.signal)),
         enabled,
-        refetchInterval: isOpen ? queryPresets.realtime.refetchInterval : false,
+        refetchInterval: (query) => pollingReadInterval(query, isOpen),
     });
 }
 
@@ -91,10 +98,14 @@ export function useEntryStatisticsList(
     return useQueries({
         queries: eventIds.map((eventId) => ({
             ...queryPresets.realtime,
+            ...pollingReadPolicy,
             queryKey: entryStatisticsKey(eventId),
-            queryFn: () => fetchEntryStatistics(eventId),
+            queryFn: (context) =>
+                withPollingReadGuard(context, () => fetchEntryStatistics(eventId, context.signal)),
+            refetchInterval: (query: { state: { error: unknown } }) => pollingReadInterval(query),
         })),
-        combine: (results) => results.map((result) => (result.isError ? null : result.data)),
+        combine: (results) =>
+            results.map((result) => result.data ?? (result.isError ? null : undefined)),
     });
 }
 

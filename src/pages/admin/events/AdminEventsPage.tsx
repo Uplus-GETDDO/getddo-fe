@@ -9,15 +9,25 @@ import {
     EVENT_TYPE_LABEL,
     useAdminEvents,
 } from '@entities/event';
-import { kstInputToUtcIso } from '@shared/lib/date';
-import { isDateRangeOrdered } from '@shared/lib/filterConstants';
-import { cn } from '@shared/lib/utils';
+import { isDateRangeOrdered } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
 import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
 import { PagedResult } from '@shared/ui/paged-result';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
+import { cn } from '@shared/utils/cn';
+import { kstInputToUtcIso } from '@shared/utils/date';
 
 const PAGE_SIZE = 10;
+const SORT_OPTIONS = [
+    ['createdAt,desc', '등록일 최신'],
+    ['createdAt,asc', '등록일 오래된'],
+    ['startsAt,asc', '시작일 빠른'],
+    ['startsAt,desc', '시작일 늦은'],
+    ['endsAt,asc', '마감일 빠른'],
+    ['endsAt,desc', '마감일 늦은'],
+    ['title,asc', '제목 오름차순'],
+    ['title,desc', '제목 내림차순'],
+] as const;
 
 const STATUS_OPTIONS: { value: 'all' | AdminEventStatus; label: string }[] = [
     { value: 'all', label: '이벤트 상태' },
@@ -72,6 +82,13 @@ export function AdminEventsPage() {
     const [status, setStatus] = useState<'all' | AdminEventStatus>(statusParam ?? 'all');
     const [eventType, setEventType] = useState<'all' | EventType>('all');
     const [rangeError, setRangeError] = useState(false);
+    const [sort, setSort] = useState('createdAt,desc');
+    const [weighting, setWeighting] = useState('all');
+    const [createdFromInput, setCreatedFromInput] = useState('');
+    const [createdToInput, setCreatedToInput] = useState('');
+    const [createdFrom, setCreatedFrom] = useState('');
+    const [createdTo, setCreatedTo] = useState('');
+    const [createdRangeError, setCreatedRangeError] = useState(false);
 
     // 같은 페이지에 머문 채 URL의 status가 바뀌면(대시보드 카드 재진입 등) 필터에 반영한다 — 렌더 중 비교 패턴
     const [appliedStatusParam, setAppliedStatusParam] = useState(statusParam);
@@ -84,9 +101,22 @@ export function AdminEventsPage() {
     // 검색 버튼으로 확정할 값을 미리 계산해 입력값과 적용값의 차이(미적용 변경)를 잡는다
     const draftFrom = fromInput ? kstInputToUtcIso(`${fromInput}T00:00`) : '';
     const draftTo = toInput ? nextDay(toInput) : '';
-    const hasPendingDraft = keywordInput.trim() !== keyword || draftFrom !== from || draftTo !== to;
+    const hasPendingDraft =
+        keywordInput.trim() !== keyword ||
+        draftFrom !== from ||
+        draftTo !== to ||
+        createdFromInput !== createdFrom ||
+        createdToInput !== createdTo;
     const hasAppliedFilters =
-        keyword !== '' || from !== '' || to !== '' || status !== 'all' || eventType !== 'all';
+        keyword !== '' ||
+        from !== '' ||
+        to !== '' ||
+        status !== 'all' ||
+        eventType !== 'all' ||
+        sort !== 'createdAt,desc' ||
+        weighting !== 'all' ||
+        createdFrom !== '' ||
+        createdTo !== '';
 
     const { data, isPending, isError, isFetching, dataUpdatedAt, refetch } = useAdminEvents({
         page,
@@ -96,6 +126,10 @@ export function AdminEventsPage() {
         eventType: eventType === 'all' ? undefined : eventType,
         from: from || undefined,
         to: to || undefined,
+        sort,
+        weightingEnabled: weighting === 'all' ? undefined : weighting === 'true',
+        createdFrom: createdFrom || undefined,
+        createdTo: createdTo || undefined,
     });
     const resetPage = () => setPage(1);
     const resetFilters = () => {
@@ -107,6 +141,13 @@ export function AdminEventsPage() {
         setTo('');
         setStatus('all');
         setEventType('all');
+        setSort('createdAt,desc');
+        setWeighting('all');
+        setCreatedFromInput('');
+        setCreatedToInput('');
+        setCreatedFrom('');
+        setCreatedTo('');
+        setCreatedRangeError(false);
         setRangeError(false);
         setPage(1);
         if (statusParam) void navigate('/admin/events', { replace: true });
@@ -119,14 +160,22 @@ export function AdminEventsPage() {
                     className="flex flex-wrap items-center gap-2"
                     onSubmit={(e) => {
                         e.preventDefault();
-                        if (!isDateRangeOrdered(fromInput, toInput)) {
-                            setRangeError(true);
+                        const rangeValid = isDateRangeOrdered(fromInput, toInput);
+                        const createdRangeValid = isDateRangeOrdered(
+                            createdFromInput,
+                            createdToInput,
+                        );
+                        setRangeError(!rangeValid);
+                        setCreatedRangeError(!createdRangeValid);
+                        if (!rangeValid || !createdRangeValid) {
                             return;
                         }
                         setRangeError(false);
                         setKeyword(keywordInput.trim());
                         setFrom(draftFrom);
                         setTo(draftTo);
+                        setCreatedFrom(createdFromInput);
+                        setCreatedTo(createdToInput);
                         resetPage();
                     }}
                 >
@@ -144,6 +193,14 @@ export function AdminEventsPage() {
                         onToChange={setToInput}
                         basis="응모 시작일"
                         error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                    />
+                    <DateRangeFilter
+                        from={createdFromInput}
+                        to={createdToInput}
+                        onFromChange={setCreatedFromInput}
+                        onToChange={setCreatedToInput}
+                        basis="등록일"
+                        error={createdRangeError ? '시작일이 종료일보다 늦습니다.' : null}
                     />
                     <Button type="submit" variant="secondary">
                         검색
@@ -191,6 +248,40 @@ export function AdminEventsPage() {
                     </SelectContent>
                 </Select>
 
+                <Select
+                    value={sort}
+                    onValueChange={(value) => {
+                        setSort(value);
+                        resetPage();
+                    }}
+                >
+                    <SelectTrigger className="w-40" aria-label="이벤트 정렬">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {SORT_OPTIONS.map(([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                                {label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Select
+                    value={weighting}
+                    onValueChange={(value) => {
+                        setWeighting(value);
+                        resetPage();
+                    }}
+                >
+                    <SelectTrigger className="w-40" aria-label="가중치 필터">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">가중치 전체</SelectItem>
+                        <SelectItem value="true">가중치 적용</SelectItem>
+                        <SelectItem value="false">가중치 미적용</SelectItem>
+                    </SelectContent>
+                </Select>
                 <Button className="ml-auto" onClick={() => void navigate('/admin/events/new')}>
                     새 이벤트 등록
                 </Button>

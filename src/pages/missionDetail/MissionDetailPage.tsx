@@ -6,11 +6,11 @@ import type { MissionSubmissionResult } from '@entities/mission';
 
 import { MissionResultPanel, MissionRewardDialog, useMissionDetail } from '@entities/mission';
 import { QuizForm, SurveyForm } from '@features/submitMission';
-import { formatKst } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
 import { StatusDot } from '@shared/ui/status-dot';
+import { formatKst } from '@shared/utils/date';
 
 const CONTAINER = 'mx-auto w-full max-w-312 px-6';
 

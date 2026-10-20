@@ -20,7 +20,7 @@ const DEEP_IMPORT_OF_SLICE = {
     },
 };
 // pages는 배럴(index.ts) 없이 슬라이스 루트의 XxxPage.tsx를 라우트가 직접 import한다.
-// 대신 ui/·model/·lib/ 등 하위 세그먼트 파일의 외부 참조만 차단한다 ('*/**'는 하위 폴더 파일만 매칭).
+// 대신 ui/·model/·hooks/·utils/ 등 하위 세그먼트 파일의 외부 참조만 차단한다 ('*/**'는 하위 폴더 파일만 매칭).
 const DEEP_IMPORT_OF_PAGE_SLICE = {
     to: {
         element: { type: 'pages', fileInternalPath: '*/**' },

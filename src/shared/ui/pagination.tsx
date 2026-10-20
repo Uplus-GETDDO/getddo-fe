@@ -1,7 +1,7 @@
 import { cn } from 'cn';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { pageItems } from '@shared/lib/pagination';
+import { pageItems } from '@shared/utils/pagination';
 
 const CELL =
     'text-body-sm focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none';

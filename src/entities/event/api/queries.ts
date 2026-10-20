@@ -6,8 +6,9 @@ import { queryPresets } from '@shared/api/queryPresets';
 
 import type { Event } from '../model/types';
 
-import { toEvent } from '../lib/toEvent';
 import { eventDetailResponseSchema, eventSummaryResponseSchema } from '../model/contract';
+import { isFinalEventStatus } from '../model/eventStatus';
+import { toEvent } from '../utils/toEvent';
 
 // spec 원시 응답(EventSummary/EventDetail)을 parse한 뒤 화면용 Event로 변환한다
 const eventListSchema = envelopeSchema(pageSchema(eventSummaryResponseSchema));
@@ -48,12 +49,17 @@ export function useEvent(eventId: string) {
         queryKey: [...EVENTS_KEY, 'detail', eventId],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(eventApiPath(eventId));
-            return toEvent(envelopeSchema(eventDetailResponseSchema).parse(data).data);
+            return envelopeSchema(eventDetailResponseSchema).parse(data).data;
         },
-        // 상태 전환 감지용 폴링 (ADR-0007) — 마감 상태도 결과 발표(closed → drawn) 전환을 감지해야 하므로 추첨 완료 전까지 30초 폴링을 유지한다
+        // 상태 전환 감지용 폴링 (ADR-0007) — 마감 상태도 결과 발표(closed → drawn) 전환을 감지해야 하므로
+        // 종결 전까지 30초 폴링을 유지한다. 종결 판정은 원시 상태로 한다 — 화면 상태로는 CANCELED가
+        // 'closed'로 근사돼 취소 이벤트가 영구 폴링된다. 캐시에는 원시 응답을 남기고 select로 화면 모델을 파생한다
         refetchInterval: (query) => {
             const status = query.state.data?.status;
-            return status === 'drawn' ? false : queryPresets.realtime.refetchInterval;
+            return status != null && isFinalEventStatus(status)
+                ? false
+                : queryPresets.realtime.refetchInterval;
         },
+        select: toEvent,
     });
 }

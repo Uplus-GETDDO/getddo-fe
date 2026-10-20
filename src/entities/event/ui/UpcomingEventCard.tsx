@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { formatKst } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { StatusDot } from '@shared/ui/status-dot';
+import { formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import type { Event } from '../model/types';
 
-import { eventDetailPath } from '../lib/eventPath';
+import { eventDetailPath } from '../utils/eventPath';
 import { EventThumbnail } from './EventThumbnail';
 
 const TIME_ONLY: Intl.DateTimeFormatOptions = {

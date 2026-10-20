@@ -5,9 +5,9 @@ import { Clock } from 'lucide-react';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 const CHIP = 'text-caption bg-surface-sunken flex items-center gap-2.5 rounded-full px-3 py-1';
 

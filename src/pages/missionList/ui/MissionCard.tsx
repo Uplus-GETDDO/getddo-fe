@@ -1,16 +1,16 @@
 import type { MissionSummary } from '@entities/mission';
 
 import { useMissionDetail } from '@entities/mission';
-import { formatKst } from '@shared/lib/date';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { formatKst } from '@shared/utils/date';
 
 import {
     getMissionPhase,
     MISSION_KIND_LABEL,
     missionQuestionSummary,
     missionUrgentDeadline,
-} from '../lib/missionBoard';
+} from '../utils/missionBoard';
 import { MissionReward } from './MissionReward';
 
 const MISSION_ACTION = { QUIZ: '퀴즈 풀기', SURVEY: '설문 참여' } as const;

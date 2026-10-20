@@ -11,10 +11,7 @@ import mascotCorrect from '../assets/colorWord/mascot-correct.png';
 import mascotIdle from '../assets/colorWord/mascot-idle.png';
 import mascotWrong from '../assets/colorWord/mascot-wrong.png';
 import wordBoard from '../assets/colorWord/word-board.png';
-import { COLOR_WORD_BGM, COLOR_WORD_SOUNDS } from '../lib/colorWordAssets';
-import { PAUSE_SOUNDS } from '../lib/gameSounds';
-import { isInteractive } from '../lib/isInteractive';
-import { useLoopingBgm } from '../lib/useLoopingBgm';
+import { useLoopingBgm } from '../hooks/useLoopingBgm';
 import {
     COLOR_WORD_COLORS,
     COLOR_WORD_LIVES,
@@ -23,6 +20,9 @@ import {
     createColorWordRound,
     isColorWordCorrect,
 } from '../model/colorWord';
+import { COLOR_WORD_BGM, COLOR_WORD_SOUNDS } from '../model/colorWordAssets';
+import { PAUSE_SOUNDS } from '../model/gameSounds';
+import { isInteractive } from '../utils/isInteractive';
 import { ColorWordButton } from './ColorWordButton';
 import { GameCountdown } from './GameCountdown';
 import { GameImageButton } from './GameImageButton';

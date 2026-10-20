@@ -8,7 +8,22 @@ export const DEFAULT_ERROR_MESSAGE = '요청을 처리하지 못했습니다. �
  * 값은 코드→문구 데이터일 뿐이고, 화면별 분기는 문구가 아니라 `error.code`로 판단한다.
  */
 const ERROR_MESSAGES: Record<string, string> = {
-    // E04 응모 계열 번호 코드 (getddo-spec 05-api/common.md) — 같은 의미의 이름 코드는 아래에 둔다
+    /*
+     * 실서버 현행 번호 코드 (getddo-spec 05-api/common.md "현행 코드" 표기).
+     * COMMON-002는 매핑하지 않는다 — 400은 공개 문구 계약이 적용되는 응답이라 서버의
+     * 구체 입력 위반 문구(예: '취소 사유는 1~1000자')를 통과시키는 편이 정확하다.
+     */
+    'COMMON-001': '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+    'COMMON-005': '요청 형식이 올바르지 않습니다.',
+    'COMMON-006': '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+    'HTTP-404': '요청한 대상을 찾을 수 없습니다.',
+    'USER-002': '사용자 정보를 확인할 수 없습니다. 다시 로그인해 주세요.',
+    'USER-003': '사용자 정보를 확인할 수 없습니다. 다시 로그인해 주세요.',
+    'USER-004': '사용자 정보가 올바르지 않습니다. 다시 로그인해 주세요.',
+    'USER-005': '사용자 멤버십 정보가 없습니다. 사용자를 다시 선택해 주세요.',
+    'USER-006': '사용자 멤버십 정보가 일치하지 않습니다. 사용자를 다시 선택해 주세요.',
+    // E04 응모·M03 미션 계열 번호 코드
+    'EVENT-008': '검색 조건을 확인해 주세요.',
     'ENTRY-001': '응모 요청 형식이 올바르지 않습니다.',
     'ENTRY-002': '관리자는 이벤트에 응모할 수 없습니다.',
     'ENTRY-003': '응모 가능한 멤버십 등급이 아닙니다.',
@@ -18,7 +33,19 @@ const ERROR_MESSAGES: Record<string, string> = {
     'ENTRY-007': '이 이벤트의 응모 한도를 초과했습니다.',
     'ENTRY-008': '이 이벤트는 브론즈 응모권이 필요합니다.',
     'ENTRY-009': '이미 처리 중인 요청과 내용이 다릅니다. 화면을 새로고침한 뒤 다시 시도해 주세요.',
+    'ENTRY-010': '관리자 권한이 필요합니다.',
+    'MISSION-001': '미션 구성이 올바르지 않습니다.',
+    'MISSION-002': '답변 형식이 올바르지 않습니다.',
+    'MISSION-003': '미션을 찾을 수 없습니다.',
+    'MISSION-004': '지금은 참여할 수 있는 미션이 아닙니다.',
+    'MISSION-005':
+        '이미 처리 중인 요청과 내용이 다릅니다. 화면을 새로고침한 뒤 다시 시도해 주세요.',
     'TICKET-006': '보유한 응모권이 부족합니다.',
+    /*
+     * 제안 이름 코드 — spec에 '제안'으로 남은 값이자 목업 핸들러가 방출하는 코드다.
+     * 실서버는 위 번호 코드를 보내므로 같은 의미가 둘로 나뉘어 있다. 제안이 채택되거나
+     * 목업이 번호 코드로 갱신되면 정리한다.
+     */
     USER_MEMBERSHIP_MISMATCH:
         '사용자 멤버십 정보가 일치하지 않습니다. 사용자를 다시 선택해 주세요.',
     INSUFFICIENT_TICKETS: '보유한 응모권이 부족합니다.',
@@ -64,7 +91,11 @@ export function getErrorMessage(error: unknown, fallback: string = DEFAULT_ERROR
 
     const mapped = getErrorCodeMessage(error.code);
     if (mapped) {
-        if (error.code === 'RATE_LIMIT_EXCEEDED' && error.retryAfterSeconds != null) {
+        // 429는 실서버가 COMMON-006, 목업이 RATE_LIMIT_EXCEEDED로 보낸다 — 둘 다 대기 시간을 표시한다
+        if (
+            (error.code === 'COMMON-006' || error.code === 'RATE_LIMIT_EXCEEDED') &&
+            error.retryAfterSeconds != null
+        ) {
             return `요청이 너무 많습니다. ${formatWait(error.retryAfterSeconds)} 후에 다시 시도해 주세요.`;
         }
         return mapped;

@@ -3,8 +3,8 @@ import { type CSSProperties, useEffect, useEffectEvent, useRef, useState } from 
 
 import type { TicketGrade } from '@entities/ticket';
 
-import { formatNumber } from '@shared/lib/format';
 import { Loading } from '@shared/ui/loading';
+import { formatNumber } from '@shared/utils/format';
 
 import type { GameOverHandler } from '../model/types';
 
@@ -13,16 +13,8 @@ import stage1Badge from '../assets/ui/stage/stage-1.png';
 import stage2Badge from '../assets/ui/stage/stage-2.png';
 import stage3Badge from '../assets/ui/stage/stage-3.png';
 import stage4Badge from '../assets/ui/stage/stage-4.png';
-import {
-    createPalette,
-    drawRun,
-    type TakkoRunImages,
-    type TakkoRunPalette,
-} from '../lib/drawTakkoRun';
-import { PAUSE_SOUNDS } from '../lib/gameSounds';
-import { isInteractive } from '../lib/isInteractive';
-import { loadTakkoRunImages, TAKKO_RUN_BGM, TAKKO_RUN_SOUNDS } from '../lib/takkoRunAssets';
-import { useLoopingBgm } from '../lib/useLoopingBgm';
+import { useLoopingBgm } from '../hooks/useLoopingBgm';
+import { PAUSE_SOUNDS } from '../model/gameSounds';
 import {
     createRun,
     pauseRun,
@@ -36,6 +28,14 @@ import {
     WORLD_HEIGHT,
     WORLD_WIDTH,
 } from '../model/takkoRun';
+import { loadTakkoRunImages, TAKKO_RUN_BGM, TAKKO_RUN_SOUNDS } from '../model/takkoRunAssets';
+import {
+    createPalette,
+    drawRun,
+    type TakkoRunImages,
+    type TakkoRunPalette,
+} from '../utils/drawTakkoRun';
+import { isInteractive } from '../utils/isInteractive';
 import { GameCountdown } from './GameCountdown';
 import { GameImageButton } from './GameImageButton';
 import { GameKey } from './GameKey';

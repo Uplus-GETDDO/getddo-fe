@@ -2,9 +2,9 @@ import { Check } from 'lucide-react';
 
 import type { AttendanceMilestone } from '@entities/attendance';
 
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
-import type { NextStreakMilestone } from '../lib/nextStreakMilestone';
+import type { NextStreakMilestone } from '../utils/nextStreakMilestone';
 
 /**
  * 펼친 출석 카드의 연속 출석 보너스 진행 막대 — 출석일수 2열 아래, 달력과 같은 폭으로 둔다.

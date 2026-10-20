@@ -8,11 +8,11 @@ import {
     useMarkAllNotificationsRead,
     useMarkNotificationRead,
 } from '@features/markNotificationRead';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 
-import { groupNotifications } from '../lib/groupNotifications';
-import { toInternalPath } from '../lib/toInternalPath';
+import { groupNotifications } from '../utils/groupNotifications';
+import { toInternalPath } from '../utils/toInternalPath';
 import { NotificationDrawer } from './NotificationDrawer';
 import { NotificationEmpty, NotificationGroupList } from './NotificationGroupList';
 
@@ -64,11 +64,11 @@ export function NotificationBell() {
     };
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2">
             <Popover>
                 <PopoverTrigger
                     aria-label={unreadCount > 0 ? `알림, 읽지 않음 ${unreadCount}개` : '알림'}
-                    className={`text-fg-primary relative flex size-6 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
+                    className={`text-fg-primary relative flex min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
                 >
                     <Bell className="size-6" />
                     {unreadCount > 0 && (

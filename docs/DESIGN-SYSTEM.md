@@ -12,7 +12,8 @@
 2. **의미(semantic) 우선**: 같은 색이어도 "무엇에 쓰는가"에 따라 다른 토큰명을 쓴다.
 3. **관리자 전용 vs 사용자 전용 구분**: `status/*`, `chart/*`는 관리자(운영자) 화면 전용, `play/*`는 사용자(응모자) 사이트 전용.
 4. **값의 원천**: 이 문서의 모든 값은 Figma 도형에 실제로 바인딩된 Variable/Effect 값을 기준으로 작성했다 (캔버스에 사람이 손으로 적어둔 hex 텍스트 라벨이 아님). 2026-09-27 기준으로 캔버스 라벨과 실제 값은 모두 일치한다.
-5. **`cn()` 병합 주의**: `cn`(`@shared/lib/utils`)의 충돌 병합은 Tailwind 기본 그룹 기준이라 커스텀 토큰을 모른다. `cn('text-caption', 'text-fg-brand')`처럼 타이포 토큰과 색상 토큰을 함께 넣으면 같은 `text-*` 그룹으로 보고 앞 클래스를 지운다 — 그 조합은 `cn` 대신 문자열 결합을 쓴다 (사례: `features/checkAttendance/ui/AttendanceCheckCard.tsx`).
+5. **`cn()` 병합 주의**: `cn`(`@shared/utils/cn`)의 충돌 병합은 Tailwind 기본 그룹 기준이라 커스텀 토큰을 모른다. `cn('text-caption', 'text-fg-brand')`처럼 타이포 토큰과 색상 토큰을 함께 넣으면 같은 `text-*` 그룹으로 보고 앞 클래스를 지운다 — 그 조합은 `cn` 대신 문자열 결합을 쓴다 (사례: `features/checkAttendance/ui/AttendanceCheckCard.tsx`).
+6. **공용 정책 우선**: 토큰의 색·용도와 기능 제공 범위는 별개다. `../getddo-spec/00-requirements/scope.md`·`02-domain/`의 확정 정책을 우선하며 상태 색 이름만으로 참여 허용·추첨 제외·공통 감사 조회·탈퇴 기능을 제공하지 않는다. 발표 대기는 실제 공개까지 유지하고 단일 발표 요청에서 최종 확인·공개를 함께 처리한다(`03-decisions/022-manual-initial-publication.md`). 배너 이미지 허용 형식·용량은 미확정이며 아래 비율은 FE 권장값이다(`00-requirements/pending-decisions.md`).
 
 ---
 
@@ -40,12 +41,12 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 ### 3) Ticket — 응모권
 
-| Token                   | Hex       | 용도                                                           |
-| ----------------------- | --------- | -------------------------------------------------------------- |
-| `ticket/primary`        | `#FFC83D` | 티켓 카드 면, 응모권 획득 모먼트                               |
-| `ticket/accent`         | `#FFF4D1` | 티켓 카드 라벨, 장식, 보상 화면 바탕(지갑·보상 모달·당첨 배너) |
-| `ticket/accent-pressed` | `#FFE9A6` | 지금 쓰는 곳 없음 (예전 세컨더리 버튼 hover 테두리)            |
-| `ticket/on`             | `#1F242B` | 응모권 칩 위 텍스트                                            |
+| Token                   | Hex       | 용도                                                                  |
+| ----------------------- | --------- | --------------------------------------------------------------------- |
+| `ticket/primary`        | `#FFC83D` | 티켓 카드 면, 응모권 획득 모먼트                                      |
+| `ticket/accent`         | `#FFF4D1` | 티켓 카드 라벨, 장식, 보상 화면 바탕(보유 응모권·보상 모달·당첨 배너) |
+| `ticket/accent-pressed` | `#FFE9A6` | 지금 쓰는 곳 없음 (예전 세컨더리 버튼 hover 테두리)                   |
+| `ticket/on`             | `#1F242B` | 응모권 칩 위 텍스트                                                   |
 
 ### 4) Play — 놀이 파스텔 (사용자 사이트 전용)
 
@@ -55,7 +56,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `play/yellow`        | `#FFC83D` | 응모권·코인·별 장식                                    |
 | `play/pink-soft`     | `#FDEBF4` | 보상 가능 카드, 일러스트 뒤 블롭                       |
 | `play/pink`          | `#F5A3CB` | 장식                                                   |
-| `play/lavender-soft` | `#F0EBFF` | 게임·랭킹 영역 배경, 게임 미션 아이콘 원               |
+| `play/lavender-soft` | `#F0EBFF` | 게임 영역 배경, 게임 미션 아이콘 원                    |
 | `play/lavender`      | `#A78BFA` | 게임 일러스트, 캐릭터 소품 (텍스트·버튼에는 사용 금지) |
 
 #### Game — 글자색깔 맞추기 문제 색 (게임 화면 전용)
@@ -73,14 +74,16 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 게임·미션 보상의 등급 응모권(브론즈 80%·실버 18%·골드 2%, 출석은 브론즈 고정)을 구분하는 색. 밝기·채도를 고르게 맞춰 너무 따뜻하지도 차갑지도 않게 했다. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕(글자는 잉크색). 다크 모드에도 같은 값을 쓴다.
 
-| Token               | Hex       | 용도                  |
-| ------------------- | --------- | --------------------- |
-| `grade/bronze`      | `#C27C55` | 브론즈 점·막대·테두리 |
-| `grade/bronze-soft` | `#F6E9E1` | 브론즈 알약·카드 바탕 |
-| `grade/silver`      | `#8E9BAD` | 실버 점·막대·테두리   |
-| `grade/silver-soft` | `#ECEFF4` | 실버 알약·카드 바탕   |
-| `grade/gold`        | `#D9A92E` | 골드 점·막대·테두리   |
-| `grade/gold-soft`   | `#FAF0D2` | 골드 알약·카드 바탕   |
+| Token                                                 | Hex       | 용도                    |
+| ----------------------------------------------------- | --------- | ----------------------- |
+| `grade/bronze`                                        | `#C27C55` | 브론즈 점·막대·테두리   |
+| `grade/bronze-soft`                                   | `#F6E9E1` | 브론즈 알약·카드 바탕   |
+| `grade/silver`                                        | `#8E9BAD` | 실버 점·막대·테두리     |
+| `grade/silver-soft`                                   | `#ECEFF4` | 실버 알약·카드 바탕     |
+| `grade/gold`                                          | `#D9A92E` | 골드 점·막대·테두리     |
+| `grade/gold-soft`                                     | `#FAF0D2` | 골드 알약·카드 바탕     |
+| `grade/platinum` (`--color-grade-platinum`)           | `#3E5C76` | 플래티넘 점·막대·테두리 |
+| `grade/platinum-soft` (`--color-grade-platinum-soft`) | `#DDE6EE` | 플래티넘 알약·카드 바탕 |
 
 ### 5) Surface — 배경 레이어
 
@@ -186,7 +189,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `primary`     | `action/neutral`          | `action/neutral-hover`                  | `action/neutral-pressed`                 | 행동 묶음의 주 행동 — **응모하기**, 확인, 제출, 저장, 출석하기                             |
 | `secondary`   | 흰 바탕 + `border/strong` | `surface/canvas` + `fg/disabled` 테두리 | `surface/pressed` + `fg/disabled` 테두리 | 보조 행동 — 취소·돌아가기, 카드마다 반복되는 이동(게임하러 가기, 미션하러 가기), 내역 보기 |
 | `ghost`       | 투명, 테두리 없음         | `surface/canvas`                        | `surface/pressed`                        | 아이콘 버튼, 모달 닫기(X), 더보기                                                          |
-| `destructive` | `semantic/error`          | `semantic/error-strong`                 | `semantic/error-strong`                  | 삭제, 탈퇴 등 되돌릴 수 없는 행동                                                          |
+| `destructive` | `semantic/error`          | `semantic/error-strong`                 | `semantic/error-strong`                  | 허용된 삭제·취소 등 되돌릴 수 없는 행동                                                    |
 | `link`        | `fg/primary` 글자         | 밑줄                                    | `fg/secondary` + 밑줄                    | 전체보기, 상세보기 등 글자 이동                                                            |
 
 - primary는 **행동 묶음마다 하나**만 둔다 (페이지 전체에 하나일 필요는 없다).
@@ -222,7 +225,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 ### 화면 설정 (마이페이지)
 
-- 테마: `getddo-ui-settings` persist 스토어(`shared/lib/ui-settings.ts`)의 `theme` — 시스템/라이트/다크 중 선택, 기본은 라이트다(OS 다크가 자동 적용되지 않는다). `ThemeSync`(app/providers)가 `html.dark` 클래스를 토글하고, `index.html`의 인라인 스크립트가 React 마운트 전에 저장값을 적용해 라이트 플래시를 막는다. next-themes 시절의 원시 `theme` 키는 1회 마이그레이션된다.
+- 테마: `getddo-ui-settings` persist 스토어(`shared/model/uiSettings.ts`)의 `theme` — 시스템/라이트/다크 중 선택, 기본은 라이트다(OS 다크가 자동 적용되지 않는다). `ThemeSync`(app/providers)가 `html.dark` 클래스를 토글하고, `index.html`의 인라인 스크립트가 React 마운트 전에 저장값을 적용해 라이트 플래시를 막는다. next-themes 시절의 원시 `theme` 키는 1회 마이그레이션된다.
 - 큰글씨 모드: `html[data-text-scale='large']`로 루트 `font-size`를 120%로 올린다 — rem 기반 유틸리티에 자동 적용되고, 상태는 같은 `getddo-ui-settings` persist 스토어에 유지된다.
 
 ### 미정 사항

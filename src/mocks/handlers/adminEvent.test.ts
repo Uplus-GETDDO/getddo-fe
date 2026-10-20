@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { apiClient } from '@shared/api/client';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
+
+import * as clock from '../now';
 
 // 목업은 모듈 수준 상태를 들고 있어 테스트끼리 영향을 준다 — 변경 테스트는 새로 만든 이벤트로 독립시킨다
 const call = (method: 'get' | 'post' | 'delete', path: string, body?: unknown) =>
@@ -22,6 +24,8 @@ interface AdminEventBody {
     title: string;
     status: string;
     eventType: string;
+    weightingEnabled: boolean;
+    createdAt: string;
     startsAt: string;
     endsAt: string;
     prizes: { rank: number; name: string; winnerCount: number }[];
@@ -69,6 +73,77 @@ async function userEventIds() {
 }
 
 describe('관리자 이벤트 목업 핸들러', () => {
+    it.each(['createdAt', 'startsAt', 'endsAt', 'title'] as const)(
+        '%s 정렬은 방향과 id 동률 순서를 적용한다',
+        async (field) => {
+            for (const direction of ['asc', 'desc']) {
+                const res = await call(
+                    'get',
+                    `/v1/admin/events?size=100&sort=${field},${direction}`,
+                );
+                const items = (res.data as Envelope<{ items: AdminEventBody[] }>).data.items;
+                const sign = direction === 'asc' ? 1 : -1;
+                expect(items.map((item) => item.id)).toEqual(
+                    [...items]
+                        .sort((a, b) => {
+                            const primary =
+                                field === 'title'
+                                    ? a.title.localeCompare(b.title)
+                                    : new Date(a[field]).getTime() - new Date(b[field]).getTime();
+                            return sign * (primary || a.id.localeCompare(b.id));
+                        })
+                        .map((item) => item.id),
+                );
+            }
+        },
+    );
+
+    it.each([
+        'sort=unknown,asc',
+        'sort=title',
+        'sort=title,asc,extra',
+        'sort=',
+        'createdFrom=2026-10-20&createdTo=2026-10-19',
+        'createdFrom=2026-02-30',
+        'createdTo=',
+    ])('잘못된 검색 조건 %s는 EVENT-008로 거절한다', async (query) => {
+        const res = await call('get', `/v1/admin/events?${query}`);
+        expect(res.status).toBe(400);
+        expect(res.data).toHaveProperty('code', 'EVENT-008');
+    });
+
+    it.each([true, false])('가중치 %s를 생략과 구분해 필터링한다', async (weighting) => {
+        const res = await call('get', `/v1/admin/events?size=100&weightingEnabled=${weighting}`);
+        const items = (res.data as Envelope<{ items: AdminEventBody[] }>).data.items;
+        expect(items.length).toBeGreaterThan(0);
+        expect(items.every((item) => item.weightingEnabled === weighting)).toBe(true);
+    });
+
+    it('등록일은 KST 양끝을 포함하고 모집 기간과 독립적이다', async () => {
+        const keyword = `등록일경계-${crypto.randomUUID()}`;
+        const ids: string[] = [];
+        const spy = vi.spyOn(clock, 'mockNow');
+        try {
+            for (const at of [
+                '2026-10-17T14:59:59.999Z',
+                '2026-10-17T15:00:00Z',
+                '2026-10-18T14:59:59.999Z',
+                '2026-10-18T15:00:00Z',
+            ]) {
+                spy.mockReturnValue(new Date(at));
+                ids.push((await createEvent({ title: keyword })).id);
+            }
+        } finally {
+            spy.mockRestore();
+        }
+        const res = await call(
+            'get',
+            `/v1/admin/events?keyword=${encodeURIComponent(keyword)}&createdFrom=2026-10-18&createdTo=2026-10-18`,
+        );
+        const items = (res.data as Envelope<{ items: AdminEventBody[] }>).data.items;
+        expect(items.map((item) => item.id)).toEqual([ids[2], ids[1]]);
+    });
+
     it('목록이 Page 봉투 모양이고 필터와 페이지가 동작한다', async () => {
         const res = await call('get', '/v1/admin/events', undefined);
         expect(res.status).toBe(200);

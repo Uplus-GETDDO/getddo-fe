@@ -10,13 +10,13 @@ import {
     YAxis,
 } from 'recharts';
 
-import { formatNumber } from '@shared/lib/format';
-import { cn } from '@shared/lib/utils';
 import { LoadingBlock, Skeleton } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { formatNumber } from '@shared/utils/format';
 
-import type { ParticipationDay, ParticipationSource } from '../model/useParticipationTrend';
+import type { ParticipationDay, ParticipationSource } from '../hooks/useParticipationTrend';
 
-import { PARTICIPATION_SOURCES } from '../model/useParticipationTrend';
+import { PARTICIPATION_SOURCES } from '../hooks/useParticipationTrend';
 import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';
 

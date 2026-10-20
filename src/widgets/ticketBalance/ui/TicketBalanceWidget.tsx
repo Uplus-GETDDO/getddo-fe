@@ -9,15 +9,15 @@ import { useAttendanceToday } from '@entities/attendance';
 import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
 import { missionThumbnail, useMissionList } from '@entities/mission';
 import { hasGamePlayer } from '@features/playGame';
-import { useDragScroll } from '@shared/lib/useDragScroll';
-import { cn } from '@shared/lib/utils';
+import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { Button } from '@shared/ui/button';
 import { SkeletonCard } from '@shared/ui/skeleton';
 import { TicketCard, TicketCardMedia } from '@shared/ui/ticket-card';
+import { cn } from '@shared/utils/cn';
 
-import type { OrderableEarnCard } from '../lib/orderEarnCards';
+import type { OrderableEarnCard } from '../utils/orderEarnCards';
 
-import { orderEarnCards } from '../lib/orderEarnCards';
+import { orderEarnCards } from '../utils/orderEarnCards';
 
 interface EarnCard extends OrderableEarnCard {
     id: string;

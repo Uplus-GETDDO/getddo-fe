@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts';
 
-import { formatNumber } from '@shared/lib/format';
-import { cn } from '@shared/lib/utils';
 import { LoadingBlock, Skeleton } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { formatNumber } from '@shared/utils/format';
 
-import type { EventStageKey } from '../model/useEventStageCounts';
+import type { EventStageKey } from '../hooks/useEventStageCounts';
 
-import { useEventStageCounts } from '../model/useEventStageCounts';
+import { useEventStageCounts } from '../hooks/useEventStageCounts';
 import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';
 

@@ -1,13 +1,14 @@
 import type { TicketGrade } from '@entities/ticket';
 
 import { TICKET_GRADE_IMAGE, TICKET_GRADE_LABEL } from '@entities/ticket';
-import { formatNumber } from '@shared/lib/format';
+import { formatNumber } from '@shared/utils/format';
 
 /** 등급 칸 바탕 — 등급 soft 색이라 회색 위 회색처럼 묻히지 않는다 (DESIGN-SYSTEM "Grade") */
 const GRADE_TILE: Record<TicketGrade, string> = {
     BRONZE: 'bg-grade-bronze-soft',
     SILVER: 'bg-grade-silver-soft',
     GOLD: 'bg-grade-gold-soft',
+    PLATINUM: 'bg-grade-platinum-soft',
 };
 
 /**

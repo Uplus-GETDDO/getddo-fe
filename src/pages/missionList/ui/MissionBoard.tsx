@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useMissionList } from '@entities/mission';
 import emptyMascot from '@shared/assets/ui/reward-mascot.png';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { SkeletonCard } from '@shared/ui/skeleton';
 
 import {
@@ -10,7 +10,7 @@ import {
     MISSION_FILTERS,
     type MissionFilter,
     sortMissions,
-} from '../lib/missionBoard';
+} from '../utils/missionBoard';
 import { MissionCard } from './MissionCard';
 import { SectionHeader } from './SectionHeader';
 

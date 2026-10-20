@@ -2,11 +2,11 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { useMyTickets } from '@entities/ticket';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 export function RaffleDetailsCard({ event }: { event: Event }) {
-    const { data: ticket } = useMyTickets();
+    const { data: ticket, isPending: ticketsPending } = useMyTickets();
     // 히어로와 같은 쿼리 키라 요청은 합쳐진다
     const { data: statistics } = useEntryStatistics(event.id, { isOpen: event.status === 'open' });
 
@@ -47,7 +47,11 @@ export function RaffleDetailsCard({ event }: { event: Event }) {
     const entrySpecs: Spec[] = [
         {
             label: '보유 응모권',
-            value: ticket ? `${formatNumber(ticket.availableCount)}장` : null,
+            value: ticket
+                ? `${formatNumber(ticket.availableCount)}장`
+                : ticketsPending
+                  ? '불러오는 중'
+                  : '조회 실패',
         },
         {
             label: '이번 이벤트 차감',
