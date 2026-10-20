@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
-import { EnteredChip } from '@entities/event';
+import { RaffleEntryChip } from '@entities/event';
 import { Button } from '@shared/ui/button';
 import { formatNumber } from '@shared/utils/format';
 
@@ -86,8 +86,13 @@ export function RaffleCompactCard({
                             {formatOpenChip(event, now)}
                         </span>
                     )}
-                    {/* 겟또타임은 한도까지 더 쓸 수 있다 — '완료'라고 적으면 버튼이 죽은 줄 알고 들어오지 않는다 */}
-                    {live && event.myEntered && <EnteredChip label="참여 중" />}
+                    {/* 한도가 남았으면 '응모 중 · 쓴 장수', 다 썼으면 '응모 완료' — '완료'만 적으면 더 쓸 수 있는데 버튼이 죽은 줄 안다 */}
+                    {live && (
+                        <RaffleEntryChip
+                            event={event}
+                            mySpentTicketCount={statistics?.mySpentTicketCount}
+                        />
+                    )}
                 </div>
 
                 <h3 className="text-subhead text-fg-primary truncate">{event.title}</h3>

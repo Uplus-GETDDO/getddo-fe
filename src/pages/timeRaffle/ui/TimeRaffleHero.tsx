@@ -67,7 +67,7 @@ export function TimeRaffleHero({ live, now, refresh }: TimeRaffleHeroProps) {
                 </div>
 
                 {/*
-                 * 카운터 위 소품 — 글과 지갑 사이 빈 칸에 응모권·선물 상자·뽑기 기계를 올린다.
+                 * 카운터 위 소품 — 글과 지갑 사이 빈 칸에 응모권·선물 상자를 올린다 (뽑기 기계는 오른쪽 끝).
                  * 양 끝에 두면 글 시작선이 미션 배너(40)보다 안쪽으로 밀려 둘을 맞출 수 없었다.
                  * 아래 여백만큼 내려 카운터에 걸쳐 앉힌다. 글·지갑과 겹치지 않게 넓은 화면에서만
                  */}
@@ -77,11 +77,17 @@ export function TimeRaffleHero({ live, now, refresh }: TimeRaffleHeroProps) {
                 >
                     <img src={itemTickets} alt="" className="h-6 w-auto" />
                     <img src={itemGift} alt="" className="h-7 w-auto" />
-                    <img src={itemGumball} alt="" className="ml-2 h-9 w-auto" />
                 </div>
 
                 <TicketWalletCompact action={{ to: '/missions', label: '응모권 모으러 가기' }} />
             </div>
+            {/* 뽑기 기계는 가장 오른쪽 끝 카운터 위 — 지갑 오른쪽 끝(40)보다 바깥이라 겹치지 않는다. 넓은 화면에서만 */}
+            <img
+                aria-hidden
+                src={itemGumball}
+                alt=""
+                className="pointer-events-none absolute right-1.5 bottom-[calc(var(--counter)*0.55)] hidden h-8 w-auto lg:block"
+            />
         </section>
     );
 }

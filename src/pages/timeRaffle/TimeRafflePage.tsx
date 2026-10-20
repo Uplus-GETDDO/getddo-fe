@@ -120,7 +120,8 @@ export function TimeRafflePage() {
 
     return (
         <main className={CONTAINER}>
-            <div className="flex flex-col gap-10">
+            {/* 머리 배너와 첫 섹션 사이는 미션 페이지(오늘의 적립 → 출석체크)와 같은 56 */}
+            <div className="flex flex-col gap-14">
                 <TimeRaffleHero
                     live={byEndsAtAsc}
                     now={now}

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
-import { EnteredChip } from '@entities/event';
+import { RaffleEntryChip } from '@entities/event';
 import { queryPresets } from '@shared/api/queryPresets';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
@@ -70,8 +70,11 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
                         <Clock className="size-3.5" />
                         {formatRunningRange(event)}
                     </span>
-                    {/* 겟또타임은 한도까지 더 쓸 수 있다 — '완료'가 아니라 지금 참여 중이라고 적는다 */}
-                    {event.myEntered && <EnteredChip label="참여 중" />}
+                    {/* 한도가 남았으면 '응모 중 · 쓴 장수', 다 썼으면 '응모 완료' */}
+                    <RaffleEntryChip
+                        event={event}
+                        mySpentTicketCount={statistics?.mySpentTicketCount}
+                    />
                 </div>
                 <h3 className="text-title-2 text-fg-primary">{event.title}</h3>
                 <p className="text-body text-fg-secondary line-clamp-2">{event.description}</p>

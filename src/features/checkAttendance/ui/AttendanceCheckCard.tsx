@@ -198,7 +198,8 @@ export function AttendanceCheckCard({
             오늘 출석 완료
         </Button>
     ) : (
-        <Button size="lg" className="w-full" onClick={() => void handleCheck()}>
+        // 오늘 할 일의 주된 행동이라 응모 버튼과 같은 악센트(노랑)
+        <Button variant="accent" size="lg" className="w-full" onClick={() => void handleCheck()}>
             출석하고 응모권 {status?.dailyRewardTicketCount ?? 1}장 받기
         </Button>
     );

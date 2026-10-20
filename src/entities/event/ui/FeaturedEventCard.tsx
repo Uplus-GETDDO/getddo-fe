@@ -1,4 +1,4 @@
-import { Clock, Ticket, Timer } from 'lucide-react';
+import { Clock, Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ import { formatNumber } from '@shared/utils/format';
 import type { Event } from '../model/types';
 
 import { eventDetailPath } from '../utils/eventPath';
-import { EnteredChip } from './EnteredChip';
+import { RaffleEntryChip } from './EnteredChip';
 import { EventThumbnail } from './EventThumbnail';
 
 interface FeaturedEventCardProps {
@@ -46,7 +46,7 @@ function useRemainingMs(endsAt: string): number {
  *
  * 겟또타임 목록의 대표 카드와 같은 말투로 맞춘다: 윗줄은 '● 진행중 · 시간 · 남은 시간', 숫자는 아이콘 칸 대신 한 줄.
  * 당첨 인원은 제목 옆 괄호 대신 숫자 줄에 '당첨 N명'으로 적는다 — 괄호만으로는 당첨인지 참여인지 헷갈렸다.
- * 내 응모는 응모했을 때만 응모권 칩으로 보인다 — 응모하지 않은 사람에게 빈 칸을 보이지 않는다.
+ * 내 응모는 응모했을 때만 윗줄 칩(RaffleEntryChip)으로 보인다 — 응모하지 않은 사람에게 빈 칸을 보이지 않는다.
  */
 export function FeaturedEventCard({
     event,
@@ -92,8 +92,9 @@ export function FeaturedEventCard({
                                 {formatRemaining(remainingMs)} 남음
                             </span>
                         )}
-                        {/* 이미 응모한 래플 — 마감 전이라 더 쓸 수 있으니 '끝났다'로 읽히지 않게 '참여 중'으로 적는다 */}
-                        {event.myEntered && <EnteredChip label="참여 중" />}
+                        {/* 내 응모는 윗줄 칩 하나로 — 한도가 남았으면 '응모 중 · 쓴 장수', 다 썼으면 '응모 완료'.
+                            설명 아래 따로 한 줄을 두면 왼쪽만 길어져 상품 그림이 위에 떠 보였다 */}
+                        <RaffleEntryChip event={event} mySpentTicketCount={mySpentTicketCount} />
                     </div>
                     <div className="flex flex-col gap-1">
                         <p className="text-title-3 text-fg-primary line-clamp-2">{event.title}</p>
@@ -107,12 +108,6 @@ export function FeaturedEventCard({
                             </p>
                         )}
                     </div>
-                    {mySpentTicketCount != null && mySpentTicketCount > 0 && (
-                        <span className="bg-ticket-accent text-fg-primary text-caption flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1">
-                            <Ticket aria-hidden className="size-3.5" />
-                            응모권 {formatNumber(mySpentTicketCount)}장으로 응모했어요
-                        </span>
-                    )}
                 </div>
                 {/* 상품 그림은 1:1(DESIGN-SYSTEM '이미지 비율')이되 작게 — 크게 두면 설명이 짧을 때 왼쪽이 텅 빈다 */}
                 <EventThumbnail
