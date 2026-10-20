@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Prize } from '@entities/drawResult';
 
 import { useSessionStore } from '@entities/user';
+import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { maskName } from '@shared/utils/format';
 
@@ -172,9 +173,10 @@ export function WinnerBanner({ prize }: { prize: Prize | null }) {
                         <motion.span
                             {...textIn(0)}
                             animate={inView ? { opacity: 1, y: 0 } : undefined}
-                            className="bg-action-neutral text-fg-on-brand text-caption w-fit rounded-full px-2.5 py-1"
+                            className="w-fit"
                         >
-                            {prize.rank}등 당첨
+                            {/* 등수 칩은 공용 Badge(inverse) — 추첨 결과 카드의 등수 칩과 같은 모양 */}
+                            <Badge variant="inverse">{prize.rank}등 당첨</Badge>
                         </motion.span>
                     )}
                     {/* 남이 볼 수 있는 화면이라 이름 가운데를 가린다 */}

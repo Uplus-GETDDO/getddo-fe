@@ -18,12 +18,15 @@ export function GameTicketCard({
     game,
     href,
     ready = true,
+    fluid = false,
     className,
 }: {
     game: Game;
     href: string;
     /** 플레이 화면이 준비됐는지 — false면 버튼을 '준비 중'으로 막는다 */
     ready?: boolean;
+    /** 고정 폭(265) 대신 놓인 칸을 꽉 채운다 — 미션 페이지처럼 카드 수가 적어 줄이 비어 보일 때 */
+    fluid?: boolean;
     className?: string;
 }) {
     const rewarded = game.rewardedToday ?? false;
@@ -31,7 +34,7 @@ export function GameTicketCard({
     return (
         <TicketCard
             className={className}
-            cardClassName="relative h-90 w-66.25"
+            cardClassName={`relative h-90 ${fluid ? 'w-full' : 'w-66.25'}`}
             stub={
                 <>
                     <div className="mt-3.75 flex h-4.5 items-center justify-between gap-2">

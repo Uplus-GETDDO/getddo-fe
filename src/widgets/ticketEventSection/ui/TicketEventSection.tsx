@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -5,9 +7,11 @@ import { Link } from 'react-router-dom';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
-import { FeaturedEventCard, UpcomingEventCard } from '@entities/event';
+import { FeaturedEventCard, UpcomingEventCard, useEvent } from '@entities/event';
+import emptyTakko from '@shared/assets/mascot/empty-takko.png';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
+import { EmptyState } from '@shared/ui/empty-state';
 import { Pager } from '@shared/ui/pager';
 import { SkeletonCard } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
@@ -20,10 +24,16 @@ export function TicketEventSection({
     events,
     isPending,
     isError,
+    onRetry,
+    refresh,
 }: {
     events: Event[];
     isPending?: boolean;
+    /** 보여줄 목록이 없는 실패 — 받아 둔 목록이 있으면 넘기지 않는다 */
     isError?: boolean;
+    onRetry?: () => void;
+    /** 제목 줄 오른쪽에 둘 새로고침 표시 (폴링 상태) */
+    refresh?: ReactNode;
 }) {
     const openEvents = events
         .filter((event) => event.status === 'open')
@@ -43,6 +53,8 @@ export function TicketEventSection({
                     <span className="text-fg-tertiary text-caption">
                         모은 응모권으로 정해진 시간에만 응모할 수 있어요.
                     </span>
+                    {/* 폴링 표시는 제목 쪽에 둔다 — 오른쪽 '더보기'와 붙어 있으면 링크처럼 읽혔다 */}
+                    {refresh}
                 </div>
                 <Button asChild variant="link" size="text">
                     <Link to="/time-raffle">
@@ -59,40 +71,67 @@ export function TicketEventSection({
                     ))}
                 </div>
             )}
+            {/* 실패해도 두 칸 높이를 지켜 아래 섹션이 올라오지 않게 한다 */}
             {isError && (
-                <p className="text-destructive text-body-sm">이벤트 목록을 불러오지 못했습니다.</p>
+                <Card size="lg" className="min-h-72 p-(--card-spacing)">
+                    <EmptyState
+                        title="겟또타임을 불러오지 못했어요"
+                        description="잠시 후 다시 시도해 주세요."
+                        action={
+                            onRetry && (
+                                <Button size="sm" variant="secondary" onClick={onRetry}>
+                                    다시 시도
+                                </Button>
+                            )
+                        }
+                    />
+                </Card>
             )}
-            {!isPending && !isError && events.length === 0 && (
-                <p className="text-fg-tertiary text-body-sm">표시할 이벤트가 없습니다.</p>
-            )}
-            {(featured || upcomingEvents.length > 0) && (
+            {/* 진행 중·오픈 예정 두 칸은 비어도 자리를 지키고 "없어요"를 보인다 — 한쪽만 사라지면 화면이 기울어 보인다 */}
+            {!isPending && !isError && (
                 <div className="grid items-stretch gap-4 lg:grid-cols-2">
-                    {featured && <FeaturedEvent event={featured} />}
-                    {upcomingEvents.length > 0 &&
-                        (featured ? (
-                            // featured 카드가 행 높이를 결정하고 캐러셀은 그 안에서 늘어난다 — 내용물 높이가 행을 밀지 않도록 absolute로 띄운다
-                            <Card size="lg" className="relative gap-0 self-stretch py-0">
-                                <div className="absolute inset-0 flex flex-col gap-2 overflow-hidden p-(--card-spacing)">
-                                    <UpcomingEventCarousel events={upcomingEvents} fillHeight />
-                                </div>
-                            </Card>
-                        ) : (
-                            <Card size="lg" className="gap-2 p-(--card-spacing)">
-                                <UpcomingEventCarousel events={upcomingEvents} />
-                            </Card>
-                        ))}
+                    {featured ? (
+                        <FeaturedEvent event={featured} />
+                    ) : (
+                        <Card size="lg" className="min-h-72 p-(--card-spacing)">
+                            <EmptyState
+                                title="진행 중인 겟또타임이 없어요"
+                                description={
+                                    upcomingEvents.length > 0
+                                        ? '오픈 예정 시간을 확인해 보세요.'
+                                        : '새 겟또타임이 열리면 여기에서 알려드릴게요.'
+                                }
+                            />
+                        </Card>
+                    )}
+                    {featured ? (
+                        // featured 카드가 행 높이를 결정하고 캐러셀은 그 안에서 늘어난다 — 내용물 높이가 행을 밀지 않도록 absolute로 띄운다
+                        <Card size="lg" className="relative gap-0 self-stretch py-0">
+                            <div className="absolute inset-0 flex flex-col gap-2 overflow-hidden p-(--card-spacing)">
+                                <UpcomingEventCarousel events={upcomingEvents} fillHeight />
+                            </div>
+                        </Card>
+                    ) : (
+                        <Card size="lg" className="min-h-72 gap-2 p-(--card-spacing)">
+                            <UpcomingEventCarousel events={upcomingEvents} />
+                        </Card>
+                    )}
                 </div>
             )}
         </section>
     );
 }
 
-/** 대표 이벤트의 응모 현황(E03)을 조회해 카드에 내려준다 — 진행 중이므로 30초 폴링 (ADR-0007) */
+/**
+ * 대표 이벤트의 응모 현황(E03)을 조회해 카드에 내려준다 — 진행 중이므로 30초 폴링 (ADR-0007).
+ * 목록(E01)에는 설명·경품(당첨 인원)이 없어(spec EventSummary) 상세(E02)를 받아 채운다. 받기 전에는 목록 값으로 그린다
+ */
 function FeaturedEvent({ event }: { event: Event }) {
     const { data: statistics } = useEntryStatistics(event.id, { isOpen: true });
+    const { data: detail } = useEvent(event.id);
     return (
         <FeaturedEventCard
-            event={event}
+            event={detail ?? event}
             participantCount={statistics?.participantCount}
             totalSpentTicketCount={statistics?.totalSpentTicketCount}
             mySpentTicketCount={statistics?.mySpentTicketCount}
@@ -138,6 +177,12 @@ function UpcomingEventCarousel({
                     />
                 )}
             </div>
+            {events.length === 0 && (
+                <EmptyState
+                    title="오픈 예정인 겟또타임이 없어요"
+                    description="새 겟또타임이 잡히면 여기에 보여드릴게요."
+                />
+            )}
             {/* 행 안쪽 여백(16)만큼 목록을 좌우로 넓혀, 썸네일이 '오픈 예정' 제목과 같은 선에서 시작하게 한다 */}
             <div className={cn('relative -mx-4', fillHeight && 'min-h-0 flex-1')}>
                 <div className={cn('overflow-hidden', fillHeight && 'h-full')}>
@@ -168,11 +213,42 @@ function UpcomingEventCarousel({
                                     .map((event) => (
                                         <UpcomingEventCard key={event.id} event={event} />
                                     ))}
+                                {/* 쪽에 한 줄만 남으면 빈 아래 칸을 같은 꼴의 안내 줄로 채운다 — 다른 쪽과 모양이 같아 비어 보이지 않는다 */}
+                                {events.length > 0 &&
+                                    events.length - pageIndex * UPCOMING_PAGE_SIZE <
+                                        UPCOMING_PAGE_SIZE && <UpcomingMoreRow />}
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
         </>
+    );
+}
+
+/**
+ * 오픈 예정 빈 칸 채움 줄 — 오픈 예정 줄과 같은 크기(썸네일 64 + 두 줄)로, 겟또타임 화면의 전체 일정으로 안내한다.
+ * 썸네일 자리는 빈 상태와 같은 회색 타코야끼 그림을 점선 칸에 두어 실제 래플 줄과 헷갈리지 않게 한다
+ */
+function UpcomingMoreRow() {
+    return (
+        <Link
+            to="/time-raffle"
+            className="focus-visible:ring-border-focus after:bg-surface-canvas/60 group relative isolate flex min-h-0 items-center gap-4 rounded-2xl p-4 after:absolute after:inset-2 after:-z-10 after:rounded-xl after:opacity-0 hover:after:opacity-100 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset motion-safe:after:transition-opacity motion-safe:after:duration-200"
+        >
+            <span
+                aria-hidden
+                className="border-border-strong flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed"
+            >
+                <img src={emptyTakko} alt="" className="size-12 object-contain" />
+            </span>
+            <span className="flex min-w-0 flex-col gap-1">
+                <span className="text-body-sm text-fg-tertiary">다음 래플도 곧 잡혀요</span>
+                <span className="text-body-sm-bold text-fg-secondary group-hover:text-fg-primary inline-flex items-center gap-0.5">
+                    겟또타임 전체 일정 보기
+                    <ChevronRight aria-hidden className="size-4" />
+                </span>
+            </span>
+        </Link>
     );
 }

@@ -1,6 +1,7 @@
 // 대기 시각은 오류와 함께 쿼리 캐시에 남는다. 앱의 가상 시계나 시스템 시각 변경의 영향을 받지 않는다.
 import type { QueryFunctionContext } from '@tanstack/react-query';
 
+import { keepPreviousData } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { ZodError } from 'zod';
 
@@ -23,6 +24,13 @@ export const queryPresets = {
      */
     standard: {
         staleTime: 30_000,
+    },
+    /**
+     * 페이지·필터로 바뀌는 목록 — 새 조건을 받는 동안 이전 목록을 그대로 보여 화면이 비지 않게 한다.
+     * 다른 프리셋과 함께 펼쳐 쓴다: { ...queryPresets.realtime, ...queryPresets.paged }
+     */
+    paged: {
+        placeholderData: keepPreviousData,
     },
     /** 캐싱하면 안 되는 데이터(관리자 검토 목록 등) — 화면에 들어올 때마다 서버에서 새로 받는다 */
     noCache: {

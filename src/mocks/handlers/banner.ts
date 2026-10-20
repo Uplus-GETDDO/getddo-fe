@@ -20,13 +20,15 @@ interface MockBanner {
     updatedAt: string;
 }
 
-// 실제 이미지 변환 계약이 없으므로 imageKey를 새긴 단색 SVG를 imageUrl로 돌려준다
+// 실제 이미지 변환 계약이 없으므로 imageKey를 새긴 단색 SVG를 imageUrl로 돌려준다.
+// 배너 템플릿(1200×365)처럼 왼쪽 55%는 글 자리로 비우고, 오른쪽 그림 자리에만 키를 작게 적는다 — 위에 얹는 이벤트 글과 겹치지 않게
 function imageUrlOf(imageKey: string) {
     const label = imageKey.slice(0, 40).replace(/[<>&"]/g, '');
     const svg =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="120">' +
-        '<rect width="320" height="120" fill="#e5e7eb"/>' +
-        `<text x="160" y="66" font-size="14" text-anchor="middle" fill="#4b5563">${label}</text>` +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="365">' +
+        '<rect width="1200" height="365" fill="#f3f4f6"/>' +
+        '<rect x="660" width="540" height="365" fill="#e5e7eb"/>' +
+        `<text x="930" y="190" font-size="20" text-anchor="middle" fill="#6b7280">${label}</text>` +
         '</svg>';
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }

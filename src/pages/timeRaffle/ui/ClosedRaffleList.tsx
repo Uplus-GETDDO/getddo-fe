@@ -6,19 +6,20 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { EnteredChip } from '@entities/event';
-import { getErrorMessage } from '@shared/api/errorMessage';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { Pagination } from '@shared/ui/pagination';
 import { StatusDot } from '@shared/ui/status-dot';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
+import { pageSlice } from '@shared/utils/pagination';
 
 import { kstDayLabel } from '../utils/raffleFormat';
 import { RaffleThumbnail } from './RaffleThumbnail';
 
-/** 기본 화면에서 미리 보여 주는 줄 수 — 나머지는 '마감한 래플' 화면에서 본다 */
+/** 기본 화면에서 미리 보여 주는 줄 수 — 나머지는 전체보기(마감한 래플 화면)에서 본다 */
 const PREVIEW_COUNT = 3;
-/** 마감한 래플 화면에서 '더 보기'를 누를 때마다 늘리는 줄 수 */
+/** 마감한 래플 화면 한 쪽의 줄 수 */
 const PAGE_SIZE = 10;
 
 interface ClosedRaffleListProps {
@@ -27,8 +28,8 @@ interface ClosedRaffleListProps {
     events: Event[];
     now: Date;
     /**
-     * preview — 기본 화면 아래에 최근 몇 줄만 두고 '전체보기'로 마감한 래플 화면으로 넘긴다.
-     * full — 마감한 래플 화면. 전부를 날짜별로 묶고 '더 보기'로 이어 붙인다
+     * preview — 기본 화면 아래에 최근 마감 몇 줄만 두고 '전체보기'로 마감한 래플 화면으로 넘긴다.
+     * full — 마감한 래플 화면. 최근 마감 순 한 목록을 10줄씩 번호로 넘긴다
      */
     mode: 'preview' | 'full';
     /** preview의 '전체보기' — 페이지를 옮기지 않고 내용 칸만 마감한 래플로 바꾼다 */
@@ -45,19 +46,11 @@ export function ClosedRaffleList({
     onShowAll,
     onBack,
 }: ClosedRaffleListProps) {
-    const [shown, setShown] = useState(PAGE_SIZE);
+    const [page, setPage] = useState(1);
+    const paged = pageSlice(events, page, PAGE_SIZE);
 
-    const limit = mode === 'preview' ? PREVIEW_COUNT : shown;
-    const visible = events.slice(0, limit);
-
-    // 날짜가 바뀌는 자리에만 '오늘 / 어제' 머리말을 넣는다
-    const groups: { label: string; rows: Event[] }[] = [];
-    for (const event of visible) {
-        const label = kstDayLabel(event.endsAt, now);
-        const last = groups.at(-1);
-        if (last?.label === label) last.rows.push(event);
-        else groups.push({ label, rows: [event] });
-    }
+    // 오늘·어제로 나누지 않고 최근 마감 순 한 목록 — 날짜는 줄마다 '오늘 16:28 마감'으로 적혀 있다
+    const visible = mode === 'preview' ? events.slice(0, PREVIEW_COUNT) : paged.items;
 
     return (
         <section id={id} className="flex scroll-mt-24 flex-col gap-6">
@@ -77,7 +70,14 @@ export function ClosedRaffleList({
             )}
             {mode === 'preview' && (
                 <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-title-3 text-fg-primary">마감한 래플</h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-title-3 text-fg-primary">마감한 래플</h2>
+                        {events.length > 0 && (
+                            <Badge variant="neutral" size="sm">
+                                {formatNumber(events.length)}
+                            </Badge>
+                        )}
+                    </div>
                     {events.length > PREVIEW_COUNT && (
                         <Button variant="link" size="text" onClick={onShowAll}>
                             전체보기
@@ -91,28 +91,27 @@ export function ClosedRaffleList({
                 <p className="text-body-sm text-fg-tertiary">마감한 래플이 없어요.</p>
             ) : (
                 <div className="flex flex-col">
-                    {groups.map((group) => (
-                        <div key={group.label} className="flex flex-col">
-                            {/* 머리말은 줄 안의 썸네일과 같은 왼쪽 선(16px)에 맞춘다 */}
-                            <p className="text-caption text-fg-tertiary px-4 pt-3.5 pb-0.5">
-                                {group.label}
-                            </p>
-                            {/* 홈 '발표 대기 · 결과'와 같은 목록 — 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다 */}
-                            <ul className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">
-                                {group.rows.map((event) => (
-                                    <ClosedRaffleRow key={event.id} event={event} now={now} />
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                    {mode === 'full' && events.length > shown && (
-                        <Button
-                            variant="secondary"
-                            className="mt-4 self-center"
-                            onClick={() => setShown((count) => count + PAGE_SIZE)}
-                        >
-                            더 보기
-                        </Button>
+                    {/* 홈 '발표 대기 · 결과'와 같은 목록 — 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다 */}
+                    <ul className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">
+                        {visible.map((event) => (
+                            <ClosedRaffleRow key={event.id} event={event} now={now} />
+                        ))}
+                    </ul>
+                    {mode === 'full' && paged.totalPages > 1 && (
+                        <Pagination
+                            page={paged.current}
+                            totalPages={paged.totalPages}
+                            onPageChange={(next) => {
+                                setPage(next);
+                                // 새 쪽은 목록 머리부터 읽게 올린다
+                                if (id)
+                                    document
+                                        .getElementById(id)
+                                        ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+                            }}
+                            label="마감한 래플 페이지"
+                            className="justify-center pt-4"
+                        />
                     )}
                 </div>
             )}
@@ -121,9 +120,9 @@ export function ClosedRaffleList({
 }
 
 function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
-    // 마감 이후라 값이 더 늘지 않는다 — 폴링 없이 행마다 1회 조회한다.
-    const statisticsQuery = useEntryStatistics(event.id);
-    const { data: statistics, dataUpdatedAt, isError, isFetching } = statisticsQuery;
+    // 마감 이후라 값이 더 늘지 않는다 — 폴링 없이 행마다 1회 조회하고, 받으면 참여 인원만 설명 줄에 붙인다.
+    // 조회 시각·갱신 실패 줄은 두지 않는다 — 바뀌지 않는 값이라 '마지막 성공' 시각이 무슨 뜻인지 읽히지 않았다
+    const { data: statistics } = useEntryStatistics(event.id);
     const isDrawn = event.status === 'drawn';
     // 발표 여부는 status로만 판단한다 — 예정 시각은 계약에 없고 실제 공개 전까지는 발표 대기다 (ADR-022)
     const statusLabel = isDrawn ? '발표 완료' : '발표 대기';
@@ -159,37 +158,9 @@ function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
                     <p className="text-body-bold text-fg-primary truncate">{event.title}</p>
                     <p className="text-caption text-fg-tertiary">{meta.join(' · ')}</p>
                 </div>
-                <ChevronRight className="text-fg-secondary group-hover:text-fg-primary size-7 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:translate-x-1" />
+                {/* 줄 호버는 배경만 바뀐다 — 화살표까지 움직이면 줄이 흔들려 보였다 */}
+                <ChevronRight className="text-fg-secondary group-hover:text-fg-primary size-7 shrink-0" />
             </Link>
-            <div className="text-caption text-fg-tertiary flex flex-wrap items-center gap-2 px-4 pb-3">
-                {dataUpdatedAt > 0 && (
-                    <span>현황 마지막 성공 {formatKst(new Date(dataUpdatedAt))}</span>
-                )}
-                {isFetching && (
-                    <span role="status">
-                        {statistics ? '현황 갱신 중이에요.' : '현황을 확인하고 있어요.'}
-                    </span>
-                )}
-                {isError && (
-                    <>
-                        <span role="status">
-                            {statistics
-                                ? '현황 갱신에 실패했어요. 이전 값을 표시합니다.'
-                                : '현황을 불러오지 못했어요.'}{' '}
-                            {getErrorMessage(statisticsQuery.error)}
-                        </span>
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            disabled={isFetching}
-                            aria-label={`${event.title} 현황 다시 조회`}
-                            onClick={() => void statisticsQuery.refetch({ cancelRefetch: false })}
-                        >
-                            현황 다시 조회
-                        </Button>
-                    </>
-                )}
-            </div>
         </li>
     );
 }

@@ -21,6 +21,8 @@ const badgeVariants = cva(
                 info: 'bg-status-active text-status-active-text border-status-active-text',
                 neutral: 'bg-surface-sunken text-fg-secondary',
                 accent: 'bg-ticket-accent text-fg-primary',
+                // 진한 노랑 알약 — D-day처럼 눈에 먼저 들어와야 하는 표시에만 (버튼 accent와 같은 색)
+                highlight: 'bg-ticket-primary text-ticket-on',
                 outline: 'bg-surface-page text-fg-secondary border-border-default',
                 // 흰 바탕 알약 — 배너 위 마감 시간처럼 색 배경 위에 띄울 때
                 surface: 'bg-surface-page text-fg-primary',

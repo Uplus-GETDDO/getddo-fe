@@ -51,7 +51,7 @@ export {
     MEMBERSHIP_LABEL,
 } from './model/adminStatusMeta';
 export { AdminEventTable } from './ui/AdminEventTable';
-export { EnteredChip } from './ui/EnteredChip';
+export { EnteredChip, RaffleEntryChip } from './ui/EnteredChip';
 export { EventCard } from './ui/EventCard';
 export { EventResultRow } from './ui/EventResultRow';
 export { FeaturedEventCard } from './ui/FeaturedEventCard';

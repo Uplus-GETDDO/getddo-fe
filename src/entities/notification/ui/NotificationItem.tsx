@@ -20,15 +20,23 @@ export function NotificationItem({
     now,
     onRead,
     onDelete,
+    hoverTone = 'accent',
+    inset = false,
 }: {
     notification: Notification;
     now: Date;
     onRead?: (id: string, linkUrl: string | null) => void;
     onDelete?: (id: string) => void;
+    /** 호버 배경 — 알림 드로어·페이지는 연노랑(accent), 다른 목록과 섞이는 마이페이지는 회색(neutral) */
+    hoverTone?: 'accent' | 'neutral';
+    /** 넓은 카드 안 — 호버 바탕을 좌우 8px 안쪽에 둥글게 둔다. 글자 시작선은 그대로다 (알림 페이지) */
+    inset?: boolean;
 }) {
     const unread = !notification.isRead;
     return (
-        <div className="group hover:bg-ticket-accent focus-within:bg-ticket-accent relative flex items-start gap-3 py-3.5 pr-4 pl-5 motion-safe:transition-colors">
+        <div
+            className={`group relative flex items-start gap-3 py-3.5 motion-safe:transition-colors ${inset ? 'mx-2 rounded-xl pr-2 pl-3' : 'pr-4 pl-5'} ${hoverTone === 'accent' ? 'hover:bg-ticket-accent focus-within:bg-ticket-accent' : 'hover:bg-surface-canvas focus-within:bg-surface-canvas rounded-xl'}`}
+        >
             {/* 읽지 않음 점 — 제목 첫 줄 가운데에 맞춘다. 읽은 알림도 칸은 남겨 글자 시작선을 맞춘다 */}
             <span aria-hidden className="flex h-5.5 w-2 shrink-0 items-center justify-center">
                 {unread && <span className="bg-fg-primary size-1.5 rounded-full" />}

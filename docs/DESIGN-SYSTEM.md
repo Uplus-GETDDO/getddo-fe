@@ -72,7 +72,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 #### Grade — 응모권 등급
 
-게임·미션 보상의 등급 응모권(브론즈 80%·실버 18%·골드 2%, 출석은 브론즈 고정)을 구분하는 색. 밝기·채도를 고르게 맞춰 너무 따뜻하지도 차갑지도 않게 했다. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕(글자는 잉크색). 다크 모드에도 같은 값을 쓴다.
+게임·미션 보상의 등급 응모권(브론즈 79.98%·실버 18%·골드 2%·플래티넘 0.02%, 출석은 브론즈 고정)을 구분하는 색. 플래티넘은 피그마 image 260(플래티넘 응모권)의 선 색과 바탕색에서 골랐다. 밝기·채도를 고르게 맞춰 너무 따뜻하지도 차갑지도 않게 했다. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕(글자는 잉크색). 다크 모드에도 같은 값을 쓴다.
 
 | Token                                                 | Hex       | 용도                    |
 | ----------------------------------------------------- | --------- | ----------------------- |
@@ -82,8 +82,8 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `grade/silver-soft`                                   | `#ECEFF4` | 실버 알약·카드 바탕     |
 | `grade/gold`                                          | `#D9A92E` | 골드 점·막대·테두리     |
 | `grade/gold-soft`                                     | `#FAF0D2` | 골드 알약·카드 바탕     |
-| `grade/platinum` (`--color-grade-platinum`)           | `#3E5C76` | 플래티넘 점·막대·테두리 |
-| `grade/platinum-soft` (`--color-grade-platinum-soft`) | `#DDE6EE` | 플래티넘 알약·카드 바탕 |
+| `grade/platinum` (`--color-grade-platinum`)           | `#5F7196` | 플래티넘 점·막대·테두리 |
+| `grade/platinum-soft` (`--color-grade-platinum-soft`) | `#DBE6F8` | 플래티넘 알약·카드 바탕 |
 
 ### 5) Surface — 배경 레이어
 
@@ -190,7 +190,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `secondary`   | 흰 바탕 + `border/strong` | `surface/canvas` + `fg/disabled` 테두리 | `surface/pressed` + `fg/disabled` 테두리 | 보조 행동 — 취소·돌아가기, 카드마다 반복되는 이동(게임하러 가기, 미션하러 가기), 내역 보기 |
 | `ghost`       | 투명, 테두리 없음         | `surface/canvas`                        | `surface/pressed`                        | 아이콘 버튼, 모달 닫기(X), 더보기                                                          |
 | `destructive` | `semantic/error`          | `semantic/error-strong`                 | `semantic/error-strong`                  | 허용된 삭제·취소 등 되돌릴 수 없는 행동                                                    |
-| `link`        | `fg/primary` 글자         | 밑줄                                    | `fg/secondary` + 밑줄                    | 전체보기, 상세보기 등 글자 이동                                                            |
+| `link`        | `fg/secondary` 글자       | `fg/primary` 글자 (밑줄 없음)           | `fg/primary` 글자                        | 전체보기, 상세보기 등 글자 이동                                                            |
 
 - primary는 **행동 묶음마다 하나**만 둔다 (페이지 전체에 하나일 필요는 없다).
 - **마젠타 버튼은 쓰지 않는다** (`emphasis` 제거). 응모처럼 중요한 행동은 색이 아니라 크기(Large)·자리·확인 모달로 드러낸다.

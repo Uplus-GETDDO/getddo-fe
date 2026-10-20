@@ -25,20 +25,18 @@ function query(
     };
 }
 
-describe('응모 갱신 상태 안내', () => {
-    it('지연된 백그라운드 요청은 상태 알림과 재조회 버튼에 영향을 주지 않는다', () => {
+describe('응모 갱신 상태 표시', () => {
+    it('백그라운드 요청은 표시와 다시 받기 버튼에 영향을 주지 않는다', () => {
         const initial = query();
         const { rerender } = render(<MyEntryRefreshStatus query={initial} />);
-        const message = screen.getByRole('status').textContent;
+        const button = screen.getByRole('button', { name: '지금 다시 받기' });
+        const label = button.textContent;
         rerender(<MyEntryRefreshStatus query={{ ...initial, isFetching: true }} />);
-        expect(screen.getByRole('status').textContent).toBe(message);
-        expect(screen.getByRole('button', { name: '전체 응모 다시 조회' })).toBeEnabled();
-        rerender(<MyEntryRefreshStatus query={{ ...initial, oldestResultUpdatedAt: 60_000 }} />);
-        expect(screen.getByRole('status').textContent).toBe(message);
-        expect(screen.getByRole('status')).not.toHaveTextContent('성공 시각');
-        expect(screen.getByText(/가장 오래된 성공 시각/)).toBeInTheDocument();
+        expect(button).toBeEnabled();
+        expect(button.textContent).toBe(label);
+        expect(button).toHaveTextContent('갱신');
     });
-    it('수동 조회만 버튼을 잠그고 중복 요청을 차단하며 완료 후 복구한다', async () => {
+    it('직접 누른 조회만 버튼을 잠그고 중복 요청을 막으며 끝나면 풀린다', async () => {
         let finish: (() => void) | undefined;
         const deferred = new Promise<void>((resolve) => {
             finish = resolve;
@@ -47,24 +45,27 @@ describe('응모 갱신 상태 안내', () => {
             deferred.then(() => [] as never),
         );
         render(<MyEntryRefreshStatus query={query({ refetch })} />);
-        const button = screen.getByRole('button', { name: '전체 응모 다시 조회' });
+        const button = screen.getByRole('button', { name: '지금 다시 받기' });
         fireEvent.click(button);
         fireEvent.click(button);
         expect(button).toBeDisabled();
         expect(refetch).toHaveBeenCalledTimes(1);
-        expect(screen.getByRole('status')).toHaveTextContent('응모 결과를 갱신하고 있어요.');
+        expect(button).toHaveTextContent('새로 받는 중');
         await act(async () => {
             finish?.();
             await deferred;
         });
         expect(button).toBeEnabled();
     });
-    it('갱신 실패와 요청 제한은 상태 알림으로 유지한다', () => {
+    it('갱신 실패는 다시 시도로, 요청 제한은 기다린다는 안내로 보인다', () => {
         const { rerender } = render(
             <MyEntryRefreshStatus query={query({ isResultRefreshError: true })} />,
         );
-        expect(screen.getByRole('status')).toHaveTextContent('갱신에 실패');
+        expect(
+            screen.getByRole('button', { name: '갱신에 실패했어요. 다시 받기' }),
+        ).toHaveTextContent('갱신 실패 · 다시 시도');
         rerender(<MyEntryRefreshStatus query={query({ isRateLimited: true })} />);
-        expect(screen.getByRole('status')).toHaveTextContent('서버 요청 제한');
+        expect(screen.getByRole('status')).toHaveTextContent('요청이 많아');
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 });

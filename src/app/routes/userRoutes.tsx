@@ -12,6 +12,7 @@ import { LoginPage } from '@pages/login/LoginPage';
 import { MissionDetailPage } from '@pages/missionDetail/MissionDetailPage';
 import { MissionListPage } from '@pages/missionList/MissionListPage';
 import { MyEntriesPage } from '@pages/myEntries/MyEntriesPage';
+import { MyNotificationsPage } from '@pages/myNotifications/MyNotificationsPage';
 import { MyPage } from '@pages/myPage/MyPage';
 import { MyTicketsPage } from '@pages/myTickets/MyTicketsPage';
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
@@ -52,6 +53,7 @@ export const userRoutes: RouteObject[] = [
             },
             { path: '/my-tickets', element: <MyTicketsPage /> },
             { path: '/my-entries', element: <MyEntriesPage /> },
+            { path: '/my-notifications', element: <MyNotificationsPage /> },
             { path: '/mypage', element: <MyPage /> },
             ...(env.isDev
                 ? ([

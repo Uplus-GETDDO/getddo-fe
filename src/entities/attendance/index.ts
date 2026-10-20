@@ -21,3 +21,4 @@ export type {
     AttendanceToday,
     RewardReceipt,
 } from './model/types';
+export { ATTENDANCE_THUMBNAIL } from './model/thumbnail';

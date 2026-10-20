@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     TICKET_GRADES,
@@ -9,17 +9,25 @@ import {
     type TicketOperationType,
 } from '@entities/ticket';
 import { useVirtualClock } from '@shared/model/virtualClock';
-import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
+import { Pagination } from '@shared/ui/pagination';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { Segmented } from '@shared/ui/segmented';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { formatKst, isSameKstDate, KST_HOUR_MINUTE } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
+import { pageSlice } from '@shared/utils/pagination';
 
 type Kind = 'ALL' | 'IN' | 'OUT' | 'EXPIRE_REFUND';
 type Period = '7D' | '30D' | '90D' | 'ALL';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** 한 쪽에 담는 기록(한 번의 처리 = 한 줄) 수 */
+const PAGE_SIZE = 10;
+/** 한 번에 받는 원시 이력 수 — 한 줄에 여러 장이 묶이므로 쪽을 채우려면 넉넉히 받는다 */
+const FETCH_SIZE = 20;
 
 const KIND_OPTIONS = [
     { value: 'ALL', label: '전체' },
@@ -65,11 +73,15 @@ function byDate(groups: TicketHistoryGroup[], now: Date) {
 
 /**
  * 응모권 기록 — 한 번의 처리(지급·응모 사용·반환·만료)를 한 줄로, 날짜별로 보여 준다.
- * 마이페이지 "응모권 내역 → 전체 보기"는 페이지 맨 위(큰 응모권)부터 연다
+ * 마이페이지 "응모권 내역 → 전체 보기"는 페이지 맨 위(큰 응모권)부터 연다.
+ * 번호로 넘긴다 — 서버는 커서 방식이라(ADR-0009) 보려는 쪽이 찰 때까지 nextCursor를 차례로 따라 받는다.
+ * 쪽 끝 줄이 다음 이력과 같은 처리일 수 있어 한 줄 더 받아 두고 자른다 — 끝 줄 수량이 넘긴 뒤에 바뀌지 않게.
+ * 전체 쪽 수는 받은 만큼만 센다(이력이 여러 종류 흐름을 합친 것이라 총 줄 수를 미리 알 수 없다)
  */
 export function TicketHistoryCard({ now }: { now: Date }) {
     const [kind, setKind] = useState<Kind>('ALL');
     const [period, setPeriod] = useState<Period>('30D');
+    const [page, setPage] = useState(1);
     const clock = useVirtualClock();
     const periodKey = `${clock.override?.toISOString() ?? 'real'}:${formatKst(now, { year: 'numeric', month: '2-digit', day: '2-digit' })}:${kind}:${period}`;
     const [anchor, setAnchor] = useState({ key: periodKey, time: now.getTime() });
@@ -78,6 +90,7 @@ export function TicketHistoryCard({ now }: { now: Date }) {
     const days = PERIOD_OPTIONS.find((option) => option.value === period)?.days ?? null;
     const types = kind === 'ALL' ? undefined : KIND_TYPES[kind];
     const query = useTicketHistories({
+        size: FETCH_SIZE,
         ...(types?.length === 1
             ? { operationType: types[0] }
             : { operationTypes: types ? [...types] : undefined }),
@@ -90,6 +103,39 @@ export function TicketHistoryCard({ now }: { now: Date }) {
     });
     const shown = groupTicketHistories(query.items);
     const { isPending, isError } = query;
+    const paged = pageSlice(shown, page, PAGE_SIZE);
+
+    // 보려는 쪽 + 한 줄이 찰 때까지 다음 커서를 받는다. 실패하면 멈추고 다시 시도를 기다린다
+    const { hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage, cursorError } =
+        query;
+    const needed = page * PAGE_SIZE + 1;
+    const loaded = shown.length;
+    useEffect(() => {
+        if (
+            !isPending &&
+            loaded < needed &&
+            hasNextPage &&
+            !isFetchingNextPage &&
+            !isFetchNextPageError &&
+            !cursorError
+        )
+            void fetchNextPage({ cancelRefetch: false });
+    }, [
+        isPending,
+        loaded,
+        needed,
+        hasNextPage,
+        isFetchingNextPage,
+        isFetchNextPageError,
+        cursorError,
+        fetchNextPage,
+    ]);
+    const pageLoading = loaded < page * PAGE_SIZE && hasNextPage && !isFetchNextPageError;
+    const failed = isError || cursorError;
+    const retry = () =>
+        void (!cursorError && isFetchNextPageError
+            ? fetchNextPage({ cancelRefetch: false })
+            : query.refetch());
 
     return (
         <section
@@ -104,6 +150,7 @@ export function TicketHistoryCard({ now }: { now: Date }) {
                     value={period}
                     onValueChange={(value) => {
                         setPeriod(value as Period);
+                        setPage(1);
                     }}
                 >
                     <SelectTrigger className="h-9" aria-label="기간">
@@ -124,6 +171,7 @@ export function TicketHistoryCard({ now }: { now: Date }) {
                 options={KIND_OPTIONS}
                 onValueChange={(value) => {
                     setKind(value);
+                    setPage(1);
                 }}
                 className="mb-2 self-start"
             />
@@ -138,39 +186,34 @@ export function TicketHistoryCard({ now }: { now: Date }) {
                 <span className="text-right">만료 일시</span>
             </div>
 
-            <p className="text-caption text-fg-tertiary">
-                불러온 이력 기준 수량이에요. 더 불러오면 수량이 늘어날 수 있어요.
-            </p>
             {isPending && (
                 <p role="status" className="sr-only">
                     응모권 내역을 불러오는 중
                 </p>
             )}
             {isPending && <SkeletonList count={5} className="py-3" />}
-            {(isError || query.cursorError) && (
-                <p role="alert" className="text-destructive text-body-sm py-6">
-                    응모권 내역을 불러오지 못했습니다.
-                    {
-                        <Button
-                            variant="secondary"
-                            disabled={query.isFetching}
-                            onClick={() =>
-                                void (!query.cursorError && query.isFetchNextPageError
-                                    ? query.fetchNextPage({ cancelRefetch: false })
-                                    : query.refetch())
-                            }
-                        >
-                            다시 시도
-                        </Button>
-                    }
-                </p>
+            {/* 받아 둔 기록이 있으면 그대로 두고 작은 갱신 실패 표시만, 하나도 없을 때만 실패 칸 */}
+            {failed && shown.length > 0 && (
+                <RefreshStatus
+                    fetching={query.isFetching}
+                    error
+                    onRefresh={retry}
+                    className="self-start"
+                />
             )}
-            {!isPending && !isError && !query.cursorError && shown.length === 0 && (
+            {failed && shown.length === 0 && (
+                <LoadError
+                    title="응모권 기록을 불러오지 못했어요"
+                    onRetry={retry}
+                    retrying={query.isFetching}
+                />
+            )}
+            {!isPending && !failed && shown.length === 0 && (
                 <p role="status" className="text-body-sm text-fg-tertiary py-10 text-center">
                     이 기간에 기록이 없어요.
                 </p>
             )}
-            {byDate(shown, now).map(([date, items]) => (
+            {byDate(paged.items, now).map(([date, items]) => (
                 <div key={date} className="flex flex-col">
                     <h3 className="text-caption text-fg-tertiary px-3 pt-3 pb-1">{date}</h3>
                     <ul>
@@ -235,15 +278,16 @@ export function TicketHistoryCard({ now }: { now: Date }) {
                     </ul>
                 </div>
             ))}
-            {query.hasNextPage && !query.cursorError && (
-                <Button
-                    variant="secondary"
-                    className="mt-2 w-full"
-                    disabled={query.isFetching}
-                    onClick={() => void query.fetchNextPage({ cancelRefetch: false })}
-                >
-                    {query.isFetchingNextPage ? '불러오는 중' : '더 보기'}
-                </Button>
+            {pageLoading && <SkeletonList count={3} className="py-3" />}
+            {/* 쪽 수는 받은 기록만큼 늘어난다 — 마지막 쪽을 열면 그다음 기록을 이어 받는다 */}
+            {paged.totalPages > 1 && (
+                <Pagination
+                    page={paged.current}
+                    totalPages={paged.totalPages}
+                    onPageChange={setPage}
+                    label="응모권 기록 페이지"
+                    className="justify-center pt-4"
+                />
             )}
         </section>
     );

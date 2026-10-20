@@ -4,13 +4,14 @@ import { useSearchParams } from 'react-router-dom';
 import type { MyEntryRow } from '@widgets/myEntryRows';
 
 import { useVirtualClock } from '@shared/model/virtualClock';
-import { Button } from '@shared/ui/button';
 import { PageHeader } from '@shared/ui/page-header';
+import { Pagination } from '@shared/ui/pagination';
 import { Segmented } from '@shared/ui/segmented';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { formatKst, formatKstDot } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
+import { pageSlice } from '@shared/utils/pagination';
 import { latestWonAt, MyEntryRefreshStatus, useMyEntryRows } from '@widgets/myEntryRows';
 
 import type { StatusTile } from './ui/EntryStatusTiles';
@@ -27,7 +28,7 @@ import {
     type EntryStatusFilter,
 } from './utils/filterEntries';
 
-/** "더 보기" 한 번에 늘리는 줄 수 */
+/** 한 쪽에 담는 줄 수 */
 const PAGE_SIZE = 20;
 
 const KIND_OPTIONS = [
@@ -64,14 +65,19 @@ export function MyEntriesPage() {
     const filters = readEntryFilters(params);
     const clock = useVirtualClock();
     const now = clock.now();
-    const [visible, setVisible] = useState(PAGE_SIZE);
+    const [page, setPage] = useState(1);
     const entriesQuery = useMyEntryRows({
+        // 화면 목록과 같은 pageSlice로 자른다 — 줄이 줄어 쪽 수가 당겨져도 보이는 쪽의 발표 대기를 계속 폴링한다
         selectVisibleRows: (rows) =>
-            filterEntryRows(
-                scopeEntryRows(rows, filters.kind, filters.period, now),
-                filters.status,
-                filters.sort,
-            ).slice(0, visible),
+            pageSlice(
+                filterEntryRows(
+                    scopeEntryRows(rows, filters.kind, filters.period, now),
+                    filters.status,
+                    filters.sort,
+                ),
+                page,
+                PAGE_SIZE,
+            ).items,
     });
     const { rows, isPending, isError, isResultPending } = entriesQuery;
 
@@ -85,11 +91,12 @@ export function MyEntriesPage() {
             },
             { replace: true },
         );
-        setVisible(PAGE_SIZE);
+        setPage(1);
     };
 
     const scoped = scopeEntryRows(rows, filters.kind, filters.period, now);
     const shown = filterEntryRows(scoped, filters.status, filters.sort);
+    const paged = pageSlice(shown, page, PAGE_SIZE);
     const pending = scoped.filter((row) => row.result === 'PENDING');
     const won = scoped.filter((row) => row.result === 'WON');
     const lost = scoped.filter((row) => row.result === 'LOST');
@@ -131,9 +138,8 @@ export function MyEntriesPage() {
                 backLabel="마이페이지"
                 title="내 응모 내역"
                 description="이벤트·겟또타임에 응모한 기록과 결과를 모두 볼 수 있어요."
+                action={<MyEntryRefreshStatus query={entriesQuery} />}
             />
-
-            <MyEntryRefreshStatus query={entriesQuery} />
 
             <EntryStatusTiles
                 isPending={isPending || isResultPending}
@@ -145,8 +151,9 @@ export function MyEntriesPage() {
             />
 
             <section
+                id="entry-list"
                 aria-label="응모 기록"
-                className="bg-surface-page border-border-default flex flex-col gap-2 rounded-2xl border p-6 shadow-md"
+                className="bg-surface-page border-border-default flex scroll-mt-24 flex-col gap-2 rounded-2xl border p-6 shadow-md"
             >
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
                     <Segmented
@@ -217,7 +224,7 @@ export function MyEntriesPage() {
                                 : '조건에 맞는 응모 내역이 없어요.'}
                         </p>
                     )}
-                {byMonth(shown.slice(0, visible)).map(([month, monthRows]) => (
+                {byMonth(paged.items).map(([month, monthRows]) => (
                     <div key={month} className="flex flex-col">
                         <h2 className="text-body-sm-bold text-fg-primary px-3 pt-3 pb-1">
                             {month}
@@ -229,17 +236,20 @@ export function MyEntriesPage() {
                         </ul>
                     </div>
                 ))}
-                {shown.length > visible && (
-                    <Button
-                        variant="secondary"
-                        className="mt-2 w-full"
-                        onClick={() => setVisible((count) => count + PAGE_SIZE)}
-                    >
-                        더 보기
-                        <span className="text-fg-tertiary text-xs font-normal">
-                            {formatNumber(visible)} / {formatNumber(shown.length)}건
-                        </span>
-                    </Button>
+                {paged.totalPages > 1 && (
+                    <Pagination
+                        page={paged.current}
+                        totalPages={paged.totalPages}
+                        onPageChange={(next) => {
+                            setPage(next);
+                            // 새 쪽은 목록 머리부터 읽게 올린다
+                            document
+                                .getElementById('entry-list')
+                                ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+                        }}
+                        label="응모 기록 페이지"
+                        className="justify-center pt-4"
+                    />
                 )}
             </section>
         </main>

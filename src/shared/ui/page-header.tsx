@@ -16,7 +16,8 @@ function PageHeader({
     backTo: string;
     backLabel: string;
     title: string;
-    description: string;
+    /** 한 줄 설명 — 제목만으로 충분하면 생략한다 */
+    description?: string;
     action?: React.ReactNode;
 }) {
     return (
@@ -31,7 +32,7 @@ function PageHeader({
                 </Link>
                 <div className="flex flex-col gap-2">
                     <h1 className="text-title-2 text-fg-primary">{title}</h1>
-                    <p className="text-body-sm text-fg-secondary">{description}</p>
+                    {description && <p className="text-body-sm text-fg-secondary">{description}</p>}
                 </div>
             </div>
             {action}

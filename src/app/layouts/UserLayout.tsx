@@ -1,4 +1,4 @@
-import { ChevronDown, LayoutDashboard, Menu } from 'lucide-react';
+import { ChevronDown, Menu } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, ScrollRestoration, useLocation, useMatches } from 'react-router-dom';
 
@@ -98,10 +98,11 @@ export function UserLayout() {
                                 {label}
                             </NavLink>
                         ))}
-                        {/* 활성 항목 밑줄은 텍스트 바닥과 프레임 하단의 중간 높이에 두고, 페이지 이동 시 미끄러지게 한다 */}
+                        {/* 활성 항목 밑줄은 텍스트 바닥과 프레임 하단의 중간 높이(헤더 바닥에서 16)에 두고, 페이지 이동 시 미끄러지게 한다.
+                            헤더 줄에 위아래 8px 여백(py-2)이 생겨 nav 바닥도 8px 올라왔으므로 nav 기준으로는 8px만 띄운다 */}
                         <span
                             aria-hidden
-                            className="bg-fg-primary pointer-events-none absolute bottom-4 h-0.5 rounded-full transition-all duration-300"
+                            className="bg-fg-primary pointer-events-none absolute bottom-2 h-0.5 rounded-full transition-all duration-300"
                             style={{
                                 left: indicator?.left ?? 0,
                                 width: indicator?.width ?? 0,
@@ -162,10 +163,7 @@ export function UserLayout() {
                                 asChild
                                 className="hidden min-h-[44px] min-w-[44px] xl:inline-flex"
                             >
-                                <NavLink to="/admin">
-                                    <LayoutDashboard aria-hidden />
-                                    <span className="sr-only 2xl:not-sr-only">관리자 화면으로</span>
-                                </NavLink>
+                                <NavLink to="/admin">관리자 화면으로</NavLink>
                             </Button>
                         )}
                         {/* 가상 시계 조작은 관리자만 — 일반 사용자는 시각 표시만 본다 */}
