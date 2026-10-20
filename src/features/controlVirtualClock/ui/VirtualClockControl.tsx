@@ -94,8 +94,9 @@ export function VirtualClockControl() {
                         )}
                     </CardTitle>
                     <CardDescription>
-                        카드·위젯에 표시되는 시각입니다. 오버라이드 중에는 이 시각으로 고정됩니다.
-                        헤더의 시계에서도 시간·분을 직접 조작할 수 있습니다.
+                        화면 표시와 로컬 목업에만 적용되는 로컬 개발 도구입니다. 서버의
+                        마감·추첨·발표 일정과 응답은 실제 시각으로 동작하며 바뀌지 않습니다.
+                        오버라이드 중에는 표시 시각이 이 값으로 고정됩니다.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">

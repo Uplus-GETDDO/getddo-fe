@@ -2,6 +2,7 @@ import { House } from 'lucide-react';
 import { NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 
 import { VirtualClockTicker } from '@features/controlVirtualClock';
+import { env } from '@shared/config/env';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
 import { cn } from '@shared/utils/cn';
 
@@ -65,7 +66,8 @@ export function AdminLayout() {
             <div className="flex min-w-0 flex-1 flex-col">
                 <header className="border-border bg-surface-elevated flex h-16 items-center border-b px-8">
                     <h1 className="text-title-3">{current?.label ?? '관리자'}</h1>
-                    <VirtualClockTicker className="ml-auto hidden md:flex" />
+                    {/* 가상 시계는 로컬 개발 전용 표시 도구다 */}
+                    {env.isDev && <VirtualClockTicker className="ml-auto hidden md:flex" />}
                 </header>
                 {/* 사이드바가 숨겨지는 md 미만에서는 가로 스크롤 탭으로 같은 이동 경로를 제공한다 */}
                 <nav

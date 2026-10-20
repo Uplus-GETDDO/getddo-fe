@@ -59,7 +59,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
                     )}
                     {isError && (
                         <p className="text-semantic-error-strong text-body-sm py-4 text-center">
-                            사용자 목록을 불러오지 못했습니다.
+                            시연 계정 설정이 없거나 올바르지 않습니다.
                         </p>
                     )}
                     {users?.map((user) => {

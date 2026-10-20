@@ -4,6 +4,7 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
+import { env } from '@shared/config/env';
 import { RouteErrorFallback } from '@shared/ui/route-error-boundary';
 
 import { AdminGuard } from './AdminGuard';
@@ -151,14 +152,19 @@ export const adminRoutes: RouteObject[] = [
                     })),
                 ),
             },
-            {
-                path: 'virtual-clock',
-                element: lazyPage(() =>
-                    import('@pages/admin/virtualClock/AdminVirtualClockPage').then((m) => ({
-                        default: m.AdminVirtualClockPage,
-                    })),
-                ),
-            },
+            // 가상 시계는 로컬 개발 전용 표시 도구 — 배포 라우트에는 등록하지 않는다
+            ...(env.isDev
+                ? [
+                      {
+                          path: 'virtual-clock',
+                          element: lazyPage(() =>
+                              import('@pages/admin/virtualClock/AdminVirtualClockPage').then(
+                                  (m) => ({ default: m.AdminVirtualClockPage }),
+                              ),
+                          ),
+                      },
+                  ]
+                : []),
             {
                 path: 'virtual-users',
                 element: lazyPage(() =>
