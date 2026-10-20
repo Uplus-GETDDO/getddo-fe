@@ -17,10 +17,21 @@ const asUuid = (value: string | null) => (value && z.uuid().safeParse(value).suc
 // 삭제된 이벤트도 계약대로 직접 조회할 수 있게 이벤트 상세 조회 성공에 의존하지 않는다.
 export function ParticipantsPanel() {
     const [searchParams] = useSearchParams();
-    const [eventIdDraft, setEventIdDraft] = useState(() => asUuid(searchParams.get('eventId')));
-    const [eventId, setEventId] = useState(eventIdDraft);
+    const urlEventId = asUuid(searchParams.get('eventId'));
+    const [eventIdDraft, setEventIdDraft] = useState(urlEventId);
+    const [eventId, setEventId] = useState(urlEventId);
     const [inputError, setInputError] = useState(false);
     const [page, setPage] = useState(1);
+
+    // URL의 eventId가 바뀌면 입력·조회 상태를 함께 맞춘다
+    const [prevUrlEventId, setPrevUrlEventId] = useState(urlEventId);
+    if (prevUrlEventId !== urlEventId) {
+        setPrevUrlEventId(urlEventId);
+        setEventIdDraft(urlEventId);
+        setEventId(urlEventId);
+        setInputError(false);
+        setPage(1);
+    }
 
     const query = useAdminParticipants(eventId || null, { page, size: PAGE_SIZE });
 

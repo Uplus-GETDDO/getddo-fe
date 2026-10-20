@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
@@ -82,6 +82,31 @@ describe('AdminUsersPage', () => {
         );
         renderPage();
         expect(await screen.findByRole('alert')).toHaveTextContent('권한이 없습니다.');
+    });
+
+    it('검색란에 넣은 UUID는 사용자 ID 필터로 보낸다', async () => {
+        const user = userEvent.setup();
+        let lastParams: URLSearchParams | undefined;
+        server.use(
+            http.get('*/v1/admin/users', ({ request }) => {
+                lastParams = new URL(request.url).searchParams;
+                return HttpResponse.json({
+                    success: true,
+                    data: { items: [], page: 1, size: 20, totalElements: 0, totalUserCount: 12 },
+                });
+            }),
+        );
+        renderPage();
+        await user.type(
+            screen.getByLabelText('이름·UUID 검색'),
+            '00000000-0000-4000-8000-000000000001',
+        );
+        await user.click(screen.getByRole('button', { name: '검색' }));
+        // 36자 UUID는 keyword(최대 20자)로 보낼 수 없으므로 userId로 전달한다
+        await waitFor(() =>
+            expect(lastParams?.get('userId')).toBe('00000000-0000-4000-8000-000000000001'),
+        );
+        expect(lastParams?.get('keyword')).toBeNull();
     });
 
     it('잘못된 UUID를 사용자 ID로 제출하면 요청하지 않고 안내한다', async () => {

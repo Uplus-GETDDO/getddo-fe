@@ -90,7 +90,14 @@ export function AdminUsersPage() {
                         return;
                     }
                     setUserIdError(false);
-                    setApplied({ ...draft, userId: trimmedId, keyword: draft.keyword.trim() });
+                    const keyword = draft.keyword.trim();
+                    // UUID 형태의 검색어는 keyword(최대 20자)가 아니라 userId 필터로 라우팅한다
+                    const keywordIsUuid = z.uuid().safeParse(keyword).success;
+                    setApplied({
+                        ...draft,
+                        userId: trimmedId || (keywordIsUuid ? keyword : ''),
+                        keyword: keywordIsUuid ? '' : keyword,
+                    });
                     setPage(1);
                 }}
             >

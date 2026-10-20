@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { MemoryRouter } from 'react-router-dom';
+import { Link, MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 
 import { server } from '@mocks/server';
@@ -37,6 +37,44 @@ describe('AdminEntriesPage', () => {
         renderPage(`/admin/entries?userId=${USER_ID}`);
         expect(await screen.findByText('PLATINUM 특별 추첨')).toBeInTheDocument();
         expect(screen.getByText('총 2건')).toBeInTheDocument();
+    });
+
+    it('전체 응모 조회로 이동하면 이전 사용자 필터가 남지 않는다', async () => {
+        const user = userEvent.setup();
+        const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+        render(
+            <QueryClientProvider client={client}>
+                <MemoryRouter initialEntries={[`/admin/entries?userId=${USER_ID}`]}>
+                    <Link to="/admin/entries">전체 응모 조회</Link>
+                    <AdminEntriesPage />
+                </MemoryRouter>
+            </QueryClientProvider>,
+        );
+        expect(await screen.findByText('PLATINUM 특별 추첨')).toBeInTheDocument();
+        await user.click(screen.getByRole('link', { name: '전체 응모 조회' }));
+        // URL의 userId가 사라지면 필터가 해제돼 전체 목록으로 돌아온다
+        expect(await screen.findAllByText('10월 럭키 드로우')).not.toHaveLength(0);
+        expect(screen.queryByText('총 2건')).not.toBeInTheDocument();
+    });
+
+    it('참여자 URL의 eventId가 사라지면 입력 안내로 돌아간다', async () => {
+        const user = userEvent.setup();
+        const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+        render(
+            <QueryClientProvider client={client}>
+                <MemoryRouter
+                    initialEntries={[`/admin/entries?view=participants&eventId=${EVENT_ID}`]}
+                >
+                    <Link to="/admin/entries?view=participants">참여자 조회 초기화</Link>
+                    <AdminEntriesPage />
+                </MemoryRouter>
+            </QueryClientProvider>,
+        );
+        expect(await screen.findByText(/총 2명/)).toBeInTheDocument();
+        await user.click(screen.getByRole('link', { name: '참여자 조회 초기화' }));
+        expect(
+            await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.'),
+        ).toBeInTheDocument();
     });
 
     it('참여자 보기에서 이벤트 참여자를 정렬해 보여준다', async () => {

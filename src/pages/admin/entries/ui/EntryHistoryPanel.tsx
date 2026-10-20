@@ -23,18 +23,31 @@ const EMPTY = { userId: '', eventId: '', status: ALL, from: '', to: '' };
 
 const asUuid = (value: string | null) => (value && z.uuid().safeParse(value).success ? value : '');
 
-// AO06 — 응모 이력. userId·eventId 링크 진입은 URL 초기값으로 읽는다
+// AO06 — 응모 이력. userId·eventId는 URL이 진실의 원천이다
 export function EntryHistoryPanel() {
     const [searchParams] = useSearchParams();
-    const [initial] = useState(() => ({
-        ...EMPTY,
-        userId: asUuid(searchParams.get('userId')),
-        eventId: asUuid(searchParams.get('eventId')),
-    }));
+    const urlUserId = asUuid(searchParams.get('userId'));
+    const urlEventId = asUuid(searchParams.get('eventId'));
     const [page, setPage] = useState(1);
-    const [draft, setDraft] = useState(initial);
-    const [applied, setApplied] = useState(initial);
+    const [draft, setDraft] = useState(() => ({
+        ...EMPTY,
+        userId: urlUserId,
+        eventId: urlEventId,
+    }));
+    const [applied, setApplied] = useState(draft);
     const [inputError, setInputError] = useState<string | null>(null);
+
+    // 링크 진입·메뉴 이동으로 URL의 userId/eventId가 바뀌면 적용 필터·페이지를 함께 맞춘다
+    const urlKey = `${urlUserId}|${urlEventId}`;
+    const [prevUrlKey, setPrevUrlKey] = useState(urlKey);
+    if (prevUrlKey !== urlKey) {
+        const next = { ...EMPTY, userId: urlUserId, eventId: urlEventId };
+        setPrevUrlKey(urlKey);
+        setDraft(next);
+        setApplied(next);
+        setInputError(null);
+        setPage(1);
+    }
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
     const resetFilters = () => {
         setDraft(EMPTY);
