@@ -14,6 +14,8 @@ import {
     Users,
 } from 'lucide-react';
 
+import { env } from '@shared/config/env';
+
 export interface AdminNavItem {
     to: string;
     label: string;
@@ -34,6 +36,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     { to: '/admin/banners', label: '배너 관리', icon: Images },
     { to: '/admin/attendance-policies', label: '출석 정책', icon: CalendarDays },
     { to: '/admin/missions', label: '미션 관리', icon: ClipboardList },
-    { to: '/admin/virtual-clock', label: '가상 시계', icon: Clock },
+    // 가상 시계는 로컬 개발 전용 — 배포에서는 메뉴·라우트를 등록하지 않는다
+    ...(env.isDev ? [{ to: '/admin/virtual-clock', label: '가상 시계', icon: Clock }] : []),
     { to: '/admin/virtual-users', label: '가상 사용자', icon: Users },
 ];

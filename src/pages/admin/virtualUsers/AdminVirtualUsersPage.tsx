@@ -23,7 +23,7 @@ export function AdminVirtualUsersPage() {
             )}
             {isError && (
                 <p role="alert" className="text-semantic-error-strong text-body-sm">
-                    가상 사용자 목록을 불러오지 못했습니다.
+                    시연 계정 설정(VITE_VIRTUAL_USERS_JSON)이 없거나 형식이 올바르지 않습니다.
                 </p>
             )}
             {users && users.length === 0 && (
