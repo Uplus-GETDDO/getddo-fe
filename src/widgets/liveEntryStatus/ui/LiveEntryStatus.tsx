@@ -1,12 +1,9 @@
-import { Gift, RefreshCw, Ticket, UsersRound } from 'lucide-react';
+import { Gift, Ticket, UsersRound } from 'lucide-react';
 
 import { useEntryStatistics } from '@entities/entry';
-import { getErrorMessage } from '@shared/api/errorMessage';
 import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Badge } from '@shared/ui/badge';
-import { Button } from '@shared/ui/button';
-import { cn } from '@shared/utils/cn';
-import { formatKst } from '@shared/utils/date';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { formatNumber } from '@shared/utils/format';
 
 interface LiveEntryStatusProps {
@@ -15,8 +12,6 @@ interface LiveEntryStatusProps {
     isOpen: boolean;
     /** 여러 이벤트가 겹쳐 보이는 곳(홈 배너)에서 현재 보이는 항목만 true로 둔다 */
     enabled?: boolean;
-    /** 당첨 인원 — 응모를 정하는 데 가장 먼저 보는 값이라 맨 앞에 둔다 */
-    winnerCount?: number;
 }
 
 // CONTEXT.md — 실시간 현황에는 응모자 수·총 차감 응모권 수·본인 차감 수까지만 표시하고 당첨 확률은 노출하지 않는다.
@@ -26,44 +21,20 @@ export function LiveEntryStatus({
     isOpen,
     enabled = true,
     winnerCount,
-}: LiveEntryStatusProps) {
-    const query = useEntryStatistics(eventId, { isOpen, enabled });
-    const { data } = query;
-    const error = query.error ?? query.failureReason;
-    const rateLimited = getPollingRetryDelay(error) > 0;
+}: LiveEntryStatusProps & {
+    /** 당첨 인원 — 응모를 정하는 데 가장 먼저 보는 값이라 맨 앞에 둔다 */
+    winnerCount?: number;
+}) {
+    const { data } = useEntryStatistics(eventId, { isOpen, enabled });
 
     if (!enabled) {
         return null;
     }
 
     return (
-        // 폴링으로 수치가 바뀌면 보조 기술에 조용히 알린다
-        <div className="flex flex-wrap items-center gap-2" aria-live="polite">
-            {!data && query.isPending && !rateLimited && (
-                <span>응모 현황을 불러오는 중이에요.</span>
-            )}
-            {(query.isError || rateLimited) && (
-                <div role="status" className="text-body-sm">
-                    <p>
-                        {data
-                            ? '응모 현황을 갱신하지 못했어요. 이전 값을 표시해요.'
-                            : '응모 현황을 불러오지 못했어요.'}
-                    </p>
-                    <p>{getErrorMessage(error)}</p>
-                    {rateLimited && <p>요청이 많아요. 잠시 후 다시 시도해 주세요.</p>}
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        disabled={query.isFetching || rateLimited}
-                        onClick={() => {
-                            if (getPollingRetryDelay(error) === 0)
-                                void query.refetch({ cancelRefetch: false });
-                        }}
-                    >
-                        응모 현황 다시 시도
-                    </Button>
-                </div>
-            )}
+        // 칩 줄 높이를 먼저 잡아 둔다 — 받기 전·실패해 값이 없을 때도 아래 버튼이 들썩이지 않는다.
+        // 받는 중·실패 안내는 버튼 옆 갱신 표시(LiveEntryRefresh)가 맡고, 실패해도 받아 둔 수치는 그대로 둔다
+        <div className="flex min-h-6.5 flex-wrap items-center gap-2" aria-live="polite">
             {data && (
                 <>
                     {winnerCount != null && (
@@ -80,29 +51,33 @@ export function LiveEntryStatus({
                         <Ticket className="size-5" />
                         {formatNumber(data.totalSpentTicketCount)}장 사용
                     </Badge>
-                    {/* 칩 뒤에 작게 — 마지막으로 받은 시각. 다시 받는 중에는 같은 자리에서 아이콘만 돌아 줄이 밀리지 않는다 */}
-                    <span className="text-caption text-fg-secondary inline-flex items-center gap-1 tabular-nums">
-                        <RefreshCw
-                            aria-hidden
-                            className={cn(
-                                'size-3.5',
-                                query.isFetching && 'animate-spin motion-reduce:animate-none',
-                            )}
-                        />
-                        마지막 조회{' '}
-                        {formatKst(new Date(query.dataUpdatedAt), {
-                            month: 'numeric',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                        })}
-                        {query.isFetching && (
-                            <span className="sr-only">응모 현황 갱신 중이에요.</span>
-                        )}
-                    </span>
                 </>
             )}
         </div>
+    );
+}
+
+/**
+ * 응모 현황 갱신 표시 — 30초 폴링 중임을 작게 알리고, 실패하면 이전 수치를 둔 채 '갱신 실패 · 다시 시도'로 바뀐다.
+ * 같은 쿼리 키라 칩(LiveEntryStatus)과 요청은 한 번만 나간다. 서버가 기다리라고 하면(429) 그동안 다시 받지 않는다
+ */
+export function LiveEntryRefresh({ eventId, isOpen, enabled = true }: LiveEntryStatusProps) {
+    const query = useEntryStatistics(eventId, { isOpen, enabled });
+    const rateLimited = getPollingRetryDelay(query.error ?? query.failureReason) > 0;
+
+    if (!enabled) {
+        return null;
+    }
+
+    return (
+        <RefreshStatus
+            fetching={query.isFetching && !rateLimited}
+            updatedAt={query.dataUpdatedAt || undefined}
+            error={query.isError || rateLimited}
+            interval={isOpen ? '30초마다' : undefined}
+            onRefresh={() => {
+                if (!rateLimited) void query.refetch({ cancelRefetch: false });
+            }}
+        />
     );
 }

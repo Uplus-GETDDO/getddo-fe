@@ -8,7 +8,7 @@ import { RefreshStatus } from '@shared/ui/refresh-status';
 import { SkeletonRows } from '@shared/ui/skeleton';
 import { BannerSlider } from '@widgets/bannerSlider';
 import { EventCardList } from '@widgets/eventCardList';
-import { LiveEntryStatus } from '@widgets/liveEntryStatus';
+import { LiveEntryRefresh, LiveEntryStatus } from '@widgets/liveEntryStatus';
 import { TicketBalanceWidget } from '@widgets/ticketBalance';
 import { TicketEventSection } from '@widgets/ticketEventSection';
 
@@ -48,6 +48,13 @@ export function HomePage() {
                             isOpen={event.status === 'open'}
                             enabled={isActive}
                             winnerCount={event.winnerCount}
+                        />
+                    )}
+                    renderRefresh={(event, isActive) => (
+                        <LiveEntryRefresh
+                            eventId={event.id}
+                            isOpen={event.status === 'open'}
+                            enabled={isActive}
                         />
                     )}
                     // 배너 바로 아래 줄(넘김 화살표 왼쪽)에 바로가기 — 게임이 응모권 목록에 섞여 찾기 어렵다는 의견

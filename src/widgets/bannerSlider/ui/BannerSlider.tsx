@@ -16,11 +16,11 @@ import { Skeleton } from '@shared/ui/skeleton';
 import { formatRemaining } from '@shared/utils/date';
 
 import bannerBackground from '../assets/banner-bg.jpg';
-import bannerMascot from '../assets/banner-mascot.webp';
+import { BannerMascot } from './BannerMascot';
 
 const AUTO_SLIDE_MS = 5000;
 const MAX_SLIDES = 5;
-/** 피그마 홈 배너의 무너 캐릭터(image 28) — 배너 이미지 대신 고정 장식으로 보여준다 */
+/** 피그마 홈 배너의 타꼬 캐릭터 — 배너 이미지 대신 장식으로 보여주고, 넘어올 때마다 저글링한다 */
 const SHOW_MASCOT = true;
 
 /**
@@ -42,6 +42,7 @@ function BannerDescription({ event }: { event: Event }) {
 
 export function BannerSlider({
     renderStatus,
+    renderRefresh,
     footer,
 }: {
     /** 배너 아래 줄 왼쪽에 둘 내용 — 넘김 화살표와 같은 줄에 붙여 배너와 한 덩어리로 보이게 한다 (예: 홈 바로가기) */
@@ -51,6 +52,8 @@ export function BannerSlider({
      * isActive는 지금 보이는 슬라이드인지 여부라, 보이지 않는 슬라이드의 현황 조회를 멈추는 데 쓴다
      */
     renderStatus?: (event: Event, isActive: boolean) => ReactNode;
+    /** '응모하러 가기' 옆에 둘 갱신 표시 — 실시간 현황을 폴링하고 있다는 것과 실패를 버튼 옆 한 줄로만 알린다 */
+    renderRefresh?: (event: Event, isActive: boolean) => ReactNode;
 }) {
     const { data: events, isPending, isError } = useEventList();
     const [index, setIndex] = useState(0);
@@ -163,9 +166,19 @@ export function BannerSlider({
                                 key={event.id}
                                 // 화면 밖 배너는 Tab 포커스·보조 기술에서 빼 실시간 현황 알림도 보이는 배너만 읽힌다
                                 inert={slideIndex !== safeIndex}
-                                className="bg-play-yellow relative flex min-h-91.25 w-full shrink-0 flex-col rounded-2xl bg-cover bg-right-bottom"
+                                className="bg-play-yellow relative flex min-h-91.25 w-full shrink-0 cursor-pointer flex-col rounded-2xl bg-cover bg-right-bottom"
                                 style={{ backgroundImage: `url(${bannerBackground})` }}
                             >
+                                {/*
+                                 * 배너 어디를 눌러도 상세로 간다 — 키보드·화면 낭독기는 아래 '응모하러 가기' 하나로 들어가므로 이 링크는 감춘다.
+                                 * 버튼은 남겨 둔다: 마우스를 올리지 않으면 배너가 눌린다는 걸 알 수 없고, 무엇을 하는 곳인지 글로 알려준다
+                                 */}
+                                <Link
+                                    to={eventDetailPath(event)}
+                                    aria-hidden
+                                    tabIndex={-1}
+                                    className="absolute inset-0 z-1 rounded-2xl"
+                                />
                                 {/* 마감 시간 — 배너 왼쪽 끝에 붙은 브랜드색 탭 (공용 Badge surface xl). 시각 꼴(169:59:58) 대신 읽는 단위로 적는다 */}
                                 <Badge
                                     variant="surface"
@@ -200,17 +213,19 @@ export function BannerSlider({
                                         </div>
                                     </div>
                                     {/* 상세로 이동하는 버튼이라 '응모하러 가기' — 실제로 응모권을 쓰는 '응모하기'와 구분한다 */}
-                                    <Button asChild size="lg" className="px-7">
-                                        <Link to={eventDetailPath(event)}>응모하러 가기</Link>
-                                    </Button>
+                                    {/* 버튼과 갱신 표시는 배너 전체 링크 위에 올린다 */}
+                                    <div className="relative z-2 flex flex-wrap items-center gap-3">
+                                        <Button asChild size="lg" className="px-7">
+                                            <Link to={eventDetailPath(event)}>응모하러 가기</Link>
+                                        </Button>
+                                        {renderRefresh?.(event, slideIndex === safeIndex)}
+                                    </div>
                                 </div>
                                 {/* 피그마 홈 — 무너 캐릭터가 배너 오른쪽 위로 살짝 걸친다 (넓은 화면만). 배너 안에 두어 넘길 때 배너와 함께 미끄러진다 */}
                                 {SHOW_MASCOT && (
-                                    <img
-                                        src={bannerMascot}
-                                        alt=""
-                                        aria-hidden
-                                        className="pointer-events-none absolute -top-16.75 right-8 hidden w-125 select-none xl:block"
+                                    <BannerMascot
+                                        active={slideIndex === safeIndex}
+                                        className="absolute -top-14 right-10 hidden w-112 xl:block"
                                     />
                                 )}
                             </div>
