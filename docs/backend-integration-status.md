@@ -3,7 +3,7 @@
 ## 확인 기준과 한계
 
 - 확인일: 2026-10-21.
-- FE: 원격 dev `92583c3`(GD-259 PR #110 MERGED) + `feat/GD-260` L6 작업본. GD-260의 원격 발행·머지·배포는 아직 없다.
+- FE: 원격 dev `f17056c`(GD-260 PR #111 스쿼시 머지). `https://getddo-fe.vercel.app` 프로덕션이 머지 후 dev 소스(청크 해시 일치)와 실계정 `VITE_VIRTUAL_USERS_JSON`으로 서빙 중이다.
 - 공용 명세: `main`의 `bbbe811` + `3cb9fcc`(추첨 API의 병합·배포 상태 표기 최신화). 원격 갱신 후 `origin/main`과 차이 0건을 확인했다.
 - 이번 확인은 공용 명세·실제 소스·Git 이력 대조와 2026-10-20 배포 라우팅 실측(추첨 경로 401/405·USER-002, `/admin/abuse-cases` 404)을 함께 반영한다.
 - 팀 전달의 “백엔드 구현 완료”는 실행의 출발점이다. 배포 환경·메서드·DTO·권한·쓰기 재시도가 맞는지 별도로 확인해야 한다.
@@ -85,7 +85,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - AS01: 배포·집계 의미는 확인했고 GD-250에서 연결했다. 공용 명세의 “담당자 확인 전” 표시는 남아 있으므로 BE 담당자 확정 시 화면 문구를 대조한다. AM04도 정확한 미션 UUID와 날짜 범위로 가용성을 확인한다.
 - 관리자 미션·출석 정책: GD-259 사용자 승인으로 새 메뉴/라우트·feature 구조를 확정해 구현했다. 기존 담당 경계는 유지하며 격리 실서버 예약/등록 인수가 남아 있다. (응모 조회 AO06/AO07은 GD-250에서 `/admin/entries`로 확정·구현됨)
 - 관리자 게임: AG01~AG03과 규칙·보상 조건 운영 범위, 진행 중 플레이 보호·다음 KST 기준일 적용 계약을 확정한다.
-- 시연 계정: 공급 방식은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 확정·구현했고, 실제 등록 6계정(USER 5·ADMIN 1)으로 로컬 실서버 검증을 완료했다. Vercel 환경변수 입력과 재배포 후 인수가 남아 있다.
+- 시연 계정: 공급 방식은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 확정·구현했고, 실제 등록 6계정(USER 5·ADMIN 1)으로 로컬 실서버 검증을 완료했다. Vercel 환경변수에 실계정 JSON이 설정돼 현재 프로덕션 번들에 베이크돼 있고, 배포 후 검증에서 계정 목록 일치·실서버 응답을 확인했다. 남은 것은 쓰기·서버 일정 의존 인수 시나리오다.
 - 이미지: B01 공개 URL·현재 이미지 로딩은 확인했다. 실제 업로드 API·키 공급 절차·형식·용량과 격리 실서버 CRUD는 담당자 후속이며 B01 표시 구현과 구분한다.
 - 결과 성능: 원 기획서의 화면 반영 p95 2초·알림 생성 30초 목표를 실제 발표 흐름에서 측정한다. 달성되지 않으면 개선 또는 명시적 범위 조정 없이 완료 처리하지 않는다.
 
@@ -104,4 +104,6 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - `/virtual-users` 호출을 제거하고 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 전환했다. 샘플 자동 대체를 제거했고 미설정·형식 오류는 로그인의 명시 안내다. 사용자 전환은 기존 `sessionSync`의 전체 쿼리 리셋을 유지하며, 로그아웃 UI는 사용자 전환으로 대체하기로 승인됐다.
 - `vercel.json`의 `VITE_ENABLE_MSW=false`, `main.tsx`의 `mockServiceWorker.js` 자동 해제, `hybridHandlers` 제거로 배포의 업무 가로채기를 종료했다. 가상 시계는 배포 비노출·오버라이드 무력화다.
 - 검증: format/lint/test:ci(758)/build/diff --check 통과. 실제 등록 6계정으로 로컬 preview+실서버 프록시 검증 — 155건 전부 실서버 200·실제 UUID, `/virtual-users` 미호출, Worker 자동 해제, A→B 전환 시 B 헤더 재조회·A 요청 누수 0, 새로고침 세션 유지, 320/390px, 미설정 안내를 확인했다(`docs/superpowers/plans/L6-browser-evidence.json`).
-- 업무 end-to-end 시나리오(적립→응모→추첨→발표→알림→취소 반환), 머지·배포·배포 후 검증은 미실시다. [L6 통합 보고서](../reports/20261021-GD-260-L6.md)·[L6 인계](superpowers/plans/L6-handoff.md) 참조.
+- 업무 end-to-end 시나리오(적립→응모→추첨→발표→알림→취소 반환)는 미실시다. [L6 통합 보고서](../reports/20261021-GD-260-L6.md)·[L6 인계](superpowers/plans/L6-handoff.md) 참조.
+- 배포 후 검증(2026-10-21, GD-261): `getddo-fe.vercel.app` 실측 — 신규 세션 Worker 0건, 실제 `mockServiceWorker.js` 등록 재현 후 재진입 시 해당 Worker만 자동 해제(같은 origin의 다른 Worker 유지), 로그인 6계정 = 번들 env, `/virtual-users` 0건, 계정 선택→홈→이벤트 상세 실서버 GET 200·실제 업무 ID, A→B 전환 헤더 격리·누수 0, 새로고침 세션 유지, 가상 시계 비노출, 사용자 읽기 6페이지·관리자 읽기 11페이지 GET 200(`/admin/abuse-cases`만 의도된 404), 320/390px, 키보드, 오프라인→재연결, 200% 확대 실측(640 CSS px·DPR 2) 넘침 없음 — 총 34 checks·244 요청·쓰기 0건. [배포 후 검증 보고서](../reports/20261021-GD-261-L6-deploy-acceptance.md)·[증거 JSON](../reports/20261021-L6-deploy-evidence.json).
+- 배포 쓰기 인수(2026-10-21, 사용자 승인·테스트사용자1): 출석 201→200 동일 영수증, QUIZ·SURVEY 완료+BRONZE 각 1장, 게임 4종 VALID(50/18/435/50) 보상 BRONZE 3·SILVER 1·중복 제출 동일 결과·ADMIN 403, BRONZE·SILVER 응모 201 ACCEPTED·멱등키 재시도 동일 영수증·새 키는 상한 내 별도 접수, PLATINUM 409 `TICKET-006` 잔액부족·`EVENT_NOT_OPEN` 409 `ENTRY-005` 마감 거절 — 잔액·이력 델타 전부 일치. 서버 일정 의존 시나리오(추첨·발표·취소 반환)·INACTIVE·429·p95·관리자 쓰기는 미검증.
