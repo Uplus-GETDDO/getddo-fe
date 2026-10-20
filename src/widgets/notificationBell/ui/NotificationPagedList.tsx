@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import type { Notification } from '@entities/notification';
 
 import { useVirtualClock } from '@shared/model/virtualClock';
-import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
 import { Pagination } from '@shared/ui/pagination';
 import { SkeletonList } from '@shared/ui/skeleton';
 
@@ -21,12 +21,14 @@ export function NotificationPagedList({
     refetchOnMount,
     onRead,
     skeletonCount = 4,
+    variant = 'drawer',
 }: {
     isRead?: boolean;
     size: number;
     refetchOnMount?: 'always';
     onRead: (notification: Notification) => void;
     skeletonCount?: number;
+    variant?: 'drawer' | 'page';
 }) {
     const { query, page, totalPages, setPage, items, pageLoading, pageError, retryPage } =
         useNotificationPage({ isRead, size, refetchOnMount });
@@ -45,19 +47,19 @@ export function NotificationPagedList({
     // 첫 쪽 실패만 전체 오류로 본다 — 받아 둔 쪽은 다른 쪽 실패에도 유지한다
     if (query.isError && !query.data) {
         return (
-            <div role="alert" className="flex flex-col items-center gap-3 px-6 py-10 text-center">
-                <p className="text-body-sm text-fg-secondary">알림을 불러오지 못했어요.</p>
-                <Button variant="secondary" size="sm" onClick={() => void query.refetch()}>
-                    다시 시도
-                </Button>
-            </div>
+            <LoadError
+                title="알림을 불러오지 못했어요"
+                onRetry={() => void query.refetch()}
+                retrying={query.isFetching}
+                className="px-5 py-6"
+            />
         );
     }
 
     const changePage = (next: number) => {
         setPage(next);
         // 새 쪽은 맨 위부터 읽게 목록 머리로 올린다
-        topRef.current?.scrollIntoView({ block: 'nearest' });
+        topRef.current?.scrollIntoView?.({ block: 'nearest' });
     };
 
     return (
@@ -68,17 +70,11 @@ export function NotificationPagedList({
                     <SkeletonList count={skeletonCount} rowClassName="h-16" />
                 </div>
             ) : pageError ? (
-                <div
-                    role="alert"
-                    className="flex flex-col items-center gap-3 px-6 py-10 text-center"
-                >
-                    <p className="text-body-sm text-fg-secondary">
-                        {page}쪽 알림을 불러오지 못했어요.
-                    </p>
-                    <Button variant="secondary" size="sm" onClick={retryPage}>
-                        다시 시도
-                    </Button>
-                </div>
+                <LoadError
+                    title={`${page}쪽 알림을 불러오지 못했어요`}
+                    onRetry={retryPage}
+                    className="px-5 py-6"
+                />
             ) : !items || items.length === 0 ? (
                 <NotificationEmpty />
             ) : (
@@ -86,6 +82,7 @@ export function NotificationPagedList({
                     groups={groupNotifications(items, now)}
                     now={now}
                     onRead={onRead}
+                    variant={variant}
                 />
             )}
             {totalPages > 1 && (

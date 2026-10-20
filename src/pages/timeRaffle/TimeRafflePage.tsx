@@ -4,6 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useEventList } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
+import { LoadError } from '@shared/ui/load-error';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { LoadingBlock, Skeleton, SkeletonCard, SkeletonHeading } from '@shared/ui/skeleton';
 
 import { RAFFLE_SECTION_IDS } from './model/sectionIds';
@@ -24,7 +26,8 @@ type RaffleView = 'now' | 'closed';
 const VIEW_PARAM = 'view';
 
 export function TimeRafflePage() {
-    const { data: events, isPending, isError } = useEventList();
+    const eventsQuery = useEventList();
+    const { data: events, isPending } = eventsQuery;
     const clock = useVirtualClock();
     // 날짜 머리말('오늘/어제') 표기 전용이라 마운트 시각으로 충분하다 — 마감 판정에는 쓰지 않는다
     const [now] = useState(() => clock.now());
@@ -79,10 +82,17 @@ export function TimeRafflePage() {
         );
     }
 
-    if (isError) {
+    // 처음부터 못 받았을 때만 실패 칸 — 받아 둔 목록이 있으면 다시 받기에 실패해도 그대로 두고 머리의 갱신 표시로만 알린다
+    if (!events) {
         return (
             <main className={CONTAINER}>
-                <p className="text-destructive text-body-sm">래플을 불러오지 못했습니다.</p>
+                <LoadError
+                    size="md"
+                    title="겟또타임을 불러오지 못했어요"
+                    onRetry={() => void eventsQuery.refetch()}
+                    retrying={eventsQuery.isFetching}
+                    className="border-border-default bg-surface-page min-h-96 rounded-2xl border shadow-md"
+                />
             </main>
         );
     }
@@ -110,8 +120,20 @@ export function TimeRafflePage() {
 
     return (
         <main className={CONTAINER}>
-            <div className="flex flex-col gap-14">
-                <TimeRaffleHero live={byEndsAtAsc} now={now} />
+            <div className="flex flex-col gap-10">
+                <TimeRaffleHero
+                    live={byEndsAtAsc}
+                    now={now}
+                    refresh={
+                        // 30초 폴링 중임을 알리고, 실패하면 받아 둔 목록을 둔 채 다시 시도를 연다 (홈 겟또타임과 같은 표시)
+                        <RefreshStatus
+                            fetching={eventsQuery.isFetching}
+                            updatedAt={eventsQuery.dataUpdatedAt}
+                            error={eventsQuery.isError}
+                            onRefresh={() => void eventsQuery.refetch()}
+                        />
+                    }
+                />
 
                 {/*
                  * 머리 아래 내용 칸만 갈아 끼운다 — 마감 화면은 옆에서 밀려 들어오고, 돌아가면 반대쪽에서 들어온다.

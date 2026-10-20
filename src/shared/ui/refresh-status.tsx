@@ -54,12 +54,13 @@ function RefreshStatus({
             onClick={onRefresh}
             disabled={fetching}
             aria-label={showError ? '갱신에 실패했어요. 다시 받기' : '지금 다시 받기'}
+            // 호버는 바탕을 칠하지 않고 글자만 진하고 굵게 — 작은 글 버튼이 회색 알약으로 튀어 보이지 않게 (다른 작은 글 버튼도 같은 규칙)
             // 글자 크기(text-caption)는 cn 밖에서 잇는다 — 글자색과 한 cn에 넣으면 크기가 지워진다
             className={`text-caption ${cn(
-                'focus-visible:ring-border-focus inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2 whitespace-nowrap tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:cursor-default',
+                'focus-visible:ring-border-focus inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2 whitespace-nowrap tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none enabled:hover:font-semibold disabled:cursor-default',
                 showError
-                    ? 'text-semantic-error-strong hover:bg-surface-sunken'
-                    : 'text-fg-tertiary hover:bg-surface-sunken hover:text-fg-primary',
+                    ? 'text-semantic-error-strong'
+                    : 'text-fg-tertiary enabled:hover:text-fg-primary',
                 className,
             )}`}
         >

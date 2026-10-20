@@ -46,14 +46,14 @@ describe('미션 응모권 이력 더보기', () => {
         state.isFetchNextPageError = true;
         render(<TicketHistoryCard />);
         expect(screen.getByText('기존 이력')).toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
+        fireEvent.click(screen.getByRole('button', { name: '갱신에 실패했어요. 다시 받기' }));
         expect(state.fetchNextPage).toHaveBeenCalledOnce();
         expect(state.refetch).not.toHaveBeenCalled();
     });
     it('백그라운드 재조회 오류는 다음 페이지 대신 현재 조건을 재조회한다', () => {
         state.isError = true;
         render(<TicketHistoryCard />);
-        fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
+        fireEvent.click(screen.getByRole('button', { name: '갱신에 실패했어요. 다시 받기' }));
         expect(state.refetch).toHaveBeenCalledOnce();
         expect(state.fetchNextPage).not.toHaveBeenCalled();
     });
@@ -66,7 +66,7 @@ describe('미션 응모권 이력 더보기', () => {
         state.cursorError = true;
         render(<TicketHistoryCard />);
         expect(screen.queryByRole('button', { name: '더 보기' })).not.toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
+        fireEvent.click(screen.getByRole('button', { name: '갱신에 실패했어요. 다시 받기' }));
         expect(state.refetch).toHaveBeenCalledOnce();
     });
     it('마지막 페이지에서는 더보기 버튼이 없다', () => {

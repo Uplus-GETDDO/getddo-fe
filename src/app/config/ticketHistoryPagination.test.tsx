@@ -96,18 +96,18 @@ describe('응모권 화면 실제 요청 수와 기간 전체 합계', () => {
             requests.every((url) => url.searchParams.get('from') === '2026-09-30T15:00:00.000Z'),
         ).toBe(true);
     });
-    it('내 응모권 최초는 목록1+월합계2이며 더보기는 한 요청만 추가한다', async () => {
+    it('내 응모권 최초는 목록1+월합계2이고, 첫 쪽을 채우려 다음 커서를 한 번만 이어 받는다', async () => {
         const requests: URL[] = [];
         server.use(historiesHandler(requests));
         const client = renderContent(<MyTicketsPage />);
         expect(await screen.findByText('+1,000장')).toBeInTheDocument();
         expect(await screen.findByText('−300장')).toBeInTheDocument();
         await waitFor(() => expect(client.isFetching()).toBe(0));
-        expect(requests).toHaveLength(3);
-        expect(requests.filter((url) => url.searchParams.get('size') === '1')).toHaveLength(2);
-        fireEvent.click(screen.getByRole('button', { name: '더 보기' }));
-        await waitFor(() => expect(requests).toHaveLength(4));
+        // 첫 응답이 한 줄(같은 처리 5건)뿐이라 쪽(10줄)을 채우려 nextCursor를 따라 한 번 더 받고, 끝(null)에서 멈춘다
         expect(await screen.findByText('+6장')).toBeInTheDocument();
+        expect(requests).toHaveLength(4);
+        expect(requests.filter((url) => url.searchParams.get('size') === '1')).toHaveLength(2);
+        expect(requests.filter((url) => url.searchParams.has('cursor'))).toHaveLength(1);
     });
     it('마이페이지는 최근7일 size5와 오늘GRANT size1의 두 요청만 보낸다', async () => {
         const requests: URL[] = [];
@@ -127,11 +127,12 @@ describe('응모권 화면 실제 요청 수와 기간 전체 합계', () => {
         server.use(historiesHandler(requests, true));
         renderContent(<MyTicketsPage />);
         expect(await screen.findAllByText('조회 실패')).toHaveLength(2);
-        expect(await screen.findByText('+5장')).toBeInTheDocument();
+        expect(await screen.findByText('+6장')).toBeInTheDocument();
         expect(screen.queryByText('+0장')).not.toBeInTheDocument();
         server.use(historiesHandler(requests));
         fireEvent.click(screen.getByRole('button', { name: '월 합계 다시 시도' }));
         expect(await screen.findByText('+1,000장')).toBeInTheDocument();
-        expect(requests).toHaveLength(5);
+        // 목록 2(첫 쪽 + 이어 받기) + 실패한 월 합계 2 + 다시 시도한 월 합계 2 — 목록은 다시 받지 않는다
+        expect(requests).toHaveLength(6);
     });
 });

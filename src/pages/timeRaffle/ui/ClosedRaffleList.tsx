@@ -8,16 +8,18 @@ import { useEntryStatistics } from '@entities/entry';
 import { EnteredChip } from '@entities/event';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { Pagination } from '@shared/ui/pagination';
 import { StatusDot } from '@shared/ui/status-dot';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
+import { pageSlice } from '@shared/utils/pagination';
 
 import { kstDayLabel } from '../utils/raffleFormat';
 import { RaffleThumbnail } from './RaffleThumbnail';
 
-/** 기본 화면에서 미리 보여 주는 줄 수 — 나머지는 '마감한 래플' 화면에서 본다 */
+/** 기본 화면에서 미리 보여 주는 줄 수 — 나머지는 전체보기(마감한 래플 화면)에서 본다 */
 const PREVIEW_COUNT = 3;
-/** 마감한 래플 화면에서 '더 보기'를 누를 때마다 늘리는 줄 수 */
+/** 마감한 래플 화면 한 쪽의 줄 수 */
 const PAGE_SIZE = 10;
 
 interface ClosedRaffleListProps {
@@ -26,8 +28,8 @@ interface ClosedRaffleListProps {
     events: Event[];
     now: Date;
     /**
-     * preview — 기본 화면 아래에 최근 몇 줄만 두고 '전체보기'로 마감한 래플 화면으로 넘긴다.
-     * full — 마감한 래플 화면. 전부를 날짜별로 묶고 '더 보기'로 이어 붙인다
+     * preview — 기본 화면 아래에 최근 마감 몇 줄만 두고 '전체보기'로 마감한 래플 화면으로 넘긴다.
+     * full — 마감한 래플 화면. 최근 마감 순 한 목록을 10줄씩 번호로 넘긴다
      */
     mode: 'preview' | 'full';
     /** preview의 '전체보기' — 페이지를 옮기지 않고 내용 칸만 마감한 래플로 바꾼다 */
@@ -44,19 +46,11 @@ export function ClosedRaffleList({
     onShowAll,
     onBack,
 }: ClosedRaffleListProps) {
-    const [shown, setShown] = useState(PAGE_SIZE);
+    const [page, setPage] = useState(1);
+    const paged = pageSlice(events, page, PAGE_SIZE);
 
-    const limit = mode === 'preview' ? PREVIEW_COUNT : shown;
-    const visible = events.slice(0, limit);
-
-    // 날짜가 바뀌는 자리에만 '오늘 / 어제' 머리말을 넣는다
-    const groups: { label: string; rows: Event[] }[] = [];
-    for (const event of visible) {
-        const label = kstDayLabel(event.endsAt, now);
-        const last = groups.at(-1);
-        if (last?.label === label) last.rows.push(event);
-        else groups.push({ label, rows: [event] });
-    }
+    // 오늘·어제로 나누지 않고 최근 마감 순 한 목록 — 날짜는 줄마다 '오늘 16:28 마감'으로 적혀 있다
+    const visible = mode === 'preview' ? events.slice(0, PREVIEW_COUNT) : paged.items;
 
     return (
         <section id={id} className="flex scroll-mt-24 flex-col gap-6">
@@ -76,7 +70,14 @@ export function ClosedRaffleList({
             )}
             {mode === 'preview' && (
                 <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-title-3 text-fg-primary">마감한 래플</h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-title-3 text-fg-primary">마감한 래플</h2>
+                        {events.length > 0 && (
+                            <Badge variant="neutral" size="sm">
+                                {formatNumber(events.length)}
+                            </Badge>
+                        )}
+                    </div>
                     {events.length > PREVIEW_COUNT && (
                         <Button variant="link" size="text" onClick={onShowAll}>
                             전체보기
@@ -90,28 +91,27 @@ export function ClosedRaffleList({
                 <p className="text-body-sm text-fg-tertiary">마감한 래플이 없어요.</p>
             ) : (
                 <div className="flex flex-col">
-                    {groups.map((group) => (
-                        <div key={group.label} className="flex flex-col">
-                            {/* 머리말은 줄 안의 썸네일과 같은 왼쪽 선(16px)에 맞춘다 */}
-                            <p className="text-caption text-fg-tertiary px-4 pt-3.5 pb-0.5">
-                                {group.label}
-                            </p>
-                            {/* 홈 '발표 대기 · 결과'와 같은 목록 — 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다 */}
-                            <ul className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">
-                                {group.rows.map((event) => (
-                                    <ClosedRaffleRow key={event.id} event={event} now={now} />
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                    {mode === 'full' && events.length > shown && (
-                        <Button
-                            variant="secondary"
-                            className="mt-4 self-center"
-                            onClick={() => setShown((count) => count + PAGE_SIZE)}
-                        >
-                            더 보기
-                        </Button>
+                    {/* 홈 '발표 대기 · 결과'와 같은 목록 — 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다 */}
+                    <ul className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">
+                        {visible.map((event) => (
+                            <ClosedRaffleRow key={event.id} event={event} now={now} />
+                        ))}
+                    </ul>
+                    {mode === 'full' && paged.totalPages > 1 && (
+                        <Pagination
+                            page={paged.current}
+                            totalPages={paged.totalPages}
+                            onPageChange={(next) => {
+                                setPage(next);
+                                // 새 쪽은 목록 머리부터 읽게 올린다
+                                if (id)
+                                    document
+                                        .getElementById(id)
+                                        ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+                            }}
+                            label="마감한 래플 페이지"
+                            className="justify-center pt-4"
+                        />
                     )}
                 </div>
             )}

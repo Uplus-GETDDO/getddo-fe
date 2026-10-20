@@ -8,6 +8,7 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { FeaturedEventCard, UpcomingEventCard, useEvent } from '@entities/event';
+import emptyTakko from '@shared/assets/mascot/empty-takko.png';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
 import { EmptyState } from '@shared/ui/empty-state';
@@ -212,11 +213,42 @@ function UpcomingEventCarousel({
                                     .map((event) => (
                                         <UpcomingEventCard key={event.id} event={event} />
                                     ))}
+                                {/* 쪽에 한 줄만 남으면 빈 아래 칸을 같은 꼴의 안내 줄로 채운다 — 다른 쪽과 모양이 같아 비어 보이지 않는다 */}
+                                {events.length > 0 &&
+                                    events.length - pageIndex * UPCOMING_PAGE_SIZE <
+                                        UPCOMING_PAGE_SIZE && <UpcomingMoreRow />}
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
         </>
+    );
+}
+
+/**
+ * 오픈 예정 빈 칸 채움 줄 — 오픈 예정 줄과 같은 크기(썸네일 64 + 두 줄)로, 겟또타임 화면의 전체 일정으로 안내한다.
+ * 썸네일 자리는 빈 상태와 같은 회색 타코야끼 그림을 점선 칸에 두어 실제 래플 줄과 헷갈리지 않게 한다
+ */
+function UpcomingMoreRow() {
+    return (
+        <Link
+            to="/time-raffle"
+            className="focus-visible:ring-border-focus after:bg-surface-canvas/60 group relative isolate flex min-h-0 items-center gap-4 rounded-2xl p-4 after:absolute after:inset-2 after:-z-10 after:rounded-xl after:opacity-0 hover:after:opacity-100 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset motion-safe:after:transition-opacity motion-safe:after:duration-200"
+        >
+            <span
+                aria-hidden
+                className="border-border-strong flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed"
+            >
+                <img src={emptyTakko} alt="" className="size-12 object-contain" />
+            </span>
+            <span className="flex min-w-0 flex-col gap-1">
+                <span className="text-body-sm text-fg-tertiary">다음 래플도 곧 잡혀요</span>
+                <span className="text-body-sm-bold text-fg-secondary group-hover:text-fg-primary inline-flex items-center gap-0.5">
+                    겟또타임 전체 일정 보기
+                    <ChevronRight aria-hidden className="size-4" />
+                </span>
+            </span>
+        </Link>
     );
 }

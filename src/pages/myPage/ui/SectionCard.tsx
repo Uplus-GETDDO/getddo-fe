@@ -10,6 +10,7 @@ export function SectionCard({
     description,
     moreTo,
     moreLabel,
+    status,
     children,
 }: {
     title: string;
@@ -18,13 +19,18 @@ export function SectionCard({
     moreTo?: string;
     /** 링크를 화면 낭독기에 구분해 읽힐 이름 */
     moreLabel?: string;
+    /** 제목 옆 작은 갱신 표시(RefreshStatus) */
+    status?: React.ReactNode;
     children: React.ReactNode;
 }) {
     return (
         <section className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6 shadow-md">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-col gap-1">
-                    <h2 className="text-title-3 text-fg-primary">{title}</h2>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-title-3 text-fg-primary">{title}</h2>
+                        {status}
+                    </div>
                     <p className="text-body-sm text-fg-tertiary">{description}</p>
                 </div>
                 {moreTo && (

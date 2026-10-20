@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useAttendanceMonth, useAttendanceToday } from '@entities/attendance';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 
@@ -92,7 +93,8 @@ export function AttendanceCheckCard({
     onExpandedChange: (expanded: boolean) => void;
     className?: string;
 }) {
-    const { data: status, isPending, isError } = useAttendanceToday();
+    const statusQuery = useAttendanceToday();
+    const { data: status, isPending } = statusQuery;
     const checkAttendance = useCheckAttendance();
     // 출석 판정은 서버가 하고, 여기서는 표시용 날짜 계산에만 쓴다
     const clock = useVirtualClock();
@@ -284,10 +286,14 @@ export function AttendanceCheckCard({
                         )}
 
                         {isPending && <SkeletonList count={2} rowClassName="h-16" />}
-                        {isError && (
-                            <p className="text-body-sm text-destructive self-center">
-                                출석 정보를 불러오지 못했습니다.
-                            </p>
+                        {/* 받아 둔 출석 정보가 없을 때만 — 카드 높이 안 가운데에 다시 시도를 둔다 */}
+                        {!isPending && !status && (
+                            <LoadError
+                                title="출석 정보를 불러오지 못했어요"
+                                onRetry={() => void statusQuery.refetch()}
+                                retrying={statusQuery.isFetching}
+                                className="flex-1"
+                            />
                         )}
 
                         {status &&

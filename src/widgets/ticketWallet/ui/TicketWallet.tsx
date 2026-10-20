@@ -13,7 +13,6 @@ import {
     ticketMonthRange,
 } from '@entities/ticket';
 import { useCountUp } from '@shared/hooks/useCountUp';
-import { Button } from '@shared/ui/button';
 import { SkeletonText } from '@shared/ui/skeleton';
 import { formatNumber } from '@shared/utils/format';
 
@@ -113,23 +112,22 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                         </ul>
                     )}
 
-                    {summary.isError && (
-                        <Button
-                            variant="secondary"
-                            disabled={summary.isFetching}
-                            onClick={summary.refetch}
-                        >
-                            월 합계 다시 시도
-                        </Button>
-                    )}
                     {/* 절취선 */}
                     <div className="border-border-default mt-4 flex items-center justify-between gap-3 border-t border-dashed pt-3">
                         <span
                             aria-live="polite"
                             className="text-caption text-fg-tertiary whitespace-nowrap"
                         >
-                            {summary.isError ? (
-                                '이번 달 합계 조회 실패'
+                            {/* 받아 둔 합계가 없을 때만 실패를 적고, 같은 자리에서 다시 받는다 — 큰 버튼을 따로 띄우지 않는다 */}
+                            {summary.isError && !monthly ? (
+                                <button
+                                    type="button"
+                                    disabled={summary.isFetching}
+                                    onClick={summary.refetch}
+                                    className="text-semantic-error-strong focus-visible:ring-border-focus cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:outline-none enabled:hover:font-semibold disabled:cursor-default"
+                                >
+                                    이번 달 합계 조회 실패 · 다시 시도
+                                </button>
                             ) : (
                                 <>
                                     이번 달 적립 {format(monthly?.earned)} · 사용{' '}
@@ -162,7 +160,7 @@ export function TicketWalletCompact({ action }: Pick<TicketWalletProps, 'action'
         n == null ? <SkeletonText className="w-5" /> : formatNumber(n);
 
     return (
-        <div className="bg-surface-page flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl px-5 py-4 shadow-[0_1px_2px_rgb(from_var(--color-ink)_r_g_b_/_0.1)]">
+        <div className="bg-surface-page flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl px-5 py-3 shadow-[0_1px_2px_rgb(from_var(--color-ink)_r_g_b_/_0.1)]">
             <div className="flex flex-col">
                 <p className="text-caption text-fg-secondary flex items-center gap-1">
                     사용 가능 응모권

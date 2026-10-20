@@ -14,7 +14,7 @@ import { latestWonAt, MyEntryRefreshStatus, useMyEntryRows } from '@widgets/myEn
 
 import { AccountInfoCard } from './ui/AccountInfoCard';
 import { ProfileCard } from './ui/ProfileCard';
-import { RecentEntriesCard } from './ui/RecentEntriesCard';
+import { RECENT_ENTRY_COUNT, RecentEntriesCard } from './ui/RecentEntriesCard';
 import { RecentNotificationsCard } from './ui/RecentNotificationsCard';
 import { RecentTicketsCard } from './ui/RecentTicketsCard';
 
@@ -39,7 +39,10 @@ export function MyPage() {
         to: new Date(time).toISOString(),
     });
     const daily = useTicketHistoryCounts([{ operationType: 'GRANT', ...ticketDayRange(now) }]);
-    const entries = useMyEntryRows({ selectVisibleRows: (rows) => rows.slice(0, 4) });
+    // 보이는 줄의 결과만 폴링한다
+    const entries = useMyEntryRows({
+        selectVisibleRows: (rows) => rows.slice(0, RECENT_ENTRY_COUNT),
+    });
 
     const won = entries.rows.filter((row) => row.result === 'WON');
     const lastWonAt = latestWonAt(won);
@@ -66,14 +69,18 @@ export function MyPage() {
                 />
             )}
 
-            <MyEntryRefreshStatus query={entries} />
-
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24.5rem]">
                 <div className="flex flex-col gap-6">
                     <RecentEntriesCard
                         rows={entries.rows}
                         isPending={entries.isPending}
                         isError={entries.isError}
+                        onRetry={() => void entries.refetch()}
+                        retrying={entries.isFetching}
+                        status={
+                            !entries.isPending &&
+                            !entries.isError && <MyEntryRefreshStatus query={entries} />
+                        }
                     />
                     <RecentTicketsCard
                         histories={historiesQuery.items}

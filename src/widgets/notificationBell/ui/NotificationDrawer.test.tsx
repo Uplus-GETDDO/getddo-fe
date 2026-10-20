@@ -152,7 +152,7 @@ describe('NotificationDrawer', () => {
         const dialog = await open();
 
         expect(await within(dialog).findByRole('alert')).toHaveTextContent(
-            '알림을 불러오지 못했어요.',
+            '알림을 불러오지 못했어요',
         );
 
         get.mockResolvedValue(page([note(1)], null));

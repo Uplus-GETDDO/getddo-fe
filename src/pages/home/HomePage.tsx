@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { EventResultRow, useEventList } from '@entities/event';
 import { Button } from '@shared/ui/button';
 import { EmptyState } from '@shared/ui/empty-state';
+import { LoadError } from '@shared/ui/load-error';
 import { RefreshStatus } from '@shared/ui/refresh-status';
 import { SkeletonRows } from '@shared/ui/skeleton';
 import { BannerSlider } from '@widgets/bannerSlider';
@@ -88,44 +89,49 @@ export function HomePage() {
                     events={freeEvents.slice(0, FREE_EVENT_LIMIT)}
                     isPending={isPending}
                     isError={isError}
+                    onRetry={() => void eventsQuery.refetch()}
                     emptyMessage="지금 참여할 수 있는 이벤트가 없어요."
                 />
-                {/* 응모한 이벤트가 없어도 섹션은 두고 빈 안내를 보인다 — 있다 없다 하면 홈 아래쪽이 들썩인다 */}
-                {!isError && (
-                    <section className="flex flex-col gap-6">
-                        {/* 다른 홈 섹션처럼 제목 옆에 작은 설명 — 내가 응모한 것만 모았다는 걸 밝힌다 */}
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div className="flex flex-wrap items-center gap-3">
-                                <h2 className="text-title-3 text-fg-primary">내 응모 결과</h2>
-                                <span className="text-fg-tertiary text-caption">
-                                    내가 응모한 이벤트의 발표 대기와 결과예요.
-                                </span>
-                            </div>
-                            <Button asChild variant="link" size="text">
-                                <Link to="/my-entries">
-                                    더보기
-                                    <ChevronRight />
-                                </Link>
-                            </Button>
+                {/* 응모한 이벤트가 없거나 못 불러와도 섹션은 두고 안내를 보인다 — 있다 없다 하면 홈 아래쪽이 들썩인다 */}
+                <section className="flex flex-col gap-6">
+                    {/* 다른 홈 섹션처럼 제목 옆에 작은 설명 — 내가 응모한 것만 모았다는 걸 밝힌다 */}
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <h2 className="text-title-3 text-fg-primary">내 응모 결과</h2>
+                            <span className="text-fg-tertiary text-caption">
+                                내가 응모한 이벤트의 발표 대기와 결과예요.
+                            </span>
                         </div>
-                        {/* 피그마 홈 — 바깥 테두리 없이 행 사이에만 구분선, 4개까지 보여주고 나머지는 '더보기'. 구분선은 호버 배경과 같은 8px 안쪽에서 시작해 좌우 끝을 맞춘다 */}
-                        {isPending ? (
-                            <SkeletonRows rows={2} />
-                        ) : resultEvents.length === 0 ? (
-                            <EmptyState
-                                size="sm"
-                                title="아직 응모한 이벤트가 없어요"
-                                description="응모한 이벤트가 마감되면 발표 대기와 결과를 여기에서 볼 수 있어요."
-                            />
-                        ) : (
-                            <div className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">
-                                {resultEvents.slice(0, RESULT_LIMIT).map((event) => (
-                                    <EventResultRow key={event.id} event={event} />
-                                ))}
-                            </div>
-                        )}
-                    </section>
-                )}
+                        <Button asChild variant="link" size="text">
+                            <Link to="/my-entries">
+                                더보기
+                                <ChevronRight />
+                            </Link>
+                        </Button>
+                    </div>
+                    {/* 피그마 홈 — 바깥 테두리 없이 행 사이에만 구분선, 4개까지 보여주고 나머지는 '더보기'. 구분선은 호버 배경과 같은 8px 안쪽에서 시작해 좌우 끝을 맞춘다 */}
+                    {isPending ? (
+                        <SkeletonRows rows={2} />
+                    ) : isError ? (
+                        <LoadError
+                            title="응모 결과를 불러오지 못했어요"
+                            onRetry={() => void eventsQuery.refetch()}
+                            retrying={eventsQuery.isFetching}
+                        />
+                    ) : resultEvents.length === 0 ? (
+                        <EmptyState
+                            size="sm"
+                            title="아직 응모한 이벤트가 없어요"
+                            description="응모한 이벤트가 마감되면 발표 대기와 결과를 여기에서 볼 수 있어요."
+                        />
+                    ) : (
+                        <div className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">
+                            {resultEvents.slice(0, RESULT_LIMIT).map((event) => (
+                                <EventResultRow key={event.id} event={event} />
+                            ))}
+                        </div>
+                    )}
+                </section>
             </div>
         </main>
     );

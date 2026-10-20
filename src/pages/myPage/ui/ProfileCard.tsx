@@ -16,6 +16,7 @@ import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar.png';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { SkeletonText } from '@shared/ui/skeleton';
 import { TICKET_OUTLINE_FILTER } from '@shared/ui/ticket-card';
 import { formatNumber } from '@shared/utils/format';
@@ -228,16 +229,13 @@ export function ProfileCard({
             </div>
             {/* 받아 둔 합계가 있으면 다시 받기 실패에도 그 값을 두고 안내를 띄우지 않는다 */}
             {stats.historiesError && stats.todayGranted === undefined && (
-                <div role="alert">
-                    <span>오늘 적립 합계를 불러오지 못했습니다.</span>
-                    <Button
-                        variant="secondary"
-                        disabled={stats.historiesFetching}
-                        onClick={stats.onRetryHistories}
-                    >
-                        오늘 적립 다시 시도
-                    </Button>
-                </div>
+                // '오늘 적립' 칸은 '조회 실패'로 남기고, 여기엔 다시 받는 작은 표시만 둔다 — 큰 안내 줄이 카드를 밀어냈다
+                <RefreshStatus
+                    fetching={stats.historiesFetching ?? false}
+                    error
+                    onRefresh={() => stats.onRetryHistories?.()}
+                    className="self-start"
+                />
             )}
             <TicketBalanceStatus query={ticketsQuery} />
         </section>

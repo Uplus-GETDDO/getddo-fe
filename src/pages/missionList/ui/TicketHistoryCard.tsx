@@ -2,6 +2,8 @@ import { Fragment, useState } from 'react';
 
 import { TicketHistoryRow, useTicketHistories } from '@entities/ticket';
 import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 
@@ -18,6 +20,10 @@ export function TicketHistoryCard({ className }: { className?: string }) {
     const freshIds = useFreshIds(history?.map((item) => item.id));
     // 상세는 한 번에 하나만 펼친다
     const [openId, setOpenId] = useState<string | null>(null);
+    const retry = () =>
+        void (!query.cursorError && query.isFetchNextPageError
+            ? query.fetchNextPage({ cancelRefetch: false })
+            : query.refetch());
 
     return (
         <div
@@ -40,23 +46,24 @@ export function TicketHistoryCard({ className }: { className?: string }) {
                         </p>
                     )}
                     {isPending && <SkeletonList count={4} className="p-4" />}
-                    {(isError || query.cursorError) && (
-                        <p role="alert" className="text-body-sm text-destructive p-4">
-                            응모권 내역을 불러오지 못했습니다.
-                            {
-                                <Button
-                                    variant="secondary"
-                                    disabled={query.isFetching}
-                                    onClick={() =>
-                                        void (!query.cursorError && query.isFetchNextPageError
-                                            ? query.fetchNextPage({ cancelRefetch: false })
-                                            : query.refetch())
-                                    }
-                                >
-                                    다시 시도
-                                </Button>
-                            }
-                        </p>
+                    {/*
+                     * 받아 둔 내역이 있으면 그대로 두고 맨 위에 작은 갱신 실패 표시만 — 비어 있을 때만 실패 칸을 띄운다.
+                     * 더 받기(커서)가 실패했으면 이어서 받고, 처음 목록이 실패했으면 처음부터 다시 받는다
+                     */}
+                    {(isError || query.cursorError) && history.length > 0 && (
+                        <RefreshStatus
+                            fetching={query.isFetching}
+                            error
+                            onRefresh={retry}
+                            className="mx-2 my-1"
+                        />
+                    )}
+                    {(isError || query.cursorError) && history.length === 0 && (
+                        <LoadError
+                            title="응모권 내역을 불러오지 못했어요"
+                            onRetry={retry}
+                            retrying={query.isFetching}
+                        />
                     )}
                     {!isPending && !isError && !query.cursorError && history.length === 0 && (
                         <p role="status" className="text-body-sm text-fg-tertiary p-4">

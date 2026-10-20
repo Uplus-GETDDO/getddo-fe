@@ -72,6 +72,7 @@ export function MyNotificationsPage() {
                         isRead={filter === 'UNREAD' ? false : undefined}
                         size={PAGE_SIZE}
                         skeletonCount={5}
+                        variant="page"
                         onRead={({ id, linkUrl }) => {
                             markRead(id);
                             const path = toInternalPath(linkUrl);

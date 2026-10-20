@@ -227,19 +227,17 @@ describe('내 응모 표시 범위', () => {
             </QueryClientProvider>,
         );
         await settle();
-        expect(screen.getByRole('button', { name: '전체 응모 다시 조회' })).toBeEnabled();
+        expect(screen.getByRole('button', { name: '지금 다시 받기' })).toBeEnabled();
         expect(screen.getByText('PENDING')).toBeInTheDocument();
-        const successTime = screen.getByText(/가장 오래된 성공 시각/).textContent;
         fail = true;
         await act(async () => {
             await vi.advanceTimersByTimeAsync(32_000);
         });
         expect(screen.getByText('PENDING')).toBeInTheDocument();
-        expect(screen.getByText(/일부 응모 갱신에 실패/)).toBeInTheDocument();
-        expect(screen.getByText(/가장 오래된 성공 시각/).textContent).toBe(successTime);
+        expect(screen.getByText('갱신 실패 · 다시 시도')).toBeInTheDocument();
         fail = false;
         recovered = true;
-        fireEvent.click(screen.getByRole('button', { name: '전체 응모 다시 조회' }));
+        fireEvent.click(screen.getByRole('button', { name: '갱신에 실패했어요. 다시 받기' }));
         await settle();
         expect(screen.getByText('LOST')).toBeInTheDocument();
         client.clear();

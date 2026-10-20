@@ -10,7 +10,7 @@ import { TicketHistoryCard } from './TicketHistoryCard';
 
 const now = new Date('2026-10-19T03:00:00Z');
 describe('내 응모권 페이지 경계 그룹', () => {
-    it('여섯 번째 이력을 로드하면 같은 응모의 수량이 5장에서 6장으로 갱신된다', async () => {
+    it('쪽을 채우려 다음 이력을 이어 받으면 같은 응모가 한 줄 6장으로 합쳐진다', async () => {
         let requests = 0;
         server.use(
             http.get('*/v1/tickets/histories/me', ({ request }) => {
@@ -51,13 +51,14 @@ describe('내 응모권 페이지 경계 그룹', () => {
                 </VirtualClockContext.Provider>
             </QueryClientProvider>,
         );
-        expect(await screen.findByText('−5장')).toBeInTheDocument();
-        expect(requests).toBe(1);
-        fireEvent.click(screen.getByRole('button', { name: '더 보기' }));
+        // 첫 응답은 한 줄뿐이라 쪽(10줄)을 채우려 nextCursor를 따라 한 번 더 받는다 — 쪽 경계에서 수량이 갈리지 않는다
         expect(await screen.findByText('−6장')).toBeInTheDocument();
         expect(requests).toBe(2);
-        expect(screen.getByText(/불러온 이력 기준 수량/)).toBeInTheDocument();
+        expect(screen.queryByText('−5장')).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('navigation', { name: '응모권 기록 페이지' }),
+        ).not.toBeInTheDocument();
         fireEvent.click(screen.getByRole('button', { name: '받은' }));
-        await waitFor(() => expect(requests).toBe(3));
+        await waitFor(() => expect(requests).toBeGreaterThanOrEqual(3));
     });
 });

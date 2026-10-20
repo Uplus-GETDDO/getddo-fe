@@ -37,7 +37,15 @@ export function LiveRaffleSection({ id, events, now, ticketLimit }: LiveRaffleSe
         <section id={id} className="flex scroll-mt-24 flex-col gap-6">
             <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                    <h2 className="text-title-3 text-fg-primary">지금 진행 중</h2>
+                    {/* 지금 열려 있다는 신호 — 브랜드색 점이 천천히 번진다. 동작 줄이기 설정에선 멈춘 점만 */}
+                    {events.length > 0 && (
+                        <span aria-hidden className="relative flex size-2.5">
+                            <span className="bg-brand-primary absolute inset-0 rounded-full opacity-60 motion-safe:animate-ping" />
+                            <span className="bg-brand-primary relative size-2.5 rounded-full" />
+                        </span>
+                    )}
+                    {/* 이 화면의 주인공이라 다른 섹션(title-3)보다 한 단계 큰 제목 */}
+                    <h2 className="text-title-2 text-fg-primary">지금 진행 중</h2>
                     {events.length > 0 && (
                         <Badge variant="neutral" size="sm">
                             {events.length}

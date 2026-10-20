@@ -11,6 +11,7 @@ import { missionThumbnail, useMissionList } from '@entities/mission';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
 import { TicketCard, TicketCardMedia } from '@shared/ui/ticket-card';
 import { cn } from '@shared/utils/cn';
@@ -48,9 +49,19 @@ export function TicketBalanceWidget({
     cardClassName?: string;
     hideMoreLink?: boolean;
 } = {}) {
-    const { data: attendance, isPending: attendancePending } = useAttendanceToday();
-    const { data: missions, isPending: missionsPending } = useMissionList();
-    const { data: games, isPending: gamesPending } = useGameList();
+    const attendanceQuery = useAttendanceToday();
+    const missionsQuery = useMissionList();
+    const gamesQuery = useGameList();
+    const { data: attendance, isPending: attendancePending } = attendanceQuery;
+    const { data: missions, isPending: missionsPending } = missionsQuery;
+    const { data: games, isPending: gamesPending } = gamesQuery;
+    // 셋 중 하나라도 처음부터 못 받았는가 — 받아 둔 카드가 하나도 없을 때만 실패 칸을 띄운다
+    const anyError = attendanceQuery.isError || missionsQuery.isError || gamesQuery.isError;
+    const retryAll = () => {
+        if (attendanceQuery.isError) void attendanceQuery.refetch();
+        if (missionsQuery.isError) void missionsQuery.refetch();
+        if (gamesQuery.isError) void gamesQuery.refetch();
+    };
     // 셋이 모두 올 때까지 카드 자리만 잡아 둔다 — 비어 있다가 갑자기 섹션이 생기면 아래 내용이 밀리고,
     // 하나씩 도착할 때마다 그리면 순서(orderEarnCards)가 바뀌며 카드가 뒤섞여 보인다
     const loading = attendancePending || missionsPending || gamesPending;
@@ -110,7 +121,8 @@ export function TicketBalanceWidget({
     ];
     const orderedCards = orderEarnCards(cards);
 
-    if (cards.length === 0 && !loading) {
+    // 받을 수 있는 게 정말 없을 때만 섹션을 감춘다 — 못 불러온 것이면 자리를 지키고 다시 시도를 연다
+    if (cards.length === 0 && !loading && !anyError) {
         return null;
     }
 
@@ -133,7 +145,13 @@ export function TicketBalanceWidget({
                 )}
             </div>
             {/* 한 화면에 N.5장 — 반 장이 잘려 보이며 옆으로 더 있다는 암시를 준다. 마우스는 드래그로, 터치는 브라우저 네이티브 스크롤로 움직인다 */}
-            {loading ? (
+            {cards.length === 0 && !loading && anyError ? (
+                <LoadError
+                    title="받을 수 있는 응모권을 불러오지 못했어요"
+                    onRetry={retryAll}
+                    className="min-h-90"
+                />
+            ) : loading ? (
                 <div role="status" className="flex gap-4 overflow-hidden">
                     <span className="sr-only">응모권 카드를 불러오는 중이에요</span>
                     {Array.from({ length: 4 }, (_, index) => (

@@ -86,15 +86,17 @@ export function QuickLinks() {
 function QuickLinkButton({ link }: { link: QuickLink }) {
     const done = link.today === 'done';
     const highlight = link.highlight && link.today === 'pending';
+    // 그림자 없이 공용 버튼과 같은 호버·누름 — 노랑은 accent 버튼처럼 밝기를, 흰 칸은 secondary 버튼처럼 바탕·테두리를 한 단계 바꾼다.
+    // 배너 아래 작은 버튼 셋이 모두 떠 보이면 무거웠다
     const tone = highlight
-        ? 'bg-ticket-primary text-ticket-on border-transparent hover:brightness-95 shadow-md'
+        ? 'bg-ticket-primary text-ticket-on border-transparent hover:brightness-95 active:brightness-90'
         : done
-          ? 'bg-surface-sunken text-fg-tertiary border-transparent hover:bg-surface-canvas'
-          : 'bg-surface-page text-fg-primary border-border-default hover:bg-surface-canvas shadow-md';
+          ? 'bg-surface-sunken text-fg-tertiary border-transparent hover:bg-surface-canvas active:bg-surface-pressed'
+          : 'bg-surface-page text-fg-primary border-border-default hover:bg-surface-canvas hover:border-border-strong active:bg-surface-pressed';
     return (
         <Link
             to={link.to}
-            className={`${tone} focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center transition-[background-color,filter,transform] focus-visible:ring-2 focus-visible:outline-none active:translate-y-px sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
+            className={`${tone} group focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-[background-color,border-color,filter,transform] focus-visible:ring-2 focus-visible:outline-none active:translate-y-px sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
         >
             <span className="relative shrink-0">
                 <img
@@ -105,7 +107,10 @@ function QuickLinkButton({ link }: { link: QuickLink }) {
                 />
                 {link.today === 'pending' && (
                     // 오늘 할 일이 남았다는 표시 — 글자 대신 점 하나
-                    <span className="bg-brand-primary border-surface-page absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2">
+                    // 점 테두리는 버튼 바탕색과 같게 — 그림을 살짝 파낸 것처럼 보이게 한다 (노란 게임 칸에 흰 테두리가 튀었다)
+                    <span
+                        className={`bg-brand-primary absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2 ${highlight ? 'border-ticket-primary' : 'border-surface-page group-hover:border-surface-canvas group-active:border-surface-pressed'}`}
+                    >
                         <span className="sr-only">오늘 할 일이 남았어요</span>
                     </span>
                 )}

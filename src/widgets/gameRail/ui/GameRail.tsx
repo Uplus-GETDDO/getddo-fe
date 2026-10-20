@@ -1,6 +1,7 @@
 import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
+import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
 
 /** fill일 때 한 줄에 채우는 칸 수 */
@@ -23,7 +24,8 @@ export function GameRail({
     /** 넓은 화면에서 게임이 한 줄(4개)에 다 들어가면 가로 넘김 대신 칸을 꽉 채운다 — 오른쪽이 비어 보였다 */
     fill?: boolean;
 }) {
-    const { data: games, isPending, isError } = useGameList();
+    const gamesQuery = useGameList();
+    const { data: games, isPending } = gamesQuery;
     const dragScroll = useDragScroll<HTMLDivElement>();
     const ordered = (games ?? [])
         // 플레이 화면이 없는 게임(후보·준비 중)은 목록에서 뺀다
@@ -47,10 +49,16 @@ export function GameRail({
                     ))}
                 </div>
             )}
-            {isError && (
-                <p className="text-body-sm text-destructive">게임 목록을 불러오지 못했습니다.</p>
+            {/* 받아 둔 목록이 없을 때만 — 카드 한 줄 높이를 지켜 아래가 올라오지 않게 한다 */}
+            {!isPending && !games && (
+                <LoadError
+                    title="게임을 불러오지 못했어요"
+                    onRetry={() => void gamesQuery.refetch()}
+                    retrying={gamesQuery.isFetching}
+                    className="min-h-90"
+                />
             )}
-            {!isPending && !isError && ordered.length === 0 && (
+            {games && ordered.length === 0 && (
                 <p className="text-body-sm text-fg-tertiary">지금 참여할 수 있는 게임이 없어요.</p>
             )}
             {fillRow && (
