@@ -34,6 +34,7 @@ export {
     adminEventApiPath,
     useAdminEvent,
     useAdminEvents,
+    useAdminEventsByStatus,
     useAdminEventStatusCounts,
 } from './api/adminQueries';
 export {

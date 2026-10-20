@@ -40,7 +40,8 @@ export function AccountInfoCard({ user }: { user: VirtualUser }) {
                         <Button
                             variant="link"
                             size="text"
-                            aria-pressed={idShown}
+                            // 글자가 보기·숨기기로 바뀌므로 aria-pressed 대신 무엇을 하는지 이름에 담는다
+                            aria-label={idShown ? '사용자 ID 숨기기' : '사용자 ID 보기'}
                             onClick={() => setIdShown((shown) => !shown)}
                         >
                             {idShown ? '숨기기' : '보기'}

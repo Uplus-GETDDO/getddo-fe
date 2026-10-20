@@ -16,9 +16,9 @@ describe('계정 정보 카드', () => {
         render(<AccountInfoCard user={user} />);
         expect(screen.queryByText(user.id)).not.toBeInTheDocument();
         expect(screen.getByText('a1b2••••6789')).toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: '보기' }));
+        fireEvent.click(screen.getByRole('button', { name: '사용자 ID 보기' }));
         expect(screen.getByText(user.id)).toBeInTheDocument();
-        fireEvent.click(screen.getByRole('button', { name: '숨기기' }));
+        fireEvent.click(screen.getByRole('button', { name: '사용자 ID 숨기기' }));
         expect(screen.queryByText(user.id)).not.toBeInTheDocument();
     });
 
