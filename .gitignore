@@ -47,3 +47,7 @@ public/mockServiceWorker.js.bak
 
 # vite
 *.local
+
+# python
+__pycache__/
+*.pyc
