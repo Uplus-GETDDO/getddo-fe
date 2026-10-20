@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import type { Game } from '@entities/game';
 
-import { useAttendanceToday } from '@entities/attendance';
+import { ATTENDANCE_THUMBNAIL, useAttendanceToday } from '@entities/attendance';
 import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
 import { missionThumbnail, useMissionList } from '@entities/mission';
 import { hasGamePlayer } from '@features/playGame';
@@ -27,7 +27,7 @@ interface EarnCard extends OrderableEarnCard {
     rewardKind: string;
     href: string;
     actionLabel: string;
-    /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(게임), 없으면 임시로 회색 블록 + 아이콘 */
+    /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(출석·미션·게임), 없으면 회색 블록 + 아이콘 */
     thumbnailUrl: string | null;
     thumbnailIcon: LucideIcon;
     /** 게임 카드면 미션 페이지와 같은 공용 게임 카드(GameTicketCard)로 그린다 */
@@ -71,7 +71,7 @@ export function TicketBalanceWidget({
                       href: '/missions#today-attendance',
                       actionLabel: '출석하러 가기',
                       completed: attendance.attended,
-                      thumbnailUrl: null,
+                      thumbnailUrl: ATTENDANCE_THUMBNAIL,
                       thumbnailIcon: CalendarCheck,
                   },
               ]

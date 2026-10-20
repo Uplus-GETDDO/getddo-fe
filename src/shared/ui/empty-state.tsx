@@ -4,7 +4,7 @@ import emptyTakko from '@shared/assets/mascot/empty-takko.png';
 import { cn } from '@shared/utils/cn';
 
 /**
- * 빈 상태 — 회색 선 캐릭터(피그마 image 261)와 짧은 안내. 칸 높이는 부모가 정하고, 이 블록은 그 안 가운데에 선다.
+ * 빈 상태 — 회색 선 캐릭터(피그마 image 262)와 짧은 안내. 칸 높이는 부모가 정하고, 이 블록은 그 안 가운데에 선다.
  * 목록이 비었을 때 칸을 지우지 않고 이걸 둬 화면이 들썩이지 않게 한다
  */
 function EmptyState({
