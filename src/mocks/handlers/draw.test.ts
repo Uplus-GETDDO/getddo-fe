@@ -27,6 +27,7 @@ interface Page<T> {
 interface RunBody {
     id: string;
     runNumber: number;
+    drawType: string;
     status: string;
     originalDrawId: string | null;
 }
@@ -51,8 +52,18 @@ interface ResultBody {
 
 interface DetailBody extends RunBody {
     results: ResultBody[];
-    cancellations: { id: string; reason: string; canceledDrawResultId: string }[];
-    lastFailureCode: string | null;
+    execution: {
+        failureCount: number;
+        latestFailure: { failureCode: string; failedAt: string; traceId: string | null } | null;
+        retryAt: string | null;
+        waitingForOperator: boolean;
+        cancellations: {
+            id: string;
+            reason: string;
+            resultId: string;
+            replacementRunId: string | null;
+        }[];
+    };
 }
 
 // 멱등키는 UUID여야 한다 — 테스트마다 구분되는 고정 v4 UUID를 만든다
@@ -123,7 +134,11 @@ describe('추첨 목업', () => {
         expect(list.status).toBe(200);
         expect(list.data.success).toBe(true);
         expect(list.data.data.totalElements).toBe(1);
-        expect(list.data.data.items[0]).toMatchObject({ runNumber: 1, status: 'CONFIRMED' });
+        expect(list.data.data.items[0]).toMatchObject({
+            runNumber: 1,
+            drawType: 'INITIAL',
+            status: 'CONFIRMED',
+        });
 
         const original = await firstRun(EVENT);
         const candidates = await call<
@@ -225,14 +240,14 @@ describe('추첨 목업', () => {
             key: keyOf(2),
         });
         expect(reused.status).toBe(409);
-        expect(reused.data.code).toBe('IDEMPOTENCY_CONFLICT');
+        expect(reused.data.code).toBe('CANCEL-003');
 
         const again = await call('post', `/v1/admin/wins/${win.id}/cancellations`, {
             body: { reason: '본인 확인 실패' },
             key: keyOf(3),
         });
         expect(again.status).toBe(409);
-        expect(again.data.code).toBe('STATE_CONFLICT');
+        expect(again.data.code).toBe('CANCEL-002');
     });
 
     it('AD05는 미확정 재추첨이 있으면 다른 당첨의 새 취소를 409로 거절하고, 확정 뒤에는 허용한다', async () => {
@@ -290,7 +305,12 @@ describe('추첨 목업', () => {
         );
         expect(detail.data.data.status).toBe('CONFIRMED');
         expect(detail.data.data.originalDrawId).toBe(original.id);
-        expect(detail.data.data.cancellations[0]?.canceledDrawResultId).toBe(win.id);
+        // 이 재추첨을 발생시킨 취소 — resultId는 취소된 결과, replacementRunId는 이 실행이다
+        expect(detail.data.data.execution.cancellations[0]).toMatchObject({
+            resultId: win.id,
+            replacementRunId: res.data.data.replacementDrawRunId,
+        });
+        expect(detail.data.data.drawType).toBe('REPLACEMENT');
         const replacement = detail.data.data.results[0]!;
         expect(replacement.slotNumber).toBe(canceled.slotNumber);
         expect(replacement.userId).not.toBe(canceled.userId);
@@ -349,11 +369,14 @@ describe('추첨 목업', () => {
         const list = await call<Page<RunBody>>('get', `/v1/admin/events/${FAILED_EVENT}/draws`);
         const failed = list.data.data.items.find((r) => r.status === 'FAILED')!;
         const detail = await call<DetailBody>('get', `/v1/admin/draws/${failed.id}`);
-        expect(detail.data.data.lastFailureCode).toBeTruthy();
+        expect(detail.data.data.execution.latestFailure?.failureCode).toBeTruthy();
+        // 재시도 예약이 있는 실패는 운영자 대기가 아니다
+        expect(detail.data.data.execution.retryAt).toBeTruthy();
+        expect(detail.data.data.execution.waitingForOperator).toBe(false);
 
         const resume = await call<RunBody>(
             'post',
-            `/v1/admin/cancellations/${detail.data.data.cancellations[0]!.id}/redraws`,
+            `/v1/admin/cancellations/${detail.data.data.execution.cancellations[0]!.id}/redraws`,
         );
         expect(resume.status).toBe(202);
         expect(resume.data.data.status).toBe('PREPARING');
@@ -455,11 +478,17 @@ describe('추첨 목업', () => {
         const changes = await call<
             Page<{
                 revision: number;
-                reason: string;
+                reason: string | null;
+                confirmedBy: string | null;
                 changes: { beforeUserId: string | null; afterUserId: string | null }[];
+                executions: {
+                    runId: string;
+                    cancellations: { id: string; resultId: string; reason: string }[];
+                }[];
             }>
         >('get', `/v1/admin/events/${EVENT}/result-changes`);
-        expect(changes.data.data.totalElements).toBe(1);
+        // 시계 자동 발표의 revision 1(근거 없는 과거 공개)과 AD06 반영의 revision 2다
+        expect(changes.data.data.totalElements).toBe(2);
         const change = changes.data.data.items[0]!;
         expect(change.revision).toBe(2);
         // 본문이 없는 계약이라 이력의 사유는 연결된 취소의 사유다 (cancelFirstWinner 기본값)
@@ -469,6 +498,16 @@ describe('추첨 목업', () => {
             (await firstRun(EVENT)).results.find((r) => r.id === win.id)?.userId,
         );
         expect(change.changes[0]?.afterUserId).toBeTruthy();
+        // 이 재추첨을 발생시킨 취소가 실행별 근거로 남는다
+        expect(change.executions[0]?.runId).toBe(redrawId);
+        expect(change.executions[0]?.cancellations[0]?.reason).toBe('본인 확인 실패');
+        // 시계 자동 발표는 확인자·사유·실행 근거가 없는 과거 공개다
+        expect(changes.data.data.items[1]).toMatchObject({
+            revision: 1,
+            reason: null,
+            confirmedBy: null,
+            executions: [],
+        });
     });
 
     it('AD06은 최초 발표 전이거나 재추첨이 아닌 실행이면 409다', async () => {
@@ -485,5 +524,133 @@ describe('추첨 목업', () => {
         const original = await firstRun(EVENT);
         const notRedraw = await call('post', `/v1/admin/draws/${original.id}/publication`);
         expect(notRedraw.status).toBe(409);
+    });
+
+    describe('최초 발표 (POST /admin/draws/{runId}/result-confirmation)', () => {
+        const confirm = (runId: string, userId?: string) =>
+            call<{
+                eventId: string;
+                confirmationId: string;
+                runId: string;
+                confirmedBy: string;
+                isPublished: boolean;
+                revision: number | null;
+                publishedAt: string | null;
+            }>('post', `/v1/admin/draws/${runId}/result-confirmation`, { userId });
+
+        it('최신 확정 실행으로 본문 없이 발표하면 200으로 공개되고 같은 실행 재요청은 같은 결과다', async () => {
+            const latest = await firstRun(UNPUBLISHED_EVENT);
+            const published = await confirm(latest.id);
+            expect(published.status).toBe(200);
+            expect(published.data.data).toMatchObject({
+                runId: latest.id,
+                isPublished: true,
+                revision: 1,
+            });
+            expect(published.data.data.publishedAt).toBeTruthy();
+
+            const retry = await confirm(latest.id);
+            expect(retry.status).toBe(200);
+            expect(retry.data.data).toEqual(published.data.data);
+
+            // 변경 이력에 실행별 확인 근거가 남는다
+            const changes = await call<
+                Page<{ revision: number; confirmedBy: string | null; executions: unknown[] }>
+            >('get', `/v1/admin/events/${UNPUBLISHED_EVENT}/result-changes`);
+            expect(changes.data.data.items[0]).toMatchObject({ revision: 1 });
+            expect(changes.data.data.items[0]?.executions.length).toBeGreaterThan(0);
+            expect(changes.data.data.items[0]?.confirmedBy).toBeTruthy();
+
+            // 발표된 당첨 결과에는 공개 이력이 생긴다
+            const detail = await call<DetailBody>('get', `/v1/admin/draws/${latest.id}`);
+            expect(
+                detail.data.data.results.every(
+                    (r) => r.resultType !== 'SELECTED' || r.wasPublished,
+                ),
+            ).toBe(true);
+        });
+
+        it('최신이 아닌 실행은 PUBLICATION-005, 미확정 최신 실행은 PUBLICATION-002다', async () => {
+            const { res } = await cancelFirstWinner(UNPUBLISHED_EVENT, keyOf(20));
+            const redrawId = res.data.data.replacementDrawRunId;
+
+            // 검토한 최초 실행이 더는 최신이 아니다 — 명단이 바뀐 것이다
+            const stale = await confirm((await firstRun(UNPUBLISHED_EVENT)).id);
+            expect(stale.status).toBe(409);
+            expect(stale.data.code).toBe('PUBLICATION-005');
+
+            // 최신이지만 미확정 실행은 명단이 준비되지 않았다
+            const notReady = await confirm(redrawId);
+            expect(notReady.status).toBe(409);
+            expect(notReady.data.code).toBe('PUBLICATION-002');
+
+            // 재추첨이 확정되면 최신 실행으로 발표할 수 있다 — 재추첨 결과도 함께 공개된다
+            settleRedraw();
+            const published = await confirm(redrawId);
+            expect(published.status).toBe(200);
+            expect(published.data.data.isPublished).toBe(true);
+        });
+
+        it('발표된 이벤트의 다른 실행은 PUBLICATION-005, 취소됨·비관리자·없는 실행도 거절이다', async () => {
+            const first = await firstRun(EVENT); // evt-009는 시계 발표 완료
+            const rejected = await confirm(first.id);
+            expect(rejected.status).toBe(409);
+            expect(rejected.data.code).toBe('PUBLICATION-005');
+
+            const canceled = await confirm((await firstRun(CANCELED_EVENT)).id);
+            expect(canceled.status).toBe(409);
+            expect(canceled.data.code).toBe('PUBLICATION-005');
+
+            const forbidden = await confirm(first.id, 'vu-doyoon');
+            expect(forbidden.status).toBe(403);
+            expect(forbidden.data.code).toBe('PUBLICATION-003');
+
+            expect((await confirm('drw-nope-r1')).status).toBe(404);
+        });
+    });
+
+    describe('운영 이력 (GD-137)', () => {
+        it('/failures는 실패 이력을 최신순으로 돌려주고 실패 없는 실행은 빈 목록이다', async () => {
+            const list = await call<Page<RunBody>>('get', `/v1/admin/events/${FAILED_EVENT}/draws`);
+            const failed = list.data.data.items.find((r) => r.status === 'FAILED')!;
+
+            const failures = await call<
+                Page<{ runId: string; failureCode: string; failedAt: string }>
+            >('get', `/v1/admin/draws/${failed.id}/failures`);
+            expect(failures.status).toBe(200);
+            expect(failures.data.data.items).toHaveLength(2);
+            expect(failures.data.data.items[0]?.runId).toBe(failed.id);
+            // failedAt 내림차순
+            expect(
+                failures.data.data.items[0]!.failedAt >= failures.data.data.items[1]!.failedAt,
+            ).toBe(true);
+
+            const empty = await call<Page<unknown>>(
+                'get',
+                `/v1/admin/draws/${(await firstRun(EVENT)).id}/failures`,
+            );
+            expect(empty.data.data.items).toHaveLength(0);
+            expect((await call('get', '/v1/admin/draws/drw-nope-r1/failures')).status).toBe(404);
+        });
+
+        it('/execution-audits는 재개·취소 같은 업무 행위를 최신순으로 돌려준다', async () => {
+            const original = await firstRun(FAILED_INITIAL_EVENT);
+            const audits = await call<
+                Page<{ action: string; actorId: string | null; createdAt: string }>
+            >('get', `/v1/admin/draws/${original.id}/execution-audits`);
+            expect(audits.status).toBe(200);
+            expect(audits.data.data.items.some((a) => a.action === 'DRAW_FAILED')).toBe(true);
+
+            await call('post', `/v1/admin/draws/${original.id}/resume`);
+            const after = await call<Page<{ action: string }>>(
+                'get',
+                `/v1/admin/draws/${original.id}/execution-audits`,
+            );
+            expect(after.data.data.items[0]?.action).toBe('RUN_RESUMED');
+
+            expect((await call('get', '/v1/admin/draws/drw-nope-r1/execution-audits')).status).toBe(
+                404,
+            );
+        });
     });
 });
