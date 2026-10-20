@@ -3,7 +3,7 @@
 ## 확인 기준과 한계
 
 - 확인일: 2026-10-20.
-- FE: `dev`의 `a49796a` + GD-253(`feat/GD-253`)의 추첨 계약 정합화 변경.
+- FE: 원격 `dev`의 `adf279e` + `feat/GD-257` L4 변경. 2026-10-20 최종 fetch에서도 원격 dev는 동일했다.
 - 공용 명세: `main`의 `bbbe811` + `3cb9fcc`(추첨 API의 병합·배포 상태 표기 최신화). 원격 갱신 후 `origin/main`과 차이 0건을 확인했다.
 - 이번 확인은 공용 명세·실제 소스·Git 이력 대조와 2026-10-20 배포 라우팅 실측(추첨 경로 401/405·USER-002, `/admin/abuse-cases` 404)을 함께 반영한다.
 - 팀 전달의 “백엔드 구현 완료”는 실행의 출발점이다. 배포 환경·메서드·DTO·권한·쓰기 재시도가 맞는지 별도로 확인해야 한다.
@@ -21,11 +21,17 @@ GD-253에서 최초 발표(`result-confirmation`) 호출이 연결됐고 관리�
 
 ### 게임 연결과 게임 기록
 
-`gameHandlers`가 배포용 하이브리드에 남아 있다. G01은 임시 Game 모델로 파싱하고 결과는 비계약 단일 `POST /games/{id}/play`에 점수만 보낸다. G02 상세·G05 개인 통계 훅이 없으며 기록 카드는 같은 Game 객체의 임시 통계를 소비한다.
+GD-257에서 G01 요약·G02 상세·G05 누적 통계를 분리하고 UUID 요청·code 선택, G03 시작→G04 원본 입력 제출을 연결했다. 색깔 answers, 타꼬런 120Hz endTick/inputs, 타이밍 누른 순간 정수 ms taps, 주문 rounds/picks를 기록한다. 임시 dailyLimit/remainingPlays·오늘 플레이 횟수·비계약 `/play`를 제거했다.
 
-현재 명세는 네 게임의 G03/G04 계약을 채택했다. 색깔 최소 50점, 타꼬런 400점, 타이밍 50점, 주문 18점이다. 2026-10-18 결정이 있으므로 타이밍·주문을 규칙 미확정으로 분류하지 않는다. G05의 `validPlayCount`는 누적 유효 플레이 횟수이므로 “오늘 플레이”에 그대로 넣지 않는다.
+네 게임 모두 실제 API에서 VALID·동일 재제출·보상·G05·T01/T02를 대조했다. 색깔 50점·주문 18점·타이밍 50점·타꼬런 451점이 FE 계산과 일치했고 각 게임에서 1장 지급을 확인했다(BRONZE/SILVER 실물 표본). 네 게임 기준 미달 reward=null·미완료 INVALID와 통계 미반영, 404 GAME-005·409 GAME-006·413 GAME-008·429 COMMON-006 및 Retry-After 59초 뒤 동일 요청 성공을 확인했다. ADMIN은 네 게임 시작 201·결과/통계 403이다.
 
-근거: `entities/game/model/types.ts`, `entities/game/api/queries.ts`, `features/playGame/api/queries.ts`, `pages/gameDetail/GameDetailPage.tsx`, `pages/gameDetail/ui/GameStats.tsx`, [게임 계약](../../getddo-spec/05-api/game.md).
+MSW 없는 로컬 preview 브라우저에서도 네 게임을 실제 입력으로 종료해 VALID를 확인했다. 타이밍 결과 응답 유실 후 같은 playId·입력으로 재시도했고 내 응모권 화면을 조회했다. 브라우저는 로컬 Origin을 제거하는 실제 API 프록시와 사용자 선택 목록 fixture를 사용했으므로 배포 CORS·L6 계정 공급 인수와 구분한다. PROCESSING·KST 자정·입력/점수 경계는 자동 테스트로 검증했으며 실제 서버 처리 중 경합·실제 자정·10분 연속 UI 플레이는 미검증이다.
+
+`hybridHandlers`의 gameHandlers 등록을 해제했다. 테스트·로컬 handlers는 고정 예제 fixture로 유지하며 임의 입력의 서버 판정을 증명하지 않는다. 제출 실패의 playId/playToken/원본은 사용자·게임별 메모리에 보존한다. 새로고침 후 복구는 지원하지 않으며 토큰을 영속 저장하지 않는다.
+
+**판정: 사용자 게임 구현·실연동 검증 완료, 배포 인수 대기. L4 전체 완료는 아니다.** 관리자 AG01~AG03·변경/예약은 여전히 미확정이며 구현하지 않았다. 관리자 운영의 확정 계약 또는 사용자 범위 조정 결정이 필요하다. 자동 머지·실제 배포는 수행하지 않았다.
+
+근거: [L4 계획](superpowers/plans/2026-10-20-GD-257-game-integration.md), [API 성공 증거](superpowers/plans/L4-api-evidence.json), [API 오류 증거](superpowers/plans/L4-api-errors-evidence.json), [브라우저 증거](superpowers/plans/L4-browser-evidence.json), [인계](superpowers/plans/L4-handoff.md).
 
 ### 홈 배너
 
@@ -61,7 +67,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 ## 런타임 목업 제거 조건
 
-현재 `mocks/handlers/index.ts`의 `hybridHandlers`는 `abuseHandlers`, `gameHandlers`, `virtualUserHandlers`다. `drawHandlers`는 GD-253에서 신계약 정합화와 배포 라우팅 실측(AD01~AD09·GD-87·GD-137·GD-199 경로 존재 확인)을 근거로 해제했다 — 테스트용 `handlers` 등록과 시드는 유지한다. `mocks/browser.ts`는 개발 전체 목업과 배포 하이브리드를 구분하고, `app/main.tsx`는 `env.enableMsw`로 시작 여부를 정한다.
+현재 `mocks/handlers/index.ts`의 `hybridHandlers`는 `abuseHandlers`, `virtualUserHandlers`다. `gameHandlers`는 GD-257의 네 게임 실제 연동 검증 후 해제했다. `drawHandlers`는 GD-253에서 신계약 정합화와 배포 라우팅 실측(AD01~AD09·GD-87·GD-137·GD-199 경로 존재 확인)을 근거로 해제했다 — 테스트용 `handlers` 등록과 시드는 유지한다. `mocks/browser.ts`는 개발 전체 목업과 배포 하이브리드를 구분하고, `app/main.tsx`는 `env.enableMsw`로 시작 여부를 정한다.
 
 1. 각 업무의 서버 요청·응답·화면 검증을 먼저 끝내고 해당 배포 핸들러를 해제한다. 목업 해제만으로 연동 완료로 보지 않는다.
 2. `/virtual-users` 호출을 제거해도 로그인·계정 전환이 가능하도록 실제 등록된 시연 계정 목록의 공급 방식을 정한다. 추천은 기존 `VITE_VIRTUAL_USERS_JSON`을 명시적 시연 설정으로 읽고 샘플 사용자 자동 대체를 없애는 방식이다. 사용자 문맥·환경 설정 변경 승인을 먼저 받는다.

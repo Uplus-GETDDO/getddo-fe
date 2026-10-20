@@ -1,6 +1,6 @@
 # CONTEXT.md — 도메인 맥락과 연동 경계
 
-기준일은 2026-10-20이다. FE `a49796a`, 공용 명세 `bbbe811`을 대조했다. 이 문서는 FE 코드의 위치와 주의사항을 설명하며, 공용 정책·API 계약을 새로 정의하지 않는다.
+기준일은 2026-10-20이다. FE 원격 `adf279e`와 GD-257 L4 변경, 공용 명세의 게임 채택 계약을 대조했다. 이 문서는 FE 코드의 위치와 주의사항을 설명하며, 공용 정책·API 계약을 새로 정의하지 않는다.
 
 - 공용 정책: [기능 요구사항](../../getddo-spec/00-requirements/functional-requirements.md), [구현 범위](../../getddo-spec/00-requirements/scope.md), [미결정 사항](../../getddo-spec/00-requirements/pending-decisions.md).
 - 코드 규칙: [AGENTS.md](../AGENTS.md). 기획 원문과 페르소나: [product-context.md](product-context.md).
@@ -21,7 +21,7 @@
 - 추첨·공개·본인 결과: `entities/drawResult`, `entities/winner`, `features/runDraw`, `features/runRedraw`, `pages/admin/draw`. 공개 조회와 관리자 추첨 연동 상태는 다르다.
 - 출석: `entities/attendance`, `features/checkAttendance`, `pages/missionList`. 일일 출석과 월간 연속 출석은 이벤트와 독립적이다.
 - 미션: `entities/mission`, `features/submitMission`, `pages/missionList`, `pages/missionDetail`. 서비스 공통 설문·퀴즈이며 사용자당 미션별 보상은 한 번이다.
-- 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. 서버 UUID와 `code`를 구분하고, 게임 결과·통계·보상은 서버 판정이 기준이다.
+- 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. GD-257에서 네 게임의 G01~G05·서버 seed·입력 기록·누적 통계·보상을 연결하고 배포 게임 목업을 해제했다. playId/토큰/원본 재시도는 메모리에 보존하며 새로고침 복구는 지원하지 않는다. 관리자 AG·변경/예약은 미확정이다. [L4 인계](superpowers/plans/L4-handoff.md)에서 실제 API·브라우저·목업 증거와 인수 잔여를 구분한다.
 - 알림: `entities/notification`, `features/markNotificationRead`, `widgets/notificationBell`. 관리자 운영은 `entities/adminNotification`, `features/retryAdminNotification`, `pages/admin/notifications`다.
 - 배너: `entities/banner`, `features/manageBanner`, `pages/admin/banners`. GD-255에서 홈 최상단 `widgets/bannerSlider`를 B01 관리 이미지 배너로 연결했다. 겟또타임 안내·현황은 아래 기존 `TicketEventSection`이 맡는다. 같은 세션의 관리 변경은 B01·AB01 무효화, 다른 세션은 홈 재진입·창 재포커스·재조회로 반영한다.
 - 사용자: `entities/user`, `features/switchVirtualUser`, `pages/login`, `pages/admin/virtualUsers`. 현재 `/virtual-users` 시연 목록과 AO01/AO02 DB 사용자 조회는 별개다.
@@ -69,11 +69,11 @@
 이 절은 코드 기준 현황이다. API 호출 코드가 있다는 사실은 배포·쓰기·권한·통합 검증 완료를 의미하지 않는다.
 
 - `env.enableMsw`가 true일 때만 `app/main.tsx`가 브라우저 목업을 시작한다. 개발 모드는 전체 `handlers`, 배포 빌드는 `hybridHandlers`를 등록한다.
-- 현재 하이브리드에는 **관리자 추첨·게임·지급 전 차단·가상 사용자**가 남아 있다. 감사 조회는 없다. 주석의 “추첨 전체 404”는 현재 배포의 증거로 사용하지 않는다.
+- 현재 하이브리드에는 **지급 전 차단·가상 사용자**가 남아 있다. 감사 조회는 없다. 주석의 “추첨 전체 404”는 현재 배포의 증거로 사용하지 않는다.
 - 알림 N01~N03·AN01~AN05, 사용자 결과 E08/E09, 관리자 배너 AB01~AB05, 관리자 응모권 AO03/AO04/AO05/AO08/AO09에는 실서버로 전달하는 호출 코드가 있다. 특히 관리자 알림은 이미 계약을 반영했으므로 신규 구현으로 중복 등록하지 않는다.
-- 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 남은 작업이다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
+- 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 GD-257에서 연결했다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
 - 게임은 **색깔·타꼬런·타이밍·주문 네 종류의 계약이 채택**됐다. 타이밍 50점·주문 18점 기준은 2026-10-18 결정이다. 과거 문서의 “규칙 미확정”을 유지하지 않는다. 다만 등록·배포·FE 연동 여부는 별도다.
-- 현재 FE 게임 목록은 임시 `title/dailyLimit/remainingPlays` 모델이고 제출은 단일 `/play`다. G01/G02/G05 모델 분리와 G03 시작→G04 결과 제출 전환이 필요하다. G05의 `validPlayCount`는 누적 횟수이며 “오늘 플레이”가 아니다.
+- FE 게임은 G01/G02/G05 모델을 분리하고 G03 시작→G04 원본 제출을 사용한다. `title/dailyLimit/remainingPlays`·단일 `/play`를 제거했다. G05의 `validPlayCount`는 누적 횟수이며 “오늘 플레이”가 아니다. 네 게임의 현재 BE 배포와 로컬 변경본의 실연동은 확인했고, FE 변경본의 실제 배포 인수는 남아 있다.
 - 관리자 출석 AP01~AP04·미션 AM01~AM03·응모 AO06/AO07은 공용 명세에 현행 구현이 기록됐지만 대응 FE 화면·호출이 남아 있다. AS01은 구현 기록과 담당자 확인 전 상태가 함께 있고, AM04는 설문 집계 계약을 따른다. 현재 배포 가용성은 새로 검증한다.
 - 관리자 게임·보상 조건 관리는 기능 요구사항에 포함되지만 AG01~AG03과 규칙 변경·비활성 전환·보상 조건 예약의 상세 계약은 제안/후속 상태다. 네 게임의 사용자 계약 채택을 관리자 운영 계약 채택으로 확대하지 않는다. 로드맵 L4에서 계약·범위를 확정하고 완료 조건에 반영한다.
 - AR01/AR02의 차단 사유·요청·검증 근거 DTO는 담당자 확인이 필요하다. 기존 목업의 이름·이벤트 표시 필드를 최종 계약으로 채택하지 않는다.
