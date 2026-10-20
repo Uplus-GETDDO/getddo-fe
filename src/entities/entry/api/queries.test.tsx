@@ -6,12 +6,59 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiError, apiClient } from '@shared/api/client';
 
-import { useEntryEligibility, useEntryStatistics, useEntryStatisticsList } from './queries';
+import {
+    useEntryEligibility,
+    useEntryStatistics,
+    useEntryStatisticsList,
+    useMyEntries,
+} from './queries';
 
 afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
     focusManager.setFocused(undefined);
+});
+
+describe('내 응모 전체 합계', () => {
+    it('50건 뒤 페이지까지 합산하고 수집 실패 시 마지막 전체 내역을 유지한다', async () => {
+        let missing = false;
+        vi.spyOn(apiClient, 'get').mockImplementation(async (_path, options) => {
+            await Promise.resolve();
+            const page = (options?.params as { page: number }).page;
+            const grades = { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 };
+            const items = Array.from({ length: page === 1 ? 50 : missing ? 0 : 2 }, (_, n) => ({
+                id: `${page}-${n}`,
+                eventId: 'event',
+                eventTitle: '이벤트',
+                requestedTicketCount: 1,
+                deductedTicketCount: 1,
+                requestedTicketsByGrade: grades,
+                deductedTicketsByGrade: grades,
+                status: 'ACCEPTED',
+                requestedAt: '2026-10-20T00:00:00Z',
+                acceptedAt: '2026-10-20T00:00:00Z',
+                rejectionCode: null,
+                rejectionReason: null,
+            }));
+            return { data: { success: true, data: { page, size: 50, totalElements: 52, items } } };
+        });
+        const { client, wrapper } = setup();
+        const hook = renderHook(() => ({ ...useMyEntries() }), { wrapper });
+        await waitFor(() => expect(hook.result.current.data).toHaveLength(52));
+        expect(
+            hook.result.current.data?.reduce((sum, entry) => sum + entry.deductedTicketCount, 0),
+        ).toBe(52);
+        const updatedAt = hook.result.current.dataUpdatedAt;
+        missing = true;
+        await act(async () => {
+            await hook.result.current.refetch();
+        });
+        await waitFor(() => expect(hook.result.current.isError).toBe(true));
+        expect(hook.result.current.data).toHaveLength(52);
+        expect(hook.result.current.dataUpdatedAt).toBe(updatedAt);
+        hook.unmount();
+        client.clear();
+    });
 });
 
 function setup() {

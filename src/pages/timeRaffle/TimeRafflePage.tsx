@@ -101,8 +101,8 @@ export function TimeRafflePage() {
     const liveRaffles = raffles.filter((event) => event.status === 'open');
     const upcomingRaffles = raffles.filter((event) => event.status === 'upcoming');
     // 마감 이후는 한 목록에 두되 줄마다 발표 대기·발표 완료를 적는다 (시안 '마감한 래플')
-    const closedRaffles = raffles.filter(
-        (event) => event.status === 'closed' || event.status === 'drawn',
+    const closedRaffles = raffles.filter((event) =>
+        ['closed', 'drawn', 'canceled', 'ended'].includes(event.status),
     );
 
     // 마감이 임박한 래플을 먼저 보여 준다.

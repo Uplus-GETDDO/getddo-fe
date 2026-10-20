@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
-import { queryPresets } from '@shared/api/queryPresets';
+import { pollingReadPolicy, queryPresets, withPollingReadGuard } from '@shared/api/queryPresets';
 
 import type { MissionSummary } from '../model/types';
 import type { MissionSubmissionResult } from '../model/types';
@@ -35,19 +35,22 @@ export interface MissionSubmissionOutcome {
 export function useMissionList() {
     return useQuery({
         ...queryPresets.standard,
+        ...pollingReadPolicy,
         queryKey: [...MISSIONS_KEY, 'list'],
-        queryFn: async () => {
-            const missions: MissionSummary[] = [];
-            for (let page = 1; ; page += 1) {
-                const { data } = await apiClient.get<unknown>(MISSIONS_API_PATH, {
-                    params: { page, size: MISSIONS_PAGE_SIZE },
-                });
-                const parsed = envelopeSchema(missionPageSchema).parse(data).data;
-                missions.push(...parsed.items);
-                if (missions.length >= parsed.totalElements || parsed.items.length === 0) break;
-            }
-            return missions;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const missions: MissionSummary[] = [];
+                for (let page = 1; ; page += 1) {
+                    const { data } = await apiClient.get<unknown>(MISSIONS_API_PATH, {
+                        params: { page, size: MISSIONS_PAGE_SIZE },
+                        signal: context.signal,
+                    });
+                    const parsed = envelopeSchema(missionPageSchema).parse(data).data;
+                    missions.push(...parsed.items);
+                    if (missions.length >= parsed.totalElements || parsed.items.length === 0) break;
+                }
+                return missions;
+            }),
     });
 }
 
@@ -61,11 +64,15 @@ export function useMissionDetail(
 ) {
     return useQuery({
         ...queryPresets.standard,
+        ...pollingReadPolicy,
         enabled,
         queryKey: [...MISSIONS_KEY, 'detail', missionId],
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(missionApiPath(missionId));
-            return envelopeSchema(missionDetailSchema).parse(data).data;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const { data } = await apiClient.get<unknown>(missionApiPath(missionId), {
+                    signal: context.signal,
+                });
+                return envelopeSchema(missionDetailSchema).parse(data).data;
+            }),
     });
 }

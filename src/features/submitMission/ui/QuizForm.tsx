@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import type { MissionAnswer, MissionDetail, MissionSubmissionResult } from '@entities/mission';
 
 import { getErrorMessage } from '@shared/api/errorMessage';
+import { Button } from '@shared/ui/button';
 
 import { useSubmitMission } from '../api/queries';
 import { MissionAnswersForm } from './MissionAnswersForm';
@@ -60,6 +61,22 @@ export function QuizForm({
                     </motion.p>
                 )}
             </AnimatePresence>
+            {submitMission.pendingOriginalAnswers && (
+                <p role="alert">
+                    이전 제출의 처리 여부가 불확실합니다. 서버 대기 후 원본 답변으로 결과를 다시
+                    확인해 주세요.
+                </p>
+            )}
+            {submitMission.pendingOriginalAnswers && (
+                <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={submitMission.isPending}
+                    onClick={() => submit(submitMission.pendingOriginalAnswers!)}
+                >
+                    원본 답변으로 결과 다시 확인
+                </Button>
+            )}
             <MissionAnswersForm
                 questions={mission.questions}
                 isPending={submitMission.isPending}

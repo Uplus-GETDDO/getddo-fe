@@ -52,12 +52,14 @@ export function MissionAnswersForm({
     const showProgress = ordered.length > 1;
 
     const submit = (values: Record<string, MissionAnswerDraft>) => {
-        const missing = findMissingRequired(ordered, values);
+        const missing = variant === 'quiz' ? [] : findMissingRequired(ordered, values);
         if (missing.length > 0) {
             setMissingIds(new Set(missing.map((q) => q.id)));
             return;
         }
-        onSubmit(buildMissionAnswers(ordered, values));
+        const answers = buildMissionAnswers(ordered, values);
+        if (variant === 'quiz' && answers.length === 0) return;
+        onSubmit(answers);
     };
 
     const fields = ordered.map((question, index) => (

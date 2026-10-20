@@ -44,3 +44,7 @@ spec의 E03 계약(`../getddo-spec/05-api/entry.md`)은 GD-200 현행 구현으�
 - E01 20개 페이지 및 E06 50개 페이지 전체 수집과 CANCELED→closed 화면 모델 변경은 [통합 로드맵 L5](../superpowers/plans/2026-10-20-backend-integration-roadmap.md)의 후속이다(구 R08 잔여·R04). 전체 결과 집계/결과 필터 서버 계약과 발표 후 revision 변경 감지도 L2/L5에서 별도로 확인한다. GD-247의 완료 범위로 확대하지 않는다.
 
 검증 근거는 `reports/20261020-GD-247-row-polling.md`와 `docs/superpowers/plans/2026-10-20-GD-247-row-polling.md`에 기록한다.
+
+## GD-259 L5 상태 보완
+
+화면 변환에서 CANCELED를 canceled, 대상 없는 종료를 ended로 분리했다. DRAW_CONFIRMED/REDRAWING은 공개 전 사용자에게 발표 대기로 유지한다. E03/E08/E09의 위 종료·429·표시 행 정책은 변경하지 않았다. 이벤트 취소를 E09 CANCELED의 단독 종결 근거로 확대하지 않는다. E01/E02·출석/미션·신규 관리자 읽기에는 기존 오류/Retry-After 가드를 재사용하며 전역 설정은 변경하지 않았다.

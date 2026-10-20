@@ -41,6 +41,8 @@ const STATUS_LABEL: Record<Event['status'], string> = {
     upcoming: '오픈 예정',
     closed: '결과 발표 대기',
     drawn: '발표 완료',
+    canceled: '이벤트 취소',
+    ended: '추첨 없이 종료',
 };
 
 export function TimeRaffleDetailPage() {
@@ -54,7 +56,7 @@ export function TimeRaffleDetailPage() {
         enabled: event?.status === 'open',
     });
     // 마감 전에는 결과가 존재하지 않으므로 묻지 않는다
-    const isAfterClose = event?.status === 'closed' || event?.status === 'drawn';
+    const isAfterClose = event != null && !['open', 'upcoming'].includes(event.status);
     const resultsQuery = useEventResults(id, isAfterClose);
     const { data: results } = resultsQuery;
     // 본인 결과도 마감 후에만 묻는다 — 공개 전에는 서버가 PENDING으로 고정해 돌려준다
@@ -294,7 +296,12 @@ export function TimeRaffleDetailPage() {
                         </div>
                     ))}
                 {/* 발표 대기·추첨 없음·취소·당첨자 명단은 결과 영역이 스스로 가른다 (GD-247과 합침) */}
-                {results && (
+                {event.status === 'canceled' && (
+                    <p role="status">
+                        이벤트가 취소됐습니다. 차감한 응모권은 원래 등급으로 반환됩니다.
+                    </p>
+                )}
+                {results && event.status !== 'canceled' && (
                     <DrawResultSection
                         results={results}
                         myResult={myResult}

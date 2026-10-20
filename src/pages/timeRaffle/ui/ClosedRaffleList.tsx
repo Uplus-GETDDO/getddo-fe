@@ -125,7 +125,14 @@ function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
     const { data: statistics } = useEntryStatistics(event.id);
     const isDrawn = event.status === 'drawn';
     // 발표 여부는 status로만 판단한다 — 예정 시각은 계약에 없고 실제 공개 전까지는 발표 대기다 (ADR-022)
-    const statusLabel = isDrawn ? '발표 완료' : '발표 대기';
+    const statusLabel =
+        event.status === 'canceled'
+            ? '이벤트 취소'
+            : event.status === 'ended'
+              ? '추첨 없이 종료'
+              : isDrawn
+                ? '발표 완료'
+                : '발표 대기';
 
     const meta = [
         `${kstDayLabel(event.endsAt, now)} ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
@@ -151,7 +158,9 @@ function ClosedRaffleRow({ event, now }: { event: Event; now: Date }) {
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     {/* 내 당첨 여부는 결과 화면에서 본다 — 목록에는 발표 상태만 둔다. 발표 전만 "지금" 신호 점을 찍는다 */}
                     <div className="flex flex-wrap items-center gap-2">
-                        <StatusDot tone={isDrawn ? 'muted' : 'info'}>{statusLabel}</StatusDot>
+                        <StatusDot tone={event.status === 'closed' ? 'info' : 'muted'}>
+                            {statusLabel}
+                        </StatusDot>
                         {/* 마감해서 더는 응모할 수 없다 — 여기서는 '응모 완료'가 맞는 말이다 */}
                         {event.myEntered && <EnteredChip label="응모 완료" />}
                     </div>

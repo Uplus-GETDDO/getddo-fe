@@ -1,0 +1,190 @@
+{
+    "at": "2026-10-20T14:23:45.319Z",
+    "base": "https://dzc8oneey9mmx.cloudfront.net/api/v1",
+    "kind": "실제 API 읽기 전용; MSW 없음",
+    "deploymentVersion": "응답 헤더에서 확인 가능한 버전만 기록",
+    "checks": [
+        {
+            "path": "/events?page=1&size=20",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 6936,
+            "elapsedMs": 109,
+            "version": null,
+            "count": 24
+        },
+        {
+            "path": "/events?page=2&size=20",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 1371,
+            "elapsedMs": 31,
+            "version": null,
+            "count": 24
+        },
+        {
+            "name": "/events 전체 수집",
+            "rows": 24,
+            "requests": 2,
+            "decodedBytes": 8307,
+            "elapsedMs": 143
+        },
+        {
+            "path": "/users/me/entries?page=1&size=50",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 3012,
+            "elapsedMs": 33,
+            "version": null,
+            "count": 6
+        },
+        {
+            "name": "/users/me/entries 전체 수집",
+            "rows": 6,
+            "requests": 1,
+            "decodedBytes": 3012,
+            "elapsedMs": 34
+        },
+        {
+            "path": "/attendances/today",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 493,
+            "elapsedMs": 36,
+            "version": null
+        },
+        {
+            "path": "/attendances?month=2026-10",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 426,
+            "elapsedMs": 45,
+            "version": null
+        },
+        {
+            "path": "/admin/policies/attendance/daily?page=1&size=20",
+            "role": "ADMIN",
+            "status": 409,
+            "code": "USER-006",
+            "envelope": false,
+            "schema": false,
+            "issues": [
+                {
+                    "path": [],
+                    "message": "Invalid input: expected object, received null"
+                }
+            ],
+            "decodedBytes": 109,
+            "elapsedMs": 29,
+            "version": null
+        },
+        {
+            "path": "/admin/policies/attendance/streak?page=1&size=20",
+            "role": "ADMIN",
+            "status": 409,
+            "code": "USER-006",
+            "envelope": false,
+            "schema": false,
+            "issues": [
+                {
+                    "path": [],
+                    "message": "Invalid input: expected object, received null"
+                }
+            ],
+            "decodedBytes": 109,
+            "elapsedMs": 19,
+            "version": null
+        },
+        {
+            "path": "/admin/policies/attendance/daily?page=1&size=20",
+            "role": "USER",
+            "status": 403,
+            "code": "ATTENDANCE-002",
+            "envelope": false,
+            "schema": null,
+            "decodedBytes": 123,
+            "elapsedMs": 28,
+            "version": null
+        },
+        {
+            "path": "/admin/missions?page=1&size=20",
+            "role": "ADMIN",
+            "status": 409,
+            "code": "USER-006",
+            "envelope": false,
+            "schema": false,
+            "issues": [
+                {
+                    "path": [],
+                    "message": "Invalid input: expected object, received null"
+                }
+            ],
+            "decodedBytes": 109,
+            "elapsedMs": 18,
+            "version": null
+        },
+        {
+            "path": "/admin/missions?page=1&size=20",
+            "role": "USER",
+            "status": 403,
+            "code": "MISSION-006",
+            "envelope": false,
+            "schema": null,
+            "decodedBytes": 113,
+            "elapsedMs": 27,
+            "version": null
+        },
+        {
+            "path": "/events/01a156c2-4f96-7779-8bdb-fe27a5057793",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 731,
+            "elapsedMs": 26,
+            "version": null
+        },
+        {
+            "path": "/events/01a14871-57fc-7770-81df-26cfc6a3e2b5",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 704,
+            "elapsedMs": 27,
+            "version": null
+        },
+        {
+            "path": "/events/01a143aa-c0ff-7c32-a8ca-45d269f0056a",
+            "role": "USER",
+            "status": 200,
+            "code": "SUCCESS",
+            "envelope": true,
+            "schema": true,
+            "decodedBytes": 871,
+            "elapsedMs": 30,
+            "version": null
+        },
+        {
+            "name": "E09 최초 요청 대상",
+            "distinctAcceptedEvents": 5
+        }
+    ]
+}
