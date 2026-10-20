@@ -1,5 +1,6 @@
 import type { Event } from '@entities/event';
 
+import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { BulletList } from '@shared/ui/bullet-list';
 import { KST_HOUR_MINUTE, formatKst, formatYmd } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
@@ -27,15 +28,20 @@ const POLICY_NOTES = [
  * 코드를 고치지 않아도 이미지 본문으로 바뀐다.
  *
  * 유의사항은 이미지에 그려져 있어도 따로 둔다 — 이미지 안 글자는 화면 읽기로 읽히지 않는다.
+ *
+ * 주소가 있어도 열리지 않으면 글 본문으로 돌아간다 — 깨진 이미지 아이콘만 남으면 본문이 없는 것과 같다.
  */
 export function EventDetailBody({ event }: { event: Event }) {
+    const detail = useImageFallback(event.detailImageUrl);
+
     return (
         <div className="flex flex-col gap-10">
-            {event.detailImageUrl ? (
+            {detail.shown ? (
                 <img
-                    src={event.detailImageUrl}
+                    src={event.detailImageUrl!}
                     alt={`${event.title} 상세 안내`}
                     loading="lazy"
+                    onError={detail.onError}
                     className="mx-auto block h-auto w-full max-w-270"
                 />
             ) : (

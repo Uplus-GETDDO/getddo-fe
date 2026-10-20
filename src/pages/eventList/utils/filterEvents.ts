@@ -1,6 +1,6 @@
 import type { Event } from '@entities/event';
 
-import type { EventFilter, EventSort, EventTab } from '../model/eventFilters';
+import type { EventSort, EventTab } from '../model/eventFilters';
 
 import { EVENT_SORTS, EVENT_TABS, TAB_STATUSES } from '../model/eventFilters';
 
@@ -23,24 +23,14 @@ const SORTERS: Record<EventSort, (a: Event, b: Event) => number> = {
 };
 
 /**
- * 탭·카테고리로 거르고 정렬한다.
+ * 탭으로 거르고 정렬한다.
  *
  * 타임래플은 전용 화면(/time-raffle)에서 다루므로 이벤트 목록에서는 언제나 뺀다.
  * 원본 배열을 건드리지 않는다 — 쿼리 캐시가 들고 있는 배열이라 제자리 정렬하면 다른 화면이 같이 흔들린다.
  */
-export function filterEvents(
-    events: readonly Event[],
-    tab: EventTab,
-    filter: EventFilter,
-    sort: EventSort,
-): Event[] {
+export function filterEvents(events: readonly Event[], tab: EventTab, sort: EventSort): Event[] {
     const statuses = TAB_STATUSES[tab];
     return events
-        .filter(
-            (event) =>
-                !event.isTimeRaffle &&
-                statuses.includes(event.status) &&
-                (filter === '전체' || (event.tags ?? []).includes(filter)),
-        )
+        .filter((event) => !event.isTimeRaffle && statuses.includes(event.status))
         .sort(SORTERS[sort]);
 }

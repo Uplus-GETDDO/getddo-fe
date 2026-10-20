@@ -155,11 +155,9 @@ export const eventSchema = z.object({
     status: eventStatusSchema,
     // 발표 예정 시각(publicationScheduledAt)은 ADR-022 수동 공개 전환으로 계약에서 제거됐다 —
     // 서버가 내려주지 않으므로 화면도 '발표 대기' 상태만 보인다 (getddo-spec 05-api/event.md)
-    // 이벤트 목록 상단 '추천 이벤트' 노출 여부 — 운영자가 고르는 값이라 계산으로 만들 수 없다.
-    // TODO: 추천 선정 방식은 백엔드와 미합의 (getddo-spec 02-domain/event.md에 정의 없음)
-    isRecommended: z.boolean().optional(),
-    // 정해진 시간에만 열리는 한정 굿즈 래플 — 타임래플 화면에만 노출하고 이벤트 목록에서는 뺀다.
-    // TODO: 이벤트 유형 구분 방식은 백엔드와 미합의 (getddo-spec 02-domain/event.md에 유형 정의 없음)
+    // 정해진 시간에만 열리는 한정 굿즈 래플 — 겟또타임 화면에만 노출하고 이벤트 목록에서는 뺀다.
+    // 서버는 이 값을 따로 주지 않는다. 기본 이벤트는 NO_TICKET, 겟또타임은 TICKET 전체라는
+    // R4 확정(getddo-spec 05-api/event.md)에 따라 toEvent가 eventType으로 판정해 채운다.
     isTimeRaffle: z.boolean().optional(),
     // 타임래플 상세 화면의 안내 문구 — 운영자가 이벤트마다 작성하는 값이라 계산으로 만들 수 없다.
     // TODO: 필드 구성은 백엔드와 미합의. 없으면 상세 화면이 기본값으로 대체한다.
@@ -183,8 +181,6 @@ export const eventSchema = z.object({
     // 레거시 표시용 필드 — 목록 섹션 분리·카드 표시에 쓴다. 응모 규칙 판정은 위 네 필드를 따른다.
     // TODO: 응모권 필요 여부 표시를 eventType으로 옮기는 전환은 별도 작업
     requiredTickets: z.number().int().nonnegative(),
-    // 카드 태그 칩 (예: "멤버십 혜택") — 없으면 칩 미노출
-    tags: z.array(z.string()).optional(),
     // 경품 요약 — prizes는 상세(E02)에만 있어 목록만으로 만든 이벤트에는 없다 (spec EventSummary)
     prizeName: z.string().optional(),
     winnerCount: z.number().int().positive().optional(),

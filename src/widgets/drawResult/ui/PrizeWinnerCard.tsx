@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import type { PublishedPrize } from '@entities/drawResult';
 
+import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { cn } from '@shared/utils/cn';
 import { formatNumber } from '@shared/utils/format';
 
@@ -40,6 +41,7 @@ export function PrizeWinnerCard({
     imageUrl,
     fillWithImage = false,
 }: PrizeWinnerCardProps) {
+    const image = useImageFallback(imageUrl);
     const [expanded, setExpanded] = useState(false);
 
     // 강조할 줄이 접힌 자리에 있으면 펼쳐 둔다 — 찾아 준 줄을 다시 눌러야 보는 건 말이 안 된다
@@ -61,10 +63,11 @@ export function PrizeWinnerCard({
                 className,
             )}
         >
-            {imageUrl ? (
+            {image.shown ? (
                 <img
-                    src={imageUrl}
+                    src={imageUrl!}
                     alt=""
+                    onError={image.onError}
                     className="absolute inset-0 size-full object-contain p-3 mix-blend-multiply dark:mix-blend-normal"
                 />
             ) : (
