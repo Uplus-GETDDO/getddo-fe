@@ -56,7 +56,8 @@ export function TimeRaffleHero({ live, now, refresh }: TimeRaffleHeroProps) {
                         {live.length > 0 ? (
                             <>
                                 지금 응모할 수 있는 래플{' '}
-                                <span className="text-fg-brand tabular-nums">
+                                {/* 숫자는 마젠타 대신 제목과 같은 잉크색 — 미션 배너의 큰 숫자와 같은 규칙 */}
+                                <span className="text-fg-primary tabular-nums">
                                     {formatNumber(live.length)}개
                                 </span>
                             </>

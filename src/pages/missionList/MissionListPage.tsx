@@ -97,7 +97,7 @@ export function MissionListPage() {
                         />
                     </section>
                     <section className="flex min-w-0 flex-col gap-6">
-                        <SectionHeader title="응모권 적립 · 사용 내역" />
+                        {/* 제목 줄(갱신 표시 포함)도 카드가 그린다 — 같은 조회의 받는 중·실패를 제목 옆에 보인다 */}
                         <TicketHistoryCard className="flex-1" />
                     </section>
                 </div>

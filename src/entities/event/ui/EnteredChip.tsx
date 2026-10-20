@@ -1,4 +1,4 @@
-import { Check, Ticket } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 import { formatNumber } from '@shared/utils/format';
 
@@ -34,7 +34,8 @@ function isEntryFull(event: Event, spent: number | undefined): boolean {
 }
 
 /**
- * 진행 중 겟또타임의 내 응모 칩 — 한도까지 더 쓸 수 있으면 '응모 중 · 1/5장'(연노랑), 다 썼으면 '응모 완료'(진한 노랑).
+ * 진행 중 겟또타임의 내 응모 칩 — 한도까지 더 쓸 수 있으면 '응모 중 · 1/5장', 다 썼으면 '응모 완료'.
+ * 둘 다 내가 한 일이라 같은 진한 노랑 바탕이고, 글과 완료 체크 아이콘으로만 나눈다 (응모 중은 아이콘 없이 글만).
  * '완료'라고만 적으면 더 쓸 수 있는데도 버튼이 죽은 줄 알고, '참여 중'만 적으면 몇 장 썼는지 따로 한 줄이 필요했다.
  * 쓴 장수(E03 mySpentTicketCount)를 받기 전에는 '응모 중'만 적는다. 응모하지 않았으면 그리지 않는다
  */
@@ -54,8 +55,7 @@ export function RaffleEntryChip({
             ? ` · ${formatNumber(mySpentTicketCount)}${limit != null ? `/${formatNumber(limit)}` : ''}장`
             : '';
     return (
-        <span className="bg-ticket-accent text-fg-primary text-caption inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 font-semibold tabular-nums">
-            <Ticket aria-hidden className="size-3" />
+        <span className="bg-ticket-primary text-fg-primary text-caption inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 font-semibold tabular-nums">
             응모 중{count}
         </span>
     );
