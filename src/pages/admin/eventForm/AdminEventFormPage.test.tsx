@@ -6,12 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import { AdminEventFormPage } from './AdminEventFormPage';
 
+// 이미지는 파일 선택으로 바뀌어 name을 들고 있지 않다 — 라벨 연결만 따로 본다 (GD-253)
 const PRIZE_FIELDS = [
     ['등수', 'rank'],
     ['경품명', 'name'],
     ['당첨 인원', 'winnerCount'],
     ['설명 (선택)', 'description'],
-    ['이미지 키 (선택)', 'imageKey'],
 ] as const;
 
 function renderPage() {
@@ -41,6 +41,24 @@ describe('AdminEventFormPage', () => {
             expect(input.tagName).toBe('INPUT');
             expect(input).toHaveAttribute('name', `prizes.0.${field}`);
         }
+    });
+
+    it('경품 이미지 라벨이 파일 선택 입력과 연결된다', () => {
+        renderPage();
+        const input = getPrizeSection().getByLabelText('경품 이미지 (선택)');
+        expect(input.tagName).toBe('INPUT');
+        expect(input).toHaveAttribute('type', 'file');
+        expect(input).toHaveAttribute('accept', 'image/png,image/jpeg');
+    });
+
+    it('경품을 추가하면 이미지 라벨도 서로 다른 입력을 가리킨다', async () => {
+        const user = userEvent.setup();
+        renderPage();
+        await user.click(screen.getByRole('button', { name: '경품 추가' }));
+
+        const images = getPrizeSection().getAllByLabelText('경품 이미지 (선택)');
+        expect(images).toHaveLength(2);
+        expect(images[0]!.id).not.toBe(images[1]!.id);
     });
 
     it('경품을 추가하면 경품명 라벨들이 서로 다른 id의 입력을 가리킨다', async () => {

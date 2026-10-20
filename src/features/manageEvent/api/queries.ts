@@ -13,6 +13,8 @@ import {
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
 
+import type { EventImageTarget } from '../model/imageUpload';
+
 type EventAction = 'cancel';
 
 interface EventActionInput {
@@ -78,6 +80,37 @@ export function useEventAction(action: EventAction) {
         },
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: ADMIN_EVENTS_KEY });
+        },
+    });
+}
+
+/** 업로드 응답 — 등록·수정에 실을 key와 미리보기에 쓸 url (BE GD-227) */
+const eventImageUploadSchema = z.object({
+    key: z.string(),
+    url: z.string(),
+});
+
+export const EVENT_IMAGE_UPLOAD_API_PATH = `${ADMIN_EVENTS_API_PATH}/images`;
+
+/**
+ * 이벤트·경품 이미지 한 장을 먼저 올리고 키를 받는다.
+ *
+ * 등록·수정(AE03·AE04)은 그대로 imageKey를 받는다 — 올려 받은 key를 폼에 채워 보내는 구조다.
+ * 그래서 이벤트가 아직 없는 등록 화면에서도 쓸 수 있다.
+ *
+ * 목록 캐시는 건드리지 않는다. 이미지를 올린 것만으로는 이벤트가 달라지지 않는다.
+ */
+export function useUploadEventImage() {
+    return useMutation({
+        mutationFn: async ({ file, target }: { file: File; target: EventImageTarget }) => {
+            const body = new FormData();
+            body.append('file', file);
+            const { data } = await apiClient.post<unknown>(EVENT_IMAGE_UPLOAD_API_PATH, body, {
+                params: { target },
+                // 5MB까지 받으므로 공통 10초로는 느린 회선에서 끊긴다
+                timeout: 60_000,
+            });
+            return envelopeSchema(eventImageUploadSchema).parse(data).data;
         },
     });
 }
