@@ -1,0 +1,104 @@
+{
+    "at": "2026-10-20T17:31:10.974Z",
+    "kind": "banner",
+    "checks": [
+        {
+            "name": "AB02 등록",
+            "status": 409,
+            "code": "USER-006"
+        },
+        {
+            "name": "AB02 등록(데모 이벤트)",
+            "status": 201,
+            "bannerId": "01a15a5e-27a7-7b51-a5b6-fd6c74ed4dd8",
+            "note": "[TEST] 이벤트 연결은 USER-006 409로 거절됨"
+        },
+        {
+            "name": "AB03 수정",
+            "status": 409,
+            "code": "USER-006"
+        },
+        {
+            "name": "B01 사용자 목록",
+            "count": 5,
+            "firstIsTest": false
+        },
+        {
+            "name": "AB05 순서",
+            "status": 409,
+            "code": "USER-006"
+        },
+        {
+            "name": "AB04 테스트 배너 삭제",
+            "status": 409,
+            "code": "USER-006"
+        },
+        {
+            "name": "원본 복원",
+            "status": 409,
+            "code": "USER-006"
+        },
+        {
+            "name": "최종 상태",
+            "list": []
+        },
+        {
+            "name": "중간 교훈 — USER-006",
+            "note": "admin 요청에 X-User-Membership:excellent를 보내면 DB 멤버십 불일치 409 USER-006 — 관리자 경로는 멤버십 헤더 생략이 계약과 일치"
+        },
+        {
+            "name": "AB03 수정",
+            "status": 200,
+            "code": "SUCCESS",
+            "order": 1,
+            "key": "demo-20261016/banner-02.svg"
+        },
+        {
+            "name": "B01 사용자 목록",
+            "count": 5,
+            "firstIsTest": true
+        },
+        {
+            "name": "AB05 순서",
+            "status": 200,
+            "code": "SUCCESS"
+        },
+        {
+            "name": "AB04 테스트 배너 삭제",
+            "status": 200,
+            "code": "SUCCESS"
+        },
+        {
+            "name": "원본 복원",
+            "status": 201,
+            "code": "SUCCESS",
+            "order": 5
+        },
+        {
+            "name": "최종 상태",
+            "list": [
+                {
+                    "order": 1,
+                    "key": "demo-20261016/banner-01.svg"
+                },
+                {
+                    "order": 2,
+                    "key": "demo-20261016/banner-04.svg"
+                },
+                {
+                    "order": 3,
+                    "key": "demo-20261016/banner-02.svg"
+                },
+                {
+                    "order": 4,
+                    "key": "demo-20261016/banner-05.svg"
+                },
+                {
+                    "order": 5,
+                    "key": "demo-20261016/banner-03.svg"
+                }
+            ]
+        }
+    ],
+    "provenance": "전 check가 수동 인라인 스크립트 실행분 — verifyL6DeployRemaining.mjs banner 모드는 동일 절차(등록→수정→순서→삭제→복원)를 재현하되 check명이 다르다"
+}

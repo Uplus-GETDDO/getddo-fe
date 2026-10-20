@@ -1,0 +1,910 @@
+{
+    "at": "2026-10-20T17:18:26.871Z",
+    "kind": "배포 실서버 응모 쓰기",
+    "checks": [
+        {
+            "name": "응모 자격 조회",
+            "eligibilities": [
+                {
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "title": "dfsadfsa",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 1,
+                    "remainingTicketLimit": 4,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.292759121Z"
+                },
+                {
+                    "eventId": "01a14871-57fc-7770-81df-26cfc6a3e2b5",
+                    "title": "ㅁㄴㅇㄻㄴㅇㄹ",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 1,
+                    "availableTicketBalance": 7,
+                    "serverTime": "2026-10-20T17:18:28.350149789Z"
+                },
+                {
+                    "eventId": "01a143aa-c0ff-7c32-a8ca-45d269f0056a",
+                    "title": "[DEMO-20261016] 10 응모자 없는 추첨",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:28.387259938Z"
+                },
+                {
+                    "eventId": "01a143aa-c081-7e7b-bd33-5b5474a95574",
+                    "title": "[DEMO-20261016] 09 취소·응모권 반환",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.431548748Z"
+                },
+                {
+                    "eventId": "01a143aa-c00d-7520-ae86-8d1e9d225202",
+                    "title": "[DEMO-20261016] 08 가중치 추첨·발표",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.471303378Z"
+                },
+                {
+                    "eventId": "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f",
+                    "title": "[DEMO-20261016] 07 무료 추첨·발표",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:28.507769015Z"
+                },
+                {
+                    "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                    "title": "[DEMO-20261016] 06 예정 응모권 이벤트",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.542776249Z"
+                },
+                {
+                    "eventId": "01a143aa-be98-7292-a29f-6fa6bfde767e",
+                    "title": "[DEMO-20261016] 05 예정 VIP 무료",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:28.580110425Z"
+                },
+                {
+                    "eventId": "01a143aa-be17-7b42-9666-ddb40cd4bd51",
+                    "title": "[DEMO-20261016] 04 VVIP 가중치 상한 없음",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": null,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.624973156Z"
+                },
+                {
+                    "eventId": "01a143aa-bd9c-736d-999e-cce99348605a",
+                    "title": "[DEMO-20261016] 03 VIP 가중치 상한 5장",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.672951439Z"
+                },
+                {
+                    "eventId": "01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+                    "title": "[DEMO-20261016] 02 응모권 1장",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 1,
+                    "availableTicketBalance": 7,
+                    "serverTime": "2026-10-20T17:18:28.709324103Z"
+                },
+                {
+                    "eventId": "01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+                    "title": "[DEMO-20261016] 01 누구나 응모",
+                    "canEnter": false,
+                    "reasons": ["ALREADY_ENTERED"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:28.744545972Z"
+                },
+                {
+                    "eventId": "01a14319-24d9-7c42-97f5-052db010e6bf",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.777254280Z"
+                },
+                {
+                    "eventId": "01a14319-1ee1-7bc0-97b8-fb5dd97795c0",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.813378779Z"
+                },
+                {
+                    "eventId": "01a14318-e037-767e-84f8-8cfe32643709",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.853570062Z"
+                },
+                {
+                    "eventId": "01a1430a-e24b-7235-933f-2392e6e0e162",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.895854858Z"
+                },
+                {
+                    "eventId": "01a1430a-8e06-77d3-8cd7-d87053050fc4",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.933473022Z"
+                },
+                {
+                    "eventId": "01a1430a-11b6-7652-bd45-b7ce69afba0c",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:28.970101393Z"
+                },
+                {
+                    "eventId": "01a14306-0b39-73d3-ac6a-544fb78dae90",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:29.007081510Z"
+                },
+                {
+                    "eventId": "01a14305-afd6-7393-8483-aac94bb7c74b",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:29.047890185Z"
+                },
+                {
+                    "eventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:29.085823044Z"
+                },
+                {
+                    "eventId": "01a14305-a6bf-7933-a35c-a5555ad5a7cb",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:29.120631174Z"
+                },
+                {
+                    "eventId": "01a14305-663a-72de-8d15-3c15782f5c06",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:18:29.152694505Z"
+                },
+                {
+                    "eventId": "01a14300-06a9-719e-b32f-d99e7dbf11d0",
+                    "title": "테스트1",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 8,
+                    "serverTime": "2026-10-20T17:18:29.186935226Z"
+                }
+            ]
+        },
+        {
+            "name": "응모 접수·멱등·중복",
+            "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+            "eventTitle": "[DEMO-20261016] 06 예정 응모권 이벤트",
+            "firstStatus": 201,
+            "receipt": {
+                "id": "6f292dae-d5dc-41ba-8694-edf0e51dadb6",
+                "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                "eventTitle": "[DEMO-20261016] 06 예정 응모권 이벤트",
+                "requestedTicketCount": 1,
+                "requestedTicketsByGrade": {
+                    "BRONZE": 1,
+                    "SILVER": 0,
+                    "GOLD": 0,
+                    "PLATINUM": 0
+                },
+                "deductedTicketCount": 1,
+                "deductedTicketsByGrade": {
+                    "BRONZE": 1,
+                    "SILVER": 0,
+                    "GOLD": 0,
+                    "PLATINUM": 0
+                },
+                "status": "ACCEPTED",
+                "requestedAt": "2026-10-20T17:18:29.276388Z",
+                "acceptedAt": "2026-10-20T17:18:29.276388Z",
+                "rejectionCode": null,
+                "rejectionReason": null
+            },
+            "replayStatus": 200,
+            "sameReceipt": true,
+            "newKeyStatus": 201,
+            "newKeyCode": "SUCCESS",
+            "newKeyReceiptStatus": "ACCEPTED",
+            "newKeyRejection": "SUCCESS",
+            "balanceDelta": -2,
+            "bronzeDelta": -2,
+            "eligibilityAfter": {
+                "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                "canEnter": true,
+                "reasons": [],
+                "usedTicketCount": 2,
+                "remainingTicketLimit": 3,
+                "availableTicketBalance": 6,
+                "serverTime": "2026-10-20T17:18:29.517434480Z"
+            },
+            "myEntriesSample": [
+                {
+                    "id": "a861b48c-d96d-4b12-a39b-2a7e1ae1ad9e",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                },
+                {
+                    "id": "6f292dae-d5dc-41ba-8694-edf0e51dadb6",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                }
+            ]
+        },
+        {
+            "name": "응모 자격 조회",
+            "eligibilities": [
+                {
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "title": "dfsadfsa",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 1,
+                    "remainingTicketLimit": 4,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:11.428914512Z"
+                },
+                {
+                    "eventId": "01a14871-57fc-7770-81df-26cfc6a3e2b5",
+                    "title": "ㅁㄴㅇㄻㄴㅇㄹ",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 1,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:11.482285203Z"
+                },
+                {
+                    "eventId": "01a143aa-c0ff-7c32-a8ca-45d269f0056a",
+                    "title": "[DEMO-20261016] 10 응모자 없는 추첨",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:11.528060130Z"
+                },
+                {
+                    "eventId": "01a143aa-c081-7e7b-bd33-5b5474a95574",
+                    "title": "[DEMO-20261016] 09 취소·응모권 반환",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:11.635884943Z"
+                },
+                {
+                    "eventId": "01a143aa-c00d-7520-ae86-8d1e9d225202",
+                    "title": "[DEMO-20261016] 08 가중치 추첨·발표",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:11.686134898Z"
+                },
+                {
+                    "eventId": "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f",
+                    "title": "[DEMO-20261016] 07 무료 추첨·발표",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:11.721655062Z"
+                },
+                {
+                    "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                    "title": "[DEMO-20261016] 06 예정 응모권 이벤트",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 2,
+                    "remainingTicketLimit": 3,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:11.753758662Z"
+                },
+                {
+                    "eventId": "01a143aa-be98-7292-a29f-6fa6bfde767e",
+                    "title": "[DEMO-20261016] 05 예정 VIP 무료",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:11.852600204Z"
+                },
+                {
+                    "eventId": "01a143aa-be17-7b42-9666-ddb40cd4bd51",
+                    "title": "[DEMO-20261016] 04 VVIP 가중치 상한 없음",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": null,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:11.891318268Z"
+                },
+                {
+                    "eventId": "01a143aa-bd9c-736d-999e-cce99348605a",
+                    "title": "[DEMO-20261016] 03 VIP 가중치 상한 5장",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:11.925950466Z"
+                },
+                {
+                    "eventId": "01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+                    "title": "[DEMO-20261016] 02 응모권 1장",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 1,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:11.963418440Z"
+                },
+                {
+                    "eventId": "01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+                    "title": "[DEMO-20261016] 01 누구나 응모",
+                    "canEnter": false,
+                    "reasons": ["ALREADY_ENTERED"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:12.015723546Z"
+                },
+                {
+                    "eventId": "01a14319-24d9-7c42-97f5-052db010e6bf",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.054078295Z"
+                },
+                {
+                    "eventId": "01a14319-1ee1-7bc0-97b8-fb5dd97795c0",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.091719324Z"
+                },
+                {
+                    "eventId": "01a14318-e037-767e-84f8-8cfe32643709",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.134110068Z"
+                },
+                {
+                    "eventId": "01a1430a-e24b-7235-933f-2392e6e0e162",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.173407948Z"
+                },
+                {
+                    "eventId": "01a1430a-8e06-77d3-8cd7-d87053050fc4",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.207282998Z"
+                },
+                {
+                    "eventId": "01a1430a-11b6-7652-bd45-b7ce69afba0c",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.243558501Z"
+                },
+                {
+                    "eventId": "01a14306-0b39-73d3-ac6a-544fb78dae90",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:12.283385539Z"
+                },
+                {
+                    "eventId": "01a14305-afd6-7393-8483-aac94bb7c74b",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:12.321125294Z"
+                },
+                {
+                    "eventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:12.368628670Z"
+                },
+                {
+                    "eventId": "01a14305-a6bf-7933-a35c-a5555ad5a7cb",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:12.405184362Z"
+                },
+                {
+                    "eventId": "01a14305-663a-72de-8d15-3c15782f5c06",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:12.479767218Z"
+                },
+                {
+                    "eventId": "01a14300-06a9-719e-b32f-d99e7dbf11d0",
+                    "title": "테스트1",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 6,
+                    "serverTime": "2026-10-20T17:19:12.515071433Z"
+                }
+            ]
+        },
+        {
+            "name": "등급별 응모·잔액 부족 거절",
+            "SILVER": {
+                "status": 201,
+                "receiptStatus": "ACCEPTED",
+                "rejectionCode": "SUCCESS",
+                "deducted": 1,
+                "balanceDelta": -1
+            },
+            "PLATINUM": {
+                "status": 409,
+                "rejectionCode": "TICKET-006",
+                "balanceDelta": 0
+            }
+        },
+        {
+            "name": "응모 자격 조회",
+            "eligibilities": [
+                {
+                    "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+                    "title": "dfsadfsa",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 1,
+                    "remainingTicketLimit": 4,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.235124707Z"
+                },
+                {
+                    "eventId": "01a14871-57fc-7770-81df-26cfc6a3e2b5",
+                    "title": "ㅁㄴㅇㄻㄴㅇㄹ",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 1,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.300744802Z"
+                },
+                {
+                    "eventId": "01a143aa-c0ff-7c32-a8ca-45d269f0056a",
+                    "title": "[DEMO-20261016] 10 응모자 없는 추첨",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:38.339011455Z"
+                },
+                {
+                    "eventId": "01a143aa-c081-7e7b-bd33-5b5474a95574",
+                    "title": "[DEMO-20261016] 09 취소·응모권 반환",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.371269219Z"
+                },
+                {
+                    "eventId": "01a143aa-c00d-7520-ae86-8d1e9d225202",
+                    "title": "[DEMO-20261016] 08 가중치 추첨·발표",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.410416355Z"
+                },
+                {
+                    "eventId": "01a143aa-bf8c-76e9-8b1f-1b70a3e8135f",
+                    "title": "[DEMO-20261016] 07 무료 추첨·발표",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:38.461274654Z"
+                },
+                {
+                    "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                    "title": "[DEMO-20261016] 06 예정 응모권 이벤트",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 3,
+                    "remainingTicketLimit": 2,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.502291054Z"
+                },
+                {
+                    "eventId": "01a143aa-be98-7292-a29f-6fa6bfde767e",
+                    "title": "[DEMO-20261016] 05 예정 VIP 무료",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:38.540403923Z"
+                },
+                {
+                    "eventId": "01a143aa-be17-7b42-9666-ddb40cd4bd51",
+                    "title": "[DEMO-20261016] 04 VVIP 가중치 상한 없음",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": null,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.588751012Z"
+                },
+                {
+                    "eventId": "01a143aa-bd9c-736d-999e-cce99348605a",
+                    "title": "[DEMO-20261016] 03 VIP 가중치 상한 5장",
+                    "canEnter": false,
+                    "reasons": ["ENTRY_MEMBERSHIP_NOT_MET"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.625281623Z"
+                },
+                {
+                    "eventId": "01a143aa-bd28-7603-b76e-d34d6c2ed18e",
+                    "title": "[DEMO-20261016] 02 응모권 1장",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 1,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.665230192Z"
+                },
+                {
+                    "eventId": "01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+                    "title": "[DEMO-20261016] 01 누구나 응모",
+                    "canEnter": false,
+                    "reasons": ["ALREADY_ENTERED"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:38.696808715Z"
+                },
+                {
+                    "eventId": "01a14319-24d9-7c42-97f5-052db010e6bf",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.729884710Z"
+                },
+                {
+                    "eventId": "01a14319-1ee1-7bc0-97b8-fb5dd97795c0",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.763371454Z"
+                },
+                {
+                    "eventId": "01a14318-e037-767e-84f8-8cfe32643709",
+                    "title": "3123",
+                    "canEnter": true,
+                    "reasons": [],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.803700955Z"
+                },
+                {
+                    "eventId": "01a1430a-e24b-7235-933f-2392e6e0e162",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.840358623Z"
+                },
+                {
+                    "eventId": "01a1430a-8e06-77d3-8cd7-d87053050fc4",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.874529708Z"
+                },
+                {
+                    "eventId": "01a1430a-11b6-7652-bd45-b7ce69afba0c",
+                    "title": "123",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:38.907452900Z"
+                },
+                {
+                    "eventId": "01a14306-0b39-73d3-ac6a-544fb78dae90",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:38.940011278Z"
+                },
+                {
+                    "eventId": "01a14305-afd6-7393-8483-aac94bb7c74b",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:38.971641630Z"
+                },
+                {
+                    "eventId": "01a14305-ab9e-7b4f-b40e-b3bf1e71dcf7",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:39.003054461Z"
+                },
+                {
+                    "eventId": "01a14305-a6bf-7933-a35c-a5555ad5a7cb",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:39.045502258Z"
+                },
+                {
+                    "eventId": "01a14305-663a-72de-8d15-3c15782f5c06",
+                    "title": "dsgfdsfgdf",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 0,
+                    "availableTicketBalance": 0,
+                    "serverTime": "2026-10-20T17:19:39.086993655Z"
+                },
+                {
+                    "eventId": "01a14300-06a9-719e-b32f-d99e7dbf11d0",
+                    "title": "테스트1",
+                    "canEnter": false,
+                    "reasons": ["EVENT_NOT_OPEN"],
+                    "usedTicketCount": 0,
+                    "remainingTicketLimit": 5,
+                    "availableTicketBalance": 5,
+                    "serverTime": "2026-10-20T17:19:39.123666476Z"
+                }
+            ]
+        },
+        {
+            "name": "응모 접수·멱등·중복",
+            "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+            "eventTitle": "[DEMO-20261016] 06 예정 응모권 이벤트",
+            "firstStatus": 201,
+            "receipt": {
+                "id": "d8484ee1-fabe-4718-b8d1-4c45cf99145e",
+                "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                "eventTitle": "[DEMO-20261016] 06 예정 응모권 이벤트",
+                "requestedTicketCount": 1,
+                "requestedTicketsByGrade": {
+                    "BRONZE": 1,
+                    "SILVER": 0,
+                    "GOLD": 0,
+                    "PLATINUM": 0
+                },
+                "deductedTicketCount": 1,
+                "deductedTicketsByGrade": {
+                    "BRONZE": 1,
+                    "SILVER": 0,
+                    "GOLD": 0,
+                    "PLATINUM": 0
+                },
+                "status": "ACCEPTED",
+                "requestedAt": "2026-10-20T17:19:39.195041Z",
+                "acceptedAt": "2026-10-20T17:19:39.195041Z",
+                "rejectionCode": null,
+                "rejectionReason": null
+            },
+            "replayStatus": 200,
+            "sameReceipt": true,
+            "newKeyStatus": 201,
+            "newKeyCode": "SUCCESS",
+            "newKeyReceiptStatus": "ACCEPTED",
+            "newKeyRejection": "SUCCESS",
+            "balanceDelta": -2,
+            "bronzeDelta": -2,
+            "eligibilityAfter": {
+                "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
+                "canEnter": false,
+                "reasons": ["TICKET_LIMIT_EXCEEDED"],
+                "usedTicketCount": 5,
+                "remainingTicketLimit": 0,
+                "availableTicketBalance": 3,
+                "serverTime": "2026-10-20T17:19:39.548328870Z"
+            },
+            "myEntriesSample": [
+                {
+                    "id": "6d0e4820-a2d3-45d3-a4fd-2cae67f90b79",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                },
+                {
+                    "id": "d8484ee1-fabe-4718-b8d1-4c45cf99145e",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                },
+                {
+                    "id": "ad5dbb74-4654-4e08-9600-d32d67673a24",
+                    "status": "REJECTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 0
+                },
+                {
+                    "id": "a693f79c-0b9c-4e0b-a0f0-79c34fe0ad06",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                },
+                {
+                    "id": "a861b48c-d96d-4b12-a39b-2a7e1ae1ad9e",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                },
+                {
+                    "id": "6f292dae-d5dc-41ba-8694-edf0e51dadb6",
+                    "status": "ACCEPTED",
+                    "requestedTicketCount": 1,
+                    "deductedTicketCount": 1
+                }
+            ]
+        },
+        {
+            "name": "마감·미오픈 거절",
+            "eventId": "01a156c2-4f96-7779-8bdb-fe27a5057793",
+            "eventTitle": "dfsadfsa",
+            "status": 409,
+            "rejectionCode": "ENTRY-005",
+            "balanceDelta": 0
+        }
+    ]
+}
