@@ -6,6 +6,8 @@ import { TicketCard, TicketCardMedia } from '@shared/ui/ticket-card';
 
 import type { Game } from '../model/types';
 
+import { getGameContent } from '../model/gameContent';
+
 /** 게임 보상은 게임별 하루 1회 응모권 1장 (getddo-spec 게임 규칙) */
 const DAILY_GAME_REWARD = 1;
 
@@ -20,8 +22,10 @@ export function GameTicketCard({
     ready = true,
     fluid = false,
     className,
+    rewardedToday,
 }: {
     game: Game;
+    rewardedToday?: boolean;
     href: string;
     /** 플레이 화면이 준비됐는지 — false면 버튼을 '준비 중'으로 막는다 */
     ready?: boolean;
@@ -29,7 +33,7 @@ export function GameTicketCard({
     fluid?: boolean;
     className?: string;
 }) {
-    const rewarded = game.rewardedToday ?? false;
+    const rewarded = rewardedToday;
 
     return (
         <TicketCard
@@ -39,7 +43,11 @@ export function GameTicketCard({
                 <>
                     <div className="mt-3.75 flex h-4.5 items-center justify-between gap-2">
                         <span className="text-caption text-fg-tertiary">응모권</span>
-                        {rewarded ? (
+                        {rewarded === undefined ? (
+                            <span className="text-caption text-fg-tertiary">
+                                보상은 상세에서 확인
+                            </span>
+                        ) : rewarded ? (
                             <span className="text-caption text-fg-tertiary">오늘 받음</span>
                         ) : (
                             <span className="text-body-sm-bold text-fg-primary flex items-center gap-1">
@@ -78,14 +86,14 @@ export function GameTicketCard({
                 />
             )}
             <TicketCardMedia
-                src={game.thumbnailUrl}
+                src={getGameContent(game).heroImage}
                 fallback={<Gamepad2 aria-hidden className="text-fg-disabled size-8" />}
             />
 
             <div className="mt-3 flex flex-col gap-2">
                 <div className="flex flex-col">
                     <span className="text-caption text-fg-tertiary">GAME</span>
-                    <h3 className="text-body-bold text-fg-primary truncate">{game.title}</h3>
+                    <h3 className="text-body-bold text-fg-primary truncate">{game.name}</h3>
                 </div>
                 {game.description && (
                     <p className="text-body-sm text-fg-tertiary line-clamp-2">{game.description}</p>

@@ -1,4 +1,5 @@
-import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
+import { GameTicketCard, gameDetailPath, useGameList, useGameStatisticsList } from '@entities/game';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { LoadError } from '@shared/ui/load-error';
@@ -26,13 +27,18 @@ export function GameRail({
 }) {
     const gamesQuery = useGameList();
     const { data: games, isPending } = gamesQuery;
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const statistics = useGameStatisticsList(
+        (games ?? []).filter((game) => hasGamePlayer(game.code)).map((game) => game.id),
+        isUser,
+    );
+    const claimed = (id: string) =>
+        statistics.find((item) => item.data?.gameId === id)?.data?.rewardClaimedToday;
     const dragScroll = useDragScroll<HTMLDivElement>();
     const ordered = (games ?? [])
-        // 플레이 화면이 없는 게임(후보·준비 중)은 목록에서 뺀다
-        .filter((game) => game.id !== excludeGameId && hasGamePlayer(game.id))
-        // 오늘 보상을 받은 게임은 뒤로 보낸다
-        .sort((a, b) => Number(a.rewardedToday ?? false) - Number(b.rewardedToday ?? false));
-
+        .filter((game) => game.id !== excludeGameId && hasGamePlayer(game.code))
+        // 화면 정리의 후보 게임 제외와 실서버의 당일 보상 정렬을 함께 유지한다.
+        .sort((a, b) => Number(claimed(a.id) ?? false) - Number(claimed(b.id) ?? false));
     const fillRow = fill && ordered.length > 0 && ordered.length <= FILL_COLUMNS;
 
     return (
@@ -68,8 +74,9 @@ export function GameRail({
                         <GameTicketCard
                             key={game.id}
                             game={game}
+                            rewardedToday={claimed(game.id)}
                             href={gameDetailPath(game.id)}
-                            ready={hasGamePlayer(game.id)}
+                            ready={hasGamePlayer(game.code)}
                             fluid
                         />
                     ))}
@@ -85,8 +92,9 @@ export function GameRail({
                         <div key={game.id} className="shrink-0">
                             <GameTicketCard
                                 game={game}
+                                rewardedToday={claimed(game.id)}
                                 href={gameDetailPath(game.id)}
-                                ready={hasGamePlayer(game.id)}
+                                ready={hasGamePlayer(game.code)}
                             />
                         </div>
                     ))}

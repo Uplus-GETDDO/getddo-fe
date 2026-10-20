@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import type { TicketGrade } from '@entities/ticket';
 
 import type { ColorWordColorId, ColorWordRound } from '../model/colorWord';
-import type { GameOverHandler } from '../model/types';
+import type { GameOverHandler, GameSessionProps, ValidationData } from '../model/types';
 
 import background from '../assets/colorWord/background.jpg';
 import mascotCorrect from '../assets/colorWord/mascot-correct.png';
@@ -15,12 +15,11 @@ import { useLoopingBgm } from '../hooks/useLoopingBgm';
 import {
     COLOR_WORD_COLORS,
     COLOR_WORD_LIVES,
-    COLOR_WORD_POINTS,
-    colorWordTimeLimitMs,
     createColorWordRound,
     isColorWordCorrect,
 } from '../model/colorWord';
 import { COLOR_WORD_BGM, COLOR_WORD_SOUNDS } from '../model/colorWordAssets';
+import { createXorshift32, ActiveClock } from '../model/gameSession';
 import { PAUSE_SOUNDS } from '../model/gameSounds';
 import { isInteractive } from '../utils/isInteractive';
 import { ColorWordButton } from './ColorWordButton';
@@ -69,21 +68,25 @@ const colorOf = (id: ColorWordColorId) => COLOR_WORD_COLORS.find((color) => colo
  * Esc·P나 일시정지 버튼으로 멈추고, 다른 탭·창으로 가면 저절로 멈춘다 (멈춘 동안 시간이 흐르지 않는다)
  */
 export function ColorWordGame({
+    session,
+    onRestart,
+    onRecordingError,
     bestScore = 0,
     onExit,
     onGameOver,
-}: {
+}: GameSessionProps & {
     bestScore?: number;
     onExit: () => void;
     onGameOver?: GameOverHandler;
 }) {
+    const [random] = useState(() => createXorshift32(session.gameData.seed));
     const [phase, setPhase] = useState<Phase>('ready');
     const [countdown, setCountdown] = useState(COUNTDOWN_FROM);
-    const [round, setRound] = useState<ColorWordRound>(() => createColorWordRound(Math.random));
+    const [round, setRound] = useState<ColorWordRound>({ word: 'red', ink: 'blue' });
     // 한 문제마다 바뀌는 번호 — 글자 등장 연출과 제한 시간을 처음부터 다시 잰다
     const [roundKey, setRoundKey] = useState(0);
     const [correct, setCorrect] = useState(0);
-    const [lives, setLives] = useState(COLOR_WORD_LIVES);
+    const [lives, setLives] = useState(session.rules.initialLives!);
     const [reveal, setReveal] = useState<Reveal | null>(null);
     const [hurry, setHurry] = useState(false);
     const [best, setBest] = useState(bestScore);
@@ -97,29 +100,42 @@ export function ColorWordGame({
     const playRef = useRef(0);
     // 답을 보여 주는 동안 멈추라고 하면, 다음 문제로 넘어가면서 멈춘다
     const pauseRequestedRef = useRef(false);
+    const [activeClock] = useState(() => new ActiveClock());
+    const answersRef = useRef<Extract<ValidationData, { answers: unknown }>['answers']>([]);
+    const judgedRef = useRef(false);
     const bgm = useLoopingBgm(COLOR_WORD_BGM);
 
     // 남은 시간(1 → 0) — 시간 막대 길이이자 제한 시간. 멈추면 이 값에서 그대로 멈춘다
     const timeLeft = useMotionValue(1);
     useMotionValueEvent(timeLeft, 'change', (value) => setHurry(value <= HURRY_RATIO));
 
-    const score = correct * COLOR_WORD_POINTS;
-    const timeLimit = colorWordTimeLimitMs(correct);
+    const score = correct * session.rules.pointsPerCorrect!;
+    const timeLimit = Math.max(
+        session.rules.minimumTimeLimitMs!,
+        session.rules.initialTimeLimitMs! - correct * session.rules.timeLimitDecreaseMs!,
+    );
 
     const playSound = (key: keyof typeof COLOR_WORD_SOUNDS) =>
         bgm.playEffect(COLOR_WORD_SOUNDS[key]);
 
     const start = () => {
+        if (phase === 'over') {
+            onRestart();
+            return;
+        }
+        answersRef.current = [];
+        activeClock.reset();
+        judgedRef.current = false;
         playRef.current += 1;
         pauseRequestedRef.current = false;
         // 시작은 항상 키·클릭 입력 안에서 불리므로 여기서 음악을 튼다 (브라우저 자동 재생 제한)
         bgm.play();
         bgm.preloadEffects([...Object.values(COLOR_WORD_SOUNDS), ...Object.values(PAUSE_SOUNDS)]);
         setCorrect(0);
-        setLives(COLOR_WORD_LIVES);
+        setLives(session.rules.initialLives!);
         setReveal(null);
         setNewBest(false);
-        setRound((prev) => createColorWordRound(Math.random, prev));
+        setRound(createColorWordRound(random));
         setRoundKey((key) => key + 1);
         timeLeft.set(1);
         setCountdown(COUNTDOWN_FROM);
@@ -135,7 +151,7 @@ export function ColorWordGame({
         const play = playRef.current;
         // 저장 요청이 실패하거나 바로 오류를 던져도 게임 화면은 그대로 둔다 (실패 안내는 게임 상세 페이지가 한다)
         Promise.resolve()
-            .then(() => onGameOver?.(finalScore))
+            .then(() => onGameOver?.(finalScore, { answers: answersRef.current }))
             .then((result) => {
                 if (!result || playRef.current !== play || result.ticketsGranted <= 0) return;
                 setTicketsGranted(result.ticketsGranted);
@@ -152,6 +168,7 @@ export function ColorWordGame({
             pauseRequestedRef.current = true;
             return;
         }
+        activeClock.pause(performance.now());
         setPhase('paused');
         bgm.pause(PAUSE_SOUNDS.pause);
     };
@@ -166,7 +183,22 @@ export function ColorWordGame({
 
     // 답을 고르거나(answer) 시간이 지나면(null) 채점하고, 잠깐 결과를 보여 준다
     const judge = (answer: ColorWordColorId | null) => {
-        if (phase !== 'playing' || reveal) return;
+        if (phase !== 'playing' || reveal || judgedRef.current) return;
+        if (answersRef.current.length >= 10000) {
+            onRecordingError(
+                '답변 기록 한도에 도달했습니다. 이 판은 정상 완료로 제출하지 않습니다.',
+            );
+            return;
+        }
+        judgedRef.current = true;
+        activeClock.pause(performance.now());
+        const elapsedMs = Math.min(activeClock.read(performance.now()), timeLimit);
+        if (answer === null || elapsedMs >= timeLimit) answer = null;
+        answersRef.current.push({
+            sequence: answersRef.current.length + 1,
+            answer,
+            elapsedMs: answer === null ? timeLimit : elapsedMs,
+        });
         const ok = answer !== null && isColorWordCorrect(round, answer);
         setReveal({ picked: answer, ok });
         if (ok) {
@@ -198,6 +230,7 @@ export function ColorWordGame({
         if (phase !== 'playing' || reveal) return;
         // 멈춘 순간에 시간이 딱 다 됐으면 길이 0짜리 애니메이션을 만들지 않고 바로 시간 초과로 넘긴다
         // (같은 값으로의 애니메이션은 끝 알림이 오지 않을 수 있어, 그대로 두면 문제가 멈춘 채 남는다)
+        activeClock.resume(performance.now());
         const remaining = timeLeft.get();
         if (remaining <= 0) {
             const timer = setTimeout(() => timeUp(), 0);
@@ -208,8 +241,11 @@ export function ColorWordGame({
             ease: 'linear',
             onComplete: () => timeUp(),
         });
-        return () => controls.stop();
-    }, [phase, reveal, roundKey, timeLimit, timeLeft]);
+        return () => {
+            controls.stop();
+            activeClock.pause(performance.now());
+        };
+    }, [phase, reveal, roundKey, timeLimit, timeLeft, activeClock]);
 
     // 결과를 보여 준 뒤 다음 문제로 (목숨을 다 쓰면 끝)
     const next = useEffectEvent(() => {
@@ -218,8 +254,10 @@ export function ColorWordGame({
             finish(score);
             return;
         }
+        activeClock.reset();
+        judgedRef.current = false;
         timeLeft.set(1);
-        setRound((prev) => createColorWordRound(Math.random, prev));
+        setRound(createColorWordRound(random, round));
         setRoundKey((key) => key + 1);
         if (pauseRequestedRef.current) {
             pauseRequestedRef.current = false;

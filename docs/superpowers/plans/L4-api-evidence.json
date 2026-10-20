@@ -1,0 +1,282 @@
+{
+    "at": "2026-10-20T09:52:59.993Z",
+    "base": "https://dzc8oneey9mmx.cloudfront.net/api/v1",
+    "kind": "실제 API 직접 호출",
+    "checks": [
+        {
+            "name": "G01",
+            "status": 200,
+            "codes": ["COLOR_WORD", "TAKKO_ORDER", "TAKKO_RUN", "TAKKO_TIMING"]
+        },
+        {
+            "name": "COLOR_WORD 조회",
+            "detailStatus": 200,
+            "statisticsBefore": {
+                "gameId": "01a143a8-b6de-74af-afca-7f908caa54eb",
+                "bestScore": 70,
+                "totalScore": 120,
+                "validPlayCount": 3,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": false,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:01.161323791Z"
+            }
+        },
+        {
+            "name": "COLOR_WORD 결과·중복·보상",
+            "startStatus": 201,
+            "resultStatus": 200,
+            "result": {
+                "playId": "01a158ba-8537-7912-80f4-170597f079d1",
+                "status": "VALID",
+                "score": 50,
+                "completedAt": "2026-10-20T09:53:01.329280Z",
+                "reward": {
+                    "ticketCount": 1,
+                    "grade": "BRONZE",
+                    "grantedAt": "2026-10-20T09:53:01.361449Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            },
+            "expectedScore": 50,
+            "scoreMatches": true,
+            "duplicateStatus": 200,
+            "duplicateMatches": true,
+            "statisticsAfter": {
+                "gameId": "01a143a8-b6de-74af-afca-7f908caa54eb",
+                "bestScore": 70,
+                "totalScore": 170,
+                "validPlayCount": 4,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": true,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:01.539720648Z"
+            },
+            "validPlayDelta": 1,
+            "totalScoreDelta": 50,
+            "walletDelta": 1,
+            "gradeDelta": 1,
+            "historyStatus": 200,
+            "gameHistories": [
+                {
+                    "grade": "BRONZE",
+                    "operationType": "GRANT",
+                    "createdAt": "2026-10-20T09:53:01.361449Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                },
+                {
+                    "grade": "BRONZE",
+                    "operationType": "GRANT",
+                    "createdAt": "2026-10-16T07:45:46.288608Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            ]
+        },
+        {
+            "name": "COLOR_WORD ADMIN",
+            "startStatus": 201,
+            "statisticsStatus": 403,
+            "statisticsCode": "GAME-007",
+            "submitStatus": 403,
+            "submitCode": "GAME-007"
+        },
+        {
+            "name": "TAKKO_ORDER 조회",
+            "detailStatus": 200,
+            "statisticsBefore": {
+                "gameId": "01a15714-8ece-7929-9127-273bb6db4875",
+                "bestScore": 0,
+                "totalScore": 0,
+                "validPlayCount": 0,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": false,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:01.933736953Z"
+            }
+        },
+        {
+            "name": "TAKKO_ORDER 결과·중복·보상",
+            "startStatus": 201,
+            "resultStatus": 200,
+            "result": {
+                "playId": "01a158ba-8839-7e6f-8b2a-40bf871828d2",
+                "status": "VALID",
+                "score": 18,
+                "completedAt": "2026-10-20T09:53:02.055709Z",
+                "reward": {
+                    "ticketCount": 1,
+                    "grade": "BRONZE",
+                    "grantedAt": "2026-10-20T09:53:02.075456Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            },
+            "expectedScore": 18,
+            "scoreMatches": true,
+            "duplicateStatus": 200,
+            "duplicateMatches": true,
+            "statisticsAfter": {
+                "gameId": "01a15714-8ece-7929-9127-273bb6db4875",
+                "bestScore": 18,
+                "totalScore": 18,
+                "validPlayCount": 1,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": true,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:02.152709460Z"
+            },
+            "validPlayDelta": 1,
+            "totalScoreDelta": 18,
+            "walletDelta": 1,
+            "gradeDelta": 1,
+            "historyStatus": 200,
+            "gameHistories": [
+                {
+                    "grade": "BRONZE",
+                    "operationType": "GRANT",
+                    "createdAt": "2026-10-20T09:53:02.075456Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            ]
+        },
+        {
+            "name": "TAKKO_ORDER ADMIN",
+            "startStatus": 201,
+            "statisticsStatus": 403,
+            "statisticsCode": "GAME-007",
+            "submitStatus": 403,
+            "submitCode": "GAME-007"
+        },
+        {
+            "name": "TAKKO_RUN 조회",
+            "detailStatus": 200,
+            "statisticsBefore": {
+                "gameId": "01a14dce-e375-7801-977c-19ba1dec3635",
+                "bestScore": 0,
+                "totalScore": 0,
+                "validPlayCount": 0,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": false,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:02.382326034Z"
+            }
+        },
+        {
+            "name": "TAKKO_RUN 결과·중복·보상",
+            "startStatus": 201,
+            "resultStatus": 200,
+            "result": {
+                "playId": "01a158ba-89e3-7fab-a784-afc96b6ae7d3",
+                "status": "VALID",
+                "score": 451,
+                "completedAt": "2026-10-20T09:53:02.484321Z",
+                "reward": {
+                    "ticketCount": 1,
+                    "grade": "SILVER",
+                    "grantedAt": "2026-10-20T09:53:02.502040Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            },
+            "expectedScore": 451,
+            "scoreMatches": true,
+            "duplicateStatus": 200,
+            "duplicateMatches": true,
+            "statisticsAfter": {
+                "gameId": "01a14dce-e375-7801-977c-19ba1dec3635",
+                "bestScore": 451,
+                "totalScore": 451,
+                "validPlayCount": 1,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": true,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:02.584163120Z"
+            },
+            "validPlayDelta": 1,
+            "totalScoreDelta": 451,
+            "walletDelta": 1,
+            "gradeDelta": 1,
+            "historyStatus": 200,
+            "gameHistories": [
+                {
+                    "grade": "SILVER",
+                    "operationType": "GRANT",
+                    "createdAt": "2026-10-20T09:53:02.502040Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            ]
+        },
+        {
+            "name": "TAKKO_RUN ADMIN",
+            "startStatus": 201,
+            "statisticsStatus": 403,
+            "statisticsCode": "GAME-007",
+            "submitStatus": 403,
+            "submitCode": "GAME-007"
+        },
+        {
+            "name": "TAKKO_TIMING 조회",
+            "detailStatus": 200,
+            "statisticsBefore": {
+                "gameId": "01a15714-8ece-7944-95ef-31fed5a68f81",
+                "bestScore": 0,
+                "totalScore": 0,
+                "validPlayCount": 0,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": false,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:02.801436600Z"
+            }
+        },
+        {
+            "name": "TAKKO_TIMING 결과·중복·보상",
+            "startStatus": 201,
+            "resultStatus": 200,
+            "result": {
+                "playId": "01a158ba-8b89-703e-b8d6-5da5e10c066d",
+                "status": "VALID",
+                "score": 50,
+                "completedAt": "2026-10-20T09:53:02.907843Z",
+                "reward": {
+                    "ticketCount": 1,
+                    "grade": "SILVER",
+                    "grantedAt": "2026-10-20T09:53:02.924197Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            },
+            "expectedScore": 50,
+            "scoreMatches": true,
+            "duplicateStatus": 200,
+            "duplicateMatches": true,
+            "statisticsAfter": {
+                "gameId": "01a15714-8ece-7944-95ef-31fed5a68f81",
+                "bestScore": 50,
+                "totalScore": 50,
+                "validPlayCount": 1,
+                "rewardDate": "2026-10-20",
+                "rewardClaimedToday": true,
+                "nextResetAt": "2026-10-20T15:00:00Z",
+                "serverTime": "2026-10-20T09:53:02.995488961Z"
+            },
+            "validPlayDelta": 1,
+            "totalScoreDelta": 50,
+            "walletDelta": 1,
+            "gradeDelta": 1,
+            "historyStatus": 200,
+            "gameHistories": [
+                {
+                    "grade": "SILVER",
+                    "operationType": "GRANT",
+                    "createdAt": "2026-10-20T09:53:02.924197Z",
+                    "expiresAt": "2026-10-31T15:00:00Z"
+                }
+            ]
+        },
+        {
+            "name": "TAKKO_TIMING ADMIN",
+            "startStatus": 201,
+            "statisticsStatus": 403,
+            "statisticsCode": "GAME-007",
+            "submitStatus": 403,
+            "submitCode": "GAME-007"
+        }
+    ]
+}

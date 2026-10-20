@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import type { TicketGrade } from '@entities/ticket';
 
 import type { TakkoTimingResult, TakkoTimingRound } from '../model/takkoTiming';
-import type { GameOverHandler } from '../model/types';
+import type { GameOverHandler, GameSessionProps } from '../model/types';
 
 import mascotCorrect from '../assets/colorWord/mascot-correct.png';
 import mascotIdle from '../assets/colorWord/mascot-idle.png';
@@ -16,11 +16,11 @@ import gaugeTrack from '../assets/takkoTiming/gauge-track.png';
 import gaugeZone from '../assets/takkoTiming/gauge-zone.png';
 import toothpick from '../assets/takkoTiming/toothpick.png';
 import { useLoopingBgm } from '../hooks/useLoopingBgm';
+import { createXorshift32, ActiveClock } from '../model/gameSession';
 import { PAUSE_SOUNDS } from '../model/gameSounds';
 import {
     createTakkoTimingRound,
     judgeTakkoTiming,
-    takkoTimingPoints,
     takkoTimingPosition,
 } from '../model/takkoTiming';
 import { TAKKO_TIMING_BGM, TAKKO_TIMING_SOUNDS } from '../model/takkoTimingAssets';
@@ -74,19 +74,25 @@ const RESULT_CHIP: Record<TakkoTimingResult, string> = {
  * 시작·이어 하기 3·2·1, 일시정지(Esc·P, 다른 탭·창으로 가면 자동), 결과 표시는 글자색깔 맞추기와 같은 틀이다
  */
 export function TakkoTimingGame({
+    session,
+    onRestart,
+    onRecordingError,
     bestScore = 0,
     onExit,
     onGameOver,
-}: {
+}: GameSessionProps & {
     bestScore?: number;
     onExit: () => void;
     onGameOver?: GameOverHandler;
 }) {
+    const [random] = useState(() => createXorshift32(session.gameData.seed));
     const [phase, setPhase] = useState<Phase>('ready');
     const [countdown, setCountdown] = useState(COUNTDOWN_FROM);
-    const [round, setRound] = useState<TakkoTimingRound>(() =>
-        createTakkoTimingRound(Math.random, 0),
-    );
+    const [round, setRound] = useState<TakkoTimingRound>(() => ({
+        center: 0.5,
+        width: 0.22,
+        sweepMs: 1600,
+    }));
     // 한 판마다 바뀌는 번호 — 움직임을 처음부터 다시 잰다
     const [roundKey, setRoundKey] = useState(0);
     const [successes, setSuccesses] = useState(0);
@@ -105,6 +111,9 @@ export function TakkoTimingGame({
     const pauseRequestedRef = useRef(false);
     // 이번 판에서 흐른 시간(ms) — 일시정지 후 이어 할 때 여기서부터 다시 움직인다
     const elapsedRef = useRef(0);
+    const [activeClock] = useState(() => new ActiveClock());
+    const tapsRef = useRef<{ sequence: number; elapsedMs: number }[]>([]);
+    const judgedRef = useRef(false);
     const bgm = useLoopingBgm(TAKKO_TIMING_BGM);
 
     // 이쑤시개 위치(0~1) — 매 프레임 바뀌므로 다시 그리지 않고 값만 옮긴다
@@ -116,10 +125,17 @@ export function TakkoTimingGame({
 
     const resetRound = () => {
         elapsedRef.current = 0;
+        activeClock.reset();
+        judgedRef.current = false;
         position.set(0);
     };
 
     const start = () => {
+        if (phase === 'over') {
+            onRestart();
+            return;
+        }
+        tapsRef.current = [];
         playRef.current += 1;
         pauseRequestedRef.current = false;
         // 시작은 항상 키·클릭 입력 안에서 불리므로 여기서 음악을 튼다 (브라우저 자동 재생 제한)
@@ -129,7 +145,7 @@ export function TakkoTimingGame({
         setScore(0);
         setReveal(null);
         setNewBest(false);
-        setRound((prev) => createTakkoTimingRound(Math.random, 0, prev));
+        setRound(createTakkoTimingRound(random, 0));
         setRoundKey((key) => key + 1);
         resetRound();
         setCountdown(COUNTDOWN_FROM);
@@ -145,7 +161,7 @@ export function TakkoTimingGame({
         const play = playRef.current;
         // 저장 요청이 실패하거나 바로 오류를 던져도 게임 화면은 그대로 둔다 (실패 안내는 게임 상세 페이지가 한다)
         Promise.resolve()
-            .then(() => onGameOver?.(finalScore))
+            .then(() => onGameOver?.(finalScore, { taps: tapsRef.current }))
             .then((result) => {
                 if (!result || playRef.current !== play || result.ticketsGranted <= 0) return;
                 setTicketsGranted(result.ticketsGranted);
@@ -162,6 +178,7 @@ export function TakkoTimingGame({
             pauseRequestedRef.current = true;
             return;
         }
+        activeClock.pause(performance.now());
         setPhase('paused');
         bgm.pause(PAUSE_SOUNDS.pause);
     };
@@ -176,9 +193,26 @@ export function TakkoTimingGame({
 
     // 꽂기 — 지금 이쑤시개 자리를 채점하고 잠깐 결과를 보여 준다
     const judge = () => {
-        if (phase !== 'playing' || reveal) return;
-        const result = judgeTakkoTiming(position.get(), round);
-        const points = takkoTimingPoints(result);
+        if (phase !== 'playing' || reveal || judgedRef.current) return;
+        if (tapsRef.current.length >= 10000) {
+            onRecordingError(
+                '입력 기록 한도에 도달했습니다. 이 판은 정상 완료로 제출하지 않습니다.',
+            );
+            return;
+        }
+        judgedRef.current = true;
+        activeClock.pause(performance.now());
+        const elapsedMs = activeClock.read(performance.now());
+        tapsRef.current.push({ sequence: tapsRef.current.length + 1, elapsedMs });
+        const stopped = takkoTimingPosition(elapsedMs, round.sweepMs);
+        position.set(stopped);
+        const result = judgeTakkoTiming(stopped, round);
+        const points =
+            result === 'perfect'
+                ? session.rules.perfectPoints!
+                : result === 'hit'
+                  ? session.rules.points!
+                  : 0;
         setReveal({ result, points });
         if (points > 0) {
             setScore((n) => n + points);
@@ -208,12 +242,12 @@ export function TakkoTimingGame({
     // 한 프레임에서 오류가 나도 다음 프레임은 반드시 이어 간다 (타꼬런 tick과 같은 방식)
     useEffect(() => {
         if (phase !== 'playing' || reveal) return;
-        const base = performance.now() - elapsedRef.current;
+        activeClock.resume(performance.now());
         let frame = 0;
         let errorLogged = false;
-        const tick = (now: number) => {
+        const tick = () => {
             try {
-                const elapsed = now - base;
+                const elapsed = activeClock.read(performance.now());
                 elapsedRef.current = elapsed;
                 position.set(takkoTimingPosition(elapsed, round.sweepMs));
             } catch (error) {
@@ -226,8 +260,11 @@ export function TakkoTimingGame({
             }
         };
         frame = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frame);
-    }, [phase, reveal, roundKey, round, position]);
+        return () => {
+            cancelAnimationFrame(frame);
+            activeClock.pause(performance.now());
+        };
+    }, [phase, reveal, roundKey, round, position, activeClock]);
 
     // 결과를 보여 준 뒤 다음 판으로 (빗나가면 끝)
     const next = useEffectEvent(() => {
@@ -238,7 +275,7 @@ export function TakkoTimingGame({
             return;
         }
         resetRound();
-        setRound((prev) => createTakkoTimingRound(Math.random, successes, prev));
+        setRound(createTakkoTimingRound(random, successes, round));
         setRoundKey((key) => key + 1);
         if (pauseRequestedRef.current) {
             pauseRequestedRef.current = false;
