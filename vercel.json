@@ -2,7 +2,7 @@
     "build": {
         "env": {
             "VITE_API_BASE_URL": "/api",
-            "VITE_ENABLE_MSW": "true"
+            "VITE_ENABLE_MSW": "false"
         }
     },
     "rewrites": [

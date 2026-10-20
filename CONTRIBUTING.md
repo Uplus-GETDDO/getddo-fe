@@ -8,8 +8,8 @@
 
 ```bash
 npm install                      # 의존성 설치 (prepare 스크립트가 husky 훅을 자동 설치)
-cp .env.example .env.development # 환경변수 생성
-npm run dev                      # 개발 서버 (VITE_ENABLE_MSW=true면 MSW 목업으로 시작)
+cp .env.example .env.development # 환경변수 생성 — VITE_VIRTUAL_USERS_JSON은 필수(미설정 시 로그인 안내)
+npm run dev                      # 개발 서버 (VITE_ENABLE_MSW=true면 MSW 목업으로 시작. 배포 빌드는 목업 없음)
 ```
 
 ## 브랜치 전략

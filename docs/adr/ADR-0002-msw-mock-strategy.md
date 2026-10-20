@@ -27,3 +27,7 @@
 현재 배포 하이브리드는 관리자 추첨·게임·차단 조회·가상 사용자 네 영역이다. 공통 감사 조회는 GD-244에서 제거했다. 정확한 코드 근거는 [연동 현황](../backend-integration-status.md)을 따른다.
 
 배포 목업 종료는 [통합 로드맵](../superpowers/plans/2026-10-20-backend-integration-roadmap.md)의 계획이며 아직 구현된 결정으로 표시하지 않는다. 각 업무 실연동 검증 뒤 배포 핸들러를 해제하고, 마지막에 `/virtual-users` 의존과 브라우저 Worker 부팅을 정리한다. 테스트용 MSW·fixture는 유지한다. 인증·환경 설정 변경은 구현 전 승인한다.
+
+## 2026-10-21 배포 종료 (GD-260)
+
+사용자 승인으로 배포 런타임 목업을 종료했다. `vercel.json` build.env `VITE_ENABLE_MSW=false`로 배포 빌드는 브라우저 목업을 시작하지 않고, `app/config/serviceWorkerCleanup.ts`가 과거에 등록된 우리 앱의 `mockServiceWorker.js`만 해제한다. `hybridHandlers`를 제거하고 `mocks/browser.ts`는 로컬 개발 전용 전체 `handlers`만 등록한다. `/virtual-users` 호출도 제거해 시연 계정은 `VITE_VIRTUAL_USERS_JSON` 설정이 공급한다(`entities/user/model/virtualUsers.ts`, 샘플 자동 대체 없음). 테스트용 MSW·fixture·로컬 개발 목업은 유지하며, 이 결정의 상태는 유효 — 목업이 사라진 것은 배포 런타임뿐이다.

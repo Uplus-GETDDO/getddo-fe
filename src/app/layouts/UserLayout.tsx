@@ -6,6 +6,7 @@ import { useSessionStore } from '@entities/user';
 import { VirtualClockTicker } from '@features/controlVirtualClock';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
+import { env } from '@shared/config/env';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
@@ -166,11 +167,13 @@ export function UserLayout() {
                                 <NavLink to="/admin">관리자 화면으로</NavLink>
                             </Button>
                         )}
-                        {/* 가상 시계 조작은 관리자만 — 일반 사용자는 시각 표시만 본다 */}
-                        <VirtualClockTicker
-                            className="hidden 2xl:flex"
-                            readOnly={user.role !== 'ADMIN'}
-                        />
+                        {/* 가상 시계는 로컬 개발 전용 표시 도구 — 조작은 관리자만, 일반 사용자는 시각 표시만 본다 */}
+                        {env.isDev && (
+                            <VirtualClockTicker
+                                className="hidden 2xl:flex"
+                                readOnly={user.role !== 'ADMIN'}
+                            />
+                        )}
                         <NotificationBell />
                         {/* 피그마 홈 — 아바타·이름·멤버십 알약(그림자) + 아래 화살표 */}
                         <VirtualUserSwitcher

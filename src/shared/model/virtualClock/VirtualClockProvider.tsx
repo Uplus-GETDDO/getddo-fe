@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
+import { env } from '@shared/config/env';
+
 import { VirtualClockContext, type VirtualClockValue } from './context';
 import { VIRTUAL_CLOCK_STORAGE_KEY } from './storageKey';
 
@@ -15,13 +17,15 @@ function readStoredOverride(): Date | null {
     }
 }
 
-// 렌더 중 외부 저장소 접근을 피하기 위해 모듈 로드 시 1회만 읽는다
-const initialOverride = readStoredOverride();
+// 렌더 중 외부 저장소 접근을 피하기 위해 모듈 로드 시 1회만 읽는다.
+// 가상 시계는 로컬 개발 전용 표시 도구 — 배포 빌드는 저장된 오버라이드를 읽지도 쓰지도 않는다
+const initialOverride = env.isDev ? readStoredOverride() : null;
 
 export function VirtualClockProvider({ children }: { children: ReactNode }) {
     const [override, setOverrideState] = useState<Date | null>(initialOverride);
 
     const setOverride = useCallback((at: Date | null) => {
+        if (!env.isDev) return;
         try {
             if (at) {
                 sessionStorage.setItem(VIRTUAL_CLOCK_STORAGE_KEY, at.toISOString());

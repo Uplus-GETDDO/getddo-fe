@@ -1,0 +1,538 @@
+{
+    "kind": "VITE_ENABLE_MSW=false 프로덕션 빌드, 로컬 preview + 실제 API 프록시",
+    "requests": [
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000001",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000002",
+            "x-user-role": "USER"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/notification-jobs?page=1&size=1&status=FAILED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=OPEN",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=100&status=OPEN",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=3&status=DRAW_CONFIRMED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=SCHEDULED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/tickets/inconsistencies?page=1&size=1",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=CLOSED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=DRAW_CONFIRMED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=OPEN",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=PUBLISHED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=CANCELED",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=NO_ENTRANTS",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/stats/daily?from=2026-10-15&to=2026-10-21",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=REDRAWING",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events?page=1&size=1&status=NO_ELIGIBLE_ENTRANTS",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions?page=1&size=50",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events?page=1&size=20",
+            "status": 401,
+            "x-user-id": "00000000-0000-4000-8000-000000000003",
+            "x-user-role": "ADMIN"
+        }
+    ],
+    "checks": [
+        {
+            "name": "로그인 계정 목록 = 설정 JSON",
+            "users": 3,
+            "listed": true
+        },
+        {
+            "name": "/virtual-users 미호출",
+            "ok": true
+        },
+        {
+            "name": "A 선택 후 실제 API + X-User-ID",
+            "requests": 9,
+            "sample": [
+                {
+                    "method": "GET",
+                    "path": "/v1/banners",
+                    "status": 401,
+                    "x-user-id": "00000000-0000-4000-8000-000000000001",
+                    "x-user-role": "USER"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/events?page=1&size=20",
+                    "status": 401,
+                    "x-user-id": "00000000-0000-4000-8000-000000000001",
+                    "x-user-role": "USER"
+                },
+                {
+                    "method": "GET",
+                    "path": "/v1/notifications/me?size=1&isRead=false",
+                    "status": 401,
+                    "x-user-id": "00000000-0000-4000-8000-000000000001",
+                    "x-user-role": "USER"
+                }
+            ]
+        },
+        {
+            "name": "신규 세션 Worker 없음",
+            "registrations": []
+        },
+        {
+            "name": "기존 설치 Worker 자동 해제",
+            "after": []
+        },
+        {
+            "name": "A→B 전환 시 캐시 리셋·재조회",
+            "bRequests": 10,
+            "leakedARequests": []
+        },
+        {
+            "name": "새로고침 후 세션 유지",
+            "user": "임시 검증 B",
+            "kept": true
+        },
+        {
+            "name": "헤더 가상 시계 비노출",
+            "count": 0
+        },
+        {
+            "name": "admin 가상 시계 라우트·메뉴 비노출",
+            "navItems": 0
+        },
+        {
+            "name": "반응형 320px",
+            "horizontalOverflow": false
+        },
+        {
+            "name": "반응형 390px",
+            "horizontalOverflow": false
+        },
+        {
+            "name": "200% 확대(640px)",
+            "horizontalOverflow": true
+        },
+        {
+            "name": "키보드 탭 순회",
+            "focusTrail": ["A", "A", "A", "A", "A", "A", "A", "BUTTON", "BUTTON", "A", "A", "A"]
+        },
+        {
+            "name": "미설정 시 명시 안내",
+            "shown": true
+        }
+    ],
+    "errors": []
+}
