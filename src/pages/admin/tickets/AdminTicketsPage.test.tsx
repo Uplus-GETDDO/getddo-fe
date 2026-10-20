@@ -137,6 +137,41 @@ describe('AdminTicketsPage', () => {
         }
     });
 
+    it('같은 경로에서 링크 날짜·처리 유형이 바뀌면 이전 조건이 남지 않는다', async () => {
+        const { client, router } = renderRoutedPage(
+            [
+                '/admin/tickets?tab=histories&date=2026-10-19&operationType=USE',
+                '/admin/tickets?tab=histories',
+            ],
+            0,
+        );
+        try {
+            expect(await screen.findByLabelText('처리일 시작일')).toHaveValue('2026-10-19');
+            expect(screen.getByLabelText('처리 유형 필터')).toHaveTextContent('사용');
+            await act(() => router.navigate(1));
+            await waitFor(() => expect(screen.getByLabelText('처리일 시작일')).toHaveValue(''));
+            expect(screen.getByLabelText('처리 유형 필터')).toHaveTextContent('전체 처리');
+        } finally {
+            client.clear();
+            router.dispose();
+        }
+    });
+
+    it('같은 경로에서 링크 날짜가 바뀌면 지급 탭의 이전 날짜가 남지 않는다', async () => {
+        const { client, router } = renderRoutedPage(
+            ['/admin/tickets?tab=grants&date=2026-10-19', '/admin/tickets?tab=grants'],
+            0,
+        );
+        try {
+            expect(await screen.findByLabelText('지급일 시작일')).toHaveValue('2026-10-19');
+            await act(() => router.navigate(1));
+            await waitFor(() => expect(screen.getByLabelText('지급일 시작일')).toHaveValue(''));
+        } finally {
+            client.clear();
+            router.dispose();
+        }
+    });
+
     it('검색 조건에 맞는 결과가 없으면 빈 목록을 안내한다', async () => {
         const user = userEvent.setup();
         renderPage('/admin/tickets?tab=grants');

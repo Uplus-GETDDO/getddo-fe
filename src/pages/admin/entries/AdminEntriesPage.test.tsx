@@ -106,6 +106,37 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByRole('alert')).toHaveTextContent('이벤트를 찾을 수 없습니다.');
     });
 
+    it('잘못된 이벤트 ID를 제출하면 요청 없이 UUID 안내를 보여준다', async () => {
+        const user = userEvent.setup();
+        let calls = 0;
+        server.use(
+            http.get('*/v1/admin/events/*/participants', () => {
+                calls += 1;
+                return HttpResponse.json({
+                    success: true,
+                    data: { items: [], page: 1, size: 20, totalElements: 0 },
+                });
+            }),
+        );
+        renderPage('/admin/entries?view=participants');
+        await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.');
+        await user.type(screen.getByLabelText('이벤트 ID 입력'), 'not-a-uuid');
+        await user.click(screen.getByRole('button', { name: '참여자 조회' }));
+        expect(await screen.findByText('올바른 UUID 형식이 아닙니다.')).toBeInTheDocument();
+        expect(calls).toBe(0);
+    });
+
+    it('응모 이력에서 잘못된 ID 필터를 제출하면 요청 없이 UUID 안내를 보여준다', async () => {
+        const user = userEvent.setup();
+        renderPage();
+        await screen.findAllByText('10월 럭키 드로우');
+        await user.type(screen.getByLabelText('사용자 ID 필터'), 'not-a-uuid');
+        await user.click(screen.getByRole('button', { name: '검색' }));
+        expect(
+            await screen.findByText('사용자·이벤트 ID는 올바른 UUID 형식이어야 합니다.'),
+        ).toBeInTheDocument();
+    });
+
     it('이벤트 목록에 있지만 응모가 없는 이벤트의 참여자 조회는 빈 결과로 응답한다', async () => {
         // 이벤트 상세의 '참여자 조회' 링크가 타는 경로 — 응모 fixture 밖의 관리자 이벤트
         renderPage('/admin/entries?view=participants&eventId=20000000-0000-4000-8000-000000000902');

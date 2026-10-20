@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, it } from 'vitest';
 
@@ -83,5 +84,53 @@ it('요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 �
         view.unmount();
         client.clear();
         server.events.removeListener('request:start', observe);
+    }
+});
+
+it('활성 일반 사용자가 0명이면 참여율을 계산 불가로 표시한다', async () => {
+    const day = (date: string) => ({
+        date,
+        entrantCount: 0,
+        entryCount: 0,
+        activeUserCount: 3,
+        grantedTickets: { ATTENDANCE: 0, MISSION: 0, GAME: 0 },
+        usedTickets: 0,
+        blockedCount: 0,
+    });
+    server.use(
+        http.get('*/v1/admin/stats/daily', () =>
+            HttpResponse.json({
+                success: true,
+                data: {
+                    days: [
+                        '2026-10-14',
+                        '2026-10-15',
+                        '2026-10-16',
+                        '2026-10-17',
+                        '2026-10-18',
+                        '2026-10-19',
+                        '2026-10-20',
+                    ].map(day),
+                    totalUserCount: 0,
+                },
+            }),
+        ),
+    );
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const view = render(
+        <QueryClientProvider client={client}>
+            <VirtualClockProvider>
+                <MemoryRouter>
+                    <AdminDashboardPage />
+                </MemoryRouter>
+            </VirtualClockProvider>
+        </QueryClientProvider>,
+    );
+    try {
+        // 분모가 0이면 0%나 무한대 대신 '계산 불가'로 표시한다
+        expect(await screen.findByText('계산 불가')).toBeInTheDocument();
+    } finally {
+        view.unmount();
+        client.clear();
     }
 });
