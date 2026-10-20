@@ -1,1 +1,1 @@
-export { TicketWallet } from './ui/TicketWallet';
+export { TicketWallet, TicketWalletCompact } from './ui/TicketWallet';

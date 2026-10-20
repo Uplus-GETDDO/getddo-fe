@@ -5,12 +5,11 @@ import gold from '../assets/ticket-gold.png';
 import platinum from '../assets/ticket-platinum.png';
 import silver from '../assets/ticket-silver.png';
 
-/** 등급별 응모권 그림 — 피그마 image 193 (가로 5 : 세로 3, 투명 바탕) */
+/** 등급별 응모권 그림 — 피그마 image 278 네 장을 한 장씩 잘랐다 (가로 5 : 세로 3, 투명 바탕) */
 export const TICKET_GRADE_IMAGE: Record<TicketGrade, string> = {
     BRONZE: bronze,
     SILVER: silver,
     GOLD: gold,
-    // 피그마 image 260 — 같은 5:3 비율로 잘라 다른 등급 그림과 크기를 맞췄다
     PLATINUM: platinum,
 };
 

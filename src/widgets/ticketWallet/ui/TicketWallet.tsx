@@ -89,13 +89,13 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                      */}
                     {(tickets || ticketsQuery.isPending) && (
                         <ul
-                            className="divide-border-default mt-4 grid grid-cols-3 divide-x"
+                            className="divide-border-default mt-4 grid grid-cols-4 divide-x"
                             aria-label="등급별 보유 응모권"
                         >
                             {TICKET_GRADES.map((grade) => (
                                 <li
                                     key={grade}
-                                    className="flex flex-col items-center gap-1 px-1.5 pt-2 pb-1.5"
+                                    className="flex min-w-0 flex-col items-center gap-1 px-1 pt-2 pb-1.5"
                                 >
                                     <img
                                         src={TICKET_GRADE_IMAGE[grade]}
@@ -146,6 +146,56 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                         </Link>
                     </div>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+/**
+ * 간단한 지갑 — 겟또타임 머리처럼 지갑보다 아래 목록이 중요한 곳에서 한 줄로 쓴다.
+ * 사용 가능 장수와 등급별 장수, 바로가기만 두고 이번 달 합계·캐릭터·절취선은 뺀다 (자세한 건 미션 페이지 지갑)
+ */
+export function TicketWalletCompact({ action }: Pick<TicketWalletProps, 'action'>) {
+    const ticketsQuery = useMyTickets();
+    const tickets = ticketsQuery.data;
+    const format = (n: number | undefined) =>
+        n == null ? <SkeletonText className="w-5" /> : formatNumber(n);
+
+    return (
+        <div className="bg-surface-page flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl px-5 py-4 shadow-[0_1px_2px_rgb(from_var(--color-ink)_r_g_b_/_0.1)]">
+            <div className="flex flex-col">
+                <p className="text-caption text-fg-secondary flex items-center gap-1">
+                    사용 가능 응모권
+                    <TicketGradeInfo />
+                </p>
+                <p className="text-title-3 text-fg-primary tabular-nums">
+                    {format(tickets?.availableCount)}장
+                </p>
+            </div>
+            <ul
+                aria-label="등급별 보유 응모권"
+                className="border-border-default flex items-center gap-3 border-l pl-5"
+            >
+                {TICKET_GRADES.map((grade) => (
+                    <li key={grade} className="flex items-center gap-1.5">
+                        <img src={TICKET_GRADE_IMAGE[grade]} alt="" className="h-auto w-7" />
+                        <span className="sr-only">{TICKET_GRADE_LABEL[grade]}</span>
+                        <span className="text-body-sm-bold text-fg-primary tabular-nums">
+                            {format(tickets?.countByGrade[grade])}
+                        </span>
+                    </li>
+                ))}
+            </ul>
+            <Link
+                to={action.to}
+                className="text-body-sm-bold text-fg-primary focus-visible:ring-border-focus ml-auto flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap hover:underline focus-visible:ring-2 focus-visible:outline-none"
+            >
+                {action.label}
+                <ChevronRight className="size-4" />
+            </Link>
+            {/* 조회 실패 안내는 줄을 바꿔 아래에 — 평소에는 아무것도 그리지 않아 칸이 생기지 않는다 */}
+            <div className="basis-full empty:hidden">
+                <TicketBalanceStatus query={ticketsQuery} />
             </div>
         </div>
     );
