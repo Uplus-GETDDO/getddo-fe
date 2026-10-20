@@ -2,6 +2,7 @@ import type { TicketGrade } from './types';
 
 import bronze from '../assets/ticket-bronze.png';
 import gold from '../assets/ticket-gold.png';
+import platinum from '../assets/ticket-platinum.png';
 import silver from '../assets/ticket-silver.png';
 
 /** 등급별 응모권 그림 — 피그마 image 193 (가로 5 : 세로 3, 투명 바탕) */
@@ -9,8 +10,8 @@ export const TICKET_GRADE_IMAGE: Record<TicketGrade, string> = {
     BRONZE: bronze,
     SILVER: silver,
     GOLD: gold,
-    // 전용 이미지 확정 전에는 은색 응모권 그림을 재사용하고 이름·등급 토큰으로 구분한다.
-    PLATINUM: silver,
+    // 피그마 image 260 — 같은 5:3 비율로 잘라 다른 등급 그림과 크기를 맞췄다
+    PLATINUM: platinum,
 };
 
 /** 화면에 늘어놓을 때의 등급 순서 — 낮은 등급부터 */
