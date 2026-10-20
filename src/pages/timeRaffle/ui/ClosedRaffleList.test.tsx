@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -91,11 +91,13 @@ describe('마감 래플 표시 범위', () => {
         },
     );
 
-    it('더보기는 새 10행만 읽고 목록 교체 후 예전 행을 다시 읽지 않는다', async () => {
+    it('2쪽은 새 10행만 읽고 목록 교체 후 예전 행을 다시 읽지 않는다', async () => {
         const test = setup('full');
         await waitFor(() => expect(screen.getAllByText(/12명 참여/)).toHaveLength(10));
-        fireEvent.click(screen.getByRole('button', { name: '더 보기' }));
-        await waitFor(() => expect(screen.getAllByText(/12명 참여/)).toHaveLength(20));
+        fireEvent.click(screen.getByRole('button', { name: '2페이지' }));
+        // 쪽을 넘기면 그 쪽 10행만 보이고, 새로 보인 10행만 더 읽는다
+        await waitFor(() => expect(test.ids).toHaveLength(20));
+        expect(screen.getAllByText(/12명 참여/)).toHaveLength(10);
         expect(test.ids).toHaveLength(20);
         test.rerender(test.view(events.slice(20)));
         await waitFor(() => expect(screen.getAllByText(/12명 참여/)).toHaveLength(5));
@@ -104,19 +106,12 @@ describe('마감 래플 표시 범위', () => {
         test.client.clear();
     });
 
-    it('최초 실패를 안내하고 행 링크 밖의 재시도로 정상 복구한다', async () => {
-        const test = setup('preview', true);
-        await waitFor(() =>
-            expect(screen.getAllByRole('button', { name: /현황 다시 조회/ })).toHaveLength(3),
-        );
-        expect(test.ids).toHaveLength(3);
-        const button = screen.getAllByRole('button', { name: /현황 다시 조회/ })[0]!;
-        expect(button.closest('a')).toBeNull();
-        expect(within(button.closest('li')!).getByRole('status')).toHaveTextContent('불러오지 못');
-        test.recover();
-        fireEvent.click(button);
-        await waitFor(() => expect(screen.getByText(/12명 참여/)).toBeInTheDocument());
-        expect(test.ids).toHaveLength(4);
+    it('현황을 못 받으면 참여 인원만 빼고 줄은 그대로 둔다 — 재시도 줄을 따로 띄우지 않는다', async () => {
+        const test = setup('full', true);
+        await waitFor(() => expect(test.ids).toHaveLength(10));
+        expect(screen.queryByText(/참여/)).toBeNull();
+        expect(screen.queryByRole('button', { name: /현황/ })).toBeNull();
+        expect(screen.getAllByRole('link')).toHaveLength(10);
         test.unmount();
         test.client.clear();
     });

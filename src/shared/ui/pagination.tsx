@@ -14,11 +14,14 @@ function Pagination({
     page,
     totalPages,
     onPageChange,
+    label = '페이지',
     className,
 }: {
     page: number;
     totalPages: number;
     onPageChange: (page: number) => void;
+    /** 한 화면에 목록이 여럿이면 어느 목록의 쪽 넘김인지 구분해 읽힌다 — 예: '응모 내역 페이지' */
+    label?: string;
     className?: string;
 }) {
     const arrow = cn(
@@ -26,7 +29,7 @@ function Pagination({
         'text-fg-secondary hover:bg-surface-sunken disabled:text-fg-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
     );
     return (
-        <nav aria-label="페이지" className={cn('flex items-center gap-1', className)}>
+        <nav aria-label={label} className={cn('flex items-center gap-1', className)}>
             <button
                 type="button"
                 aria-label="이전 페이지"

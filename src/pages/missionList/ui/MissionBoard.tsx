@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useMissionList } from '@entities/mission';
 import emptyMascot from '@shared/assets/ui/reward-mascot.png';
 import { useVirtualClock } from '@shared/model/virtualClock';
+import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
 
 import {
@@ -31,7 +32,8 @@ export function MissionBoard({
     className?: string;
     onOpen: (missionId: string) => void;
 }) {
-    const { data: missions, isPending, isError } = useMissionList();
+    const missionsQuery = useMissionList();
+    const { data: missions, isPending } = missionsQuery;
     // 가상 시계는 시간이 흘러도 다시 그리지 않으므로, 페이지를 열어 둔 채 시작·마감 시각을 지나도
     // 카드가 바뀌도록 1분마다 다시 그려 지금 시각을 새로 읽는다. 시간 여행은 시계 context가 바뀌어 바로 반영된다
     const [, setTick] = useState(0);
@@ -75,8 +77,14 @@ export function MissionBoard({
                     ))}
                 </div>
             )}
-            {isError && (
-                <p className="text-body-sm text-destructive">미션 목록을 불러오지 못했습니다.</p>
+            {/* 받아 둔 목록이 없을 때만 — 받아 둔 게 있으면 다시 받기에 실패해도 그대로 둔다 */}
+            {!isPending && !missions && (
+                <LoadError
+                    title="미션을 불러오지 못했어요"
+                    onRetry={() => void missionsQuery.refetch()}
+                    retrying={missionsQuery.isFetching}
+                    className="bg-surface-sunken rounded-2xl"
+                />
             )}
 
             {missions && shown.length === 0 && (

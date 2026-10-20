@@ -5,7 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TicketBalanceWidget } from './TicketBalanceWidget';
 
 const state = vi.hoisted(() => ({ role: 'USER', pending: true }));
-vi.mock('@entities/attendance', () => ({ useAttendanceToday: () => ({ isPending: false }) }));
+vi.mock('@entities/attendance', () => ({
+    ATTENDANCE_THUMBNAIL: 'attendance.png',
+    useAttendanceToday: () => ({ isPending: false }),
+}));
 vi.mock('@entities/mission', () => ({ useMissionList: () => ({ data: [], isPending: false }) }));
 vi.mock('@entities/user', () => ({
     useSessionStore: (select: (value: unknown) => unknown) =>

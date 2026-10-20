@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useAttendanceMonth, useAttendanceToday } from '@entities/attendance';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 
@@ -92,7 +93,8 @@ export function AttendanceCheckCard({
     onExpandedChange: (expanded: boolean) => void;
     className?: string;
 }) {
-    const { data: status, isPending, isError } = useAttendanceToday();
+    const statusQuery = useAttendanceToday();
+    const { data: status, isPending } = statusQuery;
     const checkAttendance = useCheckAttendance();
     // 출석 판정은 서버가 하고, 여기서는 표시용 날짜 계산에만 쓴다
     const clock = useVirtualClock();
@@ -196,7 +198,8 @@ export function AttendanceCheckCard({
             오늘 출석 완료
         </Button>
     ) : (
-        <Button size="lg" className="w-full" onClick={() => void handleCheck()}>
+        // 오늘 할 일의 주된 행동이라 응모 버튼과 같은 악센트(노랑)
+        <Button variant="accent" size="lg" className="w-full" onClick={() => void handleCheck()}>
             출석하고 응모권 {status?.dailyRewardTicketCount ?? 1}장 받기
         </Button>
     );
@@ -267,7 +270,7 @@ export function AttendanceCheckCard({
                                         type="button"
                                         aria-expanded="true"
                                         onClick={collapse}
-                                        className="text-body-sm text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex shrink-0 cursor-pointer items-center rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                        className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex shrink-0 cursor-pointer items-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                     >
                                         접기
                                         <ChevronUp className="size-5" />
@@ -284,10 +287,14 @@ export function AttendanceCheckCard({
                         )}
 
                         {isPending && <SkeletonList count={2} rowClassName="h-16" />}
-                        {isError && (
-                            <p className="text-body-sm text-destructive self-center">
-                                출석 정보를 불러오지 못했습니다.
-                            </p>
+                        {/* 받아 둔 출석 정보가 없을 때만 — 카드 높이 안 가운데에 다시 시도를 둔다 */}
+                        {!isPending && !status && (
+                            <LoadError
+                                title="출석 정보를 불러오지 못했어요"
+                                onRetry={() => void statusQuery.refetch()}
+                                retrying={statusQuery.isFetching}
+                                className="flex-1"
+                            />
                         )}
 
                         {status &&
@@ -346,7 +353,7 @@ export function AttendanceCheckCard({
                                                     type="button"
                                                     aria-expanded="false"
                                                     onClick={() => expand()}
-                                                    className="text-body-sm text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex cursor-pointer items-center rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                                    className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex cursor-pointer items-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                                 >
                                                     펼쳐보기
                                                     <ChevronRight className="size-5" />

@@ -98,17 +98,13 @@ describe('응모권 잔액 표시 화면', () => {
         expect(screen.getByRole('status')).toHaveTextContent('응모권 잔액을 불러오는 중이에요.');
         expect((await screen.findAllByText('0장')).length).toBeGreaterThan(0);
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: '다시 조회' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: '다시 시도' })).not.toBeInTheDocument();
     });
 
     it.each([
         ['HTTP', httpFailure, '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'],
-        ['계약', contractFailure, '응모권 정보의 형식을 확인하지 못했어요. 다시 조회해 주세요.'],
-        [
-            '네트워크',
-            () => HttpResponse.error(),
-            '서버에 연결하지 못했어요. 연결 상태를 확인한 뒤 다시 조회해 주세요.',
-        ],
+        ['계약', contractFailure, '잠시 후 다시 시도해 주세요.'],
+        ['네트워크', () => HttpResponse.error(), '인터넷 연결을 확인한 뒤 다시 시도해 주세요.'],
     ])('%s 실패를 구분하고 재조회로 복구한다', async (_kind, failure, message) => {
         server.use(http.get(balancePath, failure));
         renderContent(wallet);
@@ -116,8 +112,9 @@ describe('응모권 잔액 표시 화면', () => {
         expect(alert).toHaveTextContent('응모권 잔액을 불러오지 못했어요.');
         expect(alert).toHaveTextContent(message);
         expect(alert).not.toHaveTextContent('내부 정보');
+        expect(alert).not.toHaveTextContent('형식');
         server.use(http.get(balancePath, () => ok(balance())));
-        await userEvent.click(screen.getByRole('button', { name: '다시 조회' }));
+        await userEvent.click(screen.getByRole('button', { name: '다시 시도' }));
         expect((await screen.findAllByText('17장')).length).toBeGreaterThan(0);
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
@@ -140,18 +137,23 @@ describe('응모권 잔액 표시 화면', () => {
         act(() => {
             refresh = client.refetchQueries({ queryKey: balanceKey });
         });
-        expect(await screen.findByText('응모권 잔액을 갱신하는 중이에요.')).toBeInTheDocument();
+        // 다시 받는 중에는 안내 줄 없이 받아 둔 잔액을 그대로 둔다
         expect(screen.getAllByText('17장').length).toBeGreaterThan(0);
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
         await act(async () => {
             await refresh;
         });
-        expect(await screen.findByRole('alert')).toHaveTextContent(
-            '응모권 잔액을 갱신하지 못했어요. 이전 잔액을 표시하고 있어요.',
-        );
+        // 받아 둔 잔액이 있으면 빨간 문단 대신 작은 갱신 실패 표시만
+        const stale = await screen.findByRole('button', { name: '잔액 갱신 실패. 다시 받기' });
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
         expect(screen.getAllByText('17장').length).toBeGreaterThan(0);
         server.use(http.get(balancePath, () => ok(balance(0))));
-        await userEvent.click(screen.getByRole('button', { name: '다시 조회' }));
-        await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
+        await userEvent.click(stale);
+        await waitFor(() =>
+            expect(
+                screen.queryByRole('button', { name: '잔액 갱신 실패. 다시 받기' }),
+            ).not.toBeInTheDocument(),
+        );
         expect(screen.getAllByText('0장').length).toBeGreaterThan(0);
     });
 
@@ -164,7 +166,7 @@ describe('응모권 잔액 표시 화면', () => {
         expect(await screen.findByRole('alert')).toHaveTextContent(
             '응모권 잔액을 불러오지 못했어요.',
         );
-        const retry = screen.getByRole('button', { name: '다시 조회' });
+        const retry = screen.getByRole('button', { name: '다시 시도' });
         expect(retry.closest('a')).toBeNull();
         server.use(http.get(balancePath, () => ok(balance(0))));
         await userEvent.click(retry);
@@ -183,16 +185,17 @@ describe('응모권 갱신 경계', () => {
         await act(async () => {
             await client.refetchQueries({ queryKey: balanceKey });
         });
-        expect(await screen.findByRole('alert')).toHaveTextContent(
-            '응모권 정보의 형식을 확인하지 못했어요.',
-        );
+        expect(
+            await screen.findByRole('button', { name: '잔액 갱신 실패. 다시 받기' }),
+        ).toBeInTheDocument();
+        expect(screen.queryByText(/형식/)).not.toBeInTheDocument();
         expect(screen.getAllByText('17장')).toHaveLength(2);
     });
 
     it('키보드로 재조회할 수 있고 재조회 중에는 중복 클릭을 잠근다', async () => {
         server.use(http.get(balancePath, httpFailure));
         renderContent(wallet);
-        const retry = await screen.findByRole('button', { name: '다시 조회' });
+        const retry = await screen.findByRole('button', { name: '다시 시도' });
         let requests = 0;
         server.use(
             http.get(balancePath, async () => {
@@ -203,7 +206,7 @@ describe('응모권 갱신 경계', () => {
         );
         retry.focus();
         await userEvent.keyboard('{Enter}');
-        const pending = await screen.findByRole('button', { name: '다시 조회 중…' });
+        const pending = await screen.findByRole('button', { name: '다시 불러오는 중…' });
         expect(pending).toBeDisabled();
         await userEvent.click(pending);
         await screen.findAllByText('0장');
@@ -227,7 +230,7 @@ describe('응모권 잔액과 응모 안전성', () => {
         const client = renderContent(page, id);
         await waitFor(() => expect(client.isFetching()).toBe(0));
         expect(await screen.findByRole('alert')).toHaveTextContent(
-            '응모권 정보의 형식을 확인하지 못했어요.',
+            '응모권 잔액을 불러오지 못했어요.',
         );
         expect(
             screen.queryByRole('button', { name: '응모권을 골라주세요' }),
@@ -238,7 +241,7 @@ describe('응모권 잔액과 응모 안전성', () => {
         await userEvent.click(blocked);
         expect(requests).toBe(0);
         server.use(http.get(balancePath, () => ok(balance())));
-        await userEvent.click(screen.getByRole('button', { name: '다시 조회' }));
+        await userEvent.click(screen.getByRole('button', { name: '다시 시도' }));
         await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
         if (id === 'evt-002') {
             await userEvent.click(screen.getByRole('button', { name: '브론즈 응모 수량 늘리기' }));
@@ -289,13 +292,13 @@ describe('응모권 잔액과 응모 안전성', () => {
         await act(async () => {
             await refresh;
         });
-        expect(await screen.findByRole('alert')).toHaveTextContent('이전 잔액을 표시하고 있어요.');
+        const stale = await screen.findByRole('button', { name: '잔액 갱신 실패. 다시 받기' });
         expect(screen.getByRole('textbox', { name: '브론즈 응모 수량' })).toHaveValue('1');
         expect(screen.getByRole('textbox', { name: '브론즈 응모 수량' })).toBeDisabled();
         expect(screen.getByRole('button', { name: '브론즈 응모 수량 줄이기' })).toBeDisabled();
         expect(screen.getByRole('button', { name: '브론즈 응모 수량 늘리기' })).toBeDisabled();
         server.use(http.get(balancePath, () => ok(balance())));
-        await userEvent.click(screen.getByRole('button', { name: '다시 조회' }));
+        await userEvent.click(stale);
         await waitFor(() =>
             expect(screen.getByRole('textbox', { name: '브론즈 응모 수량' })).toBeEnabled(),
         );

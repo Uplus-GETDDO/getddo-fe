@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
-import { useAttendanceToday } from '@entities/attendance';
 import { MissionRewardDialog } from '@entities/mission';
 import { TICKET_GRADE_LABEL, type TicketGrade, TicketGradeReveal } from '@entities/ticket';
 import { AttendanceCheckCard } from '@features/checkAttendance';
 import { Button } from '@shared/ui/button';
 import { cn } from '@shared/utils/cn';
-import { formatKst, KST_HOUR_MINUTE } from '@shared/utils/date';
 import { GameRail } from '@widgets/gameRail';
 
 import { MISSION_SECTION_IDS } from './model/sectionIds';
@@ -25,10 +23,8 @@ const MISSION_PARAM = 'mission';
 const SETTLE_SCROLL_MS = 600;
 
 export function MissionListPage() {
-    const { data: attendance } = useAttendanceToday();
-    const attendanceResetCaption = attendance
-        ? `하루 1회 · 다음 초기화 ${formatKst(attendance.nextResetAt, { month: 'numeric', day: 'numeric', ...KST_HOUR_MINUTE })} KST`
-        : '하루 1회 · 매일 자정(00:00 KST) 초기화';
+    // 초기화는 늘 자정이라 날짜·시각·시간대 없이 짧게 적는다 — 'KST'·'00:00'은 사용자에게 낯선 표기였다
+    const attendanceResetCaption = '하루 1회 · 매일 자정 초기화';
     // 출석 카드를 펼치면(펼쳐보기·출석 완료) 출석 카드가 넓어지고 응모권 내역 카드가 좁아진다.
     // 펼침 상태는 저장하지 않는다 — 페이지에 들어올 때마다 접힌 상태로 새로 시작한다
     const [attendanceExpanded, setAttendanceExpanded] = useState(false);
@@ -82,9 +78,13 @@ export function MissionListPage() {
                 {/* 페이지 머리 — 오늘의 적립: 오늘 더 받을 응모권·진행 세 칸과 내 응모권 지갑 */}
                 <TodayRewardsBanner />
 
+                {/*
+                 * 넓은 화면에서는 두 칸의 제목 줄·카드를 같은 행(subgrid)에 둔다 — 출석판을 펼쳐 오른쪽 칸이 좁아지면
+                 * 내역 제목 줄(갱신 표시·전체보기)이 두 줄로 접히는데, 그래도 두 카드의 윗선이 어긋나지 않는다
+                 */}
                 <div
                     className={cn(
-                        'mt-14 grid gap-x-4 gap-y-10',
+                        'mt-14 grid gap-x-4 gap-y-10 lg:gap-y-6',
                         attendanceExpanded
                             ? 'lg:grid-cols-[885fr_300fr]'
                             : 'lg:grid-cols-[393fr_791fr]',
@@ -92,7 +92,7 @@ export function MissionListPage() {
                 >
                     <section
                         id={MISSION_SECTION_IDS.attendance}
-                        className="flex min-w-0 scroll-mt-24 flex-col gap-6"
+                        className="flex min-w-0 scroll-mt-24 flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid"
                     >
                         <SectionHeader title="출석체크" caption={attendanceResetCaption} />
                         <AttendanceCheckCard
@@ -100,9 +100,9 @@ export function MissionListPage() {
                             onExpandedChange={setAttendanceExpanded}
                         />
                     </section>
-                    <section className="flex min-w-0 flex-col gap-6">
-                        <SectionHeader title="응모권 적립 · 사용 내역" />
-                        <TicketHistoryCard className="flex-1" />
+                    <section className="flex min-w-0 flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid">
+                        {/* 제목 줄(갱신 표시 포함)도 카드가 그린다 — 같은 조회의 받는 중·실패를 제목 옆에 보인다 */}
+                        <TicketHistoryCard className="flex-1" narrow={attendanceExpanded} />
                     </section>
                 </div>
             </div>
@@ -111,7 +111,8 @@ export function MissionListPage() {
             <div id={MISSION_SECTION_IDS.games} className={`${CONTAINER} mt-20 scroll-mt-24`}>
                 <GameRail
                     title="게임"
-                    caption="게임마다 하루 한 번 응모권을 받을 수 있어요. 매일 자정(00:00 KST) 초기화"
+                    fill
+                    caption="게임마다 하루 한 번 응모권을 받을 수 있어요. 매일 자정 초기화"
                 />
             </div>
 

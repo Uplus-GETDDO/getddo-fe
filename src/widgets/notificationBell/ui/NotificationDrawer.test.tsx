@@ -48,7 +48,7 @@ const renderDrawer = (staleTime = 0) => {
 };
 
 const open = async () => {
-    await userEvent.click(screen.getByRole('button', { name: '알림 전체 보기' }));
+    await userEvent.click(screen.getByRole('button', { name: /^알림/ }));
     return screen.findByRole('dialog');
 };
 
@@ -66,6 +66,19 @@ describe('NotificationDrawer', () => {
         expect(await within(dialog).findByText('이벤트 시작 알림')).toBeInTheDocument();
         expect(within(dialog).getByText('읽지 않음 3개')).toBeInTheDocument();
         expect(within(dialog).queryByRole('button', { name: /삭제/ })).not.toBeInTheDocument();
+    });
+
+    it('종 버튼에 읽지 않은 수를 알리고, 아래에서 모든 알림 페이지로 이어진다', async () => {
+        renderDrawer();
+        expect(
+            await screen.findByRole('button', { name: '알림, 읽지 않음 3개' }),
+        ).toBeInTheDocument();
+        const dialog = await open();
+
+        expect(within(dialog).getByRole('link', { name: '모든 알림 보기' })).toHaveAttribute(
+            'href',
+            '/my-notifications',
+        );
     });
 
     it('재오픈하면 staleTime 안이어도 새 알림 목록을 조회한다', async () => {
@@ -139,7 +152,7 @@ describe('NotificationDrawer', () => {
         const dialog = await open();
 
         expect(await within(dialog).findByRole('alert')).toHaveTextContent(
-            '알림을 불러오지 못했어요.',
+            '알림을 불러오지 못했어요',
         );
 
         get.mockResolvedValue(page([note(1)], null));
@@ -148,25 +161,33 @@ describe('NotificationDrawer', () => {
         expect(await within(dialog).findByText('알림 1')).toBeInTheDocument();
     });
 
-    it('더 보기를 누르면 nextCursor로 다음 페이지를 이어 붙인다', async () => {
+    it('2쪽을 누르면 nextCursor로 다음 쪽을 받아 그 쪽만 보여준다', async () => {
+        // 드로어 한 쪽은 10개 — 전체 15개라 2쪽까지 있다
         const get = vi.spyOn(apiClient, 'get').mockImplementation((_url, config) => {
             const cursor = (config?.params as { cursor?: string } | undefined)?.cursor;
             return Promise.resolve(
-                cursor === 'cursor-1' ? page([note(2)], null, 2) : page([note(1)], 'cursor-1', 2),
+                cursor === 'cursor-1' ? page([note(2)], null, 15) : page([note(1)], 'cursor-1', 15),
             );
         });
         renderDrawer();
         const dialog = await open();
 
-        await userEvent.click(await within(dialog).findByRole('button', { name: '알림 더 보기' }));
+        await userEvent.click(await within(dialog).findByRole('button', { name: '2페이지' }));
 
         await waitFor(() => expect(within(dialog).getByText('알림 2')).toBeInTheDocument());
-        expect(within(dialog).getByText('알림 1')).toBeInTheDocument();
-        expect(within(dialog).queryByRole('button', { name: '알림 더 보기' })).toBeNull();
+        expect(within(dialog).queryByText('알림 1')).toBeNull();
+        expect(within(dialog).getByRole('button', { name: '2페이지' })).toHaveAttribute(
+            'aria-current',
+            'page',
+        );
         // 서버가 준 nextCursor를 그대로 두 번째 요청에 실었는지 확인한다
         const cursors = get.mock.calls.map(
             ([, config]) => (config?.params as { cursor?: string } | undefined)?.cursor,
         );
         expect(cursors).toContain('cursor-1');
+
+        // 1쪽으로 돌아가면 받아 둔 쪽을 다시 보여준다
+        await userEvent.click(within(dialog).getByRole('button', { name: '1페이지' }));
+        expect(within(dialog).getByText('알림 1')).toBeInTheDocument();
     });
 });

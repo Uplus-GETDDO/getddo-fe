@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList, useGameStatisticsList } from '@entities/game';
-import { useMissionList } from '@entities/mission';
+import { isMissionOpen, useMissionList } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
+import stepAttendance from '@shared/assets/step/step-attendance.png';
+import stepGame from '@shared/assets/step/step-game.png';
+import stepMission from '@shared/assets/step/step-mission.png';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { SkeletonText } from '@shared/ui/skeleton';
 import { StepTile } from '@shared/ui/step-tile';
@@ -18,12 +21,9 @@ import itemJar from '../assets/item-jar.png';
 import itemMayo from '../assets/item-mayo.png';
 import itemSauce from '../assets/item-sauce.png';
 import itemSkewer from '../assets/item-skewer.png';
-import stepAttendance from '../assets/step-attendance.png';
-import stepGame from '../assets/step-game.png';
-import stepMission from '../assets/step-mission.png';
 import { useSlotNumber } from '../hooks/useSlotNumber';
 import { MISSION_SECTION_IDS } from '../model/sectionIds';
-import { isMissionOpen, summarizeTodayRewards } from '../utils/todayRewards';
+import { summarizeTodayRewards } from '../utils/todayRewards';
 
 /** 기준 시각을 다시 읽는 간격 */
 const NOW_REFRESH_MS = 60_000;

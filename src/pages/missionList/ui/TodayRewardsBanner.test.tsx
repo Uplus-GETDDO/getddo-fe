@@ -7,7 +7,10 @@ const state = vi.hoisted(() => ({ role: 'USER', pending: false, error: false }))
 vi.mock('@entities/attendance', () => ({
     useAttendanceToday: () => ({ data: { attended: true } }),
 }));
-vi.mock('@entities/mission', () => ({ useMissionList: () => ({ data: [] }) }));
+vi.mock('@entities/mission', () => ({
+    useMissionList: () => ({ data: [] }),
+    isMissionOpen: () => true,
+}));
 vi.mock('@entities/user', () => ({
     useSessionStore: (select: (value: unknown) => unknown) =>
         select({ user: { role: state.role } }),

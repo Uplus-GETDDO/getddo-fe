@@ -146,16 +146,32 @@ const DEMO_ENTRY_SEEDS: { eventId: string; tickets: TicketsByGrade; hoursBeforeE
         hoursBeforeEnd: 1,
     },
     { eventId: 'evt-006', tickets: { ...ZERO_TICKETS }, hoursBeforeEnd: 24 * 20 },
+    // 진행 중 래플에도 하나씩 — 홈 겟또타임 카드·겟또타임 카드의 '참여 중' 칩을 응모하지 않아도 보이게 한다.
+    // 시드라 E04 제한에는 세지 않아 그대로 더 응모해 볼 수 있다
+    {
+        eventId: 'evt-101',
+        tickets: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 0.5,
+    },
+    {
+        eventId: 'evt-102',
+        tickets: { BRONZE: 0, SILVER: 1, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 0.5,
+    },
 ];
 
 const demoSeedEntries = (): EntryReceipt[] =>
     DEMO_ENTRY_SEEDS.flatMap(({ eventId, tickets, hoursBeforeEnd }) => {
         const event = findMockEvent(eventId);
         if (!event) return [];
+        // 열리기 전 시각으로 잡히지 않게 시작 시각 아래로는 내리지 않는다 (진행 중 래플은 연 지 1시간이 안 됐다)
         const at = new Date(
-            Math.min(
-                new Date(event.endsAt).getTime() - hoursBeforeEnd * HOUR_MS,
-                mockNow().getTime() - HOUR_MS,
+            Math.max(
+                new Date(event.startsAt).getTime(),
+                Math.min(
+                    new Date(event.endsAt).getTime() - hoursBeforeEnd * HOUR_MS,
+                    mockNow().getTime() - HOUR_MS,
+                ),
             ),
         ).toISOString();
         return [

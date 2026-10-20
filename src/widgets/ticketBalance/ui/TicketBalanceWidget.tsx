@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import type { Game } from '@entities/game';
 
-import { useAttendanceToday } from '@entities/attendance';
+import { ATTENDANCE_THUMBNAIL, useAttendanceToday } from '@entities/attendance';
 import {
     GameTicketCard,
     gameDetailPath,
@@ -18,6 +18,7 @@ import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { Button } from '@shared/ui/button';
+import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
 import { TicketCard, TicketCardMedia } from '@shared/ui/ticket-card';
 import { cn } from '@shared/utils/cn';
@@ -34,7 +35,7 @@ interface EarnCard extends OrderableEarnCard {
     rewardKind: string;
     href: string;
     actionLabel: string;
-    /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(게임), 없으면 임시로 회색 블록 + 아이콘 */
+    /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(출석·미션·게임), 없으면 회색 블록 + 아이콘 */
     thumbnailUrl: string | null;
     thumbnailIcon: LucideIcon;
     /** 게임 카드면 미션 페이지와 같은 공용 게임 카드(GameTicketCard)로 그린다 */
@@ -55,9 +56,18 @@ export function TicketBalanceWidget({
     cardClassName?: string;
     hideMoreLink?: boolean;
 } = {}) {
-    const { data: attendance, isPending: attendancePending } = useAttendanceToday();
-    const { data: missions, isPending: missionsPending } = useMissionList();
-    const { data: games, isPending: gamesPending } = useGameList();
+    const attendanceQuery = useAttendanceToday();
+    const missionsQuery = useMissionList();
+    const gamesQuery = useGameList();
+    const { data: attendance, isPending: attendancePending } = attendanceQuery;
+    const { data: missions, isPending: missionsPending } = missionsQuery;
+    const { data: games, isPending: gamesPending } = gamesQuery;
+    const anyError = attendanceQuery.isError || missionsQuery.isError || gamesQuery.isError;
+    const retryAll = () => {
+        if (attendanceQuery.isError) void attendanceQuery.refetch();
+        if (missionsQuery.isError) void missionsQuery.refetch();
+        if (gamesQuery.isError) void gamesQuery.refetch();
+    };
     const isUser = useSessionStore((state) => state.user?.role === 'USER');
     const statistics = useGameStatisticsList(
         (games ?? []).filter((game) => hasGamePlayer(game.code)).map((game) => game.id),
@@ -86,7 +96,7 @@ export function TicketBalanceWidget({
                       href: '/missions#today-attendance',
                       actionLabel: '출석하러 가기',
                       completed: attendance.attended,
-                      thumbnailUrl: null,
+                      thumbnailUrl: ATTENDANCE_THUMBNAIL,
                       thumbnailIcon: CalendarCheck,
                   },
               ]
@@ -105,24 +115,27 @@ export function TicketBalanceWidget({
             thumbnailUrl: missionThumbnail(mission),
             thumbnailIcon: ClipboardList,
         })),
-        ...(games ?? []).map((game) => ({
-            id: game.id,
-            category: 'GAME' as const,
-            title: game.name,
-            description: '게임별 최소 점수로 완료하면 하루 1장, 횟수 제한 없이 플레이',
-            rewardKind: '등급 응모권',
-            rewardTickets: 1,
-            href: gameDetailPath(game.id),
-            actionLabel: '게임하러 가기',
-            completed: claimed(game.id) ?? false,
-            thumbnailUrl: getGameContent(game).heroImage,
-            thumbnailIcon: Gamepad2,
-            game,
-        })),
+        ...(games ?? [])
+            .filter((game) => hasGamePlayer(game.code))
+            .map((game) => ({
+                id: game.id,
+                category: 'GAME' as const,
+                title: game.name,
+                description: '게임별 최소 점수로 완료하면 하루 1장, 횟수 제한 없이 플레이',
+                rewardKind: '등급 응모권',
+                rewardTickets: 1,
+                href: gameDetailPath(game.id),
+                actionLabel: '게임하러 가기',
+                completed: claimed(game.id) ?? false,
+                thumbnailUrl: getGameContent(game).heroImage,
+                thumbnailIcon: Gamepad2,
+                game,
+            })),
     ];
     const orderedCards = orderEarnCards(cards);
 
-    if (cards.length === 0 && !loading) {
+    // 받을 수 있는 게 정말 없을 때만 섹션을 감춘다 — 못 불러온 것이면 자리를 지키고 다시 시도를 연다
+    if (cards.length === 0 && !loading && !anyError) {
         return null;
     }
 
@@ -132,7 +145,7 @@ export function TicketBalanceWidget({
                 <div className="flex flex-wrap items-center gap-3">
                     <h2 className="text-title-3 text-fg-primary">오늘 받을 수 있는 응모권</h2>
                     <span className="text-fg-tertiary text-caption">
-                        출석과 게임 보상은 매일 자정(00:00 KST)에 다시 받을 수 있어요.
+                        출석과 게임 보상은 매일 자정에 다시 받을 수 있어요.
                     </span>
                 </div>
                 {!hideMoreLink && (
@@ -145,7 +158,13 @@ export function TicketBalanceWidget({
                 )}
             </div>
             {/* 한 화면에 N.5장 — 반 장이 잘려 보이며 옆으로 더 있다는 암시를 준다. 마우스는 드래그로, 터치는 브라우저 네이티브 스크롤로 움직인다 */}
-            {loading ? (
+            {cards.length === 0 && !loading && anyError ? (
+                <LoadError
+                    title="받을 수 있는 응모권을 불러오지 못했어요"
+                    onRetry={retryAll}
+                    className="min-h-90"
+                />
+            ) : loading ? (
                 <div role="status" className="flex gap-4 overflow-hidden">
                     <span className="sr-only">응모권 카드를 불러오는 중이에요</span>
                     {Array.from({ length: 4 }, (_, index) => (

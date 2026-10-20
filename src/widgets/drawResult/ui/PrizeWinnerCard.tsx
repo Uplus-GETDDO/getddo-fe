@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { PublishedPrize } from '@entities/drawResult';
 
 import { useImageFallback } from '@shared/hooks/useImageFallback';
+import { Badge } from '@shared/ui/badge';
 import { cn } from '@shared/utils/cn';
 import { formatNumber } from '@shared/utils/format';
 
@@ -102,17 +103,13 @@ export function PrizeWinnerCard({
                         'justify-between',
                     )}
                 >
-                    <span
-                        // 당첨 배너의 'N등 당첨' 칩과 같은 글자(caption 12px)·여백.
-                        // cn(tailwind-merge)은 text-caption 같은 맞춤 글자 토큰을 글자색과 겹친다고 보고 지워 버려 템플릿 문자열로 잇는다
-                        className={`text-caption rounded-full px-2.5 py-1 ${
-                            highlighted
-                                ? 'bg-action-neutral text-fg-on-brand'
-                                : 'bg-surface-sunken text-fg-primary'
-                        }`}
+                    {/* 당첨 배너의 'N등 당첨' 칩과 같은 공용 Badge — 강조한 등수만 검정, 나머지는 회색 바탕에 잉크 글자 */}
+                    <Badge
+                        variant={highlighted ? 'inverse' : 'neutral'}
+                        className={highlighted ? undefined : 'text-fg-primary'}
                     >
                         {prize.rank}등
-                    </span>
+                    </Badge>
                     <p className="text-body-sm-bold text-fg-primary">
                         {formatNumber(prize.winnerCount)}명
                     </p>

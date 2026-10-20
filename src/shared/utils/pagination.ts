@@ -15,3 +15,17 @@ export function pageItems(page: number, totalPages: number): PageItem[] {
     }
     return [1, 'ellipsis-start', page - 1, page, page + 1, 'ellipsis-end', totalPages];
 }
+
+/**
+ * 받아 둔 목록을 번호 쪽으로 자른다 — page는 1부터 센다.
+ * 줄이 줄어 쪽 수가 줄면 마지막 쪽에 맞춘다 (빈 쪽을 보이지 않는다)
+ */
+export function pageSlice<T>(items: readonly T[], page: number, size: number) {
+    const totalPages = Math.max(1, Math.ceil(items.length / size));
+    const current = Math.min(Math.max(1, page), totalPages);
+    return {
+        items: items.slice((current - 1) * size, current * size),
+        current,
+        totalPages,
+    };
+}

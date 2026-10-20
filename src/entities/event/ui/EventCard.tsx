@@ -8,6 +8,8 @@ import { toKst } from '@shared/utils/date';
 
 import type { Event } from '../model/types';
 
+import { EnteredChip } from './EnteredChip';
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // 카드 표시용 "2026-09-01" 형태
@@ -49,9 +51,11 @@ export function EventCard({ event }: { event: Event }) {
                 <div className="bg-surface-sunken aspect-video" />
             )}
             <div className="flex flex-col gap-3 p-4">
-                {dDay != null && dDay >= 0 && (
+                {((dDay != null && dDay >= 0) || event.myEntered) && (
                     <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="inverse">D-{dDay}</Badge>
+                        {dDay != null && dDay >= 0 && <Badge variant="inverse">D-{dDay}</Badge>}
+                        {/* 이벤트 목록 카드와 같은 칩 — 홈에서도 이미 응모한 곳을 다시 누르지 않게 */}
+                        {event.myEntered && <EnteredChip label="응모 완료" />}
                     </div>
                 )}
                 <div className="flex flex-col gap-2">
