@@ -141,7 +141,9 @@ describe('홈 관리 배너', () => {
         });
         const user = userEvent.setup();
         mount();
-        expect(await screen.findByText('연결 이벤트를 불러오지 못했습니다.')).toBeInTheDocument();
+        expect(
+            await screen.findByText('연결 이벤트를 불러오지 못했습니다.', {}, { timeout: 3000 }),
+        ).toBeInTheDocument();
         expect(screen.queryByRole('link')).not.toBeInTheDocument();
         get.mockImplementation(() => Promise.resolve(envelope(detail('free'))));
         await user.click(screen.getByRole('button', { name: '연결 이벤트 다시 불러오기' }));

@@ -34,12 +34,12 @@ export interface GameContent {
 // 모든 게임 공통 — 게임별 하루 1회 응모권 1장 (getddo-spec 게임 규칙)
 const REWARD_STEP: GameGuideStep = {
     icon: Ticket,
-    text: '하루 한 번, 플레이하면 응모권 1장을 받아요.',
+    text: '게임별 최소 점수로 완료하면 하루 한 번 응모권 1장을 받아요.',
 };
 
 // 게임 종류·규칙은 게임 담당자 확정 전 임시 콘텐츠. 타꼬런 대표 이미지(image 183)와 타코야끼 대표 이미지(image 75)는 피그마 기준
 const CONTENTS: Record<string, GameContent> = {
-    'game-dino': {
+    TAKKO_RUN: {
         tagline: '소스병과 꼬치를 뛰어넘으며 멀리 달리세요.',
         heroImage: '/images/games/takoyaki-run.jpg',
         // 16:9 이미지라 좌우 약 7%씩 잘린다. 제목(타꼬런)이 오른쪽 끝에 붙어 있어 기준을 오른쪽으로 옮긴다
@@ -60,7 +60,7 @@ const CONTENTS: Record<string, GameContent> = {
             image: takkoRunGuide,
         },
     },
-    'game-color': {
+    COLOR_WORD: {
         tagline: '글자 뜻에 속지 말고 글자 색깔을 고르세요.',
         // 대표 이미지 — 피그마 image 189 (16:9라 대표 영역 840:546에서 좌우 합쳐 약 13%가 잘린다)
         heroImage: '/images/games/color-word.jpg',
@@ -82,7 +82,7 @@ const CONTENTS: Record<string, GameContent> = {
             image: colorWordGuide,
         },
     },
-    'game-timing': {
+    TAKKO_TIMING: {
         tagline: '왔다 갔다 하는 이쑤시개를 타꼬 위에서 딱 맞춰 콕 꽂으세요.',
         // 대표 이미지 — 피그마 image 184 (16:9라 대표 영역 840:546에서 좌우가 조금 잘린다)
         heroImage: '/images/games/takko-timing.jpg',
@@ -105,7 +105,7 @@ const CONTENTS: Record<string, GameContent> = {
             image: takkoTimingGuide,
         },
     },
-    'game-order': {
+    TAKKO_ORDER: {
         tagline: '손님 주문을 잘 외웠다가 순서대로 내주세요.',
         // 대표 이미지 — 피그마 image 255
         heroImage: '/images/games/takko-order.jpg',
@@ -145,9 +145,32 @@ const CONTENTS: Record<string, GameContent> = {
 };
 
 /** 콘텐츠가 등록되지 않은 게임은 게임 설명과 공통 안내로 채운다 */
-export function getGameContent(game: { id: string; description?: string }): GameContent {
+export function getGameContent(game: { code: string; description: string | null }): GameContent {
+    const minimums: Record<string, number> = {
+        COLOR_WORD: 50,
+        TAKKO_RUN: 400,
+        TAKKO_TIMING: 50,
+        TAKKO_ORDER: 18,
+    };
+    const content = CONTENTS[game.code];
+    const minimum = minimums[game.code];
+    if (content && minimum !== undefined)
+        return {
+            ...content,
+            guide: {
+                ...content.guide,
+                steps: content.guide.steps.map((step) =>
+                    step === REWARD_STEP
+                        ? {
+                              ...step,
+                              text: `한 판 ${minimum}점 이상으로 완료하면 하루 한 번 응모권 1장을 받아요.`,
+                          }
+                        : step,
+                ),
+            },
+        };
     return (
-        CONTENTS[game.id] ?? {
+        content ?? {
             tagline: game.description ?? '',
             heroImage: null,
             guide: {

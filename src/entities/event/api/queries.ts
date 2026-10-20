@@ -2,7 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
-import { queryPresets } from '@shared/api/queryPresets';
+import {
+    pollingReadInterval,
+    pollingReadPolicy,
+    queryPresets,
+    withPollingReadGuard,
+} from '@shared/api/queryPresets';
 
 import type { Event } from '../model/types';
 
@@ -25,20 +30,26 @@ const EVENTS_PAGE_SIZE = 20;
 export function useEventList() {
     return useQuery({
         ...queryPresets.realtime,
+        ...pollingReadPolicy,
         queryKey: [...EVENTS_KEY, 'list'],
-        queryFn: async () => {
-            // Page는 기본 20건씩 자른다 — 목록 화면은 전체를 그리므로 totalElements까지 전부 모은다
-            const events: Event[] = [];
-            for (let page = 1; ; page += 1) {
-                const { data } = await apiClient.get<unknown>(EVENTS_API_PATH, {
-                    params: { page, size: EVENTS_PAGE_SIZE },
-                });
-                const parsed = eventListSchema.parse(data).data;
-                events.push(...parsed.items.map(toEvent));
-                if (events.length >= parsed.totalElements || parsed.items.length === 0) break;
-            }
-            return events;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                // Page는 기본 20건씩 자른다 — 목록 화면은 전체를 그리므로 totalElements까지 전부 모은다
+                const events: Event[] = [];
+                for (let page = 1; ; page += 1) {
+                    const { data } = await apiClient.get<unknown>(EVENTS_API_PATH, {
+                        params: { page, size: EVENTS_PAGE_SIZE },
+                        signal: context.signal,
+                    });
+                    const parsed = eventListSchema.parse(data).data;
+                    events.push(...parsed.items.map(toEvent));
+                    if (events.length >= parsed.totalElements) break;
+                    if (parsed.items.length === 0)
+                        throw new Error('이벤트 전체 목록을 받지 못했습니다. 다시 조회해 주세요.');
+                }
+                return events;
+            }),
+        refetchInterval: (query) => pollingReadInterval(query),
         // 폴링은 이벤트 상태 전환(open → closed 등) 감지용이다. 응모 현황 수치는 E03(useEntryStatistics)이 맡는다 (ADR-0007)
     });
 }
@@ -46,19 +57,21 @@ export function useEventList() {
 export function useEvent(eventId: string) {
     return useQuery({
         ...queryPresets.realtime,
+        ...pollingReadPolicy,
         queryKey: [...EVENTS_KEY, 'detail', eventId],
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(eventApiPath(eventId));
-            return envelopeSchema(eventDetailResponseSchema).parse(data).data;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const { data } = await apiClient.get<unknown>(eventApiPath(eventId), {
+                    signal: context.signal,
+                });
+                return envelopeSchema(eventDetailResponseSchema).parse(data).data;
+            }),
         // 상태 전환 감지용 폴링 (ADR-0007) — 마감 상태도 결과 발표(closed → drawn) 전환을 감지해야 하므로
-        // 종결 전까지 30초 폴링을 유지한다. 종결 판정은 원시 상태로 한다 — 화면 상태로는 CANCELED가
-        // 'closed'로 근사돼 취소 이벤트가 영구 폴링된다. 캐시에는 원시 응답을 남기고 select로 화면 모델을 파생한다
+        // 종결 판정은 원시 상태로 유지한다. 화면에서 취소·대상 없는 종료를 분리해도
+        // 추첨 확정과 실제 공개를 혼동하지 않도록 캐시에 원시 응답을 보존한다.
         refetchInterval: (query) => {
             const status = query.state.data?.status;
-            return status != null && isFinalEventStatus(status)
-                ? false
-                : queryPresets.realtime.refetchInterval;
+            return pollingReadInterval(query, status == null || !isFinalEventStatus(status));
         },
         select: toEvent,
     });

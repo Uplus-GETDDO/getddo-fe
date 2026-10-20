@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 
 import { useAttendanceMonth, useAttendanceToday } from '@entities/attendance';
+import { getErrorMessage } from '@shared/api/errorMessage';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { LoadError } from '@shared/ui/load-error';
@@ -105,10 +106,14 @@ export function AttendanceCheckCard({
         setLastClock(clock);
         setNow(clock.now());
     }
-    const today = toAttendanceDate(now);
+    const today = status?.attendanceDate ?? toAttendanceDate(now);
+    const displayDate = status ? new Date(`${status.attendanceDate}T12:00:00+09:00`) : now;
     const month = today.slice(0, 7);
     // 최근 7일이 지난달에 걸치면 그 달 출석일도 같이 받는다 — 주간 스트립이 월 경계를 넘을 수 있다
-    const weekStartMonth = toAttendanceDate(new Date(now.getTime() - 6 * DAY_MS)).slice(0, 7);
+    const weekStartMonth = toAttendanceDate(new Date(displayDate.getTime() - 6 * DAY_MS)).slice(
+        0,
+        7,
+    );
     const { data: monthData } = useAttendanceMonth(month);
     const { data: prevMonthData } = useAttendanceMonth(weekStartMonth, {
         enabled: weekStartMonth !== month,
@@ -178,12 +183,14 @@ export function AttendanceCheckCard({
                 minDurationMs: BAKING_MIN_MS,
             });
             const granted = receipt.rewards.reduce((sum, reward) => sum + reward.ticketCount, 0);
-            setRevealDate(today);
-            toast.success(`출석 완료! 응모권 ${granted}장을 받았어요.`);
+            setRevealDate(receipt.attendanceDate);
+            toast.success(`출석 확인! 해당 출석의 확정 보상은 브론즈 ${granted}장이에요.`);
             // 굽기 장면이 끝나면 바로 출석판으로 바꿔 펼친다
             if (fromCollapsed) expand(endBaking);
-        } catch {
-            toast.error('출석 처리에 실패했어요. 잠시 후 다시 시도해 주세요.');
+        } catch (error) {
+            toast.error(
+                getErrorMessage(error, '출석 처리에 실패했어요. 잠시 후 다시 시도해 주세요.'),
+            );
         } finally {
             endBaking();
         }
@@ -199,7 +206,13 @@ export function AttendanceCheckCard({
         </Button>
     ) : (
         // 오늘 할 일의 주된 행동이라 응모 버튼과 같은 악센트(노랑)
-        <Button variant="accent" size="lg" className="w-full" onClick={() => void handleCheck()}>
+        <Button
+            variant="accent"
+            size="lg"
+            className="w-full"
+            disabled={checkAttendance.isPending || baking}
+            onClick={() => void handleCheck()}
+        >
             출석하고 응모권 {status?.dailyRewardTicketCount ?? 1}장 받기
         </Button>
     );
@@ -221,7 +234,7 @@ export function AttendanceCheckCard({
     const stats = status && (
         <AttendanceStatPair
             streak={status.consecutiveDays}
-            monthly={countMonthlyAttendance(checkedDates, status.attended, now)}
+            monthly={countMonthlyAttendance(checkedDates, status.attended, displayDate)}
             // 다음 연속 출석 보너스 — 매일 출석 1장과 별도로 주는 단계 보상이라 '보너스'로 적는다 (getddo-spec attendance.md).
             // 따로 줄을 두지 않고 연속 일수 바로 아래에 붙인다 (접힌 카드에서만)
             streakHint={
@@ -286,6 +299,11 @@ export function AttendanceCheckCard({
                             </Rise>
                         )}
 
+                        {statusQuery.isError && status && (
+                            <p role="alert">
+                                출석 정보를 갱신하지 못했습니다. 마지막 성공값을 표시합니다.
+                            </p>
+                        )}
                         {isPending && <SkeletonList count={2} rowClassName="h-16" />}
                         {/* 받아 둔 출석 정보가 없을 때만 — 카드 높이 안 가운데에 다시 시도를 둔다 */}
                         {!isPending && !status && (
@@ -314,7 +332,7 @@ export function AttendanceCheckCard({
                                                 days={buildAttendanceMonth(
                                                     shownDates,
                                                     shownCheckedToday,
-                                                    now,
+                                                    displayDate,
                                                 )}
                                                 bonusClaims={bonusClaims}
                                                 revealDate={revealDate}
@@ -363,7 +381,7 @@ export function AttendanceCheckCard({
                                                 week={buildAttendanceWeek(
                                                     shownDates,
                                                     shownCheckedToday,
-                                                    now,
+                                                    displayDate,
                                                 )}
                                                 bonusDates={bonusDates}
                                             />

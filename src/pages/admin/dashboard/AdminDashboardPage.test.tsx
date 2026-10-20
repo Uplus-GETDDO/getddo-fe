@@ -6,6 +6,7 @@ import { expect, it, vi } from 'vitest';
 
 import { server } from '@mocks/server';
 import { VirtualClockProvider } from '@shared/model/virtualClock';
+import { recentKstDays } from '@shared/utils/date';
 
 import { AdminDashboardPage } from './AdminDashboardPage';
 
@@ -106,15 +107,8 @@ it('활성 일반 사용자가 0명이면 참여율을 계산 불가로 표시�
             HttpResponse.json({
                 success: true,
                 data: {
-                    days: [
-                        '2026-10-14',
-                        '2026-10-15',
-                        '2026-10-16',
-                        '2026-10-17',
-                        '2026-10-18',
-                        '2026-10-19',
-                        '2026-10-20',
-                    ].map(day),
+                    // 페이지가 요청하는 최근 7일(KST, 오늘 포함)과 정확히 같은 범위를 반환한다
+                    days: recentKstDays(new Date(), 7).map((d) => day(d.ymd)),
                     totalUserCount: 0,
                 },
             }),

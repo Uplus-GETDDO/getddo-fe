@@ -22,7 +22,8 @@ const PERIOD_FORMAT: Intl.DateTimeFormatOptions = {
 /** 미션 상세 — 문항을 풀어 제출하는 화면. 완료·기간 외 상태는 폼 대신 안내를 보여준다 */
 export function MissionDetailPage() {
     const { missionId } = useParams<{ missionId: string }>();
-    const { data: mission, isPending, isError } = useMissionDetail(missionId ?? '');
+    const missionQuery = useMissionDetail(missionId ?? '');
+    const { data: mission, isPending, isError } = missionQuery;
     // 방금 제출로 완료된 결과 — 상세 쿼리 무효화로 폼이 언마운트돼도 결과 화면이 살아있게 페이지가 들고 있는다.
     // 결과는 낸 미션 id와 함께 보관한다 — 다른 미션 상세로 바뀌어도 이전 미션의 결과가 뜨지 않게
     const [submission, setSubmission] = useState<{
@@ -42,7 +43,7 @@ export function MissionDetailPage() {
             </main>
         );
     }
-    if (isError || !mission) {
+    if (!mission) {
         return (
             <main className={`${CONTAINER} flex flex-col items-start gap-3 pb-20`}>
                 <p className="text-body text-fg-primary">
@@ -71,6 +72,9 @@ export function MissionDetailPage() {
     return (
         <main className={`${CONTAINER} flex flex-col gap-8 pb-28`}>
             <header className="flex flex-col gap-3">
+                {isError && (
+                    <p role="alert">미션 정보를 갱신하지 못했습니다. 마지막 성공값을 표시합니다.</p>
+                )}
                 <StatusDot tone={mission.completed ? 'muted' : 'brand'}>
                     {mission.completed ? '참여 완료' : '참여 가능'}
                 </StatusDot>

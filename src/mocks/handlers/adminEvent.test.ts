@@ -4,6 +4,7 @@ import { apiClient } from '@shared/api/client';
 import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 import * as clock from '../now';
+import { recordMockTicketGrant } from './ticket';
 
 // 목업은 모듈 수준 상태를 들고 있어 테스트끼리 영향을 준다 — 변경 테스트는 새로 만든 이벤트로 독립시킨다
 const call = (method: 'get' | 'post' | 'delete', path: string, body?: unknown) =>
@@ -236,6 +237,36 @@ describe('관리자 이벤트 목업 핸들러', () => {
         expect(await userEventIds()).not.toContain(created.id);
     });
 
+    it('이벤트 취소는 사용한 골드 응모권을 원래 등급으로 반환한다', async () => {
+        const userId = `cancel-grade-${crypto.randomUUID()}`;
+        recordMockTicketGrant(userId, 2, '검증용', { grade: 'GOLD' });
+        const balance = async () =>
+            (
+                await apiClient.get<{ data: { countByGrade: Record<string, number> } }>(
+                    '/v1/tickets/me',
+                    { headers: { 'X-User-ID': userId } },
+                )
+            ).data.data.countByGrade;
+        const before = await balance();
+        const event = await createEvent({
+            eventType: 'TICKET',
+            weightingEnabled: true,
+            maxTicketsPerUser: 5,
+            ...openWindow(),
+        });
+        const entry = await apiClient.post(
+            `/v1/events/${event.id}/entries`,
+            { tickets: { GOLD: 2 } },
+            { headers: { 'X-User-ID': userId, [IDEMPOTENCY_HEADER]: crypto.randomUUID() } },
+        );
+        expect(entry.status).toBe(201);
+        const canceled = await call('post', `/v1/admin/events/${event.id}/cancel`, {
+            reason: '등급 반환 검증',
+        });
+        expect(canceled.status).toBe(200);
+        expect(await balance()).toEqual(before);
+    });
+
     it('취소를 반복해도 차감된 응모권을 한 번만 반환한다', async () => {
         const userId = `cancel-${Date.now()}`;
         // 응모할 수 있는 진행 중 창으로 만든다 — 진행 예정 이벤트는 응모가 거절된다 (ENTRY-005)
@@ -274,12 +305,12 @@ describe('관리자 이벤트 목업 핸들러', () => {
         expect(firstResult.refundedTicketCount).toBe(3);
         expect(await balanceOf()).toBe(10);
 
-        // 재취소는 멱등하게 성공하지만 반환 수량은 0이고 잔액도 변하지 않는다
+        // 재취소는 EVENT-017로 거절하고 추가 반환하지 않는다
         const second = await call('post', `/v1/admin/events/${created.id}/cancel`, {
             reason: '취소 재요청',
         });
-        expect(second.status).toBe(200);
-        expect((second.data as Envelope<EventOperationResult>).data.refundedTicketCount).toBe(0);
+        expect(second.status).toBe(409);
+        expect((second.data as { code?: string }).code).toBe('EVENT-017');
         expect(await balanceOf()).toBe(10);
     });
 

@@ -90,7 +90,7 @@ function MissionDialogBody({
     onClose: () => void;
     onRewarded: (tickets: number, grade: TicketGrade | null) => void;
 }) {
-    const { data: mission, isPending, isError } = useMissionDetail(missionId);
+    const { data: mission, isPending } = useMissionDetail(missionId);
     // 기간 판정은 서버 몫 — 여기의 now 비교는 표시용 안내에만 쓴다 (시간 규칙)
     const now = useVirtualClock().now();
     const headerRef = useRef<HTMLElement>(null);
@@ -128,7 +128,7 @@ function MissionDialogBody({
         );
     }
 
-    if (isError || !mission) {
+    if (!mission) {
         return (
             <div className="bg-surface-elevated flex flex-col gap-2 rounded-2xl p-6">
                 <DialogTitle>미션을 불러오지 못했어요</DialogTitle>

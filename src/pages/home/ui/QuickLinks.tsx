@@ -2,8 +2,9 @@ import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useAttendanceToday } from '@entities/attendance';
-import { useGameList } from '@entities/game';
+import { useGameList, useGameStatisticsList } from '@entities/game';
 import { isMissionOpen, useMissionList } from '@entities/mission';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import stepAttendance from '@shared/assets/step/step-attendance.png';
 import stepGame from '@shared/assets/step/step-game.png';
@@ -41,7 +42,12 @@ export function QuickLinks() {
     const now = useVirtualClock().now();
 
     // 플레이 화면이 있는 게임만 센다 — 후보·준비 중 게임은 홈 어디에도 두지 않는다
-    const playable = games?.filter((game) => hasGamePlayer(game.id));
+    const playable = games?.filter((game) => hasGamePlayer(game.code));
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const statistics = useGameStatisticsList(
+        (playable ?? []).map((game) => game.id),
+        isUser,
+    );
 
     const links: QuickLink[] = [
         {
@@ -49,7 +55,10 @@ export function QuickLinks() {
             label: '게임하러 가기',
             doneLabel: '게임 보상 완료',
             image: stepGame,
-            today: todayOf(!!playable, playable?.some((game) => game.remainingPlays > 0) ?? false),
+            today: todayOf(
+                isUser && !!playable && statistics.every((query) => query.isSuccess),
+                statistics.some((query) => query.data?.rewardClaimedToday === false),
+            ),
             highlight: true,
         },
         {

@@ -4,17 +4,16 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import type { TicketGrade } from '@entities/ticket';
 
 import type { TakkoOrderItemId } from '../model/takkoOrder';
-import type { GameOverHandler } from '../model/types';
+import type { GameOverHandler, GameSessionProps } from '../model/types';
 
 import { useLoopingBgm } from '../hooks/useLoopingBgm';
+import { createXorshift32, ActiveClock } from '../model/gameSession';
 import { PIXEL_FONT } from '../model/pixelFont';
 import {
     TAKKO_ORDER_LIVES,
     TAKKO_ORDER_MENU,
-    TAKKO_ORDER_START_LENGTH,
     createTakkoOrder,
     isTakkoOrderPrefix,
-    nextTakkoOrderLength,
     takkoOrderPoints,
     takkoOrderCustomerLabel,
     takkoOrderShowMs,
@@ -34,13 +33,19 @@ import { isInteractive } from '../utils/isInteractive';
 import { GameCountdown } from './GameCountdown';
 import { GameImageButton } from './GameImageButton';
 import { GameKey } from './GameKey';
-import { GameLives, GameOverOverlay, GameStartHint, GameStartHintLine } from './GameOverlays';
+import {
+    GameLives,
+    GameOverOverlay,
+    GameStartHint,
+    GameStartHintLine,
+    GamePauseOverlay,
+} from './GameOverlays';
 import { RewardDialog } from './RewardDialog';
 import { ScoreBoard } from './ScoreBoard';
 import { VolumeControl } from './VolumeControl';
 
 /** ready 시작 안내 · countdown 3,2,1 · showing 주문 보여 주기 · input 내주기 · reveal 맞음/틀림 · over 끝 */
-type Phase = 'ready' | 'countdown' | 'showing' | 'input' | 'reveal' | 'over';
+type Phase = 'ready' | 'countdown' | 'showing' | 'input' | 'reveal' | 'over' | 'paused';
 
 const COUNTDOWN_FROM = 3;
 const COUNTDOWN_STEP_MS = 700;
@@ -54,23 +59,25 @@ const nameOf = (id: TakkoOrderItemId) => TAKKO_ORDER_MENU.find((item) => item.id
 /**
  * 타꼬 주문 — 손님 주문(타코야끼 순서)을 잠깐 보여 주고 가린 뒤, 아래 메뉴 버튼으로 같은 순서대로 내준다 (키보드 1~4도 된다).
  * 맞히면 주문이 하나씩 길어지고, 틀리면 목숨이 하나 줄고 같은 길이의 새 주문을 받는다. 목숨 3개를 다 쓰면 끝.
- * 내주는 동안은 시간 제한이 없어 멈춤 버튼을 두지 않는다
+ * 결과 표시 중에도 멈춰 탭 밖에서 다음 주문의 노출 시간이 소비되지 않게 한다
  */
 export function TakkoOrderGame({
+    session,
+    onRestart,
+    onRecordingError,
     bestScore = 0,
     onExit,
     onGameOver,
-}: {
+}: GameSessionProps & {
     bestScore?: number;
     onExit: () => void;
     onGameOver?: GameOverHandler;
 }) {
+    const [random] = useState(() => createXorshift32(session.gameData.seed));
     const [phase, setPhase] = useState<Phase>('ready');
     const [countdown, setCountdown] = useState(COUNTDOWN_FROM);
-    const [length, setLength] = useState(TAKKO_ORDER_START_LENGTH);
-    const [order, setOrder] = useState<TakkoOrderItemId[]>(() =>
-        createTakkoOrder(TAKKO_ORDER_START_LENGTH, Math.random),
-    );
+    const [length, setLength] = useState(session.rules.startLength!);
+    const [order, setOrder] = useState<TakkoOrderItemId[]>(() => []);
     const [picked, setPicked] = useState<TakkoOrderItemId[]>([]);
     const [ok, setOk] = useState(false);
     const [customer, setCustomer] = useState(1);
@@ -79,7 +86,7 @@ export function TakkoOrderGame({
         Math.floor(Math.random() * TAKKO_ORDER_CUSTOMERS.length),
     );
     const [score, setScore] = useState(0);
-    const [lives, setLives] = useState(TAKKO_ORDER_LIVES);
+    const [lives, setLives] = useState(session.rules.initialLives!);
     const [best, setBest] = useState(bestScore);
     const [newBest, setNewBest] = useState(false);
     const [rewardOpen, setRewardOpen] = useState(false);
@@ -89,23 +96,36 @@ export function TakkoOrderGame({
     const restartRef = useRef<HTMLButtonElement>(null);
     // 이번 판 — 보상 응답이 늦게 와도 그사이 다시 시작한 판에는 띄우지 않는다
     const playRef = useRef(0);
+    const roundsRef = useRef<{ sequence: number; picks: TakkoOrderItemId[] }[]>([]);
+    const pickedRef = useRef<TakkoOrderItemId[]>([]);
+    const revealedRef = useRef(false);
+    const [showClock] = useState(() => new ActiveClock());
+    const pausedPhase = useRef<Phase>('showing');
     const bgm = useLoopingBgm(TAKKO_ORDER_BGM);
 
     const playSound = (key: keyof typeof TAKKO_ORDER_SOUNDS) =>
         bgm.playEffect(TAKKO_ORDER_SOUNDS[key]);
 
     const start = () => {
+        if (phase === 'over') {
+            onRestart();
+            return;
+        }
+        roundsRef.current = [];
+        pickedRef.current = [];
+        revealedRef.current = false;
+        showClock.reset();
         playRef.current += 1;
         // 시작은 항상 키·클릭 입력 안에서 불리므로 여기서 음악을 튼다 (브라우저 자동 재생 제한)
         bgm.play();
         bgm.preloadEffects(Object.values(TAKKO_ORDER_SOUNDS));
-        setLength(TAKKO_ORDER_START_LENGTH);
-        setOrder(createTakkoOrder(TAKKO_ORDER_START_LENGTH, Math.random));
+        setLength(session.rules.startLength!);
+        setOrder(createTakkoOrder(session.rules.startLength!, random));
         setPicked([]);
         setCustomer(1);
         setLook(Math.floor(Math.random() * TAKKO_ORDER_CUSTOMERS.length));
         setScore(0);
-        setLives(TAKKO_ORDER_LIVES);
+        setLives(session.rules.initialLives!);
         setNewBest(false);
         setCountdown(COUNTDOWN_FROM);
         setPhase('countdown');
@@ -120,7 +140,7 @@ export function TakkoOrderGame({
         const play = playRef.current;
         // 저장 요청이 실패해도 게임 화면은 그대로 둔다 (실패 안내는 게임 상세 페이지가 한다)
         Promise.resolve()
-            .then(() => onGameOver?.(finalScore))
+            .then(() => onGameOver?.(finalScore, { rounds: roundsRef.current }))
             .then((result) => {
                 if (!result || playRef.current !== play || result.ticketsGranted <= 0) return;
                 setTicketsGranted(result.ticketsGranted);
@@ -132,11 +152,20 @@ export function TakkoOrderGame({
 
     // 메뉴 하나를 내준다 — 주문 앞부분과 다르면 그 자리에서 틀리고, 끝까지 같으면 맞는다
     const pick = (id: TakkoOrderItemId) => {
-        if (phase !== 'input') return;
-        const next = [...picked, id];
+        if (phase !== 'input' || revealedRef.current) return;
+        if (roundsRef.current.length >= 10000) {
+            onRecordingError(
+                '주문 기록 한도에 도달했습니다. 이 판은 정상 완료로 제출하지 않습니다.',
+            );
+            return;
+        }
+        const next = [...pickedRef.current, id];
+        pickedRef.current = next;
         setPicked(next);
         if (!isTakkoOrderPrefix(order, next)) {
             setOk(false);
+            revealedRef.current = true;
+            roundsRef.current.push({ sequence: roundsRef.current.length + 1, picks: [...next] });
             setPhase('reveal');
             setLives((n) => n - 1);
             playSound('wrong');
@@ -152,6 +181,8 @@ export function TakkoOrderGame({
         }
         if (next.length === order.length) {
             setOk(true);
+            revealedRef.current = true;
+            roundsRef.current.push({ sequence: roundsRef.current.length + 1, picks: [...next] });
             setPhase('reveal');
             setScore((n) => n + takkoOrderPoints(order.length));
             playSound('correct');
@@ -171,9 +202,16 @@ export function TakkoOrderGame({
     // 주문을 보여 준 뒤 가리고 내주기로
     useEffect(() => {
         if (phase !== 'showing') return;
-        const timer = setTimeout(() => setPhase('input'), takkoOrderShowMs(order.length));
-        return () => clearTimeout(timer);
-    }, [phase, order]);
+        showClock.resume(performance.now());
+        const timer = setTimeout(
+            () => setPhase('input'),
+            Math.max(0, takkoOrderShowMs(order.length) - showClock.read(performance.now())),
+        );
+        return () => {
+            clearTimeout(timer);
+            showClock.pause(performance.now());
+        };
+    }, [phase, order, showClock]);
 
     // 결과를 보여 준 뒤 다음 손님으로 (목숨을 다 쓰면 끝)
     const next = useEffectEvent(() => {
@@ -181,10 +219,12 @@ export function TakkoOrderGame({
             finish(score);
             return;
         }
-        const nextLength = nextTakkoOrderLength(length, ok);
+        const nextLength = ok ? Math.min(session.rules.maxLength!, length + 1) : length;
         setLength(nextLength);
-        setOrder(createTakkoOrder(nextLength, Math.random));
+        setOrder(createTakkoOrder(nextLength, random));
         setPicked([]);
+        pickedRef.current = [];
+        revealedRef.current = false;
         if (ok) {
             setCustomer((n) => n + 1);
             // 바로 앞 손님과 다른 그림으로
@@ -194,6 +234,7 @@ export function TakkoOrderGame({
                     TAKKO_ORDER_CUSTOMERS.length,
             );
         }
+        showClock.reset();
         setPhase('showing');
     });
     useEffect(() => {
@@ -202,11 +243,55 @@ export function TakkoOrderGame({
         return () => clearTimeout(timer);
     }, [phase, ok]);
 
+    const pause = () => {
+        if (
+            phase === 'showing' ||
+            phase === 'input' ||
+            phase === 'countdown' ||
+            phase === 'reveal'
+        ) {
+            pausedPhase.current = phase;
+            showClock.pause(performance.now());
+            setPhase('paused');
+            bgm.pause();
+        }
+    };
+    const resume = () => {
+        if (phase === 'paused') {
+            setPhase(pausedPhase.current);
+            bgm.resume();
+        }
+    };
+    const autoPause = useEffectEvent(() => pause());
+    useEffect(() => {
+        const hidden = () => {
+            if (document.hidden) autoPause();
+        };
+        const blur = () => autoPause();
+        document.addEventListener('visibilitychange', hidden);
+        window.addEventListener('blur', blur);
+        return () => {
+            document.removeEventListener('visibilitychange', hidden);
+            window.removeEventListener('blur', blur);
+        };
+    }, []);
+
     // 키보드 — 1~4로 메뉴를 내주고, 시작 화면에서는 스페이스바·Enter로 시작한다
     const handleKey = useEffectEvent((event: KeyboardEvent) => {
         // 게임이 떠 있는 동안 스페이스바로 페이지가 내려가지 않게 한다 (버튼에 초점이 있으면 그 버튼을 누르게 둔다)
         if (event.key === ' ' && !isInteractive(event.target)) event.preventDefault();
         if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.code === 'Escape' || event.code === 'KeyP') {
+            event.preventDefault();
+            if (phase === 'paused') resume();
+            else pause();
+            return;
+        }
+        if (phase === 'paused' && (event.key === ' ' || event.key === 'Enter')) {
+            event.preventDefault();
+            resume();
+            return;
+        }
         if (phase === 'input') {
             const item = TAKKO_ORDER_MENU[Number(event.key) - 1];
             if (!item) return;
@@ -438,6 +523,17 @@ export function TakkoOrderGame({
                 <div className="flex items-start gap-2 sm:gap-3">
                     <GameImageButton kind="exit" size="small" onClick={onExit} />
                     <VolumeControl level={bgm.level} onLevelChange={bgm.setLevel} />
+                    {(phase === 'showing' ||
+                        phase === 'input' ||
+                        phase === 'countdown' ||
+                        phase === 'reveal' ||
+                        phase === 'paused') && (
+                        <GameImageButton
+                            kind="pause"
+                            size="small"
+                            onClick={phase === 'paused' ? resume : pause}
+                        />
+                    )}
                 </div>
                 <GameLives lives={lives} max={TAKKO_ORDER_LIVES} />
                 <ScoreBoard value={padScore(score)} />
@@ -512,6 +608,7 @@ export function TakkoOrderGame({
                 </div>
             )}
 
+            {phase === 'paused' && <GamePauseOverlay onResume={resume} />}
             {phase === 'over' && (
                 <GameOverOverlay
                     title="목숨을 다 썼어요!"

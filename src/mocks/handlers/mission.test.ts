@@ -58,6 +58,36 @@ async function balance(userId: string) {
 }
 
 describe('미션 목업 핸들러', () => {
+    it('다문항 퀴즈는 정답을 누적하고 마지막 문항에서 한 장만 보상한다', async () => {
+        const userId = nextUser();
+        const { data: detail } = await apiClient.get<
+            Envelope<{
+                questions: { id: string; questionType: string; options: { id: string }[] }[];
+            }>
+        >('/v1/missions/msn-quiz-multi', { headers: { 'X-User-ID': userId } });
+        const answers = [
+            { questionId: 'q-multi-1', selectedOptionId: 'opt-multi-1-1' },
+            { questionId: 'q-multi-2', selectedOptionId: 'opt-multi-2-4' },
+            { questionId: 'q-multi-3', selectedOptionId: 'opt-multi-3-1' },
+            { questionId: 'q-multi-4', selectedOptionId: 'opt-multi-4-1' },
+            { questionId: 'q-multi-5', answerText: '무너' },
+        ];
+        expect(detail.data.questions).toHaveLength(5);
+        const before = await balance(userId);
+        for (let i = 0; i < answers.length; i++) {
+            const response = await submit(
+                'msn-quiz-multi',
+                [answers[i]],
+                `partial-${userId}-${i}`,
+                userId,
+            );
+            expect(response.status).toBe(201);
+            const result = (response.data as Envelope<SubmissionResult>).data;
+            expect(result.isCompleted).toBe(i === 4);
+            expect(result.reward?.ticketCount ?? 0).toBe(i === 4 ? 1 : 0);
+        }
+        expect(await balance(userId)).toBe(before + 1);
+    });
     it('설문 필수 문항을 모두 답하면 201·완료·보상을 받는다', async () => {
         const userId = nextUser();
         const res = await submit(SURVEY_ID, SURVEY_ANSWERS, `k-${userId}`, userId);
@@ -129,7 +159,7 @@ describe('미션 목업 핸들러', () => {
             userId,
         );
         expect((right.data as Envelope<SubmissionResult>).data.isCompleted).toBe(true);
-        expect((right.data as Envelope<SubmissionResult>).data.reward?.ticketCount).toBe(2);
+        expect((right.data as Envelope<SubmissionResult>).data.reward?.ticketCount).toBe(1);
     });
 
     it('완료된 미션 재제출은 기존 결과를 200으로 돌려주고 보상을 중복 지급하지 않는다', async () => {
@@ -167,7 +197,7 @@ describe('미션 목업 핸들러', () => {
             userId,
         );
         expect(res.status).toBe(409);
-        expect((res.data as { code: string }).code).toBe('IDEMPOTENCY_CONFLICT');
+        expect((res.data as { code: string }).code).toBe('MISSION-005');
     });
 
     it('같은 멱등키·같은 본문 재전송은 처음 결과를 돌려준다', async () => {
@@ -200,7 +230,7 @@ describe('미션 목업 핸들러', () => {
             userId,
         );
         expect(res.status).toBe(409);
-        expect((res.data as { code: string }).code).toBe('MISSION_NOT_ACTIVE');
+        expect((res.data as { code: string }).code).toBe('MISSION-004');
     });
 
     it('완료 시드 미션은 목록에서 completed로 표시된다', async () => {

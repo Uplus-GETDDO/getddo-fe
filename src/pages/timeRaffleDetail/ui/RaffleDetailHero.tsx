@@ -23,6 +23,8 @@ const STATUS_CHIP: Record<Event['status'], { label: string; emphasized: boolean 
     upcoming: { label: '오픈 예정', emphasized: false },
     closed: { label: '발표 대기', emphasized: false },
     drawn: { label: '발표 완료', emphasized: false },
+    canceled: { label: '이벤트 취소', emphasized: false },
+    ended: { label: '추첨 없이 종료', emphasized: false },
 };
 
 interface RaffleDetailHeroProps {

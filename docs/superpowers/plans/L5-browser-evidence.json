@@ -1,0 +1,322 @@
+{
+    "kind": "MSW 없음, 로컬 preview 실제 API 프록시. 관리자 POST와 오류 상태는 주입으로 별도 표시.",
+    "requests": [
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/streak?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/admin/policies/attendance/daily",
+            "kind": "주입: 중복 예약",
+            "status": 409
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/streak?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/admin/policies/attendance/streak",
+            "kind": "주입: 연속 정책 예약 성공",
+            "status": 201
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/streak?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions/01a143a8-b6df-7cbd-a070-7a196e668677",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions/01a143a8-b6df-7cbd-a070-7a196e668677/survey-summary?from=2026-10-01&to=2026-10-20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/admin/missions",
+            "kind": "주입: 미션 등록 성공",
+            "status": 201,
+            "rewardTicketCount": 1,
+            "questionCount": 1
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions/01a143a8-b6df-7cbd-a070-7a196e668677",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions/01a143a8-b6df-7cbd-a070-7a196e668677/survey-summary?from=2026-10-01&to=2026-10-20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/streak?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "주입: 조회 실패",
+            "status": 503
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "주입: 조회 실패",
+            "status": 503
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "주입: 조회 실패",
+            "status": 429
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "주입: 조회 실패",
+            "status": 429
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/missions?page=1&size=20",
+            "kind": "주입: 빈 목록",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/daily?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/policies/attendance/streak?page=1&size=20",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/tickets/me",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-c0ff-7c32-a8ca-45d269f0056a",
+            "kind": "주입: 실제 상세의 상태만 CANCELED",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-c0ff-7c32-a8ca-45d269f0056a/results",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-c0ff-7c32-a8ca-45d269f0056a/my-result",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/tickets/me",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a156c2-4f96-7779-8bdb-fe27a5057793",
+            "kind": "주입: 실제 상세의 상태만 CANCELED",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a156c2-4f96-7779-8bdb-fe27a5057793/statistics",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a156c2-4f96-7779-8bdb-fe27a5057793/results",
+            "kind": "실제 API",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a156c2-4f96-7779-8bdb-fe27a5057793/my-result",
+            "kind": "실제 API",
+            "status": 200
+        }
+    ],
+    "checks": [
+        {
+            "name": "AP01/AP03 실제 목록",
+            "loaded": true
+        },
+        {
+            "name": "AP02 중복 예약 UI",
+            "kind": "409 주입",
+            "shown": true
+        },
+        {
+            "name": "AP04 단계 예약",
+            "kind": "201 주입",
+            "submitted": true
+        },
+        {
+            "name": "AM01/AM02 실제 목록·상세",
+            "loaded": true
+        },
+        {
+            "name": "AM04 실제 집계",
+            "loaded": true
+        },
+        {
+            "name": "AM03 등록 폼·1장·ACTIVE",
+            "kind": "201 주입",
+            "submitted": true
+        },
+        {
+            "name": "관리자 미션 반응형",
+            "width": 320,
+            "horizontalOverflow": false
+        },
+        {
+            "name": "관리자 미션 반응형",
+            "width": 390,
+            "horizontalOverflow": false
+        },
+        {
+            "name": "관리자 미션 반응형",
+            "width": 640,
+            "horizontalOverflow": false
+        },
+        {
+            "name": "키보드 포커스",
+            "tag": "A"
+        },
+        {
+            "name": "출석 정책 320px",
+            "horizontalOverflow": false
+        },
+        {
+            "name": "정책 갱신 실패 마지막 성공값 보존",
+            "kind": "503 주입",
+            "retained": true
+        },
+        {
+            "name": "429 즉시 재클릭 우회 차단",
+            "kind": "Retry-After 2초 주입",
+            "blocked": true
+        },
+        {
+            "name": "429 이후 재연결 복구",
+            "kind": "대기 후 실제 API 재조회",
+            "restored": true
+        },
+        {
+            "name": "실제 브라우저 오프라인·온라인 전환",
+            "retained": true
+        },
+        {
+            "name": "미션 빈 목록",
+            "kind": "빈 응답 주입",
+            "shown": true
+        },
+        {
+            "name": "Worker 차단",
+            "registrations": 0
+        },
+        {
+            "name": "NO_TICKET 취소 상세·응모 차단",
+            "kind": "상태 CANCELED 주입, 그 외 실제 API",
+            "path": "/events/",
+            "shown": true
+        },
+        {
+            "name": "TICKET 취소 상세·응모 차단",
+            "kind": "상태 CANCELED 주입, 그 외 실제 API",
+            "path": "/time-raffle/",
+            "shown": true
+        }
+    ],
+    "errors": []
+}

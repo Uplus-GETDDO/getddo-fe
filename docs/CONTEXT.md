@@ -1,6 +1,6 @@
 # CONTEXT.md — 도메인 맥락과 연동 경계
 
-기준일은 2026-10-20이다. FE `a49796a`, 공용 명세 `bbbe811`을 대조했다. 이 문서는 FE 코드의 위치와 주의사항을 설명하며, 공용 정책·API 계약을 새로 정의하지 않는다.
+기준일은 2026-10-20이다. FE 원격 dev `948256c`와 GD-259 L5 작업본, 공용 명세의 게임 채택 계약을 대조했다. 이 문서는 FE 코드의 위치와 주의사항을 설명하며, 공용 정책·API 계약을 새로 정의하지 않는다.
 
 - 공용 정책: [기능 요구사항](../../getddo-spec/00-requirements/functional-requirements.md), [구현 범위](../../getddo-spec/00-requirements/scope.md), [미결정 사항](../../getddo-spec/00-requirements/pending-decisions.md).
 - 코드 규칙: [AGENTS.md](../AGENTS.md). 기획 원문과 페르소나: [product-context.md](product-context.md).
@@ -21,7 +21,7 @@
 - 추첨·공개·본인 결과: `entities/drawResult`, `entities/winner`, `features/runDraw`, `features/runRedraw`, `pages/admin/draw`. 공개 조회와 관리자 추첨 연동 상태는 다르다.
 - 출석: `entities/attendance`, `features/checkAttendance`, `pages/missionList`. 일일 출석과 월간 연속 출석은 이벤트와 독립적이다.
 - 미션: `entities/mission`, `features/submitMission`, `pages/missionList`, `pages/missionDetail`. 서비스 공통 설문·퀴즈이며 사용자당 미션별 보상은 한 번이다.
-- 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. 서버 UUID와 `code`를 구분하고, 게임 결과·통계·보상은 서버 판정이 기준이다.
+- 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. GD-257에서 네 게임의 G01~G05·서버 seed·입력 기록·누적 통계·보상을 연결하고 배포 게임 목업을 해제했다. playId/토큰/원본 재시도는 메모리에 보존하며 새로고침 복구는 지원하지 않는다. 관리자 AG·변경/예약은 미확정이다. [L4 인계](superpowers/plans/L4-handoff.md)에서 실제 API·브라우저·목업 증거와 인수 잔여를 구분한다.
 - 알림: `entities/notification`, `features/markNotificationRead`, `widgets/notificationBell`. 관리자 운영은 `entities/adminNotification`, `features/retryAdminNotification`, `pages/admin/notifications`다.
 - 배너: `entities/banner`, `features/manageBanner`, `pages/admin/banners`. GD-255에서 홈 최상단 `widgets/bannerSlider`를 B01 관리 이미지 배너로 연결했다. 겟또타임 안내·현황은 아래 기존 `TicketEventSection`이 맡는다. 같은 세션의 관리 변경은 B01·AB01 무효화, 다른 세션은 홈 재진입·창 재포커스·재조회로 반영한다.
 - 사용자: `entities/user`, `features/switchVirtualUser`, `pages/login`, `pages/admin/virtualUsers`. 현재 `/virtual-users` 시연 목록과 AO01/AO02 DB 사용자 조회는 별개다.
@@ -40,7 +40,7 @@
 - 최초 공개 전 취소·재추첨이 있으면 유지 결과와 최종 재추첨 결과를 합쳐 공개한다. 미확정 결과·일부 명단을 먼저 공개하지 않는다.
 - 개별 당첨 취소는 사유와 함께 요청하며 빈 자리 재추첨이 연결된다. 정상 당첨·최초 가중치는 유지하고, 이를 이유로 응모권을 반환·회수하지 않는다. 전체 취소 후 처음부터 재추첨은 이번 범위 밖이다.
 - 발표 후 취소·재추첨 사이의 사용자 중간 표시는 이번 운영에서 해당 흐름을 쓰지 않는 전제로 GD-140 범위에서 제외됐다. 관리자 API 폐지·일괄 호출 금지를 뜻하지 않는다.
-- `toEvent.ts`는 아직 `CANCELED`·`REDRAWING`을 `closed`로 축약한다. GD-247의 결과 폴링 종료 개선으로 이 화면 상태 문제가 해결된 것은 아니다.
+- GD-259의 `toEvent.ts`는 CANCELED를 canceled, 대상 없는 종료를 ended로 구분한다. DRAW_CONFIRMED/REDRAWING은 공개 전 사용자 발표 대기로 유지하며 내부 사유를 노출하지 않는다. 실제 결과 공개는 E08의 isPublished를 따른다. 취소 상세는 기존 결과 캐시보다 취소 안내를 우선한다.
 
 ## 응모권·응모·멱등 처리
 
@@ -69,12 +69,12 @@
 이 절은 코드 기준 현황이다. API 호출 코드가 있다는 사실은 배포·쓰기·권한·통합 검증 완료를 의미하지 않는다.
 
 - `env.enableMsw`가 true일 때만 `app/main.tsx`가 브라우저 목업을 시작한다. 개발 모드는 전체 `handlers`, 배포 빌드는 `hybridHandlers`를 등록한다.
-- 현재 하이브리드에는 **관리자 추첨·게임·지급 전 차단·가상 사용자**가 남아 있다. 감사 조회는 없다. 주석의 “추첨 전체 404”는 현재 배포의 증거로 사용하지 않는다.
+- 현재 하이브리드에는 **지급 전 차단·가상 사용자**가 남아 있다. 감사 조회는 없다. 주석의 “추첨 전체 404”는 현재 배포의 증거로 사용하지 않는다.
 - 알림 N01~N03·AN01~AN05, 사용자 결과 E08/E09, 관리자 배너 AB01~AB05, 관리자 응모권 AO03/AO04/AO05/AO08/AO09에는 실서버로 전달하는 호출 코드가 있다. 특히 관리자 알림은 이미 계약을 반영했으므로 신규 구현으로 중복 등록하지 않는다.
-- 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 남은 작업이다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
+- 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 GD-257에서 연결했다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
 - 게임은 **색깔·타꼬런·타이밍·주문 네 종류의 계약이 채택**됐다. 타이밍 50점·주문 18점 기준은 2026-10-18 결정이다. 과거 문서의 “규칙 미확정”을 유지하지 않는다. 다만 등록·배포·FE 연동 여부는 별도다.
-- 현재 FE 게임 목록은 임시 `title/dailyLimit/remainingPlays` 모델이고 제출은 단일 `/play`다. G01/G02/G05 모델 분리와 G03 시작→G04 결과 제출 전환이 필요하다. G05의 `validPlayCount`는 누적 횟수이며 “오늘 플레이”가 아니다.
-- 관리자 출석 AP01~AP04·미션 AM01~AM03·응모 AO06/AO07은 공용 명세에 현행 구현이 기록됐지만 대응 FE 화면·호출이 남아 있다. AS01은 구현 기록과 담당자 확인 전 상태가 함께 있고, AM04는 설문 집계 계약을 따른다. 현재 배포 가용성은 새로 검증한다.
+- FE 게임은 G01/G02/G05 모델을 분리하고 G03 시작→G04 원본 제출을 사용한다. `title/dailyLimit/remainingPlays`·단일 `/play`를 제거했다. G05의 `validPlayCount`는 누적 횟수이며 “오늘 플레이”가 아니다. 네 게임의 현재 BE 배포와 로컬 변경본의 실연동은 확인했고, FE 변경본의 실제 배포 인수는 남아 있다.
+- GD-259는 관리자 출석 AP01~AP04를 `/admin/attendance-policies`, 미션 AM01~AM04를 `/admin/missions`에 연결했다. AP01/AP03·AM01/AM02/AM04의 실제 200·Zod·일반 사용자 403을 확인했다. AP02/AP04·AM03의 격리 실서버 쓰기는 미검증이며 목업/브라우저 주입과 구분한다. AO06/AO07은 기존 GD-250 구현을 유지한다. [L5 인계](superpowers/plans/L5-handoff.md)에 경계·증거·L6 잔여를 기록한다.
 - 관리자 게임·보상 조건 관리는 기능 요구사항에 포함되지만 AG01~AG03과 규칙 변경·비활성 전환·보상 조건 예약의 상세 계약은 제안/후속 상태다. 네 게임의 사용자 계약 채택을 관리자 운영 계약 채택으로 확대하지 않는다. 로드맵 L4에서 계약·범위를 확정하고 완료 조건에 반영한다.
 - AR01/AR02의 차단 사유·요청·검증 근거 DTO는 담당자 확인이 필요하다. 기존 목업의 이름·이벤트 표시 필드를 최종 계약으로 채택하지 않는다.
 - `/virtual-users`는 spec 외 시연 경로다. `VITE_VIRTUAL_USERS_JSON`은 현재 목업 핸들러가 소비하므로 플래그만 끄면 선택 화면이 깨진다. 실제 등록된 시연 계정 선택은 유지하되 런타임 MSW 없이 읽는 방식은 로드맵의 승인 항목이다. AO01을 일반 사용자 로그인용으로 호출하지 않는다.
@@ -93,3 +93,7 @@
 배포 중 가짜 업무 응답을 제거하는 것이 연동의 목표다. Vitest용 MSW·계약 fixture·장애 재현 테스트는 유지한다. 프론트 문서만으로 DB 데이터 삭제나 새 인증 방식 도입을 승인하지 않는다.
 
 사용자 정보 수정·탈퇴, 수동 응모권 지급·회수, 참여 허용·추첨 제외, 실제 문자·메일·외부 푸시, 미션 관리자 승인·반려, 공통 감사 조회, 전체 취소 후 처음부터 재추첨은 추가하지 않는다. 이미지·디자인 토큰은 업무 목업 데이터와 구분하며 [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md)를 따른다.
+
+## GD-259 L5 검증 경계
+
+E01 24건·2요청·8,307바이트·122ms, E06 시연 사용자 6건·1요청·3,012바이트·31ms를 측정했다. 전체 합계·결과 필터를 위해 전체 수집을 유지하며 없는 요약 API를 만들지 않았다. 출석·단일 문항 퀴즈/설문은 실제 보상 각 1장과 재시도 추가 지급 0을 확인했다. 다문항 누적 정답·일일/연속/월 경계·반환 정합성은 자동 테스트이며 실제 격리 인수와 구분한다. L4 PR #107 머지는 확인했지만 게임 관리자 계약·배포 인수 잔여는 그대로다. L6 구현은 이번 세션 범위 밖이다.

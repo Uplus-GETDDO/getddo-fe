@@ -40,7 +40,15 @@ export function EventResultRow({ event }: { event: Event }) {
                 <div className="bg-surface-canvas aspect-video h-20 shrink-0 rounded-lg" />
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <StatusDot tone="muted">{drawn ? '종료' : '응모 마감 · 결과 발표 대기'}</StatusDot>
+                <StatusDot tone="muted">
+                    {event.status === 'canceled'
+                        ? '이벤트 취소'
+                        : event.status === 'ended'
+                          ? '추첨 없이 종료'
+                          : drawn
+                            ? '발표 완료'
+                            : '응모 마감 · 결과 발표 대기'}
+                </StatusDot>
                 <p className="text-body-bold text-fg-primary truncate">{event.title}</p>
                 <p className="text-caption text-fg-tertiary">
                     {formatYmdWeekday(event.startsAt)} ~ {formatYmdWeekday(event.endsAt)}

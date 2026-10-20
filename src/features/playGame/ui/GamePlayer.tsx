@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 
 import { Loading } from '@shared/ui/loading';
 
-import type { GameOverHandler } from '../model/types';
+import type { GameOverHandler, GameSessionProps } from '../model/types';
 
 import { GameImageButton } from './GameImageButton';
 
@@ -32,43 +32,74 @@ function GameLoading({ onExit }: { onExit: () => void }) {
     );
 }
 
-/** 게임 id에 맞는 미니게임 플레이 화면 — 있는지는 hasGamePlayer로 먼저 확인한다 */
+/** 게임 code에 맞는 미니게임 플레이 화면 — 있는지는 hasGamePlayer로 먼저 확인한다 */
 export function GamePlayer({
-    gameId,
+    code,
+    session,
+    onRestart,
+    onRecordingError,
     bestScore,
     onExit,
     onGameOver,
-}: {
-    gameId: string;
+}: GameSessionProps & {
+    code: string;
     bestScore?: number;
     onExit: () => void;
     onGameOver?: GameOverHandler;
 }) {
-    if (gameId === 'game-dino') {
+    if (code === 'TAKKO_RUN') {
         return (
             <Suspense fallback={<GameLoading onExit={onExit} />}>
-                <TakkoRunGame bestScore={bestScore} onExit={onExit} onGameOver={onGameOver} />
+                <TakkoRunGame
+                    onRecordingError={onRecordingError}
+                    session={session}
+                    onRestart={onRestart}
+                    bestScore={bestScore}
+                    onExit={onExit}
+                    onGameOver={onGameOver}
+                />
             </Suspense>
         );
     }
-    if (gameId === 'game-color') {
+    if (code === 'COLOR_WORD') {
         return (
             <Suspense fallback={<GameLoading onExit={onExit} />}>
-                <ColorWordGame bestScore={bestScore} onExit={onExit} onGameOver={onGameOver} />
+                <ColorWordGame
+                    onRecordingError={onRecordingError}
+                    session={session}
+                    onRestart={onRestart}
+                    bestScore={bestScore}
+                    onExit={onExit}
+                    onGameOver={onGameOver}
+                />
             </Suspense>
         );
     }
-    if (gameId === 'game-timing') {
+    if (code === 'TAKKO_TIMING') {
         return (
             <Suspense fallback={<GameLoading onExit={onExit} />}>
-                <TakkoTimingGame bestScore={bestScore} onExit={onExit} onGameOver={onGameOver} />
+                <TakkoTimingGame
+                    onRecordingError={onRecordingError}
+                    session={session}
+                    onRestart={onRestart}
+                    bestScore={bestScore}
+                    onExit={onExit}
+                    onGameOver={onGameOver}
+                />
             </Suspense>
         );
     }
-    if (gameId === 'game-order') {
+    if (code === 'TAKKO_ORDER') {
         return (
             <Suspense fallback={<GameLoading onExit={onExit} />}>
-                <TakkoOrderGame bestScore={bestScore} onExit={onExit} onGameOver={onGameOver} />
+                <TakkoOrderGame
+                    onRecordingError={onRecordingError}
+                    session={session}
+                    onRestart={onRestart}
+                    bestScore={bestScore}
+                    onExit={onExit}
+                    onGameOver={onGameOver}
+                />
             </Suspense>
         );
     }

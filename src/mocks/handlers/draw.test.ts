@@ -212,6 +212,24 @@ describe('추첨 목업', () => {
         expect(edge.status).toBe(202);
     });
 
+    it('개별 당첨 취소는 응모권을 반환하거나 회수하지 않는다', async () => {
+        const original = await firstRun(EVENT);
+        const winner = original.results.find((result) => result.resultType === 'SELECTED')!;
+        const balance = async () =>
+            (
+                await apiClient.get<{ data: { availableCount: number } }>('/v1/tickets/me', {
+                    headers: { 'X-User-ID': winner.userId! },
+                })
+            ).data.data.availableCount;
+        const before = await balance();
+        const response = await call('post', `/v1/admin/wins/${winner.id}/cancellations`, {
+            body: { reason: '당첨 정보 확인' },
+            key: keyOf(991),
+        });
+        expect(response.status).toBe(202);
+        expect(await balance()).toBe(before);
+    });
+
     it('AD05는 202로 취소와 재추첨 실행을 함께 등록하고, 같은 요청 재시도는 200이다', async () => {
         const { win, res } = await cancelFirstWinner(EVENT, keyOf(1));
         expect(res.status).toBe(202);
