@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import type { Event } from '@entities/event';
 
+import { EnteredChip } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { formatYmd, kstDayDiff } from '@shared/utils/date';
 
@@ -25,6 +26,8 @@ export function EventListCard({ event }: { event: Event }) {
     const dDay = event.status === 'open' ? kstDayDiff(event.endsAt, now) : null;
     const hasDDay = dDay != null && dDay >= 0;
     const statusChip = STATUS_CHIP[event.status];
+    // 이 목록은 타임래플을 빼고 보여 주므로 전부 1회 응모 이벤트다 — '완료'라고 단정해도 틀리지 않는다
+    const entered = event.myEntered;
 
     // 카드 배경이 페이지 배경과 같은 토큰이라 그림자만으로는 경계가 생기지 않는다.
     // 다크에서는 그 그림자마저 어두운 배경에 묻혀 카드가 통째로 사라져 보이므로 테두리를 둔다.
@@ -39,7 +42,7 @@ export function EventListCard({ event }: { event: Event }) {
                 <div className="bg-surface-sunken h-37.5" />
             )}
             <div className="flex flex-col gap-3 p-3.5">
-                {((event.tags?.length ?? 0) > 0 || hasDDay || statusChip) && (
+                {((event.tags?.length ?? 0) > 0 || hasDDay || statusChip || entered) && (
                     <div className="flex flex-wrap items-center gap-2">
                         {event.tags?.map((tag) => (
                             <span
@@ -54,6 +57,7 @@ export function EventListCard({ event }: { event: Event }) {
                                 D-{dDay}
                             </span>
                         )}
+                        {entered && <EnteredChip label="응모 완료" />}
                         {/* 지난·예정 이벤트는 눌러도 응모할 수 없으므로 브랜드색 대신 차분한 칩으로 둔다 */}
                         {statusChip && (
                             <span className="bg-surface-sunken border-border-strong text-fg-secondary text-caption rounded-full border px-3 py-0.5">
