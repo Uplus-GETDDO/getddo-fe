@@ -4,7 +4,8 @@
 //   grades — 자격 조회 후 SILVER·PLATINUM 등급 검사만 실행한다 (BRONZE 재응모 없음).
 //   closed — EVENT_NOT_OPEN 이벤트에 응모해 마감·미오픈 거절만 확인한다.
 // 자격(canEnter)이 확인된 첫 이벤트에 BRONZE 1장으로 응모하고,
-// 같은 멱등키 재시도→같은 영수증, 새 키 재시도→중복 거절/동일 응모 유지를 확인한다.
+// 같은 멱등키 재시도→같은 영수증, 새 키 재시도→상한 내 별도 응모(201 ACCEPTED) 또는
+// 계약상 거절을 확인한다 — 기대값은 증거의 newKeyExpected에 기록한다.
 // 응모는 실제 응모권을 차감하고 해당 이벤트의 실제 참여로 기록된다 — 승인된 계정에서만 실행한다.
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';

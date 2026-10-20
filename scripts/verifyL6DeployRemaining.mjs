@@ -200,7 +200,8 @@ async function runAlready() {
                 eventId: event.id,
                 eventTitle: event.title,
                 status: result.status,
-                rejectionCode: result.data?.rejectionCode ?? result.code,
+                rejectionCode: result.data?.rejectionCode ?? null,
+                envelopeCode: result.code,
                 balanceDelta: after.availableCount - before.availableCount,
             });
             return;
@@ -422,7 +423,7 @@ async function runDraw() {
         });
         if (publish.status === 200) break;
         if (publish.code !== 'DRAW-005') break; // 재시도해도 의미 없는 오류는 중단
-        await sleep(5_000 * (attempt + 1));
+        if (attempt < 3) await sleep(5_000 * (attempt + 1));
     }
     const eventAfter = await adminGet(`/admin/events/${eventId}`);
     const runsAfter = await adminGet(`/admin/events/${eventId}/draws?size=5`);
@@ -488,7 +489,7 @@ async function runBanner() {
     if (list.length >= 5) {
         const blocked = await call('POST', '/admin/banners', {
             admin: true,
-            body: { eventId: open?.id, imageKey: 'demo-20261016/banner-01.svg', displayOrder: 6 },
+            body: { eventId: open.id, imageKey: 'demo-20261016/banner-01.svg', displayOrder: 6 },
         });
         push({
             name: '배너 5개 상한 거절',
@@ -552,19 +553,38 @@ async function runBanner() {
             restoreStatus: restored.status,
         });
     } finally {
-        const deleted = await call('DELETE', `/admin/banners/${bannerId}`, { admin: true });
-        const originalOrder = list.map((b) => b.id);
-        const orderRestored = originalOrder.length
-            ? await call('PUT', '/admin/banners/order', {
-                  admin: true,
-                  body: { bannerIds: originalOrder },
-              })
-            : null;
-        const after = await adminGet('/admin/banners');
+        // 정리 요청의 예외가 try 본문의 원래 예외를 덮지 않도록 각 단계를 독립적으로 기록한다.
+        const cleanup = { deleteStatus: null, orderRestoreStatus: null, cleanupError: null };
+        try {
+            cleanup.deleteStatus = (
+                await call('DELETE', `/admin/banners/${bannerId}`, { admin: true })
+            ).status;
+        } catch (error) {
+            cleanup.cleanupError = `DELETE 예외: ${error.message}`;
+        }
+        const after = await adminGet('/admin/banners').catch(() => ({ data: [] }));
+        const remainingIds = (after.data ?? []).map((b) => b.id);
+        if (remainingIds.length) {
+            // 삭제 실패로 테스트 배너가 남아 있어도 현재 목록 전체를 원본 순서로 맞춘다
+            const originalOrder = list.map((b) => b.id);
+            const restoreIds = [
+                ...originalOrder.filter((id) => remainingIds.includes(id)),
+                ...remainingIds.filter((id) => !originalOrder.includes(id)),
+            ];
+            try {
+                cleanup.orderRestoreStatus = (
+                    await call('PUT', '/admin/banners/order', {
+                        admin: true,
+                        body: { bannerIds: restoreIds },
+                    })
+                ).status;
+            } catch (error) {
+                cleanup.cleanupError = `order 복원 예외: ${error.message}`;
+            }
+        }
         push({
             name: '배너 삭제·원본 순서 복원(AB04)',
-            deleteStatus: deleted.status,
-            orderRestoreStatus: orderRestored?.status,
+            ...cleanup,
             remainingCount: (after.data ?? []).length,
             testBannerRemoved: !(after.data ?? []).some((b) => b.id === bannerId),
         });
@@ -591,7 +611,10 @@ async function runAdminWrites() {
     const daily = await adminGet('/admin/policies/attendance/daily?size=20');
     const dailyItems = daily.data?.items ?? [];
     const nextEffective = nextKstMidnightUtc();
-    const dailyCovered = dailyItems.some((p) => p.effectiveFrom === nextEffective);
+    // 서버는 effectiveFrom을 밀리초 없는 형식(…:00Z)으로 반환하므로 문자열이 아닌
+    // 시각으로 비교한다.
+    const nextEffectiveMs = Date.parse(nextEffective);
+    const dailyCovered = dailyItems.some((p) => Date.parse(p.effectiveFrom) === nextEffectiveMs);
     const invalid = await call('POST', '/admin/policies/attendance/daily', {
         admin: true,
         body: { rewardTicketCount: 0 },
@@ -747,5 +770,6 @@ const runners = {
     'admin-writes': runAdminWrites,
     misc: runMisc,
 };
+if (!runners[mode]) throw new Error(`알 수 없는 모드: ${mode}`);
 await runners[mode]();
 save();

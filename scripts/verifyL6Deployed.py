@@ -119,8 +119,9 @@ with sync_playwright() as p:
     for user in USERS:
         page.get_by_text(user['name'], exact=False).first.wait_for()
     check('로그인 계정 목록 = 배포 JSON', users=len(USERS), listed=True)
-    # 기록 경로는 /api 이후 접미사(/v1/...) — 엔드포인트명 접미사로 판정한다
-    assert not any(r['path'].endswith('/virtual-users') for r in evidence['requests'])
+    # 기록 경로는 /api 이후 접미사(/v1/...) — 제거 대상 /v1/virtual-users와 정확히 일치해야
+    # /v1/admin/virtual-users 같은 관리자 엔드포인트를 오탐하지 않는다
+    assert not any(r['path'] == '/v1/virtual-users' for r in evidence['requests'])
     page.screenshot(path=str(IMAGES / 'L6-deploy-login.png'), full_page=True)
 
     # 3) 기존 설치 재현 — 실제 /mockServiceWorker.js(구 목업 설치) + 다른 앱 Worker를 함께 등록한다.
@@ -267,9 +268,13 @@ with sync_playwright() as p:
     page.reload(wait_until='networkidle')
     page.wait_for_timeout(1000)
     # 복구 판정은 렌더된 앱 내용으로 한다 — offline 오류 페이지도 scrollWidth>0이므로 무의미하다
-    recovered = page.get_by_text(USER_A['name'], exact=False).count() > 0
+    try:
+        page.get_by_text(USER_A['name'], exact=False).first.wait_for(timeout=5000)
+        recovered = True
+    except Exception:
+        recovered = False
     check('오프라인→재연결', offlineNavError=offline_nav_error,
-          offlinePreview=offline_body, recoveredAfterOnline=bool(recovered))
+          offlinePreview=offline_body, recoveredAfterOnline=recovered)
     page.screenshot(path=str(IMAGES / 'L6-deploy-online-recovered.png'), full_page=True)
 
     browser.close()
@@ -293,9 +298,10 @@ with sync_playwright() as p:
     zpage.screenshot(path=str(IMAGES / 'L6-deploy-zoom200.png'), full_page=True)
     browser.close()
 
-# 전체 방문이 끝난 뒤 /virtual-users 호출이 한 번도 없었는지 최종 확인한다
-assert not any(r['path'].endswith('/virtual-users') for r in evidence['requests'])
-check('/virtual-users 미호출(전 구간)', ok=True)
+# 전체 방문이 끝난 뒤 /v1/virtual-users 호출이 한 번도 없었는지 최종 확인한다
+# (응답 기록은 page.on('response') 바인딩 구간 — zpage는 기록 대상이 아니다)
+assert not any(r['path'] == '/v1/virtual-users' for r in evidence['requests'])
+check('/virtual-users 미호출(기록된 전 요청)', ok=True)
 
 save()
 print(json.dumps({'checks': len(evidence['checks']), 'requests': len(evidence['requests']), 'errors': evidence['errors']}, ensure_ascii=False))
