@@ -25,6 +25,9 @@ export const eventSummaryResponseSchema = z.object({
     weightingEnabled: z.boolean(),
     // spec 필수이나 BE 배포 확인 전까지 optional. E02에는 없으며 상세 매핑에서는 무시한다.
     myEntered: z.boolean().optional(),
+    // 경품 당첨 인원의 합계 — 목록에는 prizes가 없어 합계만 따로 받는다.
+    // BE 작업 중이라 아직 내려오지 않는다 (2026-10-20 실측) — 올 때까지 optional로 둔다.
+    winnerCount: z.number().int().nonnegative().optional(),
     membershipRule: membershipRuleSchema,
     startsAt: z.iso.datetime({ offset: true }),
     endsAt: z.iso.datetime({ offset: true }),
@@ -35,7 +38,6 @@ export const eventSummaryResponseSchema = z.object({
     detailImageUrl: z.string().nullable().optional(),
     // 상세 상단 캠페인 비주얼(GD-217) — 템플릿 union은 화면용 스키마의 정의를 그대로 쓴다
     detailVisual: eventSchema.shape.detailVisual,
-    isRecommended: z.boolean().optional(),
     isTimeRaffle: z.boolean().optional(),
     raffleDetail: z
         .object({
@@ -45,7 +47,6 @@ export const eventSummaryResponseSchema = z.object({
             membershipNote: z.string(),
         })
         .optional(),
-    tags: z.array(z.string()).optional(),
     myEntryCount: z.number().int().nonnegative().nullable().optional(),
     myTicketCount: z.number().int().nonnegative().nullable().optional(),
 

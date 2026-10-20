@@ -5,6 +5,7 @@ import { Clock } from 'lucide-react';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
+import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
@@ -35,6 +36,7 @@ interface RaffleDetailHeroProps {
 export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHeroProps) {
     // 응모 현황은 E03 전용 조회로 받는다 — 진행 중일 때만 30초 폴링 (ADR-0007)
     const isOpen = event.status === 'open';
+    const banner = useImageFallback(event.bannerImageUrl);
     const { data: statistics, dataUpdatedAt } = useEntryStatistics(event.id, { isOpen });
     const { override } = useVirtualClock();
     // 진행 중에는 30초마다 바뀌는 값이라 언제 기준인지 같이 적는다 — 가상 시계로 멈춰 두면 그 시각으로 맞춘다
@@ -47,10 +49,11 @@ export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHe
              * 응모권 선택이 긴 래플만 이미지가 세로로 길어져 상품이 작아 보였다
              */}
             <div className="bg-surface-canvas relative aspect-square w-full max-w-110 shrink-0 self-center overflow-hidden rounded-2xl lg:size-110 lg:self-start">
-                {event.bannerImageUrl ? (
+                {banner.shown ? (
                     <img
-                        src={event.bannerImageUrl}
+                        src={event.bannerImageUrl!}
                         alt=""
+                        onError={banner.onError}
                         className="absolute inset-0 size-full object-contain p-6 mix-blend-multiply dark:mix-blend-normal"
                     />
                 ) : (

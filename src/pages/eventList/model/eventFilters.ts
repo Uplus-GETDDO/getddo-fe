@@ -1,19 +1,14 @@
 import type { EventStatus } from '@entities/event';
 
-// 필터 칩 — '전체' 외에는 이벤트 tags에 같은 이름이 있으면 해당 칩에 노출한다.
-// 경품 성격으로 나눈다. 응모권 사용 여부는 requiredTickets로 판단하므로 칩에 넣지 않는다.
-export const EVENT_FILTERS = [
-    '전체',
-    '디지털기기',
-    '기프티콘·상품권',
-    '한정 굿즈',
-    '데이터·통신',
-    '멤버십 혜택',
-] as const;
-
-export type EventFilter = (typeof EVENT_FILTERS)[number];
-
-// 서버 페이지네이션 형식이 미합의(CONTEXT.md)라 전체 목록을 받아 프론트에서 나눈다
+/**
+ * 한 쪽에 그릴 장수.
+ *
+ * 서버 페이지네이션은 있다 (`Page<T>` — items·page·size·totalElements, 05-api/common.md).
+ * 그런데도 화면에서 다시 나누는 것은 useEventList가 totalElements까지 전부 모아 오기 때문이다.
+ * 탭별로 가르고 전체를 기준으로 정렬하려면 한 쪽만으로는 안 되고, 홈·겟또타임도 같은 쿼리를 함께 쓴다.
+ *
+ * 이벤트가 수천 건이 되면 이 방식은 요청을 그만큼 반복한다 — 그때는 서버 정렬·서버 페이지네이션으로 옮긴다.
+ */
 export const PAGE_SIZE = 12;
 
 /**
