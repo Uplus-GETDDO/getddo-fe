@@ -1,16 +1,30 @@
 import type { Notification } from '@entities/notification';
 
-import { isSameKstDate } from '@shared/utils/date';
+import { formatKst, kstDayDiff } from '@shared/utils/date';
 
-export type NotificationGroup = { label: '오늘' | '이전'; items: Notification[] };
+export type NotificationGroup = { label: string; items: Notification[] };
 
-/** 알림을 KST 날짜 기준 '오늘'과 '이전'으로 나눈다 (피그마 알림 팝오버 수정안). 빈 묶음은 뺀다 */
+/** 묶음 이름 — 오늘·어제, 그 전은 '10월 3일 (금)' */
+function dayLabel(createdAt: string, now: Date): string {
+    const diff = kstDayDiff(createdAt, now);
+    if (diff >= 0) return '오늘';
+    if (diff === -1) return '어제';
+    // 요일은 따로 받아 괄호로 붙인다 — 한 번에 받으면 브라우저마다 '10월 3일 금'처럼 꼴이 달랐다
+    const weekday = formatKst(createdAt, { weekday: 'short' });
+    return `${formatKst(createdAt, { month: 'long', day: 'numeric' })} (${weekday})`;
+}
+
+/**
+ * 알림을 KST 날짜별로 묶는다 — 오늘·어제·날짜. 받은 순서(최신순)를 유지하고, 같은 날짜는 한 묶음이다.
+ * 예전 '오늘/이전' 두 묶음은 이전이 너무 길어 언제 받은 알림인지 알기 어려웠다
+ */
 export function groupNotifications(notifications: Notification[], now: Date): NotificationGroup[] {
-    const today = notifications.filter((n) => isSameKstDate(n.createdAt, now));
-    const earlier = notifications.filter((n) => !isSameKstDate(n.createdAt, now));
-    const groups: NotificationGroup[] = [
-        { label: '오늘', items: today },
-        { label: '이전', items: earlier },
-    ];
-    return groups.filter((group) => group.items.length > 0);
+    const groups = new Map<string, Notification[]>();
+    for (const notification of notifications) {
+        const label = dayLabel(notification.createdAt, now);
+        const items = groups.get(label);
+        if (items) items.push(notification);
+        else groups.set(label, [notification]);
+    }
+    return [...groups].map(([label, items]) => ({ label, items }));
 }

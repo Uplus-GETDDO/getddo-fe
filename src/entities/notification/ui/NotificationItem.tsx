@@ -20,15 +20,20 @@ export function NotificationItem({
     now,
     onRead,
     onDelete,
+    hoverTone = 'accent',
 }: {
     notification: Notification;
     now: Date;
     onRead?: (id: string, linkUrl: string | null) => void;
     onDelete?: (id: string) => void;
+    /** 호버 배경 — 알림 드로어·페이지는 연노랑(accent), 다른 목록과 섞이는 마이페이지는 회색(neutral) */
+    hoverTone?: 'accent' | 'neutral';
 }) {
     const unread = !notification.isRead;
     return (
-        <div className="group hover:bg-ticket-accent focus-within:bg-ticket-accent relative flex items-start gap-3 py-3.5 pr-4 pl-5 motion-safe:transition-colors">
+        <div
+            className={`group relative flex items-start gap-3 py-3.5 pr-4 pl-5 motion-safe:transition-colors ${hoverTone === 'accent' ? 'hover:bg-ticket-accent focus-within:bg-ticket-accent' : 'hover:bg-surface-canvas focus-within:bg-surface-canvas rounded-xl'}`}
+        >
             {/* 읽지 않음 점 — 제목 첫 줄 가운데에 맞춘다. 읽은 알림도 칸은 남겨 글자 시작선을 맞춘다 */}
             <span aria-hidden className="flex h-5.5 w-2 shrink-0 items-center justify-center">
                 {unread && <span className="bg-fg-primary size-1.5 rounded-full" />}

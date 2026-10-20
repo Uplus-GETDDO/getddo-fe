@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react';
 
 import { TicketHistoryRow, type TicketHistory } from '@entities/ticket';
 import { Button } from '@shared/ui/button';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { SkeletonList } from '@shared/ui/skeleton';
 
 import { SectionCard } from './SectionCard';
@@ -41,7 +42,16 @@ export function RecentTicketsCard({
                 </p>
             )}
             {isPending && <SkeletonList />}
-            {isError && (
+            {/* 받아 둔 내역이 있으면 목록을 그대로 두고 작은 갱신 실패 표시만 — 비어 있을 때만 실패 안내로 바꾼다 */}
+            {isError && histories.length > 0 && (
+                <RefreshStatus
+                    fetching={isFetching}
+                    error
+                    onRefresh={onRetry}
+                    className="-mt-2 self-start"
+                />
+            )}
+            {isError && histories.length === 0 && (
                 <div role="alert" className="text-destructive text-body-sm">
                     응모권 내역을 불러오지 못했습니다.
                     <Button variant="secondary" disabled={isFetching} onClick={onRetry}>

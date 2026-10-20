@@ -226,7 +226,8 @@ export function ProfileCard({
                     </span>
                 </StatTile>
             </div>
-            {stats.historiesError && (
+            {/* 받아 둔 합계가 있으면 다시 받기 실패에도 그 값을 두고 안내를 띄우지 않는다 */}
+            {stats.historiesError && stats.todayGranted === undefined && (
                 <div role="alert">
                     <span>오늘 적립 합계를 불러오지 못했습니다.</span>
                     <Button
