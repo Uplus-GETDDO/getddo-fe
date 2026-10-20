@@ -59,7 +59,7 @@ const nameOf = (id: TakkoOrderItemId) => TAKKO_ORDER_MENU.find((item) => item.id
 /**
  * 타꼬 주문 — 손님 주문(타코야끼 순서)을 잠깐 보여 주고 가린 뒤, 아래 메뉴 버튼으로 같은 순서대로 내준다 (키보드 1~4도 된다).
  * 맞히면 주문이 하나씩 길어지고, 틀리면 목숨이 하나 줄고 같은 길이의 새 주문을 받는다. 목숨 3개를 다 쓰면 끝.
- * 내주는 동안은 시간 제한이 없어 멈춤 버튼을 두지 않는다
+ * 결과 표시 중에도 멈춰 탭 밖에서 다음 주문의 노출 시간이 소비되지 않게 한다
  */
 export function TakkoOrderGame({
     session,
@@ -244,7 +244,12 @@ export function TakkoOrderGame({
     }, [phase, ok]);
 
     const pause = () => {
-        if (phase === 'showing' || phase === 'input' || phase === 'countdown') {
+        if (
+            phase === 'showing' ||
+            phase === 'input' ||
+            phase === 'countdown' ||
+            phase === 'reveal'
+        ) {
             pausedPhase.current = phase;
             showClock.pause(performance.now());
             setPhase('paused');
@@ -516,6 +521,7 @@ export function TakkoOrderGame({
                     {(phase === 'showing' ||
                         phase === 'input' ||
                         phase === 'countdown' ||
+                        phase === 'reveal' ||
                         phase === 'paused') && (
                         <GameImageButton
                             kind="pause"

@@ -88,7 +88,13 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
         }
     };
     const begin = async () => {
-        if (busy.current || !retryReady || pendingSubmissions.has(key)) return;
+        if (pendingSubmissions.has(key)) {
+            setError(
+                '이전 플레이의 결과를 먼저 확인해 주세요. 원본 기록으로 다시 확인할 수 있습니다.',
+            );
+            return;
+        }
+        if (busy.current || !retryReady) return;
         busy.current = true;
         setError(null);
         setResult(null);

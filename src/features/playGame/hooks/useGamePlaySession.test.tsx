@@ -15,8 +15,7 @@ const start = {
     rules: { points: 10, perfectPoints: 20, minimumRewardScore: 50 },
     gameData: { generatorVersion: 'takko-timing-generator-v1', seed: 1 },
 };
-function setup(isUser = true) {
-    const userId = crypto.randomUUID();
+function setup(isUser = true, userId = crypto.randomUUID()) {
     const client = new QueryClient({
         defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
     });
@@ -67,6 +66,7 @@ describe('원본 제출과 재시도 수명', () => {
             await result.current.begin();
         });
         expect(starts).toBe(1);
+        expect(result.current.error).toContain('이전 플레이');
         await act(async () => {
             await result.current.retry();
         });
@@ -152,5 +152,47 @@ describe('원본 제출과 재시도 수명', () => {
         expect(result.current.result?.status).toBe('PROCESSING');
         expect(result.current.pending?.playId).toBe(playId);
         expect(result.current.retryReady).toBe(false);
+    });
+    it('화면을 떠나도 같은 사용자의 원본은 보존하고 다른 사용자에게 노출하지 않는다', async () => {
+        const bodies: unknown[] = [];
+        server.use(
+            http.post('*/v1/games/:gameId/plays', () =>
+                HttpResponse.json({ success: true, data: start }, { status: 201 }),
+            ),
+            http.put('*/v1/games/:id/plays/:playId/result', async ({ request }) => {
+                bodies.push(await request.json());
+                return bodies.length === 1
+                    ? HttpResponse.error()
+                    : HttpResponse.json({
+                          success: true,
+                          data: {
+                              playId,
+                              status: 'VALID',
+                              score: 0,
+                              completedAt: '2026-10-20T01:01:00Z',
+                              reward: null,
+                          },
+                      });
+            }),
+        );
+        const userId = crypto.randomUUID();
+        const first = setup(true, userId);
+        await act(async () => {
+            await first.result.current.begin();
+        });
+        await act(async () => {
+            await first.result.current.complete(0, { taps: [{ sequence: 1, elapsedMs: 0 }] });
+        });
+        first.unmount();
+        const other = setup();
+        expect(other.result.current.pending).toBeUndefined();
+        other.unmount();
+        const restored = setup(true, userId);
+        expect(restored.result.current.pending?.playId).toBe(playId);
+        await act(async () => {
+            await restored.result.current.retry();
+        });
+        expect(bodies[1]).toEqual(bodies[0]);
+        expect(restored.result.current.pending).toBeUndefined();
     });
 });
