@@ -10,7 +10,7 @@ const api = (path: string) => `${env.apiBaseUrl}${path}`;
 
 const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
-// AO01/AO02 목업 — 배포 표본과 같은 형태로 활성 일반 사용자 12명 + 비활성 관리자 1명을 둔다.
+// AO01/AO02 목업 — 배포 표본과 같은 형태로 활성 일반 사용자 12명 + 관리자 1명을 둔다.
 // totalUserCount는 필터·페이지와 무관하게 role=USER AND status=ACTIVE 전체 수(12)다.
 const mkUser = (
     n: number,

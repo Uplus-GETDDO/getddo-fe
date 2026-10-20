@@ -128,4 +128,24 @@ describe('AdminUsersPage', () => {
         // 초기 목록 조회 1회만 발생하고 잘못된 제출은 요청을 늘리지 않는다
         expect(calls).toBe(1);
     });
+
+    it('20자를 넘는 검색어는 요청하지 않고 안내한다', async () => {
+        const user = userEvent.setup();
+        let calls = 0;
+        server.use(
+            http.get('*/v1/admin/users', () => {
+                calls += 1;
+                return HttpResponse.json({
+                    success: true,
+                    data: { items: [], page: 1, size: 20, totalElements: 0, totalUserCount: 12 },
+                });
+            }),
+        );
+        renderPage();
+        // keyword 계약 상한은 20자다 — 초과하면 서버 요청 전에 안내한다
+        await user.type(screen.getByLabelText('이름·UUID 검색'), '가'.repeat(21));
+        await user.click(screen.getByRole('button', { name: '검색' }));
+        expect(await screen.findByText('검색어는 20자 이하여야 합니다.')).toBeInTheDocument();
+        expect(calls).toBe(1);
+    });
 });

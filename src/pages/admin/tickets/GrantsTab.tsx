@@ -48,6 +48,20 @@ export function GrantsTab() {
     // 검색 버튼으로 확정한 값만 쿼리에 넘긴다 — 입력마다 요청하지 않는다
     const [applied, setApplied] = useState(initial);
     const [rangeError, setRangeError] = useState(false);
+    // 같은 화면에서 ?date= 가 바뀌면 이전 링크의 날짜가 남지 않게 URL 기준으로 덮는다
+    const [prevLinkedDate, setPrevLinkedDate] = useState(linkedDate);
+    if (prevLinkedDate !== linkedDate) {
+        setPrevLinkedDate(linkedDate);
+        const patchLinked = (d: typeof EMPTY) => ({
+            ...d,
+            from: linkedDate ?? '',
+            to: linkedDate ?? '',
+        });
+        setDraft(patchLinked);
+        setApplied(patchLinked);
+        setRangeError(false);
+        setPage(1);
+    }
     const hasPendingDraft = JSON.stringify(draft) !== JSON.stringify(applied);
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
     const resetFilters = () => {

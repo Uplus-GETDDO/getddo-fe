@@ -159,7 +159,7 @@ export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> 
                     error={stats.isError}
                     onRetry={() => void stats.refetch()}
                     description="출석·미션·게임 보상"
-                    to={`/admin/tickets?tab=grants&date=${todayYmd}`}
+                    to={today ? `/admin/tickets?tab=grants&date=${todayYmd}` : undefined}
                 />
                 <StatCard
                     label="오늘 응모에 쓴 응모권"
@@ -170,7 +170,11 @@ export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> 
                     error={stats.isError}
                     onRetry={() => void stats.refetch()}
                     description="이벤트 응모로 차감된 응모권(반환 미차감)"
-                    to={`/admin/tickets?tab=histories&date=${todayYmd}&operationType=USE`}
+                    to={
+                        today
+                            ? `/admin/tickets?tab=histories&date=${todayYmd}&operationType=USE`
+                            : undefined
+                    }
                 />
                 <StatCard
                     label="오늘 어뷰징 탐지 기록"

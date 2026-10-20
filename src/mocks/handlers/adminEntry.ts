@@ -4,6 +4,7 @@ import type { AdminEntry, AdminParticipant } from '@entities/entry';
 
 import { env } from '@shared/config/env';
 
+import { mockAdminEventExists } from './adminEvent';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
@@ -81,6 +82,10 @@ const adminEntries: AdminEntry[] = [
 
 const knownEventIds = new Set(adminEntries.map((e) => e.eventId));
 
+// 응모 fixture에 없는 이벤트라도 관리자 이벤트 목업에 있으면 참여자 조회는 빈 목록으로 응답한다
+const isKnownEvent = (eventId: string) =>
+    knownEventIds.has(eventId) || mockAdminEventExists(eventId);
+
 export const adminEntryHandlers = [
     http.get(api('/v1/admin/entries'), ({ request }) => {
         const params = new URL(request.url).searchParams;
@@ -111,7 +116,7 @@ export const adminEntryHandlers = [
     }),
     http.get(api('/v1/admin/events/:eventId/participants'), ({ params, request }) => {
         const eventIdParam = params.eventId as string;
-        if (!knownEventIds.has(eventIdParam)) {
+        if (!isKnownEvent(eventIdParam)) {
             return fail(404, 'ENTRY-004', '이벤트를 찾을 수 없습니다.');
         }
         const query = new URL(request.url).searchParams;

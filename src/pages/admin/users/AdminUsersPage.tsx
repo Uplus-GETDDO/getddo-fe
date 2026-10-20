@@ -44,12 +44,12 @@ export function AdminUsersPage() {
     const [size, setSize] = useState(20);
     const [draft, setDraft] = useState(EMPTY);
     const [applied, setApplied] = useState(EMPTY);
-    const [userIdError, setUserIdError] = useState(false);
+    const [searchError, setSearchError] = useState<string | null>(null);
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
     const resetFilters = () => {
         setDraft(EMPTY);
         setApplied(EMPTY);
-        setUserIdError(false);
+        setSearchError(null);
         setPage(1);
     };
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
@@ -86,13 +86,17 @@ export function AdminUsersPage() {
                     e.preventDefault();
                     const trimmedId = draft.userId.trim();
                     if (trimmedId && !z.uuid().safeParse(trimmedId).success) {
-                        setUserIdError(true);
+                        setSearchError('올바른 UUID 형식이 아닙니다.');
                         return;
                     }
-                    setUserIdError(false);
                     const keyword = draft.keyword.trim();
                     // UUID 형태의 검색어는 keyword(최대 20자)가 아니라 userId 필터로 라우팅한다
                     const keywordIsUuid = z.uuid().safeParse(keyword).success;
+                    if (!keywordIsUuid && keyword.length > 20) {
+                        setSearchError('검색어는 20자 이하여야 합니다.');
+                        return;
+                    }
+                    setSearchError(null);
                     setApplied({
                         ...draft,
                         userId: trimmedId || (keywordIsUuid ? keyword : ''),
@@ -137,38 +141,37 @@ export function AdminUsersPage() {
                 <Button type="button" variant="ghost" onClick={resetFilters}>
                     초기화
                 </Button>
-                {userIdError && (
+                {searchError && (
                     <p role="alert" className="text-semantic-error-strong text-caption basis-full">
-                        올바른 UUID 형식이 아닙니다.
+                        {searchError}
                     </p>
                 )}
             </form>
 
-            {listQuery.data && (
-                <div className="flex items-center gap-4">
-                    <p className="text-body-sm text-fg-secondary">
-                        현재 활성 일반 사용자 {listQuery.data.totalUserCount}명
-                    </p>
-                    <Select
-                        value={String(size)}
-                        onValueChange={(v) => {
-                            setSize(Number(v));
-                            setPage(1);
-                        }}
-                    >
-                        <SelectTrigger className="w-28" aria-label="페이지 크기">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {SIZE_OPTIONS.map((n) => (
-                                <SelectItem key={n} value={String(n)}>
-                                    {n}개씩
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-            )}
+            {/* 재조회 중에도 행이 사라지지 않게 값만 비운다 */}
+            <div className="flex items-center gap-4">
+                <p className="text-body-sm text-fg-secondary">
+                    현재 활성 일반 사용자 {listQuery.data?.totalUserCount ?? '—'}명
+                </p>
+                <Select
+                    value={String(size)}
+                    onValueChange={(v) => {
+                        setSize(Number(v));
+                        setPage(1);
+                    }}
+                >
+                    <SelectTrigger className="w-28" aria-label="페이지 크기">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {SIZE_OPTIONS.map((n) => (
+                            <SelectItem key={n} value={String(n)}>
+                                {n}개씩
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
             <PagedResult
                 data={listQuery.data}
@@ -210,6 +213,7 @@ export function AdminUsersPage() {
                                 <TableRow
                                     key={row.id}
                                     className="cursor-pointer"
+                                    role="button"
                                     tabIndex={0}
                                     onClick={() => setSearchParams({ detail: row.id })}
                                     onKeyDown={(e) => {

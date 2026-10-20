@@ -106,6 +106,12 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByRole('alert')).toHaveTextContent('이벤트를 찾을 수 없습니다.');
     });
 
+    it('이벤트 목록에 있지만 응모가 없는 이벤트의 참여자 조회는 빈 결과로 응답한다', async () => {
+        // 이벤트 상세의 '참여자 조회' 링크가 타는 경로 — 응모 fixture 밖의 관리자 이벤트
+        renderPage('/admin/entries?view=participants&eventId=20000000-0000-4000-8000-000000000902');
+        expect(await screen.findByText('접수된 참여자가 없습니다.')).toBeInTheDocument();
+    });
+
     it('응모 이력의 사용자 ID 링크가 사용자 상세로 연결된다', async () => {
         renderPage();
         await screen.findAllByText('10월 럭키 드로우');
