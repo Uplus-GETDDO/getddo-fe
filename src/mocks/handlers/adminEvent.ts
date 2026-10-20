@@ -13,6 +13,42 @@ import { recordMockTicketRefund } from './ticket';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
 
+/**
+ * 올린 이미지를 키로 기억한다 — 실서버의 S3 자리.
+ *
+ * 등록·수정은 키만 싣고 오므로, 화면에 보여 줄 주소는 이 표에서 되찾는다.
+ * 새로고침하면 사라진다(목업은 메모리에만 둔다) — 그때는 키만 남아 회색 칸이 된다.
+ */
+const mockUploadedImages = new Map<string, string>();
+
+/** 등록·수정이 실어 온 키를 화면 주소로 바꾼다 — 모르는 키는 주소가 없다 */
+export function resolveMockImageUrl(imageKey: string | null | undefined): string | null {
+    return imageKey ? (mockUploadedImages.get(imageKey) ?? null) : null;
+}
+
+/**
+ * multipart 본문에서 파일 한 덩이를 꺼낸다.
+ *
+ * request.formData()는 이 환경(undici)에서 예외를 던진다. 바이트를 그대로 보존하는 latin1로
+ * 한 번 읽어 머리말 위치를 찾고, 같은 자리에서 원본 바이트를 잘라 낸다.
+ */
+function readMultipartFile(buffer: ArrayBuffer): { contentType: string; dataUrl: string } | null {
+    const bytes = new Uint8Array(buffer);
+    const text = new TextDecoder('latin1').decode(bytes);
+
+    const header = /filename="[^"]*"[^]*?content-type:\s*([^\r\n]+)\r?\n\r?\n/i.exec(text);
+    if (!header) return null;
+
+    const start = header.index + header[0].length;
+    const end = text.indexOf('\r\n--', start);
+    const body = bytes.slice(start, end === -1 ? bytes.length : end);
+
+    let binary = '';
+    for (const byte of body) binary += String.fromCharCode(byte);
+    const contentType = header[1]!.trim().toLowerCase();
+    return { contentType, dataUrl: `data:${contentType};base64,${btoa(binary)}` };
+}
+
 /** ADR-009 — 유형과 무관하게 마감 + 5분 검토 후 자동으로 최초 발표한다 */
 const ANNOUNCE_DELAY_MS = 5 * 60 * 1000;
 const MINUTE = 60 * 1000;
@@ -412,14 +448,14 @@ function writeBodyToItem(body: EventWriteBody, id: string, nowIso: string): Mock
         rank: p.rank as number,
         name: (p.name as string).trim(),
         description: typeof p.description === 'string' && p.description ? p.description : null,
-        imageUrl: null,
+        imageUrl: resolveMockImageUrl(p.imageKey as string | null),
         winnerCount: p.winnerCount as number,
     }));
     return {
         id,
         title: (body.title as string).trim(),
         description: (body.description as string).trim(),
-        imageUrl: null,
+        imageUrl: resolveMockImageUrl(body.imageKey as string | null),
         imageKey: (body.imageKey as string | null) ?? null,
         eventType: body.eventType as MockAdminEvent['eventType'],
         weightingEnabled: body.weightingEnabled as boolean,
@@ -543,6 +579,36 @@ export const adminEventHandlers = [
         const item = findItem(params.eventId);
         if (!item) return fail(404, 'RESOURCE_NOT_FOUND', '이벤트를 찾을 수 없습니다');
         return ok(toAdminResponse(item, mockNow().getTime()));
+    }),
+
+    /**
+     * 이벤트·경품 이미지 업로드 (BE GD-227).
+     *
+     * 실서버는 S3에 올리고 키와 공개 주소를 돌려준다. 목업은 올린 바이트를 키에 묶어 기억해
+     * 등록·수정 뒤에도 같은 그림이 보이게 한다. 형식·용량 기준은 서버와 같게 맞춘다.
+     */
+    http.post(api('/v1/admin/events/images'), async ({ request }) => {
+        // 이 파일의 다른 관리자 핸들러와 같이 역할 검사는 두지 않는다 — 실서버가 판정한다
+        const target = new URL(request.url).searchParams.get('target');
+        if (target !== 'EVENT' && target !== 'PRIZE') {
+            return fail(400, 'COMMON-002', 'target은 EVENT 또는 PRIZE여야 합니다');
+        }
+
+        const buffer = await request.arrayBuffer().catch(() => null);
+        const file = buffer && readMultipartFile(buffer);
+        if (!file) return fail(400, 'COMMON-002', '파일이 없습니다');
+
+        const png = file.contentType === 'image/png';
+        if (!png && file.contentType !== 'image/jpeg') {
+            return fail(400, 'EVENT-009', 'PNG 또는 JPG만 올릴 수 있습니다');
+        }
+        if (buffer.byteLength > 5_000_000)
+            return fail(400, 'EVENT-009', '5MB까지 올릴 수 있습니다');
+
+        const directory = target === 'EVENT' ? 'events' : 'prizes';
+        const key = `${directory}/${crypto.randomUUID()}.${png ? 'png' : 'jpg'}`;
+        mockUploadedImages.set(key, file.dataUrl);
+        return ok({ key, url: file.dataUrl }, 201);
     }),
 
     // AE03 — 등록: 이벤트와 경품이 함께 성공하거나 함께 실패한다

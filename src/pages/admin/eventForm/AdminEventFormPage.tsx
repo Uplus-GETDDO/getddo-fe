@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { EVENT_TYPE_LABEL, MEMBERSHIP_LABEL, useAdminEvent } from '@entities/event';
-import { useCreateEvent, useUpdateEvent } from '@features/manageEvent';
+import { EventImageField, useCreateEvent, useUpdateEvent } from '@features/manageEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -179,16 +179,19 @@ export function AdminEventFormPage() {
                     )}
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <label htmlFor="event-image-key" className={FIELD_LABEL}>
-                        이미지 키 (선택)
-                    </label>
-                    <Input
-                        id="event-image-key"
-                        placeholder="이미지 업로드 계약 확정 전까지 키를 직접 입력"
-                        {...register('imageKey')}
-                    />
-                </div>
+                <Controller
+                    control={control}
+                    name="imageKey"
+                    render={({ field }) => (
+                        <EventImageField
+                            label="대표 이미지 (선택)"
+                            target="EVENT"
+                            value={field.value ?? ''}
+                            onChange={field.onChange}
+                            initialPreviewUrl={event?.imageUrl}
+                        />
+                    )}
+                />
             </section>
 
             <section className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6">
@@ -478,15 +481,21 @@ export function AdminEventFormPage() {
                                 />
                             </div>
                             <div className="flex min-w-48 flex-1 flex-col gap-1">
-                                <label
-                                    htmlFor={`prize-${field.fieldKey}-image-key`}
-                                    className="text-caption text-fg-tertiary"
-                                >
-                                    이미지 키 (선택)
-                                </label>
-                                <Input
-                                    id={`prize-${field.fieldKey}-image-key`}
-                                    {...register(`prizes.${index}.imageKey`)}
+                                <Controller
+                                    control={control}
+                                    name={`prizes.${index}.imageKey`}
+                                    render={({ field: imageField }) => (
+                                        <EventImageField
+                                            label="경품 이미지 (선택)"
+                                            target="PRIZE"
+                                            value={imageField.value ?? ''}
+                                            onChange={imageField.onChange}
+                                            initialPreviewUrl={
+                                                event?.prizes.find((prize) => prize.id === field.id)
+                                                    ?.imageUrl
+                                            }
+                                        />
+                                    )}
                                 />
                             </div>
                         </div>
