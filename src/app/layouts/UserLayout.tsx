@@ -166,11 +166,10 @@ export function UserLayout() {
                                 <NavLink to="/admin">관리자 화면으로</NavLink>
                             </Button>
                         )}
-                        {/* 가상 시계 조작은 관리자만 — 일반 사용자는 시각 표시만 본다 */}
-                        <VirtualClockTicker
-                            className="hidden 2xl:flex"
-                            readOnly={user.role !== 'ADMIN'}
-                        />
+                        {/* 가상 시계는 시연 운영 도구라 관리자에게만 — 일반 사용자 헤더에는 서비스 밖 요소를 두지 않는다 */}
+                        {user.role === 'ADMIN' && (
+                            <VirtualClockTicker className="hidden 2xl:flex" />
+                        )}
                         <NotificationBell />
                         {/* 피그마 홈 — 아바타·이름·멤버십 알약(그림자) + 아래 화살표 */}
                         <VirtualUserSwitcher

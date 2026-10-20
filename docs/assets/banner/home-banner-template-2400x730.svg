@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="730" viewBox="0 0 2400 730" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">
+  <!--
+    GETDDO 홈 관리 배너 템플릿 — 2400×730 (화면 1200×365의 2배)
+    · 이 안내선 레이어는 작업용이다. 실제 업로드 그림에는 안내선·글자를 넣지 않는다.
+    · 홈 배너는 그림을 화면 높이에 맞추고 오른쪽 끝을 기준으로 자른다(object-cover, object-right).
+      화면이 좁아질수록 왼쪽부터 잘려 나간다. 태블릿(약 768px)에서는 오른쪽 60%, 휴대폰(약 360px)에서는 오른쪽 26%만 보인다.
+    · 제목·설명·응모 현황·마감 시간은 화면이 그림 위에 글로 얹는다 — 그림 속에 글을 넣지 않는다.
+  -->
+
+  <!-- 바탕 -->
+  <rect width="2400" height="730" rx="32" fill="#FFF4D1"/>
+
+  <!-- 글 자리 (왼쪽 55% = 1320px): 무늬 없이 단색이나 은은한 배경만 -->
+  <rect x="0" y="0" width="1320" height="730" rx="32" fill="#FFFFFF" fill-opacity="0.55"/>
+  <rect x="100" y="168" width="1120" height="492" fill="none" stroke="#1F242B" stroke-opacity="0.35" stroke-width="3" stroke-dasharray="14 10"/>
+  <text x="130" y="236" font-size="40" font-weight="700" fill="#1F242B">글 자리 · 왼쪽 55% (0–1320px)</text>
+  <text x="130" y="292" font-size="30" fill="#4A515C">무늬 없이 단색이나 은은한 배경만 두세요.</text>
+  <text x="130" y="340" font-size="30" fill="#4A515C">제목·설명·응모 현황은 화면이 글로 얹어요 (그림에 글 넣지 않기).</text>
+  <text x="130" y="388" font-size="30" fill="#4A515C">글 여백: 왼쪽 100px · 위 168px · 아래 70px</text>
+
+  <!-- 마감 시간 탭 자리 (왼쪽 위) -->
+  <rect x="0" y="60" width="460" height="56" rx="0" fill="#FFFFFF" stroke="#E6007E" stroke-width="3" stroke-dasharray="10 8"/>
+  <text x="100" y="98" font-size="26" font-weight="600" fill="#E6007E">마감 시간 탭 자리 — 비워 두기</text>
+
+  <!-- 상품·아트 자리 (오른쪽 45% = 1080px) -->
+  <rect x="1320" y="0" width="1080" height="730" fill="#FFC83D" fill-opacity="0.35"/>
+  <text x="1350" y="80" font-size="34" font-weight="700" fill="#1F242B">상품·아트 자리</text>
+  <text x="1350" y="124" font-size="26" fill="#4A515C">오른쪽 45% (1320–2400px)</text>
+  <text x="1350" y="164" font-size="26" fill="#4A515C">핵심은 초록 칸 안에</text>
+
+  <!-- 태블릿에서 보이는 시작선 (오른쪽 60% → x=960) -->
+  <line x1="960" y1="0" x2="960" y2="730" stroke="#2563EB" stroke-width="4" stroke-dasharray="18 12"/>
+  <rect x="972" y="640" width="330" height="56" rx="10" fill="#2563EB"/>
+  <text x="990" y="678" font-size="26" font-weight="600" fill="#FFFFFF">태블릿 ↦ 여기부터 보임</text>
+
+  <!-- 휴대폰에서 보이는 시작선 (오른쪽 26% → x=1776): 이 안에 상품의 핵심을 둔다 -->
+  <rect x="1776" y="0" width="624" height="730" fill="none" stroke="#16A34A" stroke-width="6"/>
+  <line x1="1776" y1="0" x2="1776" y2="730" stroke="#16A34A" stroke-width="6"/>
+  <rect x="1792" y="640" width="380" height="56" rx="10" fill="#16A34A"/>
+  <text x="1810" y="678" font-size="26" font-weight="600" fill="#FFFFFF">휴대폰 ↦ 여기부터 보임</text>
+  <text x="1810" y="380" font-size="32" font-weight="700" fill="#14532D">상품 핵심 자리</text>
+  <text x="1810" y="424" font-size="26" fill="#14532D">휴대폰에서는 이 위에 글이</text>
+  <text x="1810" y="460" font-size="26" fill="#14532D">얹히니 너무 진하지 않게</text>
+
+  <!-- 55% 경계 -->
+  <line x1="1320" y1="0" x2="1320" y2="730" stroke="#1F242B" stroke-width="4"/>
+</svg>

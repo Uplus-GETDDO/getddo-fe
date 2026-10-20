@@ -103,7 +103,7 @@ function QuickLinkButton({ link }: { link: QuickLink }) {
     return (
         <Link
             to={link.to}
-            className={`${tone} group focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-[background-color,border-color,filter,transform] focus-visible:ring-2 focus-visible:outline-none active:translate-y-px sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
+            className={`${tone} group focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-[background-color,border-color,filter] focus-visible:ring-2 focus-visible:outline-none sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
         >
             <span className="relative shrink-0">
                 <img
