@@ -57,6 +57,7 @@ export function ResultChangesSection({ eventId }: { eventId: string }) {
                                 <TableHead>변경 내용</TableHead>
                                 <TableHead>사유</TableHead>
                                 <TableHead>확인</TableHead>
+                                <TableHead>실행 근거</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -88,13 +89,40 @@ export function ResultChangesSection({ eventId }: { eventId: string }) {
                                             </ul>
                                         )}
                                     </TableCell>
+                                    {/* 과거 INITIAL 공개는 사유·확인자·시각이 없을 수 있어 null을 보존해 표시한다 */}
                                     <TableCell className="text-body-sm max-w-60 whitespace-normal">
-                                        {change.reason}
+                                        {change.reason ?? '—'}
                                     </TableCell>
                                     <TableCell className="text-body-sm text-fg-secondary whitespace-nowrap">
-                                        {change.confirmedBy}
+                                        {change.confirmedBy ?? '—'}
                                         <br />
-                                        {formatKst(change.confirmedAt)}
+                                        {change.confirmedAt ? formatKst(change.confirmedAt) : '—'}
+                                    </TableCell>
+                                    <TableCell className="text-body-sm max-w-72 whitespace-normal">
+                                        {change.executions.length === 0 ? (
+                                            <span className="text-fg-tertiary">근거 기록 없음</span>
+                                        ) : (
+                                            <ul className="flex flex-col gap-1.5">
+                                                {change.executions.map((exec) => (
+                                                    <li key={exec.runId}>
+                                                        <span className="text-fg-secondary">
+                                                            실행 {exec.runId} · 확인{' '}
+                                                            {exec.confirmedBy} ·{' '}
+                                                            {formatKst(exec.confirmedAt)}
+                                                        </span>
+                                                        {exec.cancellations.length > 0 && (
+                                                            <ul className="text-caption text-fg-tertiary mt-0.5 flex list-disc flex-col gap-0.5 pl-4">
+                                                                {exec.cancellations.map((c) => (
+                                                                    <li key={c.id}>
+                                                                        취소 {c.reason}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

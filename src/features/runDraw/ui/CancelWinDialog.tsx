@@ -65,7 +65,8 @@ export function CancelWinDialog({ result, open, onOpenChange, onCanceled }: Canc
             { winId: result.id, reason: trimmed, idempotencyKey: intent.current.key },
             {
                 onSuccess: (data) => {
-                    toast.success('당첨을 취소하고 재추첨을 시작했습니다');
+                    // 202는 접수다 — 재추첨 선정은 서버가 비동기로 진행해 실행 목록에서 상태를 확인한다
+                    toast.success('당첨 취소를 접수했습니다. 재추첨 실행이 목록에 표시됩니다');
                     onCanceled?.(data.replacementDrawRunId);
                     onOpenChange(false);
                     reset();

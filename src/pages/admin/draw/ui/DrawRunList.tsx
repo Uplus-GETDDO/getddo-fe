@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import {
-    DRAW_EXECUTION_TYPE_LABEL,
     DRAW_RUN_STATUS_META,
+    DRAW_TYPE_LABEL,
     isDrawRunInProgress,
     useEventDraws,
 } from '@entities/drawResult';
@@ -118,14 +118,9 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                                 >
                                     <TableCell className="text-body-sm px-4 py-3 font-medium">
                                         {run.runNumber}회차
-                                        {run.originalDrawId === null && (
-                                            <span className="text-caption text-fg-secondary ml-1">
-                                                (최초)
-                                            </span>
-                                        )}
                                     </TableCell>
                                     <TableCell className="text-body-sm text-fg-secondary px-4 py-3">
-                                        {DRAW_EXECUTION_TYPE_LABEL[run.executionType]}
+                                        {DRAW_TYPE_LABEL[run.drawType]}
                                     </TableCell>
                                     <TableCell className="px-4 py-3 text-center">
                                         <span className={cn(CHIP, status.chipClass)}>

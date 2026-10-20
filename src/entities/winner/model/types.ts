@@ -30,15 +30,35 @@ export const publicationUpdateResultSchema = z.object({
     updatedBy: z.string(),
 });
 
-// AD07 항목 — 공개 버전 간 변경 대상의 전후 정보
+// AD07 executions[]의 취소 근거 — 해당 공개 버전에 반영된 실행에 연결된 취소의 사유
+export const publicationCancellationSchema = z.object({
+    id: z.string(),
+    resultId: z.string(),
+    reason: z.string(),
+});
+
+// AD07 executions[] — 공개 버전에 반영된 실행별 확인 근거 (실행 번호 오름차순)
+export const publicationExecutionSchema = z.object({
+    runId: z.string(),
+    confirmationId: z.string(),
+    confirmedBy: z.string(),
+    confirmedAt: z.iso.datetime(),
+    cancellations: z.array(publicationCancellationSchema),
+});
+
+/**
+ * AD07 항목 — 공개 버전 간 변경 대상의 전후 정보.
+ * 과거 INITIAL 공개는 확인자·시각·사유가 없을 수 있어 null을 보존하고,
+ * 과거 근거가 없으면 executions=[]일 수 있다.
+ */
 export const publicListChangeSchema = z.object({
     id: z.string(),
     publicationId: z.string(),
     revision: z.number().int(),
     drawRunId: z.string(),
-    reason: z.string(),
-    confirmedBy: z.string(),
-    confirmedAt: z.iso.datetime(),
+    reason: z.string().nullable(),
+    confirmedBy: z.string().nullable(),
+    confirmedAt: z.iso.datetime().nullable(),
     updatedAt: z.iso.datetime(),
     changes: z.array(
         z.object({
@@ -48,9 +68,12 @@ export const publicListChangeSchema = z.object({
             afterUserId: z.string().nullable(),
         }),
     ),
+    executions: z.array(publicationExecutionSchema),
 });
 
 export type AwardCancellationRequest = z.infer<typeof awardCancellationRequestSchema>;
 export type AwardCancellationResult = z.infer<typeof awardCancellationResultSchema>;
 export type PublicationUpdateResult = z.infer<typeof publicationUpdateResultSchema>;
+export type PublicationCancellation = z.infer<typeof publicationCancellationSchema>;
+export type PublicationExecution = z.infer<typeof publicationExecutionSchema>;
 export type PublicListChange = z.infer<typeof publicListChangeSchema>;

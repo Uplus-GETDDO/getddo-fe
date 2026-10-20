@@ -16,6 +16,8 @@ import type { DrawRunStatus, MyResult } from '../model/types';
 import { isDrawRunInProgress } from '../model/runStatus';
 import {
     drawCandidateSchema,
+    drawExecutionAuditSchema,
+    drawFailureSchema,
     drawRunDetailSchema,
     drawRunSchema,
     drawVerificationSchema,
@@ -99,6 +101,8 @@ export function useMyResults(
 const drawRunPageSchema = pageSchema(drawRunSchema);
 const drawCandidatePageSchema = pageSchema(drawCandidateSchema);
 const drawVerificationPageSchema = pageSchema(drawVerificationSchema);
+const drawFailurePageSchema = pageSchema(drawFailureSchema);
+const drawExecutionAuditPageSchema = pageSchema(drawExecutionAuditSchema);
 
 export const DRAWS_KEY = ['admin', 'draws'] as const;
 
@@ -112,6 +116,13 @@ export const drawChecksApiPath = (drawId: string) => `${drawApiPath(drawId)}/che
 export const drawResumeApiPath = (runId: string) => `${drawApiPath(runId)}/resume`;
 export const cancellationRedrawsApiPath = (cancellationId: string) =>
     `/v1/admin/cancellations/${cancellationId}/redraws`;
+// GD-137 관리자 운영 이력 — 실행별 실패 이력·실행 감사. 공통 감사 조회와 다른 업무별 경로다
+export const drawFailuresApiPath = (drawId: string) => `${drawApiPath(drawId)}/failures`;
+export const drawExecutionAuditsApiPath = (drawId: string) =>
+    `${drawApiPath(drawId)}/execution-audits`;
+// GD-199 — 최신 검토 실행의 최종 확인과 최초 공개를 한 요청으로 처리한다 (본문·추가 멱등 헤더 없음)
+export const drawResultConfirmationApiPath = (runId: string) =>
+    `${drawApiPath(runId)}/result-confirmation`;
 
 export interface PageParams {
     page: number;
@@ -185,6 +196,36 @@ export function useDrawVerifications(drawId: string | null, params: PageParams) 
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawChecksApiPath(drawId!), { params });
             return envelopeSchema(drawVerificationPageSchema).parse(data).data;
+        },
+        enabled: Boolean(drawId),
+    });
+}
+
+// GD-137 — 실행의 전체 실패 이력 (failedAt·id 내림차순은 서버 정렬). 추가만 되는 기록이다
+export function useDrawFailures(drawId: string | null, params: PageParams) {
+    return useQuery({
+        ...queryPresets.standard,
+        queryKey: [...DRAWS_KEY, 'failures', drawId, params],
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(drawFailuresApiPath(drawId!), {
+                params,
+            });
+            return envelopeSchema(drawFailurePageSchema).parse(data).data;
+        },
+        enabled: Boolean(drawId),
+    });
+}
+
+// GD-137 — 실행의 시작·재개·취소 등 업무 감사 이력 (createdAt·id 내림차순은 서버 정렬)
+export function useDrawExecutionAudits(drawId: string | null, params: PageParams) {
+    return useQuery({
+        ...queryPresets.standard,
+        queryKey: [...DRAWS_KEY, 'execution-audits', drawId, params],
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(drawExecutionAuditsApiPath(drawId!), {
+                params,
+            });
+            return envelopeSchema(drawExecutionAuditPageSchema).parse(data).data;
         },
         enabled: Boolean(drawId),
     });

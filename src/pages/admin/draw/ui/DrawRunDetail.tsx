@@ -6,14 +6,16 @@ import { toast } from 'sonner';
 import type { DrawResult, DrawRunDetail as DrawRunDetailData } from '@entities/drawResult';
 
 import {
-    DRAW_EXECUTION_TYPE_LABEL,
     DRAW_RUN_STATUS_META,
+    DRAW_TYPE_LABEL,
     DRAWS_KEY,
     isDrawRunInProgress,
     useDrawRun,
     useDrawRuns,
+    useEventDraws,
 } from '@entities/drawResult';
-import { CancelWinDialog, useResumeDraw } from '@features/runDraw';
+import { useResultChanges } from '@entities/winner';
+import { CancelWinDialog, ConfirmPublicationDialog, useResumeDraw } from '@features/runDraw';
 import { PublishRedrawDialog, useStartRedraw } from '@features/runRedraw';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { badgeVariants } from '@shared/ui/badge';
@@ -25,17 +27,19 @@ import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
 import { DrawCandidatesSection } from './DrawCandidatesSection';
+import { DrawOperationsSection } from './DrawOperationsSection';
 import { DrawVerificationsSection } from './DrawVerificationsSection';
 import { PolicyPendingChip } from './PolicyPendingNotice';
 
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
 const CHIP = badgeVariants({ variant: null });
 
-type RunSection = 'results' | 'verifications' | 'candidates';
+type RunSection = 'results' | 'verifications' | 'candidates' | 'operations';
 const RUN_SECTIONS: readonly { value: RunSection; label: string }[] = [
     { value: 'results', label: '추첨 결과' },
     { value: 'verifications', label: '정합성 검증' },
     { value: 'candidates', label: '후보 명단' },
+    { value: 'operations', label: '운영 이력' },
 ];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -81,7 +85,8 @@ interface DrawRunDetailProps {
     actionSlot?: HTMLElement | null;
 }
 
-// AD02 실행 상세 — 실행 요약, 실패 정보, 취소 근거, 결과(당첨 취소 진입), 재추첨 시작·재개와 공개 반영
+// AD02 실행 상세 — 실행 요약, 실패·재시도 정보, 취소 근거, 결과(당첨 취소 진입),
+// 재추첨 시작·재개(AD09), 최초 발표(GD-199), 공개 반영(AD06), 운영 이력(GD-137)
 export function DrawRunDetail({
     drawId,
     eventCanceled,
@@ -146,6 +151,7 @@ function RunDetailBody({
     const [cancelTarget, setCancelTarget] = useState<DrawResult | null>(null);
     const [section, setSection] = useState<RunSection>('results');
     const [publishOpen, setPublishOpen] = useState(false);
+    const [firstPublishOpen, setFirstPublishOpen] = useState(false);
     const start = useStartRedraw();
     const resumeInitial = useResumeDraw();
     const queryClient = useQueryClient();
@@ -154,27 +160,42 @@ function RunDetailBody({
         void queryClient.invalidateQueries({ queryKey: [...DRAWS_KEY, 'list'] });
     }, [queryClient, run.status]);
     const status = DRAW_RUN_STATUS_META[run.status];
-    const isRedraw = run.originalDrawId !== null;
+    const isRedraw = run.drawType === 'REPLACEMENT';
     const confirmed = run.status === 'CONFIRMED';
     const inProgress = isDrawRunInProgress(run.status);
 
-    // 재추첨이 취소한 결과가 최초 발표 이후 공개된 적이 있는지 — AD06 사용 가능 여부를 가른다
-    const canceledRunIds = [...new Set(run.cancellations.map((c) => c.canceledDrawRunId))];
-    const canceledRuns = useDrawRuns(canceledRunIds);
-    // 공개 이력 조회 결과를 로딩·실패·발표 전·후로 구분한다 — 실패는 공개 반영을 막는다
-    const publicationOf = (canceledResultId: string, canceledRunId: string) => {
-        const query = canceledRuns[canceledRunIds.indexOf(canceledRunId)];
-        if (query?.isError) return 'error' as const;
-        if (!query?.data) return 'loading' as const;
-        const result = query.data.results.find((r) => r.id === canceledResultId);
-        return result?.wasPublished ? ('after' as const) : ('before' as const);
+    // 이벤트의 실행 목록 — 최신 실행 판정(최초 발표는 최신 실행으로만 요청한다, GD-199)과
+    // 취소 원본 결과가 있는 더 이른 실행의 식별에 쓴다
+    const { data: runList } = useEventDraws(run.eventId, { page: 1, size: 100 });
+    const isLatestRun = runList?.items[0]?.id === run.id;
+    const earlierRunIds = (runList?.items ?? [])
+        .filter((r) => r.runNumber < run.runNumber)
+        .map((r) => r.id);
+    const earlierRuns = useDrawRuns(earlierRunIds);
+    // 취소 근거의 resultId가 가리키는 원본 결과를 이 실행과 더 이른 실행에서 찾는다
+    const resultIndex = new Map<string, DrawResult>();
+    for (const other of earlierRuns) {
+        for (const r of other.data?.results ?? []) resultIndex.set(r.id, r);
+    }
+    for (const r of run.results) resultIndex.set(r.id, r);
+    // 취소한 원본 결과가 최초 발표 이후 공개된 적이 있는지 — 발표 후 취소·재추첨인지 구분한다
+    const publicationOf = (resultId: string) => {
+        const result = resultIndex.get(resultId);
+        if (result) return result.wasPublished ? ('after' as const) : ('before' as const);
+        if (earlierRuns.some((q) => q.isError)) return 'error' as const;
+        return 'loading' as const;
     };
-    const publicationStates = run.cancellations.map((c) =>
-        publicationOf(c.canceledDrawResultId, c.canceledDrawRunId),
-    );
+    const publicationStates = run.execution.cancellations.map((c) => publicationOf(c.resultId));
     const anyBeforeFirstPublication = publicationStates.includes('before');
     const stillLoading = publicationStates.includes('loading');
     const publicationCheckFailed = publicationStates.includes('error');
+
+    // 최초 발표 여부 — 공개 명단 변경 이력(AD07)이 하나라도 있으면 발표된 이벤트다
+    const { data: changePage, isPending: changePending } = useResultChanges(run.eventId, {
+        page: 1,
+        size: 1,
+    });
+    const firstPublished = (changePage?.totalElements ?? 0) > 0;
 
     const selectedResults = run.results.filter((r) => r.resultType === 'SELECTED');
     const alreadyPublished =
@@ -184,7 +205,17 @@ function RunDetailBody({
         (r) => r.isCanceled && !r.wasPublished,
     );
 
+    // 최초 발표(GD-199) — 이벤트가 공개되지 않았고 이 실행이 최신·확정일 때만 연다
+    const canFirstPublish =
+        !changePending &&
+        !firstPublished &&
+        isLatestRun &&
+        confirmed &&
+        !eventCanceled &&
+        eventReady;
+    // 공개 후 재추첨 반영(AD06) — 최초 발표 전에는 호출하지 않는다
     const canPublish =
+        firstPublished &&
         isRedraw &&
         confirmed &&
         !eventCanceled &&
@@ -194,11 +225,15 @@ function RunDetailBody({
         !anyBeforeFirstPublication &&
         !hasUnpublishedCanceledResult &&
         !alreadyPublished;
-    // 종료된 실행(NO_ENTRIES·NO_CANDIDATES)은 재개 불가 — 진행 중이거나 실패한 재추첨만 연다
+    // 종료된 실행(NO_ENTRIES·NO_CANDIDATES)은 재개 불가 — 진행 중이거나 실패한 재추첨만 연다.
+    // AD09 재개는 이 재추첨을 발생시킨 취소(replacementRunId가 이 실행)의 ID를 보낸다
+    const causingCancellation = run.execution.cancellations.find(
+        (c) => c.replacementRunId === run.id,
+    );
     const canResume =
         isRedraw &&
         (inProgress || run.status === 'FAILED') &&
-        run.cancellations.length > 0 &&
+        causingCancellation != null &&
         !eventCanceled &&
         eventReady;
     // 실패한 최초 실행은 새로 만들지 않고 같은 실행을 재개한다 (GD-87) — 재추첨은 AD09로 재개한다
@@ -206,9 +241,8 @@ function RunDetailBody({
     const cancelable = confirmed && !eventCanceled && eventReady;
 
     const resume = () => {
-        const cancellation = run.cancellations[0];
-        if (!cancellation) return;
-        start.mutate(cancellation.id, {
+        if (!causingCancellation) return;
+        start.mutate(causingCancellation.id, {
             onSuccess: () => toast.success('재추첨 실행을 시작·재개했습니다'),
         });
     };
@@ -262,7 +296,7 @@ function RunDetailBody({
                 </div>
 
                 <Field label="실행 ID">{run.id}</Field>
-                <Field label="구분">{DRAW_EXECUTION_TYPE_LABEL[run.executionType]}</Field>
+                <Field label="구분">{DRAW_TYPE_LABEL[run.drawType]}</Field>
                 <Field label="후보 고정">
                     {run.snapshotFixedAt ? formatKst(run.snapshotFixedAt) : '—'} · 같은 실행을
                     재시도하면 고정된 명단·조건을 그대로 씁니다
@@ -272,12 +306,6 @@ function RunDetailBody({
                     {run.confirmedAt ? formatKst(run.confirmedAt) : '—'}
                 </Field>
                 <Field label="알고리즘">{run.algorithmVersion ?? '—'}</Field>
-                {isRedraw && (
-                    <Field label="시작·재개 처리">
-                        <span className="text-fg-tertiary">처리자·시각 기록 미제공</span>{' '}
-                        <PolicyPendingChip />
-                    </Field>
-                )}
 
                 {inProgress && (
                     <p role="status" className="text-body-sm text-fg-secondary">
@@ -307,7 +335,7 @@ function RunDetailBody({
                 )}
             </section>
 
-            {run.lastFailureCode && (
+            {run.execution.latestFailure && (
                 <section
                     aria-labelledby="draw-run-failure-title"
                     className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6"
@@ -315,13 +343,27 @@ function RunDetailBody({
                     <h3 id="draw-run-failure-title" className="text-body-bold text-fg-primary">
                         실패 정보
                     </h3>
-                    <Field label="실패 코드">{run.lastFailureCode}</Field>
-                    <Field label="안내">{run.lastFailureMessage ?? '—'}</Field>
-                    <Field label="실패 횟수">{run.failureCount}회</Field>
+                    <Field label="실패 코드">{run.execution.latestFailure.failureCode}</Field>
+                    <Field label="안내">{run.execution.latestFailure.message}</Field>
+                    <Field label="실패 횟수">{run.execution.failureCount}회</Field>
                     <Field label="마지막 실패">
-                        {run.lastFailedAt ? formatKst(run.lastFailedAt) : '—'}
-                        {run.lastFailureTraceId && ` · 추적 ${run.lastFailureTraceId}`}
+                        {formatKst(run.execution.latestFailure.failedAt)}
+                        {run.execution.latestFailure.traceId &&
+                            ` · 추적 ${run.execution.latestFailure.traceId}`}
                     </Field>
+                    {/* 재시도 예약과 운영자 대기를 구분한다 — retryAt이 없고 FAILED이면 waitingForOperator다 */}
+                    {run.execution.retryAt && (
+                        <p className="text-body-sm text-fg-secondary">
+                            서버가 {formatKst(run.execution.retryAt)}에 자동으로 다시 시도할
+                            예정입니다.
+                        </p>
+                    )}
+                    {run.execution.waitingForOperator && (
+                        <p className="text-body-sm text-fg-secondary">
+                            자동 재시도가 예약되지 않아 운영자 확인이 필요합니다. 같은 실행을 재개할
+                            수 있습니다.
+                        </p>
+                    )}
                     <p className="text-caption text-fg-tertiary">
                         복구·재시도·취소 전환 기준은 <PolicyPendingChip /> 상태입니다. 같은 실행의
                         재개(AD09)만 제공합니다.
@@ -329,7 +371,7 @@ function RunDetailBody({
                 </section>
             )}
 
-            {run.cancellations.length > 0 && (
+            {run.execution.cancellations.length > 0 && (
                 <section
                     aria-labelledby="draw-run-cancel-title"
                     className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6"
@@ -338,7 +380,7 @@ function RunDetailBody({
                         당첨 취소 근거
                     </h3>
                     <ul className="flex flex-col gap-3">
-                        {run.cancellations.map((c, index) => {
+                        {run.execution.cancellations.map((c, index) => {
                             const state = publicationStates[index];
                             return (
                                 <li
@@ -348,6 +390,8 @@ function RunDetailBody({
                                     <p className="text-body-sm text-fg-primary">{c.reason}</p>
                                     <p className="text-caption text-fg-tertiary">
                                         {c.canceledBy} · {formatKst(c.canceledAt)} · 취소 ID {c.id}
+                                        {c.replacementRunId &&
+                                            ` · 재추첨 실행 ${c.replacementRunId}`}
                                     </p>
                                     <p className="text-caption text-fg-secondary">
                                         {state === 'loading' && '공개 이력 확인 중…'}
@@ -360,11 +404,9 @@ function RunDetailBody({
                                             size="sm"
                                             variant="secondary"
                                             className="self-start"
-                                            onClick={() =>
-                                                void canceledRuns[
-                                                    canceledRunIds.indexOf(c.canceledDrawRunId)
-                                                ]?.refetch()
-                                            }
+                                            onClick={() => {
+                                                for (const q of earlierRuns) void q.refetch();
+                                            }}
                                         >
                                             공개 이력 다시 확인
                                         </Button>
@@ -376,7 +418,47 @@ function RunDetailBody({
                 </section>
             )}
 
-            {isRedraw && (
+            {!changePending && !firstPublished && (
+                <section
+                    aria-labelledby="draw-run-first-publish-title"
+                    className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6"
+                >
+                    <div className="flex items-center gap-3">
+                        <h3
+                            id="draw-run-first-publish-title"
+                            className="text-body-bold text-fg-primary"
+                        >
+                            최초 발표
+                        </h3>
+                        {isLatestRun && (
+                            <Button
+                                size="sm"
+                                disabled={!canFirstPublish}
+                                onClick={() => setFirstPublishOpen(true)}
+                            >
+                                최초 발표
+                            </Button>
+                        )}
+                    </div>
+                    {!isLatestRun ? (
+                        <p className="text-body-sm text-fg-secondary">
+                            최초 발표는 가장 최근 실행으로만 요청할 수 있습니다. 실행 목록에서 최신
+                            실행을 선택해 주세요.
+                        </p>
+                    ) : !confirmed ? (
+                        <p className="text-body-sm text-fg-secondary">
+                            이 실행이 확정되면 결과를 검토하고 최초 발표할 수 있습니다.
+                        </p>
+                    ) : (
+                        <p className="text-body-sm text-fg-secondary">
+                            이 실행의 결과를 검토한 뒤 발표 버튼 한 번으로 확인·공개가 함께
+                            확정됩니다. 발표 전까지 사용자에게 결과가 공개되지 않습니다.
+                        </p>
+                    )}
+                </section>
+            )}
+
+            {firstPublished && isRedraw && (
                 <section
                     aria-labelledby="draw-run-publish-title"
                     className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6"
@@ -409,10 +491,10 @@ function RunDetailBody({
                             공개 명단에 반영할 수 없습니다.
                         </p>
                     )}
-                    {confirmed && anyBeforeFirstPublication && (
+                    {confirmed && !publicationCheckFailed && anyBeforeFirstPublication && (
                         <p className="text-body-sm text-fg-secondary">
                             최초 공개 전 취소가 포함돼 이 API(AD06)로 반영할 수 없습니다. 최초 공개
-                            전 재추첨은 관리자 확인 후 수동 공개로 함께 공개됩니다.
+                            전 재추첨은 최초 발표 요청으로 함께 공개됩니다.
                         </p>
                     )}
                     {confirmed && !anyBeforeFirstPublication && !alreadyPublished && (
@@ -493,6 +575,7 @@ function RunDetailBody({
                 <DrawVerificationsSection drawId={run.id} canVerify={confirmed} />
             )}
             {section === 'candidates' && <DrawCandidatesSection drawId={run.id} />}
+            {section === 'operations' && <DrawOperationsSection drawId={run.id} />}
 
             <CancelWinDialog
                 result={cancelTarget}
@@ -503,6 +586,11 @@ function RunDetailBody({
                 }}
             />
             <PublishRedrawDialog run={run} open={publishOpen} onOpenChange={setPublishOpen} />
+            <ConfirmPublicationDialog
+                run={run}
+                open={firstPublishOpen}
+                onOpenChange={setFirstPublishOpen}
+            />
         </div>
     );
 }
