@@ -107,6 +107,7 @@ const POLL_MS = queryPresets.realtime.refetchInterval;
 export function useEventDraws(eventId: string, params: PageParams) {
     return useQuery({
         ...queryPresets.realtime,
+        ...queryPresets.paged,
         refetchInterval: (query) =>
             query.state.data?.items.some((run) => isDrawRunInProgress(run.status))
                 ? POLL_MS
@@ -148,6 +149,7 @@ export function useDrawRuns(drawIds: string[]) {
 export function useDrawCandidates(drawId: string | null, params: PageParams) {
     return useQuery({
         ...queryPresets.standard,
+        ...queryPresets.paged,
         queryKey: [...DRAWS_KEY, 'participants', drawId, params],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawParticipantsApiPath(drawId!), {
@@ -163,6 +165,7 @@ export function useDrawCandidates(drawId: string | null, params: PageParams) {
 export function useDrawVerifications(drawId: string | null, params: PageParams) {
     return useQuery({
         ...queryPresets.standard,
+        ...queryPresets.paged,
         queryKey: [...DRAWS_KEY, 'checks', drawId, params],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawChecksApiPath(drawId!), { params });

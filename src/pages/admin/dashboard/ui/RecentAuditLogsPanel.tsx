@@ -38,6 +38,7 @@ export function RecentAuditLogsPanel() {
             }
             actions={<ViewAllLink to="/admin/audit" />}
             error={query.isError}
+            hasData={query.data !== undefined}
             onRetry={() => void query.refetch()}
         >
             {query.isPending ? (

@@ -44,9 +44,11 @@ export interface AdminNotificationsParams extends PageParams {
     to?: string;
 }
 
-// 운영 화면은 접수·처리 상태가 수시로 바뀌므로 들어올 때마다 새로 받는다
+// 운영 화면은 접수·처리 상태가 수시로 바뀌므로 들어올 때마다 새로 받는다.
+// 페이지·필터를 바꾸면 새 결과가 올 때까지 이전 목록을 둔다
 const adminListOptions = {
     ...queryPresets.noCache,
+    ...queryPresets.paged,
 } as const;
 
 // AN01 — 알림 생성 작업 목록

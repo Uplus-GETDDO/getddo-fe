@@ -92,6 +92,7 @@ export function RefundsTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
+                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="이벤트 취소로 반환된 응모권이 없습니다."

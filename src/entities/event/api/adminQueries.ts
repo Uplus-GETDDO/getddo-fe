@@ -30,6 +30,7 @@ export interface AdminEventsParams {
 export function useAdminEvents(params: AdminEventsParams) {
     return useQuery({
         ...queryPresets.realtime,
+        ...queryPresets.paged,
         queryKey: [...ADMIN_EVENTS_KEY, 'list', params],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(ADMIN_EVENTS_API_PATH, { params });
@@ -67,6 +68,8 @@ export function useAdminEventStatusCounts(statuses: readonly AdminEventStatus[])
             counts: results.map((result) => result.data),
             isPending: results.some((result) => result.isPending),
             isError: results.some((result) => result.isError),
+            /** 하나라도 받은 값이 있는가 — 다시 받기에 실패해도 이전 값을 보여줄지 가른다 */
+            hasData: results.some((result) => result.data !== undefined),
             refetch: () => results.forEach((result) => void result.refetch()),
         }),
     });

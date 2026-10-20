@@ -81,6 +81,7 @@ export function InconsistencyTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
+                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="불일치한 응모권이 없습니다."

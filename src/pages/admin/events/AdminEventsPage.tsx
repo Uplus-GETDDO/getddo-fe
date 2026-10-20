@@ -14,9 +14,8 @@ import { isDateRangeOrdered } from '@shared/lib/filterConstants';
 import { cn } from '@shared/lib/utils';
 import { Button } from '@shared/ui/button';
 import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
-import { Pagination } from '@shared/ui/pagination';
+import { PagedResult } from '@shared/ui/paged-result';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
-import { LoadingBlock, TableSkeleton } from '@shared/ui/skeleton';
 
 const PAGE_SIZE = 10;
 
@@ -89,7 +88,7 @@ export function AdminEventsPage() {
     const hasAppliedFilters =
         keyword !== '' || from !== '' || to !== '' || status !== 'all' || eventType !== 'all';
 
-    const { data, isPending, isError, isFetching, refetch } = useAdminEvents({
+    const { data, isPending, isError, isFetching, dataUpdatedAt, refetch } = useAdminEvents({
         page,
         size: PAGE_SIZE,
         keyword: keyword || undefined,
@@ -98,8 +97,6 @@ export function AdminEventsPage() {
         from: from || undefined,
         to: to || undefined,
     });
-
-    const totalPages = data ? Math.max(1, Math.ceil(data.totalElements / data.size)) : 0;
     const resetPage = () => setPage(1);
     const resetFilters = () => {
         setKeywordInput('');
@@ -214,27 +211,19 @@ export function AdminEventsPage() {
                 )}
             >
                 <div className="flex min-w-0 flex-col gap-6">
-                    {isPending && (
-                        <LoadingBlock>
-                            <TableSkeleton />
-                        </LoadingBlock>
-                    )}
-                    {isError && (
-                        <div className="flex items-center gap-3" role="alert">
-                            <p className="text-semantic-error-strong text-body-sm">
-                                이벤트 목록을 불러오지 못했습니다.
-                            </p>
-                            <Button size="sm" variant="secondary" onClick={() => void refetch()}>
-                                다시 시도
-                            </Button>
-                        </div>
-                    )}
-                    {!isPending && !isError && data && data.items.length === 0 && (
-                        <div className="flex flex-col gap-2 py-6">
-                            <p className="text-fg-secondary text-body-sm">
-                                해당하는 이벤트가 없습니다.
-                            </p>
-                            {hasAppliedFilters && (
+                    <PagedResult
+                        data={data}
+                        isPending={isPending}
+                        isError={isError}
+                        isFetching={isFetching}
+                        updatedAt={dataUpdatedAt}
+                        page={page}
+                        onPageChange={setPage}
+                        emptyText="해당하는 이벤트가 없습니다."
+                        errorText="이벤트 목록을 불러오지 못했습니다."
+                        onRetry={() => void refetch()}
+                        emptyAction={
+                            hasAppliedFilters ? (
                                 <Button
                                     size="sm"
                                     variant="ghost"
@@ -243,18 +232,12 @@ export function AdminEventsPage() {
                                 >
                                     검색 조건 초기화
                                 </Button>
-                            )}
-                        </div>
-                    )}
-                    {!isPending && !isError && isFetching && (
-                        <p role="status" className="text-fg-tertiary text-caption -mt-4">
-                            목록을 새로 확인하는 중…
-                        </p>
-                    )}
-                    {data && data.items.length > 0 && (
-                        <>
+                            ) : undefined
+                        }
+                    >
+                        {(items) => (
                             <AdminEventTable
-                                events={data.items}
+                                events={items}
                                 compact={selectedId != null}
                                 selectedId={selectedId}
                                 onRowClick={(event) =>
@@ -262,18 +245,8 @@ export function AdminEventsPage() {
                                     openDetail(event.id === selectedId ? null : event.id)
                                 }
                             />
-                            <div className="flex items-center justify-between">
-                                <span className="text-body-sm text-fg-secondary">
-                                    총 {data.totalElements}건
-                                </span>
-                                <Pagination
-                                    page={page}
-                                    totalPages={totalPages}
-                                    onPageChange={setPage}
-                                />
-                            </div>
-                        </>
-                    )}
+                        )}
+                    </PagedResult>
                 </div>
                 {selectedId && (
                     <aside

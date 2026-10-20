@@ -133,6 +133,7 @@ export function OpenEventsPanel({ className }: { className?: string }) {
             }
             actions={<ViewAllLink to="/admin/events?status=OPEN" />}
             error={query.isError}
+            hasData={query.data !== undefined}
             onRetry={() => void query.refetch()}
             className={className}
         >

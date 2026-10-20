@@ -29,6 +29,7 @@ export interface AuditLogsParams {
 export function useAuditLogs(params: AuditLogsParams) {
     return useQuery({
         ...queryPresets.standard,
+        ...queryPresets.paged,
         queryKey: [...AUDIT_KEY, 'list', params],
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(AUDIT_LOGS_API_PATH, { params });

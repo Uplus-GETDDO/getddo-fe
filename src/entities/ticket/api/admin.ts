@@ -58,9 +58,10 @@ export interface TicketInconsistenciesParams extends PageParams {
 }
 
 // 정합성은 요청 시점에 계산한 값이라 캐시하지 않고 화면에 들어올 때마다 새로 받는다.
-// 페이지·필터를 바꾸면 이전 결과를 새 페이지처럼 보이지 않도록 로딩 상태로 돌아간다
+// 페이지·필터를 바꾸면 새 결과가 올 때까지 이전 목록을 두고, 화면의 새로고침 표시로 받는 중임을 알린다
 const adminListOptions = {
     ...queryPresets.noCache,
+    ...queryPresets.paged,
 } as const;
 
 // AO03 — 지급 이력
