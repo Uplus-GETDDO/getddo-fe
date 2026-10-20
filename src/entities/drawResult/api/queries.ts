@@ -132,6 +132,12 @@ export interface PageParams {
 // 서버가 선정하는 동안만 realtime 프리셋 주기로 폴링하고, 끝나면 멈춘다
 const POLL_MS = queryPresets.realtime.refetchInterval;
 
+// AD01 단일 페이지 fetch — 취소 원본 결과를 찾기 위한 이전 페이지 순차 탐색에서도 쓴다
+export async function fetchEventDrawsPage(eventId: string, params: PageParams) {
+    const { data } = await apiClient.get<unknown>(eventDrawsApiPath(eventId), { params });
+    return envelopeSchema(drawRunPageSchema).parse(data).data;
+}
+
 // AD01 — 이벤트의 실행 목록(Page). 진행 중인 실행이 하나라도 있으면 폴링한다
 export function useEventDraws(eventId: string, params: PageParams) {
     return useQuery({
@@ -141,10 +147,7 @@ export function useEventDraws(eventId: string, params: PageParams) {
                 ? POLL_MS
                 : false,
         queryKey: [...DRAWS_KEY, 'list', eventId, params],
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(eventDrawsApiPath(eventId), { params });
-            return envelopeSchema(drawRunPageSchema).parse(data).data;
-        },
+        queryFn: () => fetchEventDrawsPage(eventId, params),
         enabled: Boolean(eventId),
     });
 }
@@ -154,7 +157,8 @@ async function fetchDrawRun(drawId: string) {
     return envelopeSchema(drawRunDetailSchema).parse(data).data;
 }
 
-const drawRunOptions = (drawId: string | null) => ({
+// fetchQuery에서도 같은 키·fetcher를 써야 상세 캐시를 공유한다 — 화면 밖 탐색용으로 export한다
+export const drawRunOptions = (drawId: string | null) => ({
     ...queryPresets.realtime,
     refetchInterval: (query: { state: { data?: { status: DrawRunStatus } } }) =>
         query.state.data && isDrawRunInProgress(query.state.data.status) ? POLL_MS : false,

@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
@@ -9,6 +9,8 @@ import {
     DRAW_RUN_STATUS_META,
     DRAW_TYPE_LABEL,
     DRAWS_KEY,
+    drawRunOptions,
+    fetchEventDrawsPage,
     isDrawRunInProgress,
     useDrawRun,
     useDrawRuns,
@@ -33,6 +35,9 @@ import { PolicyPendingChip } from './PolicyPendingNotice';
 
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
 const CHIP = badgeVariants({ variant: null });
+
+// 실행 목록 페이지 크기 — 이 크기를 넘는 과거 실행은 취소 원본 탐색에서 추가 페이지로 읽는다
+const RUN_LIST_PAGE_SIZE = 100;
 
 type RunSection = 'results' | 'verifications' | 'candidates' | 'operations';
 const RUN_SECTIONS: readonly { value: RunSection; label: string }[] = [
@@ -166,23 +171,114 @@ function RunDetailBody({
 
     // 이벤트의 실행 목록 — 최신 실행 판정(최초 발표는 최신 실행으로만 요청한다, GD-199)과
     // 취소 원본 결과가 있는 더 이른 실행의 식별에 쓴다
-    const { data: runList } = useEventDraws(run.eventId, { page: 1, size: 100 });
+    const { data: runList } = useEventDraws(run.eventId, { page: 1, size: RUN_LIST_PAGE_SIZE });
     const isLatestRun = runList?.items[0]?.id === run.id;
     const earlierRunIds = (runList?.items ?? [])
         .filter((r) => r.runNumber < run.runNumber)
         .map((r) => r.id);
     const earlierRuns = useDrawRuns(earlierRunIds);
+
+    // 이 실행에 없는 취소 원본 결과 — 더 이른 실행을 뒤져 찾아야 한다
+    const missingResultIds = useMemo(() => {
+        const own = new Set(run.results.map((r) => r.id));
+        return [...new Set(run.execution.cancellations.map((c) => c.resultId))].filter(
+            (id) => !own.has(id),
+        );
+    }, [run]);
+    // 탐색 결과는 시작한 실행에 묶는다 — 실행을 바꾸면 이전 실행의 결과가 섞이지 않는다
+    const [earlierSearch, setEarlierSearch] = useState<{
+        runId: string;
+        results: DrawResult[];
+        done: boolean;
+        failed: boolean;
+    }>({ runId: run.id, results: [], done: false, failed: false });
+    const searchedResults = useMemo(
+        () => (earlierSearch.runId === run.id ? earlierSearch.results : []),
+        [earlierSearch, run.id],
+    );
+    const earlierSearchDone = earlierSearch.runId === run.id && earlierSearch.done;
+    const earlierSearchFailed = earlierSearch.runId === run.id && earlierSearch.failed;
+    const searchingRef = useRef(false);
+
+    // 첫 페이지(최신 100개)의 상세에서 못 찾은 취소 원본은 더 이른 실행 페이지를 순차 조회해 찾는다.
+    // 취소 근거에는 원본 실행 ID가 없고 resultId뿐이라 실행 상세를 하나씩 확인해야 한다
+    useEffect(() => {
+        if (!runList || earlierSearchDone || earlierSearchFailed || searchingRef.current) return;
+        if (earlierRuns.some((q) => q.isPending)) return;
+        const known = new Set(run.results.map((r) => r.id));
+        for (const q of earlierRuns) for (const r of q.data?.results ?? []) known.add(r.id);
+        for (const r of searchedResults) known.add(r.id);
+        const remaining = new Set(missingResultIds.filter((id) => !known.has(id)));
+        // 모두 찾았으면 뒤질 필요가 없다 — resultIndex가 이미 판정할 수 있다
+        if (remaining.size === 0) return;
+        searchingRef.current = true;
+        let cancelled = false;
+        const found: DrawResult[] = [];
+        const runId = run.id;
+        const eventId = run.eventId;
+        const runNumber = run.runNumber;
+        const totalPages = Math.ceil(runList.totalElements / RUN_LIST_PAGE_SIZE);
+        void (async () => {
+            try {
+                for (let page = 2; page <= totalPages && remaining.size > 0 && !cancelled; page++) {
+                    const list = await queryClient.fetchQuery({
+                        queryKey: [
+                            ...DRAWS_KEY,
+                            'list',
+                            eventId,
+                            { page, size: RUN_LIST_PAGE_SIZE },
+                        ],
+                        queryFn: () =>
+                            fetchEventDrawsPage(eventId, { page, size: RUN_LIST_PAGE_SIZE }),
+                    });
+                    for (const item of list.items) {
+                        if (item.runNumber >= runNumber) continue;
+                        const detail = await queryClient.fetchQuery(drawRunOptions(item.id));
+                        if (cancelled) return;
+                        for (const r of detail.results) {
+                            if (remaining.delete(r.id)) found.push(r);
+                        }
+                        if (remaining.size === 0) break;
+                    }
+                }
+                if (cancelled) return;
+                setEarlierSearch({ runId, results: found, done: true, failed: false });
+            } catch {
+                if (!cancelled) {
+                    setEarlierSearch({ runId, results: found, done: false, failed: true });
+                }
+            } finally {
+                searchingRef.current = false;
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        runList,
+        earlierRuns,
+        searchedResults,
+        missingResultIds,
+        earlierSearchDone,
+        earlierSearchFailed,
+        run,
+        queryClient,
+    ]);
+
     // 취소 근거의 resultId가 가리키는 원본 결과를 이 실행과 더 이른 실행에서 찾는다
     const resultIndex = new Map<string, DrawResult>();
     for (const other of earlierRuns) {
         for (const r of other.data?.results ?? []) resultIndex.set(r.id, r);
     }
+    for (const r of searchedResults) resultIndex.set(r.id, r);
     for (const r of run.results) resultIndex.set(r.id, r);
     // 취소한 원본 결과가 최초 발표 이후 공개된 적이 있는지 — 발표 후 취소·재추첨인지 구분한다
     const publicationOf = (resultId: string) => {
         const result = resultIndex.get(resultId);
         if (result) return result.wasPublished ? ('after' as const) : ('before' as const);
-        if (earlierRuns.some((q) => q.isError)) return 'error' as const;
+        if (earlierRuns.some((q) => q.isError) || earlierSearchFailed) return 'error' as const;
+        // 이전 실행을 끝까지 뒤졌는데도 없으면 서버 데이터 불일치다 — 반영을 막는다
+        if (earlierSearchDone) return 'error' as const;
         return 'loading' as const;
     };
     const publicationStates = run.execution.cancellations.map((c) => publicationOf(c.resultId));
@@ -190,8 +286,14 @@ function RunDetailBody({
     const stillLoading = publicationStates.includes('loading');
     const publicationCheckFailed = publicationStates.includes('error');
 
-    // 최초 발표 여부 — 공개 명단 변경 이력(AD07)이 하나라도 있으면 발표된 이벤트다
-    const { data: changePage, isPending: changePending } = useResultChanges(run.eventId, {
+    // 최초 발표 여부 — 공개 명단 변경 이력(AD07)이 하나라도 있으면 발표된 이벤트다.
+    // 조회 실패는 미공개로 오판하면 안 된다 — 이미 발표된 이벤트에 최초 발표를 보내면 PUBLICATION-005다
+    const {
+        data: changePage,
+        isPending: changePending,
+        isError: changeError,
+        refetch: refetchChanges,
+    } = useResultChanges(run.eventId, {
         page: 1,
         size: 1,
     });
@@ -208,6 +310,7 @@ function RunDetailBody({
     // 최초 발표(GD-199) — 이벤트가 공개되지 않았고 이 실행이 최신·확정일 때만 연다
     const canFirstPublish =
         !changePending &&
+        !changeError &&
         !firstPublished &&
         isLatestRun &&
         confirmed &&
@@ -406,6 +509,13 @@ function RunDetailBody({
                                             className="self-start"
                                             onClick={() => {
                                                 for (const q of earlierRuns) void q.refetch();
+                                                // 이전 페이지 탐색이 실패해 낸 오류도 다시 돌린다
+                                                setEarlierSearch({
+                                                    runId: run.id,
+                                                    results: [],
+                                                    done: false,
+                                                    failed: false,
+                                                });
                                             }}
                                         >
                                             공개 이력 다시 확인
@@ -430,7 +540,7 @@ function RunDetailBody({
                         >
                             최초 발표
                         </h3>
-                        {isLatestRun && (
+                        {isLatestRun && !changeError && (
                             <Button
                                 size="sm"
                                 disabled={!canFirstPublish}
@@ -440,7 +550,20 @@ function RunDetailBody({
                             </Button>
                         )}
                     </div>
-                    {!isLatestRun ? (
+                    {changeError ? (
+                        <div className="flex items-center gap-3">
+                            <p role="alert" className="text-semantic-error-strong text-body-sm">
+                                공개 명단 변경 이력을 불러오지 못해 발표 여부를 확인할 수 없습니다.
+                            </p>
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => void refetchChanges()}
+                            >
+                                다시 시도
+                            </Button>
+                        </div>
+                    ) : !isLatestRun ? (
                         <p className="text-body-sm text-fg-secondary">
                             최초 발표는 가장 최근 실행으로만 요청할 수 있습니다. 실행 목록에서 최신
                             실행을 선택해 주세요.
