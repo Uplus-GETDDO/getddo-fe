@@ -29,6 +29,7 @@ export {
 } from './api/queries';
 export type { MissionSubmissionOutcome } from './api/queries';
 export { buildMissionAnswers, findMissingRequired } from './utils/missionAnswers';
+export { isMissionOpen } from './utils/missionPeriod';
 export { missionThumbnail } from './utils/missionThumbnail';
 export type { MissionAnswerDraft } from './utils/missionAnswers';
 export { MissionQuestionField } from './ui/MissionQuestionField';

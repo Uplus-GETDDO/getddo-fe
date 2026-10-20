@@ -51,7 +51,8 @@ export function useNotificationPage({
         /** 지금 쪽의 알림 — 그 쪽을 아직 받는 중이면 undefined */
         items: pages[page - 1]?.items,
         /** 지금 쪽을 받으러 커서를 따라가는 중 */
-        pageLoading: page > loaded && !isFetchNextPageError,
+        // 다음 커서가 없으면 더 받을 게 없다 — 합계(totalElements)와 커서가 어긋나도 뼈대만 남지 않고 빈 쪽으로 넘어간다
+        pageLoading: page > loaded && hasNextPage && !isFetchNextPageError,
         /** 지금 쪽을 받지 못함 */
         pageError: page > loaded && isFetchNextPageError,
         retryPage: () => void fetchNextPage(),

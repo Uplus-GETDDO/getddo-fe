@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList } from '@entities/game';
-import { useMissionList } from '@entities/mission';
+import { isMissionOpen, useMissionList } from '@entities/mission';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
@@ -22,7 +22,7 @@ import itemSauce from '../assets/item-sauce.png';
 import itemSkewer from '../assets/item-skewer.png';
 import { useSlotNumber } from '../hooks/useSlotNumber';
 import { MISSION_SECTION_IDS } from '../model/sectionIds';
-import { isMissionOpen, summarizeTodayRewards } from '../utils/todayRewards';
+import { summarizeTodayRewards } from '../utils/todayRewards';
 
 /** 기준 시각을 다시 읽는 간격 */
 const NOW_REFRESH_MS = 60_000;

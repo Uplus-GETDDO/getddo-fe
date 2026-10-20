@@ -1,6 +1,6 @@
 import { cn } from 'cn';
 import { RefreshCw, TriangleAlert } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 /** "n초 전"을 다시 계산하는 간격 */
 const TICK_MS = 5_000;
@@ -51,6 +51,7 @@ function RefreshStatus({
     errorLabel?: string;
 }) {
     const elapsed = useElapsedLabel(updatedAt);
+    const statusId = useId();
     const showError = error && !fetching;
     const label = fetching
         ? '새로 받는 중'
@@ -71,6 +72,8 @@ function RefreshStatus({
                         : '갱신에 실패했어요. 다시 받기'
                     : '지금 다시 받기'
             }
+            // 이름(aria-label)은 할 일만 말하므로, 포커스했을 때 지금 상태(마지막 갱신·주기·받는 중)를 설명으로 함께 읽힌다
+            aria-describedby={statusId}
             // 바탕이 없으니 좌우 여백도 거의 없앤다 — 남겨 두면 옆 글과의 간격만 어색하게 벌어졌다.
             // 호버는 바탕을 칠하지 않고 글자만 진하고 굵게 — 작은 글 버튼이 회색 알약으로 튀어 보이지 않게 (다른 작은 글 버튼도 같은 규칙)
             // 글자 크기(text-caption)는 cn 밖에서 잇는다 — 글자색과 한 cn에 넣으면 크기가 지워진다
@@ -91,7 +94,7 @@ function RefreshStatus({
                 />
             )}
             {/* 상태 변화는 화면 낭독기에 조용히 알린다 */}
-            <span aria-live="polite" className={labelClassName}>
+            <span id={statusId} aria-live="polite" className={labelClassName}>
                 {label}
                 {interval && !fetching && !showError && elapsed ? ` · ${interval}` : ''}
             </span>

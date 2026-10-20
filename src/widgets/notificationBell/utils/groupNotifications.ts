@@ -1,17 +1,20 @@
 import type { Notification } from '@entities/notification';
 
-import { formatKst, kstDayDiff } from '@shared/utils/date';
+import { formatKst, kstDayDiff, toKst } from '@shared/utils/date';
 
 export type NotificationGroup = { label: string; items: Notification[] };
 
-/** 묶음 이름 — 오늘·어제, 그 전은 '10월 3일 (금)' */
+/** 묶음 이름 — 오늘·어제, 그 전은 '10월 3일 (금)', 올해가 아니면 '2025년 10월 3일 (금)' */
 function dayLabel(createdAt: string, now: Date): string {
     const diff = kstDayDiff(createdAt, now);
     if (diff >= 0) return '오늘';
     if (diff === -1) return '어제';
     // 요일은 따로 받아 괄호로 붙인다 — 한 번에 받으면 브라우저마다 '10월 3일 금'처럼 꼴이 달랐다
     const weekday = formatKst(createdAt, { weekday: 'short' });
-    return `${formatKst(createdAt, { month: 'long', day: 'numeric' })} (${weekday})`;
+    const year = toKst(createdAt).getUTCFullYear();
+    // 다른 해의 같은 날짜가 한 묶음으로 섞이지 않고, 몇 년 전 알림인지도 보이게 해를 붙인다
+    const prefix = year === toKst(now).getUTCFullYear() ? '' : `${year}년 `;
+    return `${prefix}${formatKst(createdAt, { month: 'long', day: 'numeric' })} (${weekday})`;
 }
 
 /**

@@ -67,12 +67,17 @@ export function MyEntriesPage() {
     const now = clock.now();
     const [page, setPage] = useState(1);
     const entriesQuery = useMyEntryRows({
+        // 화면 목록과 같은 pageSlice로 자른다 — 줄이 줄어 쪽 수가 당겨져도 보이는 쪽의 발표 대기를 계속 폴링한다
         selectVisibleRows: (rows) =>
-            filterEntryRows(
-                scopeEntryRows(rows, filters.kind, filters.period, now),
-                filters.status,
-                filters.sort,
-            ).slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+            pageSlice(
+                filterEntryRows(
+                    scopeEntryRows(rows, filters.kind, filters.period, now),
+                    filters.status,
+                    filters.sort,
+                ),
+                page,
+                PAGE_SIZE,
+            ).items,
     });
     const { rows, isPending, isError, isResultPending } = entriesQuery;
 

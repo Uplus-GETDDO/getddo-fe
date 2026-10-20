@@ -89,7 +89,8 @@ export function BannerSlide({
         />
     );
 
-    if (!event || isError) {
+    // 받아 둔 이벤트가 있으면 폴링 한 번 실패해도 배너를 그대로 둔다 — 실패는 아래 줄 갱신 표시가 알린다
+    if (!event) {
         // 연결 이벤트를 모르면 갈 곳이 없어 링크를 걸지 않는다 — 그림만 두고 확인 중·실패를 알린다
         return (
             <div className={`bg-play-yellow ${SLIDE_BOX}`}>

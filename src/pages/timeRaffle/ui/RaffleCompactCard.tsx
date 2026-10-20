@@ -56,10 +56,10 @@ export function RaffleCompactCard({
               .join(' · ')
         : formatEntryRule(event, ticketLimit);
 
-    const action = (
-        // 카드마다 반복되는 이동이라 secondary — 검정·노랑 버튼은 대표 카드 하나에만 둬 시선을 모은다 (DESIGN-SYSTEM 13절).
-        // 오픈 전에는 응모할 수 없어 상세(상품·일정·규칙)를 미리 보는 '자세히 보기'
-        <Button asChild variant="secondary" className={wide ? 'w-48 shrink-0' : 'mt-1 w-full'}>
+    // 카드마다 반복되는 이동이라 secondary — 검정·노랑 버튼은 대표 카드 하나에만 둬 시선을 모은다 (DESIGN-SYSTEM 13절).
+    // 오픈 전에는 응모할 수 없어 상세(상품·일정·규칙)를 미리 보는 '자세히 보기'
+    const action = (className: string) => (
+        <Button asChild variant="secondary" className={className}>
             <Link to={`/time-raffle/${event.id}`}>{live ? '응모하러 가기' : '자세히 보기'}</Link>
         </Button>
     );
@@ -98,9 +98,10 @@ export function RaffleCompactCard({
                 <h3 className="text-subhead text-fg-primary truncate">{event.title}</h3>
                 {meta && <p className="text-caption text-fg-tertiary">{meta}</p>}
 
-                {!wide && action}
+                {/* 두 칸을 차지하는 넓은 카드도 한 칸으로 쌓이는 좁은 화면(lg 아래)에서는 다른 카드처럼 글 아래 꽉 찬 버튼 */}
+                {action(wide ? 'mt-1 w-full lg:hidden' : 'mt-1 w-full')}
             </div>
-            {wide && action}
+            {wide && action('hidden w-48 shrink-0 lg:inline-flex')}
         </article>
     );
 }

@@ -156,8 +156,15 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
 export function TicketWalletCompact({ action }: Pick<TicketWalletProps, 'action'>) {
     const ticketsQuery = useMyTickets();
     const tickets = ticketsQuery.data;
+    // 뼈대는 처음 받는 동안만 — 받지 못했으면 '–'로 두어 '불러오는 중'과 '실패' 안내가 함께 보이지 않게 한다
     const format = (n: number | undefined) =>
-        n == null ? <SkeletonText className="w-5" /> : formatNumber(n);
+        n != null ? (
+            formatNumber(n)
+        ) : ticketsQuery.isPending ? (
+            <SkeletonText className="w-5" />
+        ) : (
+            '–'
+        );
 
     return (
         <div className="bg-surface-page flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl px-5 py-3 shadow-[0_1px_2px_rgb(from_var(--color-ink)_r_g_b_/_0.1)]">

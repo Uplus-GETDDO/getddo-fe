@@ -35,7 +35,3 @@ export function summarizeTodayRewards({
         (missionProgress ? missionProgress.total - missionProgress.done : 0);
     return { attendance, games: gameProgress, missions: missionProgress, remaining };
 }
-
-/** 지금 참여할 수 있는 미션인지 — 운영 기간 [startsAt, endsAt) 안이면 true */
-export const isMissionOpen = (mission: { startsAt: string; endsAt: string }, now: Date) =>
-    new Date(mission.startsAt) <= now && now < new Date(mission.endsAt);

@@ -43,4 +43,12 @@ describe('groupNotifications', () => {
         expect(groups.map((g) => g.label)).toEqual(['10월 1일 (목)']);
         expect(groups[0]?.items.map((n) => n.id)).toEqual(['b', 'c']);
     });
+
+    it('올해가 아닌 알림은 해를 붙여 같은 날짜의 다른 해와 묶이지 않는다', () => {
+        const groups = groupNotifications(
+            [item('this', '2026-10-01T03:00:00Z'), item('last', '2025-10-01T03:00:00Z')],
+            now,
+        );
+        expect(groups.map((g) => g.label)).toEqual(['10월 1일 (목)', '2025년 10월 1일 (수)']);
+    });
 });
