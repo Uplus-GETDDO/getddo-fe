@@ -42,6 +42,8 @@ import {
 } from '@shared/ui/table';
 import { Textarea } from '@shared/ui/textarea';
 
+import { RewardDialogPreview } from './ui/RewardDialogPreview';
+
 function Section({
     title,
     usage,
@@ -237,6 +239,13 @@ export function UiGalleryPage() {
                         default
                     </Button>
                 </div>
+            </Section>
+
+            <Section
+                title="RewardDialog · 캡슐 뽑기"
+                usage="게임 보상 모달 — 손잡이나 '보상 뽑기'를 누르면 캡슐이 나와 열리며 받은 등급의 응모권을 보여 준다"
+            >
+                <RewardDialogPreview />
             </Section>
 
             <Section
