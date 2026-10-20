@@ -15,6 +15,7 @@ import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
 import { formatKst } from '@shared/utils/date';
+import { DrawResultSection } from '@widgets/drawResult';
 import {
     EntryCompleteDialog,
     EntryConfirmDialog,
@@ -23,14 +24,14 @@ import {
 } from '@widgets/eventEntry';
 
 import { BronzeOnlyTicket } from './ui/BronzeOnlyTicket';
-import { DrawResultSection } from './ui/DrawResultSection';
 import { GradeTicketSteppers } from './ui/GradeTicketSteppers';
-import { MyResultCard } from './ui/MyResultCard';
+import { LoseBanner } from './ui/LoseBanner';
 import { MyTicketCard } from './ui/MyTicketCard';
 import { RaffleDetailHero } from './ui/RaffleDetailHero';
 import { RaffleDetailsCard } from './ui/RaffleDetailsCard';
 import { RaffleRulesCard } from './ui/RaffleRulesCard';
 import { TicketSelectHeader } from './ui/TicketSelectHeader';
+import { WinnerBanner } from './ui/WinnerBanner';
 
 const CONTAINER = 'mx-auto w-full max-w-312 px-6 pb-28';
 
@@ -292,20 +293,21 @@ export function TimeRaffleDetailPage() {
                             )}
                         </div>
                     ))}
-                {results?.displayStatus === 'CANCELED' && !results.isPublished && (
-                    <p role="status">이벤트가 취소되어 당첨자를 발표하지 않아요.</p>
-                )}
-                {results?.displayStatus === 'NO_ENTRANTS' && !results.isPublished && (
-                    <p role="status">응모자가 없어 추첨이 종료됐어요.</p>
-                )}
-                {results?.displayStatus !== 'CANCELED' &&
-                    results?.displayStatus !== 'NO_ENTRANTS' &&
-                    (myResult?.result === 'PENDING' ||
-                        (event.status === 'closed' && results && !results.isPublished)) && (
-                        <MyResultCard entered={myResult?.result === 'PENDING'} />
-                    )}
+                {/* 발표 대기·추첨 없음·취소·당첨자 명단은 결과 영역이 스스로 가른다 (GD-247과 합침) */}
                 {results && (
-                    <DrawResultSection event={event} results={results} myResult={myResult} />
+                    <DrawResultSection
+                        results={results}
+                        myResult={myResult}
+                        prizeImageUrl={event.bannerImageUrl}
+                        // 래플은 당첨·낙첨을 큰 연출로 알린다 — 결과를 보러 들어오는 화면이다
+                        banner={
+                            myResult?.result === 'WON' ? (
+                                <WinnerBanner prize={myResult.prize} />
+                            ) : myResult?.result === 'LOST' ? (
+                                <LoseBanner event={event} />
+                            ) : undefined
+                        }
+                    />
                 )}
                 <MyTicketCard event={event} />
                 <RaffleDetailsCard event={event} />

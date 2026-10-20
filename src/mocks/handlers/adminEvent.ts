@@ -259,7 +259,6 @@ function toUserProjection(item: MockAdminEvent) {
         weightingEnabled: item.weightingEnabled,
         maxTicketsPerUser: item.maxTicketsPerUser,
         membershipRule: item.membershipRule,
-        tags: item.membershipRule === 'excellent' ? [] : ['멤버십 혜택'],
         prizeName:
             item.prizes.length > 1
                 ? `${item.prizes[0]?.name ?? ''} 외 ${item.prizes.length - 1}종`

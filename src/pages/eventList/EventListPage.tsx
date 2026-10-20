@@ -6,9 +6,8 @@ import { useEventList } from '@entities/event';
 import { ChipTabs, chipTabIds } from '@shared/ui/chip-tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { Skeleton } from '@shared/ui/skeleton';
-import { cn } from '@shared/utils/cn';
 
-import { EVENT_FILTERS, EVENT_SORTS, EVENT_TABS, PAGE_SIZE } from './model/eventFilters';
+import { EVENT_SORTS, EVENT_TABS, PAGE_SIZE } from './model/eventFilters';
 import { EventListCard } from './ui/EventListCard';
 import { EventPagination } from './ui/EventPagination';
 import { filterEvents, readEventSort, readEventTab } from './utils/filterEvents';
@@ -29,17 +28,18 @@ const EMPTY_NOTICE: Record<ReturnType<typeof readEventTab>, string> = {
     past: '지난 이벤트가 없습니다.',
 };
 /**
- * 이벤트 목록 — 상태 탭(진행 중·오픈 예정·지난 이벤트) + 카테고리 칩 + 정렬.
+ * 이벤트 목록 — 상태 탭(진행 중·오픈 예정·지난 이벤트)과 정렬.
  *
- * 탭·카테고리·정렬·페이지를 주소에 실어 새로고침·뒤로 가기·링크 공유에서 그대로 열린다.
- * 추천 이벤트는 탭과 무관하게 진행 중인 것만 보인다 — 끝난 이벤트를 추천할 이유가 없다.
+ * 탭·정렬·페이지를 주소에 실어 새로고침·뒤로 가기·링크 공유에서 그대로 열린다.
+ *
+ * 경품 종류로 거르는 칩과 추천 이벤트 칸은 뺐다 — 무엇을 어느 종류로 볼지, 무엇을 추천으로
+ * 볼지가 정해지지 않아 서버가 줄 값이 없다. 기준이 생기면 그때 다시 세운다.
  */
 export function EventListPage() {
     const { data: events, isPending, isError } = useEventList();
     const [params, setParams] = useSearchParams();
     const tab = readEventTab(params.get('tab'));
     const sort = readEventSort(params.get('sort'));
-    const filter = EVENT_FILTERS.find((item) => item === params.get('category')) ?? '전체';
     const page = Math.max(1, Number(params.get('page') ?? 1) || 1);
     const { tabId, panelId } = chipTabIds('events', tab);
     // 거르기를 바꾸면 보던 쪽수가 의미를 잃는다 — 페이지만 떨어뜨리고 나머지 조건은 유지한다
@@ -55,11 +55,7 @@ export function EventListPage() {
             { replace: true },
         );
     };
-    const all = events ?? [];
-    const recommended = all.filter(
-        (event) => event.status === 'open' && !event.isTimeRaffle && event.isRecommended,
-    );
-    const shown = filterEvents(all, tab, filter, sort);
+    const shown = filterEvents(events ?? [], tab, sort);
     const totalPages = Math.max(1, Math.ceil(shown.length / PAGE_SIZE));
     const paged = shown.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     const status = isPending ? (
@@ -79,15 +75,6 @@ export function EventListPage() {
             {/* 탭이 상태를 가르므로 제목은 한 상태를 가리키지 않는다 */}
             <h1 className="text-title-1 text-fg-primary">이벤트</h1>
             <section className="mt-10 flex flex-col gap-6">
-                <h2 className="text-subhead text-fg-primary">추천 이벤트</h2>
-                {status}
-                {!isPending && !isError && recommended.length === 0 && (
-                    <p className="text-fg-tertiary text-body-sm">추천 중인 이벤트가 없습니다.</p>
-                )}
-                {recommended.length > 0 && <EventGrid events={recommended} />}
-            </section>
-            <hr className="border-border-default my-20" />
-            <section className="flex flex-col gap-6">
                 <ChipTabs
                     tabs={EVENT_TABS}
                     value={tab}
@@ -95,25 +82,7 @@ export function EventListPage() {
                     label="이벤트 상태"
                     idPrefix="events"
                 />
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                        {EVENT_FILTERS.map((item) => (
-                            <button
-                                key={item}
-                                type="button"
-                                aria-pressed={item === filter}
-                                onClick={() => setParam('category', item, '전체')}
-                                className={cn(
-                                    'bg-surface-page text-caption focus-visible:ring-border-focus focus-visible:ring-offset-surface-page rounded-full border px-3 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-                                    item === filter
-                                        ? 'border-brand-primary text-brand-primary'
-                                        : 'border-border-strong text-fg-tertiary',
-                                )}
-                            >
-                                {item}
-                            </button>
-                        ))}
-                    </div>
+                <div className="flex items-center justify-end">
                     <Select value={sort} onValueChange={(next) => setParam('sort', next, 'latest')}>
                         <SelectTrigger className="h-9 shrink-0" aria-label="정렬">
                             <SelectValue />
@@ -135,11 +104,7 @@ export function EventListPage() {
                 >
                     {status}
                     {!isPending && !isError && paged.length === 0 && (
-                        <p className="text-fg-tertiary text-body-sm">
-                            {filter === '전체'
-                                ? EMPTY_NOTICE[tab]
-                                : `'${filter}'에 해당하는 이벤트가 없습니다.`}
-                        </p>
+                        <p className="text-fg-tertiary text-body-sm">{EMPTY_NOTICE[tab]}</p>
                     )}
                     {paged.length > 0 && (
                         <div className="flex flex-col gap-10">

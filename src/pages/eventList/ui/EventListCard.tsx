@@ -42,16 +42,8 @@ export function EventListCard({ event }: { event: Event }) {
                 <div className="bg-surface-sunken h-37.5" />
             )}
             <div className="flex flex-col gap-3 p-3.5">
-                {((event.tags?.length ?? 0) > 0 || hasDDay || statusChip || entered) && (
+                {(hasDDay || statusChip || entered) && (
                     <div className="flex flex-wrap items-center gap-2">
-                        {event.tags?.map((tag) => (
-                            <span
-                                key={tag}
-                                className="bg-status-active border-status-active-text text-status-active-text text-caption rounded-full border px-3 py-0.5"
-                            >
-                                {tag}
-                            </span>
-                        ))}
                         {hasDDay && (
                             <span className="bg-brand-primary border-brand-primary text-fg-on-brand text-caption rounded-full border px-3 py-0.5">
                                 D-{dDay}

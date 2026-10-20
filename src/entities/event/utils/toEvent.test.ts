@@ -70,6 +70,18 @@ describe('toEvent', () => {
         expect(toEvent({ ...SUMMARY, imageUrl: null }).bannerImageUrl).toBeNull();
     });
 
+    it('목록이 준 당첨 인원 합계를 그대로 쓴다 — 목록에는 prizes가 없다', () => {
+        expect(toEvent({ ...SUMMARY, winnerCount: 120 }).winnerCount).toBe(120);
+    });
+
+    it('합계가 오지 않으면 비워 둔다 — 0으로 꾸미지 않는다', () => {
+        expect(toEvent(SUMMARY).winnerCount).toBeUndefined();
+    });
+
+    it('상세는 prizes 합계를 쓴다 — 목록 합계와 어긋나도 경품이 근거다', () => {
+        expect(toEvent({ ...DETAIL, winnerCount: 999 }).winnerCount).toBe(10);
+    });
+
     it('prizes를 rank 오름차순으로 요약해 prizeName·winnerCount를 파생한다', () => {
         const event = toEvent(DETAIL);
         expect(event.prizeName).toBe('1등 경품 외 1종');
@@ -130,13 +142,11 @@ describe('toEvent', () => {
         const raw: EventSummaryResponse = {
             ...SUMMARY,
             isTimeRaffle: true,
-            tags: ['멤버십 혜택'],
             myEntryCount: 2,
             myTicketCount: 4,
         };
         const event = toEvent(raw);
         expect(event.isTimeRaffle).toBe(true);
-        expect(event.tags).toEqual(['멤버십 혜택']);
         expect(event.myEntryCount).toBe(2);
         expect(event.myTicketCount).toBe(4);
     });
