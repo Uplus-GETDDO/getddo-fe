@@ -53,7 +53,7 @@
 - [x] 브라우저에서 320/390px·키보드 포커스·자동 재생 정지·동작 줄이기·상세 이동을 확인한다.
 - [x] 관련 테스트와 npm run format:check, npm run lint, npm run test:ci, npm run build를 실행한다. 무관한 기존 경고를 임의 수정하지 않는다.
 - [x] git diff를 검토하고 로드맵·연동 현황에 확정 배치·검증 명령·실측 한계를 기록한다.
-- [ ] GD-255 커밋을 push하고 템플릿을 채운 dev 대상 PR을 작성한다. 머지·배포는 하지 않는다.
+- [x] GD-255 커밋을 push하고 템플릿을 채운 dev 대상 [PR #105](https://github.com/Uplus-GETDDO/getddo-fe/pull/105)를 작성했다. 머지·수동 배포는 수행하지 않았다.
 
 ## 2026-10-20 검증 증거
 
@@ -71,3 +71,5 @@
 실서버는 관리 목록이 최대 5개이며 전용 격리 공간이 없어 기존 행을 수정·삭제하지 않았다. **실서버 CRUD는 미검증**이며 로컬 MSW 인수와 구분한다. 업로드 API·키 공급 절차·허용 형식·용량은 여전히 담당자 확인 대상이다. L2 BE 데이터 대기를 해제하거나 완료로 표기하지 않았다.
 
 공통 최종 검사: `npm run format:check`, `npm run lint`(경고 0개), `npm run build`(TypeScript 포함), `git diff --check` 모두 종료 코드 0. Chromium 640px 뷰포트의 200% 확대에서도 document 폭 640px로 가로 넘침이 없었다.
+
+커밋 훅 적용 후 배너 관련 5개 테스트 파일·27개 테스트도 통과했다. 별도 리뷰어 승인과 원격 CI 판정은 PR에서 확인한다.
