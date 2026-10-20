@@ -4,7 +4,7 @@
 
 ## 기준
 
-- 브랜치 `feat/GD-260`(base dev `92583c3` = GD-259 PR #110 MERGED), 커밋 `a7855c1`. 원격 미발행 — push·PR·머지는 사용자 지시 대기다.
+- 브랜치 `feat/GD-260`(base dev `92583c3` = GD-259 PR #110 MERGED), 커밋 `a7855c1`(구현) + `2cd6d18`(이 문서). 원격 미발행 — push·PR·머지는 사용자 지시 대기다.
 - 승인된 결정: 시연 계정은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기 + 모든 모드 fallback 없음 · 배포 MSW 종료 + `mockServiceWorker.js` 자동 해제 · 가상 시계 배포 비노출 · 로그아웃 UI 없이 사용자 전환으로 대체.
 - 계획: [L6 계획](2026-10-21-GD-260-L6-runtime-mock-retirement.md). 보고서: [reports/20261021-GD-260-L6.md](../../../reports/20261021-GD-260-L6.md). 운영 절차: [docs/demo-operations.md](../../demo-operations.md).
 
@@ -33,7 +33,7 @@
 
 ## 배포 후보와 실행안 (승인 대기)
 
-배포 후보: `feat/GD-260` 커밋 `a7855c1` → dev 머지 → Vercel 배포.
+배포 후보: `feat/GD-260`(`a7855c1`+`2cd6d18`) → dev 머지 → Vercel 배포.
 
 1. Vercel 환경변수 `VITE_VIRTUAL_USERS_JSON`에 **실제 등록 계정 JSON** 설정(USER 여럿·ADMIN·INACTIVE, `id`는 DB UUID) — 사용자 제공 필요
 2. `feat/GD-260` push → PR → CI 통과 → dev 스쿼시 머지
