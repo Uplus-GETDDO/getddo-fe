@@ -99,6 +99,7 @@ export function BannerSlider() {
                                     variant="ghost"
                                     className="min-h-11"
                                     onClick={() => {
+                                        if (stopped) setFocused(false);
                                         setPaused(!stopped);
                                         setAutoSteps(0);
                                     }}

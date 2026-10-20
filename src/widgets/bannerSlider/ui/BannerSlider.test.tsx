@@ -67,6 +67,26 @@ afterEach(() => {
 });
 
 describe('홈 관리 배너', () => {
+    it('키보드로 재시작하면 포커스를 유지한 채 재생하고 다음 포커스 이동에서 정지한다', async () => {
+        vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+        const user = userEvent.setup();
+        mount();
+        await screen.findByRole('link', { name: '일반 이벤트 상세 보기' });
+        act(() => screen.getByRole('button', { name: '자동 재생 정지' }).focus());
+        expect(screen.getByRole('button', { name: '자동 재생 정지' })).toHaveFocus();
+        await user.keyboard('{Enter}');
+        await user.keyboard('{Enter}');
+        expect(screen.getByRole('button', { name: '자동 재생 정지' })).toHaveFocus();
+
+        await act(() => vi.advanceTimersByTimeAsync(5_000));
+        expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toBeInTheDocument();
+
+        await user.tab({ shift: true });
+        expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toHaveFocus();
+        await act(() => vi.advanceTimersByTimeAsync(5_000));
+        expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toBeInTheDocument();
+    });
+
     it('B01의 비연속 상대 순서와 이미지를 유지하고 이벤트 유형별 상세로 이동한다', async () => {
         const user = userEvent.setup();
         const { container } = mount();
