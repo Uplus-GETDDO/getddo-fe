@@ -43,7 +43,7 @@ spec의 E03 계약(`../getddo-spec/05-api/entry.md`)은 GD-200 현행 구현으�
 - E03/E08/E09 queryFn은 AbortSignal을 Axios에 전달한다. 키는 유지하고 다른 이벤트의 이전 값을 현재 행으로 표시하지 않는다. 전역 기본 재시도·포커스 설정, SSE/WebSocket·dependency·전역 상태는 변경하지 않는다.
 - E01 20개 페이지 및 E06 50개 페이지 전체 수집과 CANCELED→closed 화면 모델 변경은 [통합 로드맵 L5](../superpowers/plans/2026-10-20-backend-integration-roadmap.md)의 후속이다(구 R08 잔여·R04). 전체 결과 집계/결과 필터 서버 계약과 발표 후 revision 변경 감지도 L2/L5에서 별도로 확인한다. GD-247의 완료 범위로 확대하지 않는다.
 
-검증 근거는 `reports/20261020-GD-247-row-polling.md`와 `docs/superpowers/plans/2026-10-20-GD-247-row-polling.md`에 기록한다.
+검증 근거는 [GD-247 검증 보고서](../../reports/20261020-GD-247-row-polling.md)에 기록한다. 완료 계획은 2026-10-21 문서 정리로 삭제했으며 Git 이력에서 확인할 수 있다.
 
 ## GD-259 L5 상태 보완
 
