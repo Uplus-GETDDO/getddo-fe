@@ -12,7 +12,11 @@ import { VirtualClockProvider } from '@shared/model/virtualClock';
 import { BannerSlider } from './BannerSlider';
 
 const { motion } = vi.hoisted(() => ({ motion: { reduced: false } }));
-vi.mock('framer-motion', () => ({ useReducedMotion: () => motion.reduced }));
+// 진행 막대가 motion.div를 쓰므로 원래 모듈을 살리고 동작 줄이기 판정만 바꾼다
+vi.mock('framer-motion', async (importOriginal) => ({
+    ...(await importOriginal<object>()),
+    useReducedMotion: () => motion.reduced,
+}));
 
 const banners = [
     { id: 'banner-z', eventId: 'free', imageUrl: '/first.png', displayOrder: 2 },

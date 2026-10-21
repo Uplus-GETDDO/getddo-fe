@@ -84,6 +84,8 @@ export function LiveEntryRefresh({ eventId, isOpen, enabled = true }: LiveEntryS
             updatedAt={query.dataUpdatedAt || undefined}
             error={query.isError || rateLimited}
             interval={isOpen ? '30초마다' : undefined}
+            // 평소엔 아이콘만 — 넘김 화살표 옆에 '방금 갱신 · 30초마다'까지 있으면 줄이 너무 길었다. 글은 툴팁·화면 낭독기로 남고, 실패만 글자로 보인다
+            labelClassName={query.isError || rateLimited ? undefined : 'sr-only'}
             onRefresh={() => {
                 if (!rateLimited) void query.refetch({ cancelRefetch: false });
             }}
