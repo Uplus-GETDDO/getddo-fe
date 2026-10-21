@@ -87,7 +87,8 @@ export function groupEntryRows(rows: readonly MyEntryRow[]): MyEntryGroup[] {
         for (const grade of Object.keys(group.usedTicketsByGrade) as (keyof TicketsByGrade)[]) {
             group.usedTicketsByGrade[grade] += entry.deductedTicketsByGrade[grade];
         }
-        if (entry.requestedAt > group.latestRequestedAt)
+        // 밀리초 유무가 섞인 ISO 문자열은 사전순 비교가 실제 시각과 어긋난다 — 파싱해서 비교한다
+        if (new Date(entry.requestedAt).getTime() > new Date(group.latestRequestedAt).getTime())
             group.latestRequestedAt = entry.requestedAt;
     }
     return ordered;

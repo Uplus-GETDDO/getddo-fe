@@ -97,6 +97,16 @@ describe('groupEntryRows', () => {
         expect(groups.find((g) => g.status === 'ACCEPTED')?.entryCount).toBe(1);
     });
 
+    it('밀리초 유무가 섞인 시각도 실제 시간으로 비교해 최신 응모를 고른다', () => {
+        // '...:00Z'가 '...:00.100Z'보다 사전순으로 커서 문자열 비교면 오래된 시각이 덮어쓴다
+        const rows = [
+            row('e1', 'evt-a', '2026-10-12T00:00:00.100Z'),
+            row('e2', 'evt-a', '2026-10-12T00:00:00Z'),
+        ];
+        const [group] = groupEntryRows(rows);
+        expect(group?.latestRequestedAt).toBe('2026-10-12T00:00:00.100Z');
+    });
+
     it('응모권을 쓰지 않은 참여도 그룹에 포함해 횟수를 센다', () => {
         const rows = [
             row('e1', 'evt-a', '2026-10-12T00:00:00Z', { deducted: grades(1) }),
