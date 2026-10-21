@@ -32,3 +32,5 @@ export const streakPolicySetSchema = z.object({
 });
 export type DailyPolicyWrite = z.infer<typeof dailyPolicyWriteSchema>;
 export type StreakPolicyWrite = z.infer<typeof streakPolicyWriteSchema>;
+export type DailyAttendancePolicy = z.infer<typeof dailyAttendancePolicySchema>;
+export type StreakPolicySet = z.infer<typeof streakPolicySetSchema>;
