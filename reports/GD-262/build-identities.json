@@ -1,0 +1,23 @@
+{
+    "before": {
+        "indexSha256": "e371d0ce2b198660dfe5d8959ae9314e7b0dd4be2352bcdb860fc651eb6ddb49",
+        "artifactSha256": "f5e1c131d92add1789b6fc1ab5119de7af565edbd452c582f882f6f350bc5f06",
+        "files": 213,
+        "source": "88f4970 원본",
+        "users": "측정용 localStorage USER_A"
+    },
+    "after": {
+        "indexSha256": "280155aff3c5fd611bbc608a4752af4e37be90fcf8846e8a6ee25b0001655c91",
+        "artifactSha256": "a7223ab707e209cfdc596b1ba8e81d5cff8ebdaa0f3e4c78d5bb987163944499",
+        "files": 244,
+        "source": "88f4970 + userRoutes.tsx 변경",
+        "users": "측정용 localStorage USER_A"
+    },
+    "verification": {
+        "indexSha256": "f33d11c321f759f19dd2ec59ced47cb5c43fa8315a5b2e903b59c3c6fcb82e21",
+        "artifactSha256": "43775308b0cf5dd71c9181d75a83ce4909209621c8b0883f8f21d1e23d5ffaf5",
+        "files": 244,
+        "source": "88f4970 + userRoutes.tsx 변경",
+        "users": "기존 실서버 시연 계정 설정"
+    }
+}
