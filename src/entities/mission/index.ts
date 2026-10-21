@@ -40,15 +40,17 @@ export {
     missionWriteSchema,
     adminMissionSchema,
     adminMissionSummarySchema,
+    surveyFreeTextAnswerSchema,
     surveyRangeSchema,
     surveySummarySchema,
 } from './model/adminTypes';
-export type { MissionWrite, AdminMission } from './model/adminTypes';
+export type { MissionWrite, AdminMission, SurveyFreeTextAnswer } from './model/adminTypes';
 export {
     ADMIN_MISSIONS_KEY,
     ADMIN_MISSIONS_PATH,
     useAdminMissions,
     useAdminMission,
+    useSurveyAnswers,
     useSurveySummary,
 } from './api/admin';
 export type { AdminMissionsParams } from './api/admin';

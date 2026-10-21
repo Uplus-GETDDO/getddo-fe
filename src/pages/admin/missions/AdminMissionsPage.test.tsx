@@ -70,4 +70,91 @@ describe('관리자 미션', () => {
         expect(screen.getByLabelText('집계 종료일')).toHaveValue('2026-10-31');
         expect(screen.getByText(/31일만 잘랐습니다/)).toBeInTheDocument();
     });
+    it('집계 기간으로 자유 서술 답변을 조회해 텍스트로만 표시한다', async () => {
+        Element.prototype.scrollIntoView = vi.fn();
+        const summary = {
+            id: 'm-1',
+            title: '설문 미션',
+            description: '',
+            missionType: 'SURVEY',
+            startsAt: '2026-10-01T00:00:00+09:00',
+            endsAt: '2026-10-20T00:00:00+09:00',
+            rewardTicketCount: 1,
+            status: 'ACTIVE',
+            rewardPolicyId: 'rp-1',
+            createdBy: 'admin',
+            createdAt: '2026-09-01T00:00:00Z',
+            updatedAt: '2026-09-01T00:00:00Z',
+        };
+        const get = vi.spyOn(apiClient, 'get').mockImplementation((url: string) => {
+            if (url === '/v1/admin/missions') {
+                return Promise.resolve({
+                    data: {
+                        success: true,
+                        data: { items: [summary], page: 1, size: 20, totalElements: 1 },
+                    },
+                });
+            }
+            if (url === '/v1/admin/missions/m-1') {
+                return Promise.resolve({
+                    data: {
+                        success: true,
+                        data: {
+                            ...summary,
+                            questions: [
+                                {
+                                    id: 'q1',
+                                    questionType: 'FREE_TEXT',
+                                    questionText: '자유 의견',
+                                    displayOrder: 1,
+                                    required: false,
+                                },
+                            ],
+                        },
+                    },
+                });
+            }
+            if (url === '/v1/admin/missions/m-1/survey-summary') {
+                return Promise.resolve({
+                    data: {
+                        success: true,
+                        data: {
+                            dailyResponses: [{ date: '2026-10-10', count: 1 }],
+                            questions: [],
+                        },
+                    },
+                });
+            }
+            if (url === '/v1/admin/missions/m-1/survey-answers') {
+                return Promise.resolve({
+                    data: {
+                        success: true,
+                        data: {
+                            items: [
+                                {
+                                    answerText: '<b>굵게</b> 좋아요',
+                                    submittedAt: '2026-10-10T05:00:00Z',
+                                },
+                            ],
+                            page: 1,
+                            size: 20,
+                            totalElements: 1,
+                        },
+                    },
+                });
+            }
+            return Promise.reject(new Error(`unexpected ${url}`));
+        });
+        render(
+            <QueryClientProvider client={new QueryClient()}>
+                <AdminMissionsPage />
+            </QueryClientProvider>,
+        );
+        await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
+        await userEvent.click(await screen.findByRole('button', { name: '집계 조회' }));
+        // 답변 원문은 HTML로 해석하지 않고 텍스트로만 보인다 (AM05 계약)
+        expect(await screen.findByText('<b>굵게</b> 좋아요')).toBeInTheDocument();
+        const answersCall = get.mock.calls.find(([url]) => url.includes('survey-answers'));
+        expect(answersCall?.[1]?.params).toMatchObject({ questionId: 'q1', page: 1 });
+    });
 });

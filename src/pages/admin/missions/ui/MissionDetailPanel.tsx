@@ -72,6 +72,7 @@ export function MissionDetailPanel({ id }: { id: string }) {
                             missionId={mission.id}
                             startsAt={mission.startsAt}
                             endsAt={mission.endsAt}
+                            questions={mission.questions}
                         />
                     )}
                 </>
