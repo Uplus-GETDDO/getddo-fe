@@ -43,7 +43,7 @@ export function useMissionList() {
         ...pollingReadPolicy,
         queryKey: [...MISSIONS_KEY, 'list'],
         // 화면이 열린 채 미션의 시작·종료 시각을 지나도 serverTime 기준 표시가 따라가도록 폴링한다
-        refetchInterval: (query) => pollingReadInterval(query),
+        refetchInterval: (query: { state: { error: unknown } }) => pollingReadInterval(query),
         queryFn: (context) =>
             withPollingReadGuard(context, async () => {
                 const missions: MissionSummary[] = [];
