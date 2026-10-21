@@ -159,7 +159,7 @@ export function TimeRaffleDetailPage() {
                           (grade) => tickets[grade] <= ticket.countByGrade[grade],
                       )
                     : ticket.countByGrade.BRONZE >= 1)));
-    // 확인 모달은 응모 후 남는 전체 응모권을 보인다 — 브론즈만 쓰는 래플이어도 전체에서 그만큼 줄어든다
+    // 완료 모달의 남는 총합 계산용 — 확인 모달은 등급별 잔액을 따로 받는다
     const dialogBalance = ticket?.availableCount ?? null;
     const submitBlocked =
         balanceBlocked || needsSelection || invalidSelection || !canEnter || !hasEnoughTickets;
@@ -326,7 +326,7 @@ export function TimeRaffleDetailPage() {
                 onOpenChange={setConfirmOpen}
                 title={event.title}
                 tickets={requestedTickets}
-                balance={dialogBalance}
+                balanceByGrade={ticket?.countByGrade ?? null}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
                 disabled={submitBlocked}
