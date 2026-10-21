@@ -69,7 +69,7 @@ function ZoomableThumbnail({
     );
 }
 
-function PreviewImage({ src }: { src: string }) {
+function PreviewImage({ src, label }: { src: string; label: string }) {
     const image = useImageFallback(src);
     if (!image.shown) {
         return (
@@ -81,7 +81,7 @@ function PreviewImage({ src }: { src: string }) {
     return (
         <img
             src={src}
-            alt=""
+            alt={label}
             onError={image.onError}
             className="mx-auto max-h-[70vh] max-w-full object-contain"
         />
@@ -293,7 +293,7 @@ export function AdminEventDetailPage() {
                             이미지 확대 미리보기
                         </DialogDescription>
                     </DialogHeader>
-                    {preview && <PreviewImage src={preview.src} />}
+                    {preview && <PreviewImage src={preview.src} label={preview.label} />}
                 </DialogContent>
             </Dialog>
 

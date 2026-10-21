@@ -343,6 +343,14 @@ function RunDetailBody({
         (r) => r.isCanceled && !r.wasPublished,
     );
 
+    // 명단이 완성인지 — 이전 실행이 전부 로드됐고 실행 목록이 한 페이지에 들어오는
+    // 최신 실행을 볼 때만 참이다. 부분 자료를 최종 명단으로 표시하지 않는다 (작업 C)
+    const rosterLoading = runList == null || earlierRuns.some((q) => q.isPending);
+    const rosterUnreadable =
+        runList != null &&
+        (runList.totalElements > RUN_LIST_PAGE_SIZE || earlierRuns.some((q) => q.isError));
+    const rosterComplete = !rosterLoading && !rosterUnreadable && isLatestRun === true;
+
     // 확정된 실행들을 회차 순으로 겹쳐 슬롯별 최종 상태를 만든다 — 공개 요청 전에 검토할 명단이다
     const rosterRows = useMemo(() => {
         const details = [
@@ -386,7 +394,8 @@ function RunDetailBody({
         isLatestRun &&
         confirmed &&
         !eventCanceled &&
-        eventReady;
+        eventReady &&
+        rosterComplete;
     // 공개 후 재추첨 갱신(AD06) — 당첨자 공개 전에는 호출하지 않는다
     const canPublish =
         firstPublished &&
@@ -730,7 +739,25 @@ function RunDetailBody({
                 </section>
             )}
 
-            {rosterRows.length > 0 && (
+            {!rosterComplete && (
+                <section
+                    aria-labelledby="draw-run-roster-title"
+                    className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6"
+                >
+                    <h3 id="draw-run-roster-title" className="text-body-bold text-fg-primary">
+                        {firstPublished ? '공개 명단' : '공개 예정 최종 명단'}
+                    </h3>
+                    <p className="text-body-sm text-fg-secondary">
+                        {rosterLoading
+                            ? '실행 목록과 이전 실행 결과를 확인하는 중입니다.'
+                            : rosterUnreadable
+                              ? '모든 실행을 불러오지 못해 최종 명단을 확정할 수 없습니다.'
+                              : '이 실행 이후에 다른 실행이 있어 이 실행만으로 최종 명단을 확정할 수 없습니다. 최신 실행을 선택해 주세요.'}
+                    </p>
+                </section>
+            )}
+
+            {rosterComplete && rosterRows.length > 0 && (
                 <section
                     aria-labelledby="draw-run-roster-title"
                     className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6"
@@ -905,7 +932,7 @@ function RunDetailBody({
             <PublishRedrawDialog run={run} open={publishOpen} onOpenChange={setPublishOpen} />
             <ConfirmPublicationDialog
                 run={run}
-                summary={publicationSummary}
+                summary={rosterComplete ? publicationSummary : null}
                 open={firstPublishOpen}
                 onOpenChange={setFirstPublishOpen}
             />

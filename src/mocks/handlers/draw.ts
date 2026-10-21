@@ -263,7 +263,8 @@ function drawInitialResults(store: DrawStore): DrawResult[] {
 
 function drawFirstRun(store: DrawStore, endsAt: string): MockRun {
     const results = drawInitialResults(store);
-    const confirmedAt = new Date(endsAt).toISOString();
+    // ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이다. getStore도 같은 시각에 실행을 만든다
+    const confirmedAt = new Date(new Date(endsAt).getTime() + DRAW_DELAY_MS).toISOString();
     return {
         detail: {
             id: runIdOf(store.eventId, 1),
