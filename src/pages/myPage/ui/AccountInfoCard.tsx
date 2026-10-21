@@ -4,6 +4,7 @@ import type { MembershipRule } from '@entities/event';
 import type { VirtualUser } from '@entities/user';
 
 import { MEMBERSHIP_LABEL } from '@entities/event';
+import { virtualUserLabel } from '@entities/user';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { cn } from '@shared/utils/cn';
@@ -57,7 +58,7 @@ export function AccountInfoCard({ user }: { user: VirtualUser }) {
                 <div className="flex items-center justify-between gap-4">
                     <dt className="text-body-sm text-fg-tertiary">유형</dt>
                     <dd className="text-body-sm-bold text-fg-primary truncate">
-                        {user.personaLabel ?? '시스템 관리 계정'}
+                        {virtualUserLabel(user)}
                     </dd>
                 </div>
                 <div className="flex items-center justify-between gap-4">

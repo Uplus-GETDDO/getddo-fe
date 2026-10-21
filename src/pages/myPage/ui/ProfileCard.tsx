@@ -12,6 +12,7 @@ import {
     TicketBalanceStatus,
     type useMyTickets,
 } from '@entities/ticket';
+import { virtualUserLabel } from '@entities/user';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar.png';
 import { Badge } from '@shared/ui/badge';
@@ -118,7 +119,7 @@ export function ProfileCard({
                             )}
                         </div>
                         <span className="text-body-sm text-fg-tertiary">
-                            {user.personaLabel ?? '시스템 관리 계정'}
+                            {virtualUserLabel(user)}
                         </span>
                     </div>
                 </div>
