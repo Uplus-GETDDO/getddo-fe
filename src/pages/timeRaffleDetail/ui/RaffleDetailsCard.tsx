@@ -1,6 +1,7 @@
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics, useMyEventEntries } from '@entities/entry';
+import { describeTicketUsage } from '@entities/event';
 import { useMyTickets } from '@entities/ticket';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
@@ -36,13 +37,11 @@ export function RaffleDetailsCard({ event }: { event: Event }) {
             value: `${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
         },
         { label: '멤버십 자격', value: detail?.membershipNote ?? null },
-        {
-            label: '1회 차감 수량',
-            value:
-                event.requiredTickets === 0
-                    ? '응모권 없이 참여'
-                    : `1회 응모 시 ${event.requiredTickets}장`,
-        },
+        /*
+         * '1회 차감 수량'으로 두면 가중치 래플이 '1회 1장'으로 읽힌다 — 등급을 골라
+         * 누적 상한까지 여러 번 나눠 낼 수 있는 래플이라 쓰는 방식 자체를 적는다 (ADR-010)
+         */
+        { label: '응모권 사용', value: describeTicketUsage(event) },
     ];
     const entrySpecs: Spec[] = [
         {
