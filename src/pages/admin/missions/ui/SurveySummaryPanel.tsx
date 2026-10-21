@@ -95,7 +95,9 @@ export function SurveySummaryPanel({
             {query.data && (
                 <>
                     <p role="status">
-                        {query.isError ? '마지막 성공 조회의 집계입니다.' : '조회 결과입니다.'}
+                        {query.isError || error
+                            ? '마지막 성공 조회의 집계입니다.'
+                            : '조회 결과입니다.'}
                     </p>
                     <ul>
                         {query.data.dailyResponses.map((d) => (
