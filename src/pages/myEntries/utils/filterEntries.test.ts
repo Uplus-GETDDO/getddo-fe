@@ -1,6 +1,6 @@
 import type { MyEntryGroup } from '@widgets/myEntryRows';
 
-import { filterEntryRows, readEntryFilters, scopeEntryRows } from './filterEntries';
+import { filterEntryGroups, readEntryFilters, scopeEntryGroups } from './filterEntries';
 
 const group = (
     id: string,
@@ -38,21 +38,24 @@ describe('readEntryFilters', () => {
     });
 });
 
-describe('scopeEntryRows', () => {
+describe('scopeEntryGroups', () => {
     it('기간과 종류로 거른다', () => {
-        expect(scopeEntryRows(groups, 'ALL', '3M', now).map((g) => g.eventId)).toEqual(['a', 'b']);
-        expect(scopeEntryRows(groups, 'EVENT', 'ALL', now).map((g) => g.eventId)).toEqual(['b']);
-        expect(scopeEntryRows(groups, 'RAFFLE', 'ALL', now).map((g) => g.eventId)).toEqual([
+        expect(scopeEntryGroups(groups, 'ALL', '3M', now).map((g) => g.eventId)).toEqual([
+            'a',
+            'b',
+        ]);
+        expect(scopeEntryGroups(groups, 'EVENT', 'ALL', now).map((g) => g.eventId)).toEqual(['b']);
+        expect(scopeEntryGroups(groups, 'RAFFLE', 'ALL', now).map((g) => g.eventId)).toEqual([
             'a',
             'c',
         ]);
     });
 });
 
-describe('filterEntryRows', () => {
+describe('filterEntryGroups', () => {
     it('결과로 거르고 오래된 순으로 뒤집는다', () => {
-        expect(filterEntryRows(groups, 'WON', 'NEWEST').map((g) => g.eventId)).toEqual(['b']);
-        expect(filterEntryRows(groups, 'ALL', 'OLDEST').map((g) => g.eventId)).toEqual([
+        expect(filterEntryGroups(groups, 'WON', 'NEWEST').map((g) => g.eventId)).toEqual(['b']);
+        expect(filterEntryGroups(groups, 'ALL', 'OLDEST').map((g) => g.eventId)).toEqual([
             'c',
             'b',
             'a',

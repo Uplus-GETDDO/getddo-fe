@@ -19,9 +19,9 @@ import type { StatusTile } from './ui/EntryStatusTiles';
 import { EntryStatusTiles } from './ui/EntryStatusTiles';
 import { ENTRY_GRID, EntryTableRow } from './ui/EntryTableRow';
 import {
-    filterEntryRows,
+    filterEntryGroups,
     readEntryFilters,
-    scopeEntryRows,
+    scopeEntryGroups,
     type EntryKindFilter,
     type EntryPeriod,
     type EntrySort,
@@ -70,8 +70,8 @@ export function MyEntriesPage() {
         // 화면 목록과 같은 pageSlice로 자른다 — 줄이 줄어 쪽 수가 당겨져도 보이는 쪽의 발표 대기를 계속 폴링한다
         selectVisibleGroups: (groups) =>
             pageSlice(
-                filterEntryRows(
-                    scopeEntryRows(groups, filters.kind, filters.period, now),
+                filterEntryGroups(
+                    scopeEntryGroups(groups, filters.kind, filters.period, now),
                     filters.status,
                     filters.sort,
                 ),
@@ -94,8 +94,8 @@ export function MyEntriesPage() {
         setPage(1);
     };
 
-    const scoped = scopeEntryRows(groups, filters.kind, filters.period, now);
-    const shown = filterEntryRows(scoped, filters.status, filters.sort);
+    const scoped = scopeEntryGroups(groups, filters.kind, filters.period, now);
+    const shown = filterEntryGroups(scoped, filters.status, filters.sort);
     const paged = pageSlice(shown, page, PAGE_SIZE);
     const pending = scoped.filter((group) => group.result === 'PENDING');
     const won = scoped.filter((group) => group.result === 'WON');

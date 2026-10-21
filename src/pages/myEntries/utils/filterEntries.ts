@@ -31,7 +31,7 @@ export function readEntryFilters(params: URLSearchParams) {
 }
 
 /** 종류·기간으로 먼저 거른다 — 결과 칸의 건수는 이 범위 안에서 센다 */
-export function scopeEntryRows(
+export function scopeEntryGroups(
     groups: readonly MyEntryGroup[],
     kind: EntryKindFilter,
     period: EntryPeriod,
@@ -46,7 +46,7 @@ export function scopeEntryRows(
 }
 
 /** 결과로 거르고 정렬한다 — 결과 거르기는 접수된 응모의 본인 결과(E09)만 본다 */
-export function filterEntryRows(
+export function filterEntryGroups(
     groups: readonly MyEntryGroup[],
     status: EntryStatusFilter,
     sort: EntrySort,

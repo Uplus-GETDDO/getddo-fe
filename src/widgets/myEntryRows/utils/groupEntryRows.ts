@@ -1,5 +1,5 @@
 import type { MyResultStatus } from '@entities/drawResult';
-import type { TicketsByGrade } from '@entities/entry';
+import type { EntryStatus, TicketsByGrade } from '@entities/entry';
 import type { Event } from '@entities/event';
 
 import type { MyEntryRow } from '../hooks/useMyEntryRows';
@@ -17,7 +17,7 @@ export interface MyEntryGroup {
     eventTitle: string;
     event: Event | undefined;
     isTimeRaffle: boolean;
-    status: 'ACCEPTED' | 'REJECTED';
+    status: EntryStatus;
     /** 그룹 안 본인 결과 — 거절 행과 미조회는 undefined */
     result: MyResultStatus | undefined;
     /** 표시·정렬·기간 거르기 기준 시각 — 그룹 안 가장 최근 응모 */
