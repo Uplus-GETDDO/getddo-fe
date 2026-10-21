@@ -61,6 +61,11 @@ export function AdminBannersPage() {
         },
         [banners, reorder],
     );
+    // 끌어 놓기는 표가 정한 전체 순서를 그대로 보낸다 — 한 칸 이동과 달리 계산할 게 없다
+    const handleReorder = useCallback(
+        (bannerIds: string[]) => reorder.mutate(bannerIds),
+        [reorder],
+    );
     const handleEdit = useCallback((banner: AdminBanner) => setFormTarget(banner), []);
     const handleDelete = useCallback((banner: AdminBanner) => setDeleteTarget(banner), []);
 
@@ -129,6 +134,7 @@ export function AdminBannersPage() {
             {banners && banners.length > 0 && (
                 <AdminBannerTable
                     banners={banners}
+                    onReorder={handleReorder}
                     eventTitleOf={eventTitleOf}
                     onMove={handleMove}
                     onEdit={handleEdit}
