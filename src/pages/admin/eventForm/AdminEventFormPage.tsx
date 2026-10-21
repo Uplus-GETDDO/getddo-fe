@@ -4,7 +4,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { EVENT_TYPE_LABEL, MEMBERSHIP_LABEL, useAdminEvent } from '@entities/event';
-import { EventImageField, useCreateEvent, useUpdateEvent } from '@features/manageEvent';
+import { ImageUploadField } from '@entities/image';
+import { useCreateEvent, useUpdateEvent } from '@features/manageEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
 import { Input } from '@shared/ui/input';
@@ -183,9 +184,9 @@ export function AdminEventFormPage() {
                     control={control}
                     name="imageKey"
                     render={({ field }) => (
-                        <EventImageField
+                        <ImageUploadField
                             label="대표 이미지 (선택)"
-                            target="EVENT"
+                            slot="EVENT"
                             value={field.value ?? ''}
                             onChange={field.onChange}
                             initialPreviewUrl={event?.imageUrl}
@@ -485,9 +486,9 @@ export function AdminEventFormPage() {
                                     control={control}
                                     name={`prizes.${index}.imageKey`}
                                     render={({ field: imageField }) => (
-                                        <EventImageField
+                                        <ImageUploadField
                                             label="경품 이미지 (선택)"
-                                            target="PRIZE"
+                                            slot="PRIZE"
                                             value={imageField.value ?? ''}
                                             onChange={imageField.onChange}
                                             initialPreviewUrl={

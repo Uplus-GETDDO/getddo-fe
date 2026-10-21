@@ -69,7 +69,7 @@ export function PrizeWinnerCard({
                     src={imageUrl!}
                     alt=""
                     onError={image.onError}
-                    className="absolute inset-0 size-full object-contain p-3 mix-blend-multiply dark:mix-blend-normal"
+                    className="absolute inset-0 size-full object-cover"
                 />
             ) : (
                 <div className="size-full" />
