@@ -20,6 +20,7 @@ const event = (overrides: Partial<AdminEvent>): AdminEvent => ({
     status: 'DRAW_CONFIRMED',
     drawScheduledAt: '2026-10-20T05:05:00Z',
     serverTime: '2026-10-20T06:00:00Z',
+    prizeImages: [],
     prizes: [
         {
             id: 'p1',

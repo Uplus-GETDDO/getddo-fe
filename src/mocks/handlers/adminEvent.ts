@@ -60,6 +60,14 @@ const MINUTE = 60 * 1000;
  * 관리자 목업의 이벤트 항목 — AdminEvent(spec AE01/AE02) + 내부 카운터.
  * entryCount·usedTicketTotal은 응답 DTO에 없고 취소 시 반환 수량 계산에만 쓴다.
  */
+/**
+ * 목업이 들고 있는 경품 — 응답의 prizes[]에는 imageKey가 없고 prizeImages로 따로 나간다.
+ * 씨앗 데이터는 이미지가 없어 키를 적지 않으므로 선택 속성으로 둔다.
+ */
+interface MockAdminPrize extends AdminPrize {
+    imageKey?: string | null;
+}
+
 interface MockAdminEvent {
     id: string;
     title: string;
@@ -74,7 +82,7 @@ interface MockAdminEvent {
     endsAt: string;
     /** 저장 상태 — SCHEDULED/OPEN/CLOSED는 응답 시각에 시간으로 재계산된다 */
     status: AdminEventStatus;
-    prizes: AdminPrize[];
+    prizes: MockAdminPrize[];
     createdAt: string;
     updatedAt: string;
     canceledAt: string | null;
@@ -287,6 +295,21 @@ function toAdminResponse(item: MockAdminEvent, now: number) {
     delete rest.usedTicketTotal;
     return {
         ...rest,
+        // 실서버와 같이 키는 prizes[]가 아니라 prizeImages로 나간다 (05-api/event.md AdminEvent)
+        prizes: item.prizes.map(
+            ({ id, rank, name, description, imageUrl, winnerCount }): AdminPrize => ({
+                id,
+                rank,
+                name,
+                description,
+                imageUrl,
+                winnerCount,
+            }),
+        ),
+        prizeImages: item.prizes.map((prize) => ({
+            prizeId: prize.id,
+            imageKey: prize.imageKey ?? null,
+        })),
         status: effectiveStatus(item, now),
         drawScheduledAt: new Date(
             new Date(item.endsAt).getTime() + ANNOUNCE_DELAY_MS,
@@ -452,6 +475,7 @@ function writeBodyToItem(body: EventWriteBody, id: string, nowIso: string): Mock
         name: (p.name as string).trim(),
         description: typeof p.description === 'string' && p.description ? p.description : null,
         imageUrl: resolveMockImageUrl(p.imageKey as string | null),
+        imageKey: (p.imageKey as string | null) ?? null,
         winnerCount: p.winnerCount as number,
     }));
     return {
