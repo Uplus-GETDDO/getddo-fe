@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList, useGameStatisticsList } from '@entities/game';
-import { isMissionOpen, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, useMissionList } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
@@ -96,8 +96,8 @@ export function TodayRewardsBanner() {
         attended: today?.attended,
         // 준비 중인 게임은 보상을 받을 수 없어 세지 않는다
         games: gameRewards,
-        // 지금 참여할 수 있는 미션만 센다 — 목록 카드는 기간이 지난 미션도 그대로 보여 준다
-        missions: missions?.filter((mission) => isMissionOpen(mission, now)),
+        // 지금 참여할 수 있는 미션만 센다 — 판정은 응답의 serverTime 기준이다 (완료 여부는 그대로 반영)
+        missions: missions?.filter((mission) => isMissionOpenByServerTime(mission)),
     });
     // 출석·게임·미션을 다 불러오기 전에는 남은 장수가 0으로 잡혀 틀린 숫자가 보이니 글줄 스켈레톤으로 둔다
     const ready =

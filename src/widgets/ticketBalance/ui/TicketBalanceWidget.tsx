@@ -13,7 +13,7 @@ import {
     getGameContent,
     useGameStatisticsList,
 } from '@entities/game';
-import { missionThumbnail, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, missionThumbnail, useMissionList } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
@@ -101,20 +101,24 @@ export function TicketBalanceWidget({
                   },
               ]
             : []),
-        ...(missions ?? []).map((mission) => ({
-            id: mission.id,
-            category: 'MISSION' as const,
-            title: mission.title,
-            description: '미션 완료 시 등급 추첨 응모권을 받아요',
-            rewardKind: '등급 응모권',
-            rewardTickets: mission.rewardTicketCount,
-            // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
-            href: `/missions?mission=${mission.id}`,
-            actionLabel: '미션하러 가기',
-            completed: mission.completed,
-            thumbnailUrl: missionThumbnail(mission),
-            thumbnailIcon: ClipboardList,
-        })),
+        // 진행 중이고 아직 완료하지 않은 미션만 카드로 — 목록(M01)은 끝난 미션도 내려주므로
+        // 응답의 serverTime으로 걸러 완료·종료·시작 전 카드가 홈에 나오지 않게 한다
+        ...(missions ?? [])
+            .filter((mission) => !mission.completed && isMissionOpenByServerTime(mission))
+            .map((mission) => ({
+                id: mission.id,
+                category: 'MISSION' as const,
+                title: mission.title,
+                description: '미션 완료 시 등급 추첨 응모권을 받아요',
+                rewardKind: '등급 응모권',
+                rewardTickets: mission.rewardTicketCount,
+                // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
+                href: `/missions?mission=${mission.id}`,
+                actionLabel: '미션하러 가기',
+                completed: mission.completed,
+                thumbnailUrl: missionThumbnail(mission),
+                thumbnailIcon: ClipboardList,
+            })),
         ...(games ?? [])
             .filter((game) => hasGamePlayer(game.code))
             .map((game) => ({
