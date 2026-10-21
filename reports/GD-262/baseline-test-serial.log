@@ -1,0 +1,6 @@
+
+ RUN  v5.0.1 C:/Users/s_don/Desktop/Projects/Project_Hub/Ureca-GETDDO/getddo-fe
+
+ ❯ src/app/routes/userRoutes.test.tsx (1 test | 1 failed) 22ms
+   ❯ 사용자 초기 경로의 게임 코드 분리 (1)
+     × 게임 코드 로딩 경계를 페이지 안에 두어 사용자 레이아웃을 유지한다 11ms

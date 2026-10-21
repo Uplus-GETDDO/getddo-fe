@@ -1,0 +1,12 @@
+
+ RUN  v5.0.1 C:/Users/s_don/Desktop/Projects/Project_Hub/Ureca-GETDDO/getddo-fe
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  09:19:38
+   Duration  17.90s (transform 63%, setup 27%, environment 10%)
+
+  Transform  transforming modules took 10.94s · 63% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
