@@ -35,3 +35,9 @@ export function getVirtualUsers(): VirtualUser[] {
         throw new VirtualUsersConfigError('invalid', error);
     }
 }
+
+// 페르소나가 없는 계정의 보조 라벨 — '시스템 관리 계정'은 관리자 전용 문구라
+// 라벨이 비어 있는 USER 계정에 붙으면 관리자로 오인된다
+export function virtualUserLabel(user: Pick<VirtualUser, 'personaLabel' | 'role'>): string {
+    return user.personaLabel ?? (user.role === 'ADMIN' ? '시스템 관리 계정' : '시연 계정');
+}

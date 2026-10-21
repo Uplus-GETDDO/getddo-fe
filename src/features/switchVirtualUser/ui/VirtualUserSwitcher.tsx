@@ -1,7 +1,7 @@
 import { Check, CircleUserRound, ShieldCheck } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 
-import { useSessionStore, useVirtualUsers } from '@entities/user';
+import { useSessionStore, useVirtualUsers, virtualUserLabel } from '@entities/user';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { SkeletonList } from '@shared/ui/skeleton';
@@ -102,7 +102,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
                                         )}
                                     </span>
                                     <span className="text-fg-secondary text-caption break-all">
-                                        {user.personaLabel ?? '시스템 관리 계정'}
+                                        {virtualUserLabel(user)}
                                     </span>
                                 </div>
                                 {isCurrent && <Check className="text-fg-brand size-4 shrink-0" />}
