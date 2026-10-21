@@ -5,6 +5,7 @@ import type { PublishedPrize } from '@entities/drawResult';
 
 import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { Badge } from '@shared/ui/badge';
+import { ImagePlaceholder } from '@shared/ui/image-placeholder';
 import { cn } from '@shared/utils/cn';
 import { formatNumber } from '@shared/utils/format';
 
@@ -60,7 +61,7 @@ export function PrizeWinnerCard({
     const thumbnail = (className: string) => (
         <div
             className={cn(
-                'bg-surface-canvas relative hidden overflow-hidden rounded-xl lg:block',
+                'bg-surface-sunken relative hidden overflow-hidden rounded-xl lg:block',
                 className,
             )}
         >
@@ -69,10 +70,10 @@ export function PrizeWinnerCard({
                     src={imageUrl!}
                     alt=""
                     onError={image.onError}
-                    className="absolute inset-0 size-full object-contain p-3 mix-blend-multiply dark:mix-blend-normal"
+                    className="absolute inset-0 size-full object-contain p-2 mix-blend-multiply dark:mix-blend-normal"
                 />
             ) : (
-                <div className="size-full" />
+                <ImagePlaceholder className="size-full" />
             )}
         </div>
     );

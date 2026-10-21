@@ -4,6 +4,7 @@ import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { Card } from '@shared/ui/card';
+import { ImagePlaceholder } from '@shared/ui/image-placeholder';
 import { toKst } from '@shared/utils/date';
 
 import type { Event } from '../model/types';
@@ -48,7 +49,7 @@ export function EventCard({ event }: { event: Event }) {
                     className="border-border-default aspect-video w-full shrink-0 border-b object-cover object-center"
                 />
             ) : (
-                <div className="bg-surface-sunken aspect-video" />
+                <ImagePlaceholder className="border-border-default aspect-video border-b" />
             )}
             <div className="flex flex-col gap-3 p-4">
                 {((dDay != null && dDay >= 0) || event.myEntered) && (
