@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import { useAdminMission } from '@entities/mission';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
@@ -8,8 +10,16 @@ import { SurveySummaryPanel } from './SurveySummaryPanel';
 export function MissionDetailPanel({ id }: { id: string }) {
     const query = useAdminMission(id);
     const mission = query.data;
+    const panelRef = useRef<HTMLElement>(null);
+    useEffect(() => {
+        // 패널은 목록 맨 아래에 그려져 '상세'를 눌러도 안 보였다 — 열리면 패널로 스크롤하고 포커스를 옮긴다
+        panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        panelRef.current?.focus({ preventScroll: true });
+    }, []);
     return (
         <section
+            ref={panelRef}
+            tabIndex={-1}
             aria-label="미션 상세"
             className="border-border-default flex min-w-0 flex-col gap-4 rounded-xl border p-4"
         >
@@ -57,7 +67,12 @@ export function MissionDetailPanel({ id }: { id: string }) {
                         </div>
                     ))}
                     {mission.missionType === 'SURVEY' && (
-                        <SurveySummaryPanel key={mission.id} missionId={mission.id} />
+                        <SurveySummaryPanel
+                            key={mission.id}
+                            missionId={mission.id}
+                            startsAt={mission.startsAt}
+                            endsAt={mission.endsAt}
+                        />
                     )}
                 </>
             )}
