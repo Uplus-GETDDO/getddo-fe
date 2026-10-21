@@ -264,6 +264,16 @@ export function CapsuleGacha({
                         })}
                         <img src={machine} alt="" draggable={false} className="relative w-full" />
                         {/* 손잡이 — 누르면 뽑는다 (키보드·스크린리더는 아래 '보상 뽑기' 버튼을 쓴다) */}
+                        {/* 손잡이 뒤 빛 — 뽑기 전에만 천천히 커졌다 작아지며 누를 곳을 알린다 */}
+                        {phase === 'idle' && !reduceMotion && (
+                            <motion.span
+                                aria-hidden
+                                className="pointer-events-none absolute top-[76%] left-1/2 size-26 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--color-ticket-primary)_0%,var(--color-ticket-primary)_38%,transparent_72%)]"
+                                initial={{ scale: 0.7, opacity: 0.45 }}
+                                animate={{ scale: [0.7, 1.05, 0.7], opacity: [0.45, 0.9, 0.45] }}
+                                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                            />
+                        )}
                         <motion.button
                             type="button"
                             tabIndex={-1}
@@ -335,7 +345,7 @@ export function CapsuleGacha({
                             src={sparkle}
                             alt=""
                             draggable={false}
-                            className="absolute top-1/2 left-1/2 -mt-22 -ml-22 size-44 max-w-none object-contain"
+                            className="absolute top-1/2 left-1/2 -mt-20 -ml-20 size-40 max-w-none object-contain"
                             initial={reduceMotion ? false : { opacity: 0, scale: 0.2, rotate: 0 }}
                             animate={
                                 reduceMotion
@@ -353,16 +363,16 @@ export function CapsuleGacha({
                             src={capsuleBottom}
                             alt=""
                             draggable={false}
-                            className="absolute top-1/2 left-1/2 -ml-10 w-20"
+                            className="absolute top-1/2 left-1/2 -ml-9 w-18"
                             initial={reduceMotion ? false : { y: 4 }}
-                            animate={{ y: 30 }}
+                            animate={{ y: 27 }}
                             transition={{ type: 'spring', stiffness: 180, damping: 14 }}
                         />
                         <motion.img
                             src={reward}
                             alt=""
                             draggable={false}
-                            className="absolute top-1/2 left-1/2 -mt-8 -ml-13 h-16 w-26 object-contain drop-shadow-md"
+                            className="absolute top-1/2 left-1/2 -mt-8.5 -ml-14 h-17 w-28 object-contain drop-shadow-md"
                             initial={reduceMotion ? false : { y: 26, scale: 0.2, opacity: 0 }}
                             animate={{ y: -2, scale: 1, opacity: 1 }}
                             transition={{
@@ -376,9 +386,9 @@ export function CapsuleGacha({
                             src={capsuleTop}
                             alt=""
                             draggable={false}
-                            className="absolute top-1/2 left-1/2 -mt-11 -ml-10.5 w-21"
+                            className="absolute top-1/2 left-1/2 -mt-10 -ml-9.5 w-19"
                             initial={reduceMotion ? false : { y: 0, x: 0, rotate: 0 }}
-                            animate={{ y: -44, x: -22, rotate: -22 }}
+                            animate={{ y: -40, x: -20, rotate: -22 }}
                             transition={{ type: 'spring', stiffness: 150, damping: 13 }}
                         />
                     </>
