@@ -13,9 +13,11 @@ import { formatNumber } from '@shared/utils/format';
  */
 export function MyTicketCard({ event }: { event: Event }) {
     const { data: ticket, isPending } = useMyTickets();
-    const { data: myEntries } = useMyEventEntries(event.id);
+    const { data: myEntries, isPending: isEntriesPending } = useMyEventEntries(event.id);
 
     const usesTickets = event.eventType === 'TICKET';
+    // 로딩·실패를 0건으로 취급하면 한도 문구가 "전부 쓸 수 있어요"로 잘못 읽힌다
+    const entriesStatusText = myEntries ? null : isEntriesPending ? '불러오는 중' : '조회 실패';
     const entryCount = myEntries?.length ?? 0;
     // 한 번에 여러 장을 쓸 수 있어 횟수 × 차감량으로는 실제 사용량이 나오지 않는다
     const usedTickets =
@@ -30,12 +32,20 @@ export function MyTicketCard({ event }: { event: Event }) {
                 <div className="flex flex-col gap-3 max-lg:pb-5 lg:pr-6">
                     <p className="text-body-sm text-fg-tertiary">이번 래플</p>
                     <p className="text-body-sm text-fg-secondary flex flex-wrap items-baseline gap-x-2">
-                        <span className="text-body-bold text-fg-primary tabular-nums">
-                            {formatNumber(entryCount)}회 응모
-                        </span>
-                        {usesTickets && <span>응모권 {formatNumber(usedTickets)}장 사용</span>}
+                        {entriesStatusText ? (
+                            entriesStatusText
+                        ) : (
+                            <>
+                                <span className="text-body-bold text-fg-primary tabular-nums">
+                                    {formatNumber(entryCount)}회 응모
+                                </span>
+                                {usesTickets && (
+                                    <span>응모권 {formatNumber(usedTickets)}장 사용</span>
+                                )}
+                            </>
+                        )}
                     </p>
-                    {limit != null && (
+                    {entriesStatusText == null && limit != null && (
                         <div className="mt-auto flex flex-col gap-1.5">
                             <div
                                 role="progressbar"
