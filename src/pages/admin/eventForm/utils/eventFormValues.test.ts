@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { eventFormSchema, eventFormToRequest } from './eventFormValues';
+import type { AdminEvent } from '@entities/event';
+
+import { eventFormSchema, eventFormToRequest, eventToFormValues } from './eventFormValues';
 
 const base = {
     title: '테스트 이벤트',
@@ -138,5 +140,75 @@ describe('eventFormSchema', () => {
             ],
         });
         expect(result.success).toBe(false);
+    });
+});
+
+describe('eventToFormValues', () => {
+    const adminEvent = (prizeImages: AdminEvent['prizeImages']): AdminEvent =>
+        ({
+            title: '수정할 이벤트',
+            description: '설명',
+            imageUrl: 'https://cdn.example.com/images/events/hero.png',
+            imageKey: 'events/hero.png',
+            eventType: 'TICKET',
+            weightingEnabled: true,
+            maxTicketsPerUser: 5,
+            membershipRule: 'excellent',
+            startsAt: '2026-10-20T01:00:00Z',
+            endsAt: '2026-10-21T01:00:00Z',
+            prizes: [
+                {
+                    id: 'prize-1',
+                    rank: 1,
+                    name: '1등',
+                    description: null,
+                    imageUrl: 'https://cdn.example.com/images/prizes/one.png',
+                    winnerCount: 1,
+                },
+                {
+                    id: 'prize-2',
+                    rank: 2,
+                    name: '2등',
+                    description: null,
+                    imageUrl: null,
+                    winnerCount: 2,
+                },
+            ],
+            prizeImages,
+        }) as AdminEvent;
+
+    it('prizeImages의 키를 경품별 폼 값으로 되살린다', () => {
+        const values = eventToFormValues(
+            adminEvent([{ prizeId: 'prize-1', imageKey: 'prizes/one.png' }]),
+        );
+
+        expect(values.prizes[0]!.imageKey).toBe('prizes/one.png');
+        // 키가 없는 경품은 빈 값 — 지운 것과 같게 다룬다
+        expect(values.prizes[1]!.imageKey).toBe('');
+    });
+
+    /*
+     * 제목만 고쳐 저장해도 경품 이미지 연결이 지워지던 버그를 막는다.
+     * 키를 되살리지 않으면 imageKey가 null로 나가 서버가 연결을 끊는다.
+     */
+    it('이미지를 건드리지 않은 경품은 받은 키를 그대로 돌려보낸다', () => {
+        const values = eventToFormValues(
+            adminEvent([{ prizeId: 'prize-1', imageKey: 'prizes/one.png' }]),
+        );
+        const body = eventFormToRequest(eventFormSchema.parse({ ...values, title: '제목만 고침' }));
+
+        expect(body.prizes[0]!.imageKey).toBe('prizes/one.png');
+        expect(body.imageKey).toBe('events/hero.png');
+    });
+
+    it('사용자가 지운 경품만 null로 나간다', () => {
+        const values = eventToFormValues(
+            adminEvent([{ prizeId: 'prize-1', imageKey: 'prizes/one.png' }]),
+        );
+        values.prizes[0]!.imageKey = '';
+
+        const body = eventFormToRequest(eventFormSchema.parse(values));
+
+        expect(body.prizes[0]!.imageKey).toBeNull();
     });
 });
