@@ -1,10 +1,11 @@
-import type { MouseEvent, PointerEvent } from 'react';
+import type { DragEvent, MouseEvent, PointerEvent } from 'react';
 
 import { useRef } from 'react';
 
 /**
  * 가로 스크롤 목록을 마우스로 끌어서 넘길 수 있게 한다 (터치는 브라우저 기본 스크롤을 쓴다).
  * 끌다가 놓으면 그 속도로 조금 더 미끄러지고, 끈 뒤에 생기는 클릭은 안쪽 링크로 전달하지 않는다.
+ * 안쪽 링크·이미지를 잡고 끌어도 링크가 끌려 나가지 않고 목록이 넘어간다.
  * 반환값을 스크롤 영역 요소에 그대로 펼쳐 넣는다
  */
 export function useDragScroll<T extends HTMLElement>() {
@@ -79,6 +80,10 @@ export function useDragScroll<T extends HTMLElement>() {
         },
         onPointerCancel: () => {
             drag.current = null;
+        },
+        // 안쪽 링크·이미지를 누르고 끌면 브라우저가 그 링크·이미지를 끌어 옮기기 시작해 포인터 이벤트가 끊긴다 — 목록 끌기만 남긴다
+        onDragStart: (e: DragEvent<T>) => {
+            e.preventDefault();
         },
         onClickCapture: (e: MouseEvent<T>) => {
             if (!suppressClick.current) return;

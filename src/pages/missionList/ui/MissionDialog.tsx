@@ -18,6 +18,7 @@ import {
     DialogTitle,
 } from '@shared/ui/dialog';
 import { Skeleton, SkeletonText } from '@shared/ui/skeleton';
+import { StatusDot } from '@shared/ui/status-dot';
 import { formatKst } from '@shared/utils/date';
 
 import { MISSION_KIND_LABEL, missionUrgentDeadline } from '../utils/missionBoard';
@@ -167,14 +168,21 @@ function MissionDialogBody({
                 ref={headerRef}
                 className="border-border-strong flex shrink-0 flex-col gap-2 border-b border-dashed px-6 pt-6 pr-12 pb-5"
             >
-                <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="neutral">{MISSION_KIND_LABEL[mission.missionType]}</Badge>
-                    {!mission.completed && !notYetOpen && !ended && deadline && (
-                        // 오늘 마감은 겟또타임 D-day처럼 검정 알약, 7일 이내는 흰 바탕+테두리 (카드와 같은 규칙)
-                        <Badge variant={deadline === '오늘 마감' ? 'inverse' : 'outline'}>
-                            {deadline}
-                        </Badge>
-                    )}
+                <div className="flex min-h-5.5 flex-wrap items-center gap-2">
+                    {/* 종류는 카드처럼 작은 라벨, 칩은 급한 마감만 */}
+                    <span className="text-caption text-fg-tertiary">
+                        {MISSION_KIND_LABEL[mission.missionType]}
+                    </span>
+                    {!mission.completed &&
+                        !notYetOpen &&
+                        !ended &&
+                        deadline &&
+                        // 오늘 마감은 '지금' 신호(마젠타 점+글자), 7일 이내는 흰 바탕+테두리 (카드와 같은 규칙)
+                        (deadline === '오늘 마감' ? (
+                            <StatusDot>{deadline}</StatusDot>
+                        ) : (
+                            <Badge variant="outline">{deadline}</Badge>
+                        ))}
                 </div>
                 {/* 글자 크기는 text-xl로 — 커스텀 타이포 토큰은 공용 cn이 글자색과 같은 묶음으로 보고 지운다 */}
                 <DialogTitle className="text-xl leading-7 font-semibold">
@@ -192,7 +200,7 @@ function MissionDialogBody({
                     <MissionReward
                         count={mission.rewardTicketCount}
                         received={mission.completed}
-                        muted={mission.completed}
+                        muted={mission.completed || ended}
                         small
                     />
                 </p>

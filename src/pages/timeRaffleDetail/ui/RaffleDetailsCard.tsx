@@ -33,7 +33,7 @@ export function RaffleDetailsCard({ event }: { event: Event }) {
         { label: '배송 일정', value: detail?.shippingSchedule ?? null },
         {
             label: '모집 시각',
-            value: `KST ${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · KST ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
+            value: `${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
         },
         { label: '멤버십 자격', value: detail?.membershipNote ?? null },
         {

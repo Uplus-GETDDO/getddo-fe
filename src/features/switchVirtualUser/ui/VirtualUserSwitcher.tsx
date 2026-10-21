@@ -23,9 +23,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger
                 asChild={!!trigger}
-                aria-label={
-                    current ? `가상 사용자 전환, 현재 사용자 ${current.name}` : '가상 사용자 전환'
-                }
+                aria-label={current ? `계정 전환, 현재 사용자 ${current.name}` : '계정 전환'}
                 className={
                     trigger
                         ? undefined
@@ -40,7 +38,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
                 className="w-80 max-w-[calc(100vw-2rem)]"
             >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-body-sm-bold text-fg-primary">가상 사용자 전환</p>
+                    <p className="text-body-sm-bold text-fg-primary">계정 전환</p>
                     {current && (
                         <p className="text-fg-tertiary text-caption min-w-0 break-all">
                             현재: {current.name}

@@ -54,6 +54,37 @@ export function useAdminEvent(eventId: string) {
     });
 }
 
+// 여러 상태의 목록을 한 번에 — AE01 상태 필터가 하나만 받아 상태마다 따로 불러 합친다 (추첨 관리의 단계 거르기).
+// 키는 useAdminEvents와 같은 모양이라 같은 조건이면 캐시를 나눠 쓴다. truncated: 어느 상태든 한 쪽에 다 담기지 않았다
+export function useAdminEventsByStatus(
+    statuses: readonly AdminEventStatus[],
+    params: Omit<AdminEventsParams, 'status'>,
+) {
+    return useQueries({
+        queries: statuses.map((status) => {
+            const query = { ...params, status };
+            return {
+                ...queryPresets.realtime,
+                queryKey: [...ADMIN_EVENTS_KEY, 'list', query],
+                queryFn: async () => {
+                    const { data } = await apiClient.get<unknown>(ADMIN_EVENTS_API_PATH, {
+                        params: query,
+                    });
+                    return envelopeSchema(adminEventPageSchema).parse(data).data;
+                },
+            };
+        }),
+        combine: (results) => ({
+            items: results.flatMap((result) => result.data?.items ?? []),
+            truncated: results.some(
+                (result) => (result.data?.totalElements ?? 0) > (result.data?.items.length ?? 0),
+            ),
+            isPending: results.some((result) => result.isPending),
+            isError: results.some((result) => result.isError),
+        }),
+    });
+}
+
 // 대시보드 집계 — 상태별 집계 API가 없어 상태마다 size=1로 불러 totalElements(전체 건수)만 쓴다
 export function useAdminEventStatusCounts(statuses: readonly AdminEventStatus[]) {
     return useQueries({

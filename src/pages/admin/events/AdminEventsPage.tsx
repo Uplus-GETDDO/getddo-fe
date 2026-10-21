@@ -17,8 +17,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LoadingBlock, TableSkeleton } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 import { kstInputToUtcIso } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
-const PAGE_SIZE = 10;
+// 한 화면에 보는 줄 수 — 수천 건을 넘겨 보려면 30·100개씩 고를 수 있어야 한다 (AE01 size 최대 100)
+const PAGE_SIZE_OPTIONS = [30, 100] as const;
 const SORT_OPTIONS = [
     ['createdAt,desc', '등록일 최신'],
     ['createdAt,asc', '등록일 오래된'],
@@ -72,6 +74,7 @@ export function AdminEventsPage() {
         });
     };
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
     const [keywordInput, setKeywordInput] = useState('');
     // 검색어는 엔터·버튼으로 확정된 값만 쿼리에 넘긴다 — 입력마다 요청하지 않는다
     const [keyword, setKeyword] = useState('');
@@ -121,7 +124,7 @@ export function AdminEventsPage() {
 
     const { data, isPending, isError, isFetching, refetch } = useAdminEvents({
         page,
-        size: PAGE_SIZE,
+        size: pageSize,
         keyword: keyword || undefined,
         status: status === 'all' ? undefined : status,
         eventType: eventType === 'all' ? undefined : eventType,
@@ -158,136 +161,141 @@ export function AdminEventsPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            <div className="flex flex-wrap items-center gap-3">
-                <form
-                    className="flex flex-wrap items-center gap-2"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        const rangeValid = isDateRangeOrdered(fromInput, toInput);
-                        const createdRangeValid = isDateRangeOrdered(
-                            createdFromInput,
-                            createdToInput,
-                        );
-                        setRangeError(!rangeValid);
-                        setCreatedRangeError(!createdRangeValid);
-                        if (!rangeValid || !createdRangeValid) {
-                            return;
-                        }
-                        setRangeError(false);
-                        setKeyword(keywordInput.trim());
-                        setFrom(draftFrom);
-                        setTo(draftTo);
-                        setCreatedFrom(createdFromInput);
-                        setCreatedTo(createdToInput);
-                        resetPage();
-                    }}
-                >
-                    <TextFilter
-                        value={keywordInput}
-                        onChange={setKeywordInput}
-                        placeholder="이벤트 이름·설명 검색"
-                        label="이벤트 검색"
-                        className="w-64"
-                    />
-                    <DateRangeFilter
-                        from={fromInput}
-                        to={toInput}
-                        onFromChange={setFromInput}
-                        onToChange={setToInput}
-                        basis="응모 시작일"
-                        error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
-                    />
-                    <DateRangeFilter
-                        from={createdFromInput}
-                        to={createdToInput}
-                        onFromChange={setCreatedFromInput}
-                        onToChange={setCreatedToInput}
-                        basis="등록일"
-                        error={createdRangeError ? '시작일이 종료일보다 늦습니다.' : null}
-                    />
-                    <Button type="submit" variant="secondary">
-                        검색
+            {/* 첫 줄은 검색어·기간 검색과 등록, 둘째 줄은 바로 걸리는 선택형 필터(상태·유형·정렬·가중치)를 한데 묶는다 */}
+            <div className="flex flex-col gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                    <form
+                        className="flex flex-wrap items-center gap-2"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            const rangeValid = isDateRangeOrdered(fromInput, toInput);
+                            const createdRangeValid = isDateRangeOrdered(
+                                createdFromInput,
+                                createdToInput,
+                            );
+                            setRangeError(!rangeValid);
+                            setCreatedRangeError(!createdRangeValid);
+                            if (!rangeValid || !createdRangeValid) {
+                                return;
+                            }
+                            setRangeError(false);
+                            setKeyword(keywordInput.trim());
+                            setFrom(draftFrom);
+                            setTo(draftTo);
+                            setCreatedFrom(createdFromInput);
+                            setCreatedTo(createdToInput);
+                            resetPage();
+                        }}
+                    >
+                        <TextFilter
+                            value={keywordInput}
+                            onChange={setKeywordInput}
+                            placeholder="이벤트 이름·설명 검색"
+                            label="이벤트 검색"
+                            className="w-64"
+                        />
+                        <DateRangeFilter
+                            from={fromInput}
+                            to={toInput}
+                            onFromChange={setFromInput}
+                            onToChange={setToInput}
+                            basis="응모 시작일"
+                            error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                        />
+                        <DateRangeFilter
+                            from={createdFromInput}
+                            to={createdToInput}
+                            onFromChange={setCreatedFromInput}
+                            onToChange={setCreatedToInput}
+                            basis="등록일"
+                            error={createdRangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                        />
+                        <Button type="submit" variant="secondary">
+                            검색
+                        </Button>
+                        <Button type="button" variant="ghost" onClick={resetFilters}>
+                            초기화
+                        </Button>
+                    </form>
+                    <Button className="ml-auto" onClick={() => void navigate('/admin/events/new')}>
+                        새 이벤트 등록
                     </Button>
-                    <Button type="button" variant="ghost" onClick={resetFilters}>
-                        초기화
-                    </Button>
-                </form>
+                </div>
 
-                <Select
-                    value={status}
-                    onValueChange={(v) => {
-                        setStatus(v as 'all' | AdminEventStatus);
-                        resetPage();
-                    }}
-                >
-                    <SelectTrigger className="w-40" aria-label="상태 필터">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {STATUS_OPTIONS.map(({ value, label }) => (
-                            <SelectItem key={value} value={value}>
-                                {label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <div className="flex flex-wrap items-center gap-3">
+                    <Select
+                        value={status}
+                        onValueChange={(v) => {
+                            setStatus(v as 'all' | AdminEventStatus);
+                            resetPage();
+                        }}
+                    >
+                        <SelectTrigger className="w-40" aria-label="상태 필터">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {STATUS_OPTIONS.map(({ value, label }) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
 
-                <Select
-                    value={eventType}
-                    onValueChange={(v) => {
-                        setEventType(v as 'all' | EventType);
-                        resetPage();
-                    }}
-                >
-                    <SelectTrigger className="w-36" aria-label="유형 필터">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {TYPE_OPTIONS.map(({ value, label }) => (
-                            <SelectItem key={value} value={value}>
-                                {label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                    <Select
+                        value={eventType}
+                        onValueChange={(v) => {
+                            setEventType(v as 'all' | EventType);
+                            resetPage();
+                        }}
+                    >
+                        <SelectTrigger className="w-36" aria-label="유형 필터">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {TYPE_OPTIONS.map(({ value, label }) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
 
-                <Select
-                    value={sort}
-                    onValueChange={(value) => {
-                        setSort(value);
-                        resetPage();
-                    }}
-                >
-                    <SelectTrigger className="w-40" aria-label="이벤트 정렬">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {SORT_OPTIONS.map(([value, label]) => (
-                            <SelectItem key={value} value={value}>
-                                {label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <Select
-                    value={weighting}
-                    onValueChange={(value) => {
-                        setWeighting(value);
-                        resetPage();
-                    }}
-                >
-                    <SelectTrigger className="w-40" aria-label="가중치 필터">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">가중치 전체</SelectItem>
-                        <SelectItem value="true">가중치 적용</SelectItem>
-                        <SelectItem value="false">가중치 미적용</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Button className="ml-auto" onClick={() => void navigate('/admin/events/new')}>
-                    새 이벤트 등록
-                </Button>
+                    <Select
+                        value={sort}
+                        onValueChange={(value) => {
+                            setSort(value);
+                            resetPage();
+                        }}
+                    >
+                        <SelectTrigger className="w-40" aria-label="이벤트 정렬">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {SORT_OPTIONS.map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select
+                        value={weighting}
+                        onValueChange={(value) => {
+                            setWeighting(value);
+                            resetPage();
+                        }}
+                    >
+                        <SelectTrigger className="w-40" aria-label="가중치 필터">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">가중치 전체</SelectItem>
+                            <SelectItem value="true">가중치 적용</SelectItem>
+                            <SelectItem value="false">가중치 미적용</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             {hasPendingDraft && (
@@ -344,6 +352,33 @@ export function AdminEventsPage() {
                     )}
                     {data && data.items.length > 0 && (
                         <>
+                            {/* 총 건수와 볼 개수는 표 위에 — 아래에 두면 목록을 다 내려야 몇 건인지 보였다 */}
+                            <div className="-mb-3 flex items-center gap-3">
+                                <span className="text-body-sm-bold text-fg-primary tabular-nums">
+                                    총 {formatNumber(data.totalElements)}건
+                                </span>
+                                <Select
+                                    value={String(pageSize)}
+                                    onValueChange={(value) => {
+                                        setPageSize(Number(value));
+                                        resetPage();
+                                    }}
+                                >
+                                    <SelectTrigger
+                                        className="h-9 w-28"
+                                        aria-label="한 화면에 볼 개수"
+                                    >
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {PAGE_SIZE_OPTIONS.map((size) => (
+                                            <SelectItem key={size} value={String(size)}>
+                                                {size}개씩 보기
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <AdminEventTable
                                 events={data.items}
                                 compact={selectedId != null}
@@ -353,16 +388,13 @@ export function AdminEventsPage() {
                                     openDetail(event.id === selectedId ? null : event.id)
                                 }
                             />
-                            <div className="flex items-center justify-between">
-                                <span className="text-body-sm text-fg-secondary">
-                                    총 {data.totalElements}건
-                                </span>
-                                <Pagination
-                                    page={page}
-                                    totalPages={totalPages}
-                                    onPageChange={setPage}
-                                />
-                            </div>
+                            <Pagination
+                                page={page}
+                                totalPages={totalPages}
+                                onPageChange={setPage}
+                                jump
+                                className="self-end"
+                            />
                         </>
                     )}
                 </div>

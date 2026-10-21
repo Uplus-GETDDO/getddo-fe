@@ -4,6 +4,7 @@ export { hasGamePlayer } from './model/gamePlayers';
 export type { PlayResult } from './model/types';
 export { GameImageButton } from './ui/GameImageButton';
 export { GamePlayer } from './ui/GamePlayer';
+export { RewardDialog } from './ui/RewardDialog';
 
 export type { GameStart, ValidationData } from './model/types';
 export type { GameSubmission } from './api/queries';

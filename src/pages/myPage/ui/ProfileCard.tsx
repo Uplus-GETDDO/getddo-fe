@@ -126,7 +126,7 @@ export function ProfileCard({
                     trigger={
                         <Button variant="secondary" size="sm">
                             <Repeat className="size-4" />
-                            가상 사용자 전환
+                            계정 전환
                         </Button>
                     }
                 />
