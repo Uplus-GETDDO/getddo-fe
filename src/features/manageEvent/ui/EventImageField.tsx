@@ -54,9 +54,9 @@ export function EventImageField({
         upload.mutate(
             { file, target },
             {
-                onSuccess: ({ key, url }) => {
-                    onChange(key);
-                    setUploadedUrl(url);
+                onSuccess: ({ imageKey, imageUrl }) => {
+                    onChange(imageKey);
+                    setUploadedUrl(imageUrl);
                 },
             },
         );

@@ -65,8 +65,8 @@ describe('EventImageField', () => {
                 HttpResponse.json(
                     {
                         success: false,
-                        code: 'EVENT-009',
-                        message: '손상된 이미지입니다',
+                        code: 'EVENT-018',
+                        message: '5MB 이하의 JPG·PNG 이미지 파일이 필요합니다.',
                         data: null,
                     },
                     { status: 400 },
@@ -77,6 +77,8 @@ describe('EventImageField', () => {
 
         await userEvent.upload(screen.getByLabelText('대표 이미지'), png());
 
-        expect(await screen.findByRole('alert')).toBeInTheDocument();
+        expect(await screen.findByRole('alert')).toHaveTextContent(
+            '5MB 이하의 JPG·PNG 이미지 파일이 필요합니다.',
+        );
     });
 });

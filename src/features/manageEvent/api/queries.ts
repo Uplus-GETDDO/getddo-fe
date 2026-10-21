@@ -92,10 +92,15 @@ export function useEventAction(action: EventAction) {
     });
 }
 
-/** 업로드 응답 — 등록·수정에 실을 key와 미리보기에 쓸 url (BE GD-227) */
+/**
+ * 업로드 응답 — 등록·수정에 실을 imageKey와 미리보기에 쓸 imageUrl.
+ *
+ * 이름은 05-api/common.md의 「쓰기는 imageKey, 읽기는 imageUrl」 규칙을 그대로 따른다.
+ * 업로드 엔드포인트 자체는 아직 spec에 없어 BE 구현에 맞춘 것이다.
+ */
 const eventImageUploadSchema = z.object({
-    key: z.string(),
-    url: z.string(),
+    imageKey: z.string(),
+    imageUrl: z.string(),
 });
 
 export const EVENT_IMAGE_UPLOAD_API_PATH = `${ADMIN_EVENTS_API_PATH}/images`;

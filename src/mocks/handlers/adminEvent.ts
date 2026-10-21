@@ -21,6 +21,9 @@ const api = (path: string) => `${env.apiBaseUrl}${path}`;
  */
 const mockUploadedImages = new Map<string, string>();
 
+/** 업로드 거절 문구 — 실서버가 EVENT-018로 보내는 문장 그대로다 */
+const IMAGE_REJECTED_MESSAGE = '5MB 이하의 JPG·PNG 이미지 파일이 필요합니다.';
+
 /** 등록·수정이 실어 온 키를 화면 주소로 바꾼다 — 모르는 키는 주소가 없다 */
 export function resolveMockImageUrl(imageKey: string | null | undefined): string | null {
     return imageKey ? (mockUploadedImages.get(imageKey) ?? null) : null;
@@ -598,17 +601,17 @@ export const adminEventHandlers = [
         const file = buffer && readMultipartFile(buffer);
         if (!file) return fail(400, 'COMMON-002', '파일이 없습니다');
 
+        // 실서버는 형식·용량 위반을 한 코드·한 문구로 묶어 돌려준다 (2026-10-21 실서버 확인)
         const png = file.contentType === 'image/png';
         if (!png && file.contentType !== 'image/jpeg') {
-            return fail(400, 'EVENT-009', 'PNG 또는 JPG만 올릴 수 있습니다');
+            return fail(400, 'EVENT-018', IMAGE_REJECTED_MESSAGE);
         }
-        if (buffer.byteLength > 5_000_000)
-            return fail(400, 'EVENT-009', '5MB까지 올릴 수 있습니다');
+        if (buffer.byteLength > 5_000_000) return fail(400, 'EVENT-018', IMAGE_REJECTED_MESSAGE);
 
         const directory = target === 'EVENT' ? 'events' : 'prizes';
         const key = `${directory}/${crypto.randomUUID()}.${png ? 'png' : 'jpg'}`;
         mockUploadedImages.set(key, file.dataUrl);
-        return ok({ key, url: file.dataUrl }, 201);
+        return ok({ imageKey: key, imageUrl: file.dataUrl }, 201);
     }),
 
     // AE03 — 등록: 이벤트와 경품이 함께 성공하거나 함께 실패한다
