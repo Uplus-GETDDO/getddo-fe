@@ -116,12 +116,18 @@ export function HomePage() {
                             title="응모 결과를 불러오지 못했어요"
                             onRetry={() => void eventsQuery.refetch()}
                             retrying={eventsQuery.isFetching}
+                            inline
                         />
                     ) : resultEvents.length === 0 ? (
                         <EmptyState
                             size="sm"
                             title="아직 응모한 이벤트가 없어요"
                             description="응모한 이벤트가 마감되면 발표 대기와 결과를 여기에서 볼 수 있어요."
+                            action={
+                                <Button asChild variant="secondary" size="sm">
+                                    <Link to="/time-raffle">겟또타임 보러 가기</Link>
+                                </Button>
+                            }
                         />
                     ) : (
                         <div className="[&>*+*]:before:bg-border-default flex flex-col [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px">

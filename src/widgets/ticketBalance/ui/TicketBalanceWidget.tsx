@@ -162,7 +162,7 @@ export function TicketBalanceWidget({
                 <LoadError
                     title="받을 수 있는 응모권을 불러오지 못했어요"
                     onRetry={retryAll}
-                    className="min-h-90"
+                    inline
                 />
             ) : loading ? (
                 <div role="status" className="flex gap-4 overflow-hidden">
