@@ -71,6 +71,10 @@ export function AdminAbuseCasesPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
+            {/* '어뷰징 관리' 설명 기본안 — 이 화면이 하는 일을 한 줄로 말해 준다 */}
+            <p className="text-body-sm text-fg-secondary">
+                어뷰징 탐지 기록과 관련 내역을 확인합니다.
+            </p>
             <div className="flex flex-wrap items-center gap-3">
                 <form
                     className="flex flex-wrap items-center gap-2"

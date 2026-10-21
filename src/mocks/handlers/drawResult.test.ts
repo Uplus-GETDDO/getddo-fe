@@ -12,7 +12,7 @@ async function results(eventId: string): Promise<PublicResults> {
     return publicResultsSchema.parse((data as { data: unknown }).data);
 }
 
-// 어제 끝난 래플이라 시각과 무관하게 항상 발표 완료다
+// 공개 시드(status:'drawn') — 시각과 무관하게 추첨 목업이 과거 공개로 재현한다
 const DRAWN_EVENT_ID = 'evt-107';
 // 기준 시각 +2시간에 열리는 래플이라 아직 발표 전이다
 const PENDING_EVENT_ID = 'evt-105';
@@ -73,8 +73,8 @@ describe('공개 추첨 결과 목업 (E08)', () => {
 
 // ── E09 본인 결과 ──
 
-/** 발표는 마감 + 5분이다 (ADR-009) — 그 경계를 넘나들며 확인한다 */
-const ANNOUNCE_DELAY_MS = 5 * 60 * 1000;
+/** 최초 자동 추첨은 마감 + 1분이다 (ADR-026) — 추첨 시각이 지나도 공개되지 않음을 확인한다 */
+const DRAW_DELAY_MS = 60 * 1000;
 /** 진행 중이라 응모할 수 있는 래플 */
 const OPEN_EVENT_ID = 'evt-101';
 
@@ -107,6 +107,24 @@ async function enter(eventId: string) {
     );
 }
 
+/** 관리자의 당첨자 공개 요청 — 공개는 이 요청 성공으로만 생긴다 (ADR-022) */
+async function publish(eventId: string) {
+    const prev = apiClient.defaults.headers.common['X-User-ID'];
+    apiClient.defaults.headers.common['X-User-ID'] = 'vu-admin';
+    try {
+        const { data: draws } = await apiClient.get<{ data: { items: { id: string }[] } }>(
+            `/v1/admin/events/${eventId}/draws`,
+        );
+        const runId = draws.data.items[0]!.id;
+        const res = await apiClient.post(`/v1/admin/draws/${runId}/result-confirmation`, null, {
+            validateStatus: () => true,
+        });
+        expect(res.status).toBe(200);
+    } finally {
+        apiClient.defaults.headers.common['X-User-ID'] = prev;
+    }
+}
+
 describe('본인 결과 목업 (E09)', () => {
     afterEach(() => {
         setClock(null);
@@ -114,7 +132,6 @@ describe('본인 결과 목업 (E09)', () => {
 
     it('응모하지 않았으면 발표가 끝나도 NOT_ENTERED다', async () => {
         asUser('vu-e09-absent');
-        setClock(new Date((await endsAtOf(DRAWN_EVENT_ID)) + ANNOUNCE_DELAY_MS + 60_000));
 
         // 공개 명단은 열렸지만 내 결과는 '응모 안 함'이어야 한다 — 낙첨으로 적으면 안 된다
         expect((await results(DRAWN_EVENT_ID)).isPublished).toBe(true);
@@ -128,8 +145,8 @@ describe('본인 결과 목업 (E09)', () => {
         asUser('vu-e09-pending');
         await enter(OPEN_EVENT_ID);
 
-        // 마감은 지났지만 발표 예정 시각 전이다
-        setClock(new Date((await endsAtOf(OPEN_EVENT_ID)) + 60_000));
+        // 마감·추첨 시각이 모두 지났지만 공개 요청은 아직 없다
+        setClock(new Date((await endsAtOf(OPEN_EVENT_ID)) + DRAW_DELAY_MS + 60_000));
 
         const mine = await myResult(OPEN_EVENT_ID);
         expect(mine.result).toBe('PENDING');
@@ -138,10 +155,12 @@ describe('본인 결과 목업 (E09)', () => {
         expect(mine.revision).toBeNull();
     });
 
-    it('발표 후에는 당첨 여부와 경품을 돌려준다', async () => {
+    it('공개 요청 성공 후에는 당첨 여부와 경품을 돌려준다', async () => {
         asUser('vu-e09-won');
         await enter(OPEN_EVENT_ID);
-        setClock(new Date((await endsAtOf(OPEN_EVENT_ID)) + ANNOUNCE_DELAY_MS + 60_000));
+        // 추첨이 끝날 시간까지 보낸 뒤 관리자가 공개한다
+        setClock(new Date((await endsAtOf(OPEN_EVENT_ID)) + DRAW_DELAY_MS + 60_000));
+        await publish(OPEN_EVENT_ID);
 
         const mine = await myResult(OPEN_EVENT_ID);
         expect(mine.isPublished).toBe(true);
@@ -152,7 +171,8 @@ describe('본인 결과 목업 (E09)', () => {
     it('같은 사용자·이벤트면 다시 물어도 결과가 바뀌지 않는다', async () => {
         asUser('vu-e09-stable');
         await enter(OPEN_EVENT_ID);
-        setClock(new Date((await endsAtOf(OPEN_EVENT_ID)) + ANNOUNCE_DELAY_MS + 60_000));
+        setClock(new Date((await endsAtOf(OPEN_EVENT_ID)) + DRAW_DELAY_MS + 60_000));
+        await publish(OPEN_EVENT_ID);
 
         // 30초 폴링마다 당첨과 낙첨이 뒤집히면 발표된 결과로 보이지 않는다
         const first = await myResult(OPEN_EVENT_ID);

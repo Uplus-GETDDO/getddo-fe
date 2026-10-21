@@ -23,6 +23,10 @@ export function AdminTicketsPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
+            {/* '응모권 관리' 설명 기본안 — 이 화면이 하는 일을 한 줄로 말해 준다 */}
+            <p className="text-body-sm text-fg-secondary">
+                응모권 지급·사용 내역과 잔액 정합성을 확인합니다.
+            </p>
             <ChipTabs
                 tabs={TABS}
                 value={active.value}

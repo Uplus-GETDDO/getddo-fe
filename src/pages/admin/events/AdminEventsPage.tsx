@@ -161,6 +161,10 @@ export function AdminEventsPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
+            {/* '이벤트 관리' 설명 기본안 — 이 화면이 하는 일을 한 줄로 말해 준다 */}
+            <p className="text-body-sm text-fg-secondary">
+                이벤트 일정과 경품을 설정하고 운영 상태를 관리합니다.
+            </p>
             {/* 첫 줄은 검색어·기간 검색과 등록, 둘째 줄은 바로 걸리는 선택형 필터(상태·유형·정렬·가중치)를 한데 묶는다 */}
             <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-3">

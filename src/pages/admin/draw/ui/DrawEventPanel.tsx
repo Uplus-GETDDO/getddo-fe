@@ -33,12 +33,15 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
     const latest = useEventDraws(eventId, { page: 1, size: DRAW_RUN_PAGE_SIZE });
     const [chosenId, setChosenId] = useState<string | null>(null);
     const [tab, setTab] = useState<PanelTab>('runs');
-    // 고른 실행의 다음 행동 버튼이 들어올 머리 카드 자리 — 실행 상세가 포털로 채운다
-    const [actionSlot, setActionSlot] = useState<HTMLDivElement | null>(null);
+    // 실행 상세는 중앙 모달로 연다 — 닫아도 목록의 페이지·선택(chosenId)은 그대로 남는다
+    const [detailOpen, setDetailOpen] = useState(false);
 
     // 이벤트가 바뀌면 부모가 key로 패널을 새로 만들어 선택·페이지·탭이 초기화된다
     const selectedId = chosenId ?? latest.data?.items[0]?.id ?? null;
-    const select = (drawId: string) => setChosenId(drawId);
+    const select = (drawId: string) => {
+        setChosenId(drawId);
+        setDetailOpen(true);
+    };
 
     const status = event ? ADMIN_STATUS_META[event.status] : null;
     const awaitingFirstPublication = event?.status === 'DRAW_CONFIRMED';
@@ -77,21 +80,16 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
                     <p className="text-body-sm text-fg-secondary">
                         최초 추첨 기준{' '}
                         {drawScheduledAt ? `${formatKst(drawScheduledAt)} (KST) · ` : ''}
-                        마감 + 5분에 자동 추첨하고, 최초 공개는 명단 확인 후 수동 공개 요청으로
-                        진행합니다.
+                        마감 + 1분부터 자동 추첨 대상이 되고, 당첨자 공개는 명단 확인 후 수동
+                        요청으로 진행합니다.
                     </p>
                     {awaitingFirstPublication && (
                         <p className="text-body-sm text-fg-secondary">
-                            결과 확정만으로는 공개되지 않습니다. 추첨 실행 탭에서 최신 실행을 검토한
-                            뒤 최초 발표로 공개합니다. 발표 전까지 사용자에게 결과가 공개되지
-                            않습니다.
+                            선정 완료만으로는 공개되지 않습니다. 추첨 실행 탭에서 최신 실행을 검토한
+                            뒤 당첨자 공개 요청으로 공개합니다. 공개 전까지 사용자에게 결과가
+                            노출되지 않습니다.
                         </p>
                     )}
-                    {/* 비어 있으면 숨는다 — 처리할 행동이 있을 때만 구분선과 함께 나타난다 */}
-                    <div
-                        ref={setActionSlot}
-                        className="border-border-default border-t pt-3 empty:hidden"
-                    />
                 </section>
             )}
 
@@ -115,10 +113,11 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
                         <DrawRunDetail
                             key={selectedId}
                             drawId={selectedId}
+                            open={detailOpen}
+                            onOpenChange={setDetailOpen}
                             eventCanceled={event?.status === 'CANCELED'}
                             eventReady={event != null && !eventError}
                             onRunCreated={select}
-                            actionSlot={actionSlot}
                         />
                     )}
                 </div>
