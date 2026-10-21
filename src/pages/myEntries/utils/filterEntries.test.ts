@@ -1,23 +1,30 @@
-import type { MyEntryRow } from '@widgets/myEntryRows';
+import type { MyEntryGroup } from '@widgets/myEntryRows';
 
 import { filterEntryRows, readEntryFilters, scopeEntryRows } from './filterEntries';
 
-const row = (id: string, requestedAt: string, overrides: Partial<MyEntryRow> = {}): MyEntryRow =>
+const group = (
+    id: string,
+    latestRequestedAt: string,
+    overrides: Partial<MyEntryGroup> = {},
+): MyEntryGroup =>
     ({
-        entry: { id, requestedAt, status: 'ACCEPTED' },
+        key: `event:${id}`,
+        eventId: id,
+        status: 'ACCEPTED',
+        latestRequestedAt,
         event: undefined,
         isTimeRaffle: true,
         result: 'PENDING',
         to: `/time-raffle/${id}`,
         ...overrides,
-    }) as MyEntryRow;
+    }) as MyEntryGroup;
 
 const now = new Date('2026-10-13T00:00:00Z');
 // 들어오는 목록은 최신 응모순이다 (useMyEntryRows)
-const rows = [
-    row('a', '2026-10-12T00:00:00Z'),
-    row('b', '2026-09-20T00:00:00Z', { result: 'WON', isTimeRaffle: false }),
-    row('c', '2026-06-01T00:00:00Z', { result: 'LOST' }),
+const groups = [
+    group('a', '2026-10-12T00:00:00Z'),
+    group('b', '2026-09-20T00:00:00Z', { result: 'WON', isTimeRaffle: false }),
+    group('c', '2026-06-01T00:00:00Z', { result: 'LOST' }),
 ];
 
 describe('readEntryFilters', () => {
@@ -33,9 +40,9 @@ describe('readEntryFilters', () => {
 
 describe('scopeEntryRows', () => {
     it('기간과 종류로 거른다', () => {
-        expect(scopeEntryRows(rows, 'ALL', '3M', now).map((r) => r.entry.id)).toEqual(['a', 'b']);
-        expect(scopeEntryRows(rows, 'EVENT', 'ALL', now).map((r) => r.entry.id)).toEqual(['b']);
-        expect(scopeEntryRows(rows, 'RAFFLE', 'ALL', now).map((r) => r.entry.id)).toEqual([
+        expect(scopeEntryRows(groups, 'ALL', '3M', now).map((g) => g.eventId)).toEqual(['a', 'b']);
+        expect(scopeEntryRows(groups, 'EVENT', 'ALL', now).map((g) => g.eventId)).toEqual(['b']);
+        expect(scopeEntryRows(groups, 'RAFFLE', 'ALL', now).map((g) => g.eventId)).toEqual([
             'a',
             'c',
         ]);
@@ -44,8 +51,8 @@ describe('scopeEntryRows', () => {
 
 describe('filterEntryRows', () => {
     it('결과로 거르고 오래된 순으로 뒤집는다', () => {
-        expect(filterEntryRows(rows, 'WON', 'NEWEST').map((r) => r.entry.id)).toEqual(['b']);
-        expect(filterEntryRows(rows, 'ALL', 'OLDEST').map((r) => r.entry.id)).toEqual([
+        expect(filterEntryRows(groups, 'WON', 'NEWEST').map((g) => g.eventId)).toEqual(['b']);
+        expect(filterEntryRows(groups, 'ALL', 'OLDEST').map((g) => g.eventId)).toEqual([
             'c',
             'b',
             'a',
