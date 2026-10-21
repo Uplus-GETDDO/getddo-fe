@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
+import { useAttendanceToday } from '@entities/attendance';
 import { MissionRewardDialog } from '@entities/mission';
 import { TICKET_GRADE_LABEL, type TicketGrade, TicketGradeReveal } from '@entities/ticket';
 import { AttendanceCheckCard } from '@features/checkAttendance';
 import { Button } from '@shared/ui/button';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { cn } from '@shared/utils/cn';
 import { GameRail } from '@widgets/gameRail';
 
@@ -25,6 +27,7 @@ const SETTLE_SCROLL_MS = 600;
 export function MissionListPage() {
     // 초기화는 늘 자정이라 날짜·시각·시간대 없이 짧게 적는다 — 'KST'·'00:00'은 사용자에게 낯선 표기였다
     const attendanceResetCaption = '하루 1회 · 매일 자정 초기화';
+    const attendanceQuery = useAttendanceToday();
     // 출석 카드를 펼치면(펼쳐보기·출석 완료) 출석 카드가 넓어지고 응모권 내역 카드가 좁아진다.
     // 펼침 상태는 저장하지 않는다 — 페이지에 들어올 때마다 접힌 상태로 새로 시작한다
     const [attendanceExpanded, setAttendanceExpanded] = useState(false);
@@ -94,7 +97,24 @@ export function MissionListPage() {
                         id={MISSION_SECTION_IDS.attendance}
                         className="flex min-w-0 scroll-mt-24 flex-col gap-6 lg:row-span-2 lg:grid lg:grid-rows-subgrid"
                     >
-                        <SectionHeader title="출석체크" caption={attendanceResetCaption} />
+                        <SectionHeader
+                            title="출석체크"
+                            caption={attendanceResetCaption}
+                            // 받아 둔 출석 정보가 있는데 다시 받기에 실패했을 때만 — 카드와 같은 조회라 요청은 한 번이다
+                            refresh={
+                                attendanceQuery.isError &&
+                                attendanceQuery.data && (
+                                    <RefreshStatus
+                                        fetching={attendanceQuery.isFetching}
+                                        error
+                                        errorLabel="출석 정보 갱신 실패"
+                                        // 출석 칸 제목 줄이 좁아 글자까지 두면 줄이 넘어가 아래가 밀렸다 — 빨간 경고 아이콘만, 글은 툴팁·화면 낭독기로
+                                        labelClassName="sr-only"
+                                        onRefresh={() => void attendanceQuery.refetch()}
+                                    />
+                                )
+                            }
+                        />
                         <AttendanceCheckCard
                             expanded={attendanceExpanded}
                             onExpandedChange={setAttendanceExpanded}

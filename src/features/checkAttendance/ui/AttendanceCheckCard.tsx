@@ -299,11 +299,7 @@ export function AttendanceCheckCard({
                             </Rise>
                         )}
 
-                        {statusQuery.isError && status && (
-                            <p role="alert">
-                                출석 정보를 갱신하지 못했습니다. 마지막 성공값을 표시합니다.
-                            </p>
-                        )}
+                        {/* 다시 받기 실패는 카드 안에 문장을 두지 않는다 — 카드가 밀려 무너졌다. 받아 둔 값을 그대로 두고 제목 옆 갱신 표시가 알린다 */}
                         {isPending && <SkeletonList count={2} rowClassName="h-16" />}
                         {/* 받아 둔 출석 정보가 없을 때만 — 카드 높이 안 가운데에 다시 시도를 둔다 */}
                         {!isPending && !status && (

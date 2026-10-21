@@ -23,6 +23,8 @@ export interface GameContent {
     heroImage: string | null;
     /** 대표 이미지가 대표 영역(840:546)보다 넓어 좌우가 잘릴 때 보여줄 기준점 — 기본은 가운데 */
     heroImagePosition?: string;
+    /** 카드 썸네일(약 2:1)에서 위아래가 잘릴 때 보여줄 기준점 — 기본은 가운데 */
+    cardImagePosition?: string;
     guide: {
         title: string;
         subtitle: string;
@@ -66,6 +68,8 @@ const CONTENTS: Record<string, GameContent> = {
         heroImage: '/images/games/color-word.jpg',
         // 왼쪽 빨강 버튼(9.8%)과 오른쪽 물음표(96%)가 모두 남도록 기준을 조금 오른쪽으로 옮긴다
         heroImagePosition: '71% 50%',
+        // 카드 썸네일은 위아래가 잘린다 — 맨 위 '글자색깔' 제목이 잘리지 않게 기준을 위쪽으로 올린다 (아래 버튼 줄은 조금 덜 보임)
+        cardImagePosition: '50% 20%',
         guide: {
             title: '게임 방법',
             subtitle: '글자 뜻이 아니라 글자 색이 정답!',

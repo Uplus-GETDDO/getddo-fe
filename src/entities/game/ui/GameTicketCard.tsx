@@ -87,6 +87,7 @@ export function GameTicketCard({
             )}
             <TicketCardMedia
                 src={getGameContent(game).heroImage}
+                position={getGameContent(game).cardImagePosition}
                 fallback={<Gamepad2 aria-hidden className="text-fg-disabled size-8" />}
             />
 
