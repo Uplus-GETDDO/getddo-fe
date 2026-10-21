@@ -1,7 +1,7 @@
 import { useReducedMotion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import type { TicketGrade } from '@entities/ticket';
@@ -84,6 +84,13 @@ function RewardBody({ tickets, grade }: { tickets: number; grade?: TicketGrade |
     // 동작 줄이기 설정이면 뽑기 없이 열린 캡슐부터 보여 준다
     const [phase, setPhase] = useState<GachaPhase>(reduceMotion ? 'revealed' : 'idle');
     const revealed = phase === 'revealed';
+    const pullRef = useRef<HTMLButtonElement>(null);
+    const raffleRef = useRef<HTMLAnchorElement>(null);
+    // 키보드로 '보상 뽑기'를 눌렀다면 열린 뒤 초점을 '응모하러 가기'로 옮긴다 — 버튼이 사라져 초점이 모달 상자로 튀지 않게
+    const pulledByButton = useRef(false);
+    useEffect(() => {
+        if (revealed && pulledByButton.current) raffleRef.current?.focus();
+    }, [revealed]);
 
     return (
         <>
@@ -123,14 +130,22 @@ function RewardBody({ tickets, grade }: { tickets: number; grade?: TicketGrade |
                         </Button>
                     </DialogClose>
                     <Button asChild className="flex-1">
-                        <Link to="/time-raffle">응모하러 가기</Link>
+                        <Link ref={raffleRef} to="/time-raffle">
+                            응모하러 가기
+                        </Link>
                     </Button>
                 </div>
             ) : (
                 <Button
-                    className="w-full"
-                    disabled={phase !== 'idle'}
-                    onClick={() => setPhase('spinning')}
+                    ref={pullRef}
+                    // disabled면 초점을 잃어 뽑는 동안 초점이 화면 밖(body)으로 빠진다 — aria-disabled로 막고 초점은 남긴다
+                    aria-disabled={phase !== 'idle'}
+                    className="aria-disabled:bg-surface-disabled aria-disabled:text-fg-disabled aria-disabled:hover:bg-surface-disabled w-full aria-disabled:cursor-default"
+                    onClick={() => {
+                        if (phase !== 'idle') return;
+                        pulledByButton.current = document.activeElement === pullRef.current;
+                        setPhase('spinning');
+                    }}
                 >
                     {phase === 'idle' ? '보상 뽑기' : '뽑는 중…'}
                 </Button>

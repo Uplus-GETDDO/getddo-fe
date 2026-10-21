@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import type { AdminEventStatus, EventType } from '@entities/event';
 
 import { ADMIN_STATUS_META, useAdminEventsByStatus } from '@entities/event';
+import { Button } from '@shared/ui/button';
 import { DateRangeFilter, OptionFilter } from '@shared/ui/filter-fields';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
@@ -67,7 +68,8 @@ export function AdminDrawPage() {
     );
     const filtered = kind !== 'all' || stage !== 'all' || createdFrom !== '' || createdTo !== '';
 
-    const events = [...items].sort(
+    // 기간이 잘못되면 날짜 조건 없이 불러온 목록이라 보여 주지 않는다 (기간 입력칸이 오류를 알린다)
+    const events = (createdRangeError ? [] : [...items]).sort(
         (a, b) => (DRAW_PRIORITY[a.status] ?? 9) - (DRAW_PRIORITY[b.status] ?? 9),
     );
     // 상세 화면 등에서 URL로 들어온 이벤트는 목록 조건과 무관하게 열 수 있어야 한다
@@ -98,6 +100,12 @@ export function AdminDrawPage() {
                         ))}
                     </SelectContent>
                 </Select>
+                {/* 고른 뒤에는 거르기·표가 숨으므로 목록으로 돌아가는 길을 둔다 — 거르기 값은 그대로 남는다 */}
+                {eventId && (
+                    <Button variant="ghost" size="sm" onClick={() => setSearchParams({})}>
+                        목록으로
+                    </Button>
+                )}
             </div>
 
             {/* 거르기 — 이벤트를 고르기 전 목록에만 걸린다. 고른 뒤에는 위 선택 상자로 바꾼다 */}
@@ -137,7 +145,7 @@ export function AdminDrawPage() {
                     이벤트 목록을 불러오지 못했습니다.
                 </p>
             )}
-            {!isPending && !isError && events.length === 0 && !eventId && (
+            {!isPending && !isError && !createdRangeError && events.length === 0 && !eventId && (
                 <p className="text-fg-secondary text-body-sm py-6">
                     {filtered
                         ? '조건에 맞는 이벤트가 없습니다. 필터를 바꿔 보세요.'

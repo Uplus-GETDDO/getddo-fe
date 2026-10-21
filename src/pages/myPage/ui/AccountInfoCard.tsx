@@ -34,7 +34,13 @@ export function AccountInfoCard({ user }: { user: VirtualUser }) {
                 <div className="flex items-center justify-between gap-4">
                     <dt className="text-body-sm text-fg-tertiary shrink-0">사용자 ID</dt>
                     <dd className="flex min-w-0 items-center gap-2">
-                        <span className="text-body-sm-bold text-fg-primary truncate tabular-nums">
+                        {/* 펼친 ID는 좁은 화면에서도 끝까지 보이게 줄을 바꾼다 */}
+                        <span
+                            className={cn(
+                                'text-body-sm-bold text-fg-primary tabular-nums',
+                                idShown ? 'break-all' : 'truncate',
+                            )}
+                        >
                             {idShown ? user.id : maskId(user.id)}
                         </span>
                         <Button
