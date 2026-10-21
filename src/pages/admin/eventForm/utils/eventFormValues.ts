@@ -85,8 +85,18 @@ export function eventFormToRequest(v: EventFormValues): EventWriteRequest {
     };
 }
 
-// 경품 응답에는 imageKey가 없고 imageUrl만 있다 — URL을 스토리지 키로 재전송하지 않도록 imageKey는 빈 값으로 둔다
+/*
+ * 수정 화면의 첫 값 — 경품 이미지 키는 prizeImages에서 되찾는다.
+ *
+ * 경품 응답(prizes[])에는 imageUrl만 있고 키가 없다. 키를 빈 값으로 두면 제목만 고쳐 저장해도
+ * imageKey가 null로 나가서 기존 경품 이미지 연결이 지워진다. prizeImages가 prizeId별 키를
+ * 따로 주므로(05-api/event.md AdminEvent) 그것으로 채운다 — 이미지를 건드리지 않은 경품은
+ * 받은 키를 그대로 돌려보내고, 사용자가 지운 경품만 빈 값이 되어 null로 나간다.
+ */
 export function eventToFormValues(event: AdminEvent): EventFormInput {
+    const imageKeyByPrizeId = new Map(
+        event.prizeImages.map(({ prizeId, imageKey }) => [prizeId, imageKey]),
+    );
     return {
         title: event.title,
         description: event.description,
@@ -103,7 +113,7 @@ export function eventToFormValues(event: AdminEvent): EventFormInput {
             name: p.name,
             winnerCount: p.winnerCount,
             description: p.description ?? '',
-            imageKey: '',
+            imageKey: imageKeyByPrizeId.get(p.id) ?? '',
         })),
     };
 }

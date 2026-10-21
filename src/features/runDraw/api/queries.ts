@@ -10,7 +10,7 @@ import {
     drawResumeApiPath,
     drawVerificationSchema,
 } from '@entities/drawResult';
-import { ADMIN_EVENTS_KEY } from '@entities/event';
+import { ADMIN_EVENTS_KEY, EVENTS_KEY } from '@entities/event';
 import {
     awardCancellationResultSchema,
     RESULT_CHANGES_KEY,
@@ -81,8 +81,8 @@ export function useCancelWin() {
 /**
  * GD-199 — 최신 검토 실행의 최종 확인과 최초 공개를 한 요청으로 처리한다.
  * 본문·추가 멱등 헤더 없이 최신 검토 runId 하나만 보낸다. 최초 공개 전에는
- * AD06(publication)을 연달아 호출하지 않으며, 확인 버튼과 발표를 분리하지 않는다.
- * 성공 응답의 isPublished=false를 공개 완료로 해석하지 않는다 — 최초 발표의
+ * AD06(publication)을 연달아 호출하지 않으며, 확인 버튼과 공개 버튼을 분리하지 않는다.
+ * 성공 응답의 isPublished=false를 공개 완료로 해석하지 않는다 — 당첨자 공개의
  * 정상 성공은 isPublished=true다.
  */
 export function useConfirmResult() {
@@ -99,6 +99,7 @@ export function useConfirmResult() {
             void queryClient.invalidateQueries({ queryKey: RESULT_CHANGES_KEY });
             void queryClient.invalidateQueries({ queryKey: DRAW_RESULTS_KEY });
             void queryClient.invalidateQueries({ queryKey: ADMIN_EVENTS_KEY });
+            void queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
         },
         onError: () => {
             // 명단 변경 거절(PUBLICATION-005) 등 검토 시점과 다른 상태일 수 있으니 실행 목록을 새로 받는다

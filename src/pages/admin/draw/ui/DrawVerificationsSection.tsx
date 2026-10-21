@@ -18,7 +18,7 @@ const CHIP = badgeVariants({ variant: null });
 
 interface DrawVerificationsSectionProps {
     drawId: string;
-    /** 확정된 실행만 검증할 수 있다 (AD04 409 미확정 실행) */
+    /** 선정이 완료된 실행만 검증할 수 있다 (AD04 409 미확정 실행) */
     canVerify: boolean;
 }
 
@@ -65,7 +65,7 @@ export function DrawVerificationsSection({ drawId, canVerify }: DrawVerification
 
             {!canVerify && (
                 <p className="text-caption text-fg-tertiary">
-                    확정되지 않은 실행은 검증할 수 없습니다.
+                    선정이 완료되지 않은 실행은 검증할 수 없습니다.
                 </p>
             )}
             {verify.isError && (

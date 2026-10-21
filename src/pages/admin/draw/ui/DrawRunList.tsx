@@ -55,7 +55,8 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
     if (data.items.length === 0) {
         return (
             <p className="text-fg-secondary text-body-sm py-4">
-                아직 추첨 실행이 없습니다. 마감 후 자동 추첨이 시작되면 이곳에 표시됩니다.
+                아직 추첨 실행이 없습니다. 마감 + 1분부터 자동 추첨 대상이 되고, 선정이 시작되면
+                이곳에 표시됩니다.
             </p>
         );
     }
@@ -67,7 +68,7 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
             {inProgress && (
                 <div className="flex items-center gap-3">
                     <p className="text-body-sm text-fg-secondary" role="status">
-                        서버에서 재추첨을 진행 중입니다. 30초마다 자동으로 확인합니다.
+                        서버에서 당첨자를 선정하고 있습니다. 30초마다 자동으로 확인합니다.
                     </p>
                     <Button
                         size="sm"
@@ -96,7 +97,7 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                                 생성
                             </TableHead>
                             <TableHead className="text-caption text-fg-tertiary h-11 px-4">
-                                확정
+                                선정 완료
                             </TableHead>
                             <TableHead className="text-caption text-fg-tertiary h-11 px-4">
                                 상세
@@ -140,7 +141,7 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                                             aria-label={`${run.runNumber}회차 상세 보기`}
                                             onClick={() => onSelect(run.id)}
                                         >
-                                            {selected ? '선택됨' : '보기'}
+                                            보기
                                         </Button>
                                     </TableCell>
                                 </TableRow>
