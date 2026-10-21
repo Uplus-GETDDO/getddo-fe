@@ -21,6 +21,8 @@ function renderDetail(drawId: string) {
             <MemoryRouter>
                 <DrawRunDetail
                     drawId={drawId}
+                    open={true}
+                    onOpenChange={() => {}}
                     eventCanceled={false}
                     eventReady={true}
                     onRunCreated={() => {}}
@@ -180,7 +182,7 @@ function setupManyRuns() {
 }
 
 describe('DrawRunDetail', () => {
-    it('공개 이력 조회가 실패하면 최초 발표를 미공개로 오판하지 않고 오류·재시도를 보여준다', async () => {
+    it('공개 이력 조회가 실패하면 당첨자 공개를 미공개로 오판하지 않고 오류·재시도를 보여준다', async () => {
         server.use(
             http.get(api('/v1/admin/events/:eventId/result-changes'), () =>
                 HttpResponse.json(
@@ -197,21 +199,21 @@ describe('DrawRunDetail', () => {
         renderDetail(PRE_PUBLICATION_RUN_ID);
         expect(
             await screen.findByText(
-                '공개 명단 변경 이력을 불러오지 못해 발표 여부를 확인할 수 없습니다.',
+                '공개 명단 변경 이력을 불러오지 못해 공개 여부를 확인할 수 없습니다.',
             ),
         ).toBeInTheDocument();
-        // 실패를 미공개로 보면 발표 버튼이 열리고 이미 공개된 이벤트에 재발표 요청이 나간다
-        expect(screen.queryByRole('button', { name: '최초 발표' })).not.toBeInTheDocument();
+        // 실패를 미공개로 보면 공개 버튼이 열리고 이미 공개된 이벤트에 재공개 요청이 나간다
+        expect(screen.queryByRole('button', { name: '당첨자 공개' })).not.toBeInTheDocument();
         expect(screen.getByRole('button', { name: '다시 시도' })).toBeInTheDocument();
     });
 
     it('실행이 첫 페이지를 넘으면 이전 페이지를 조회해 취소 원본의 공개 이력을 찾는다', async () => {
         setupManyRuns();
         renderDetail('run-101');
-        // 취소 원본이 2페이지의 run-1에 있다 — 찾으면 공개 후 취소로 판정하고 반영 버튼이 열린다
-        expect(await screen.findByText('최초 발표 후 취소한 당첨입니다.')).toBeInTheDocument();
+        // 취소 원본이 2페이지의 run-1에 있다 — 찾으면 공개 후 취소로 판정하고 갱신 버튼이 열린다
+        expect(await screen.findByText('공개 이후에 취소한 당첨입니다.')).toBeInTheDocument();
         await waitFor(() => {
-            expect(screen.getByRole('button', { name: '공개 명단 반영' })).toBeEnabled();
+            expect(screen.getByRole('button', { name: '공개 명단 갱신' })).toBeEnabled();
         });
     });
 });

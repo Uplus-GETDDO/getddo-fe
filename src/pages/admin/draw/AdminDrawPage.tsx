@@ -77,6 +77,10 @@ export function AdminDrawPage() {
 
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
+            {/* '추첨 관리' 설명 기본안 — 이 화면이 하는 일을 한 줄로 말해 준다 */}
+            <p className="text-body-sm text-fg-secondary">
+                추첨 결과를 검토하고, 필요한 당첨 취소·재추첨을 진행한 뒤 당첨자를 공개합니다.
+            </p>
             <div className="flex flex-wrap items-center gap-3">
                 <label htmlFor="draw-event-select" className="text-body-bold text-fg-primary">
                     이벤트

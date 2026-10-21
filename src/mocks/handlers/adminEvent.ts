@@ -6,6 +6,7 @@ import type { AdminEventStatus, AdminPrize, MembershipRule } from '@entities/eve
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
+import { getMockDrawOverview } from './draw';
 import { mockEntryTicketTotals, mockEventHasEntries } from './entry';
 import { entryRuleOf, mockEvents, sessionFixedTime } from './event';
 import { fail, ok } from './response';
@@ -52,8 +53,8 @@ function readMultipartFile(buffer: ArrayBuffer): { contentType: string; dataUrl:
     return { contentType, dataUrl: `data:${contentType};base64,${btoa(binary)}` };
 }
 
-/** ADR-009 — 유형과 무관하게 마감 + 5분 검토 후 자동으로 최초 발표한다 */
-const ANNOUNCE_DELAY_MS = 5 * 60 * 1000;
+/** ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이 된다. 공개 예정 시각이 아니다 */
+const DRAW_DELAY_MS = 60 * 1000;
 const MINUTE = 60 * 1000;
 
 /**
@@ -274,16 +275,22 @@ const mockAdminEvents: MockAdminEvent[] = [...mockEvents.map(toAdminSeed), ...ex
 
 /**
  * 응답 시점의 운영 상태 — 서버가 시간·운영으로 바꾸는 값이라 저장값을 그대로 쓰지 않고 재계산한다.
+ * 공개 여부는 시각이 아니라 당첨자 공개 요청의 성공으로 판정한다 (ADR-022) — 추첨 목업과 같은
+ * 사실을 읽어 사용자 결과·공개 이력과 어긋나지 않게 한다.
  */
 function effectiveStatus(item: MockAdminEvent, now: number): AdminEventStatus {
-    const starts = new Date(item.startsAt).getTime();
-    const ends = new Date(item.endsAt).getTime();
+    const draw = getMockDrawOverview(item.id);
+    if (draw.published) return 'PUBLISHED';
 
     if (item.status === 'SCHEDULED' || item.status === 'OPEN' || item.status === 'CLOSED') {
+        const starts = new Date(item.startsAt).getTime();
+        const ends = new Date(item.endsAt).getTime();
         if (now < starts) return 'SCHEDULED';
         if (now < ends) return 'OPEN';
-        if (now < ends + ANNOUNCE_DELAY_MS) return 'CLOSED';
-        return 'PUBLISHED';
+        // 마감 뒤 추첨 실행 상태를 따른다 — 확정됐어도 공개 전이면 선정 완료(발표 대기)다
+        if (draw.hasRunningReplacement) return 'REDRAWING';
+        if (draw.hasConfirmedRun) return 'DRAW_CONFIRMED';
+        return 'CLOSED';
     }
     return item.status;
 }
@@ -311,9 +318,8 @@ function toAdminResponse(item: MockAdminEvent, now: number) {
             imageKey: prize.imageKey ?? null,
         })),
         status: effectiveStatus(item, now),
-        drawScheduledAt: new Date(
-            new Date(item.endsAt).getTime() + ANNOUNCE_DELAY_MS,
-        ).toISOString(),
+        // 마감 + 1분의 최초 자동 추첨 기준 — 공개 예정 시각이 아니다 (ADR-026)
+        drawScheduledAt: new Date(new Date(item.endsAt).getTime() + DRAW_DELAY_MS).toISOString(),
         serverTime: new Date(now).toISOString(),
     };
 }

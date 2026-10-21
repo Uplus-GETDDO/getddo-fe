@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
 import type { DrawResult, DrawRunDetail as DrawRunDetailData } from '@entities/drawResult';
@@ -22,6 +21,14 @@ import { PublishRedrawDialog, useStartRedraw } from '@features/runRedraw';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { Segmented } from '@shared/ui/segmented';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -81,56 +88,81 @@ function ResultChips({ result }: { result: DrawResult }) {
 
 interface DrawRunDetailProps {
     drawId: string;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
     eventCanceled: boolean;
     /** 이벤트 상세 조회가 끝나 상태를 확인했을 때만 true — 확인 전엔 운영 행동을 막는다 */
     eventReady: boolean;
     /** 당첨 취소로 재추첨 실행이 생기면 그 실행으로 선택을 옮긴다 */
     onRunCreated: (drawId: string) => void;
-    /** 다음 행동 버튼을 그릴 자리 — 이벤트 머리 카드. 없으면 실행 요약 카드 안에 그린다 */
-    actionSlot?: HTMLElement | null;
 }
 
-// AD02 실행 상세 — 실행 요약, 실패·재시도 정보, 취소 근거, 결과(당첨 취소 진입),
-// 재추첨 시작·재개(AD09), 최초 발표(GD-199), 공개 반영(AD06), 운영 이력(GD-137)
+// AD02 실행 상세 — 실행 목록 행에서 여는 중앙 모달. 닫아도 목록의 필터·페이지·선택 행은 유지된다.
+// 실행 요약, 실패·재시도 정보, 취소 근거, 결과(당첨 취소 진입),
+// 재추첨 시작·재개(AD09), 당첨자 공개(GD-199), 공개 명단 갱신(AD06), 운영 이력(GD-137)
 export function DrawRunDetail({
     drawId,
+    open,
+    onOpenChange,
     eventCanceled,
     eventReady,
     onRunCreated,
-    actionSlot,
 }: DrawRunDetailProps) {
-    const { data: run, isPending, isError, refetch, isFetching } = useDrawRun(drawId);
-
-    if (isPending) {
-        return (
-            <LoadingBlock>
-                <CardSkeleton rows={8} />
-            </LoadingBlock>
-        );
-    }
-    if (isError) {
-        return (
-            <div className="flex items-center gap-3">
-                <p role="alert" className="text-semantic-error-strong text-body-sm">
-                    추첨 실행 상세를 불러오지 못했습니다.
-                </p>
-                <Button size="sm" variant="secondary" onClick={() => void refetch()}>
-                    다시 시도
-                </Button>
-            </div>
-        );
-    }
+    const {
+        data: run,
+        isPending,
+        isError,
+        isRefetchError,
+        dataUpdatedAt,
+        refetch,
+        isFetching,
+    } = useDrawRun(drawId);
 
     return (
-        <RunDetailBody
-            run={run}
-            eventCanceled={eventCanceled}
-            eventReady={eventReady}
-            onRunCreated={onRunCreated}
-            actionSlot={actionSlot}
-            refreshing={isFetching}
-            onRefresh={() => void refetch()}
-        />
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="flex max-h-[85vh] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
+                <DialogHeader className="px-6 pt-6 pb-4">
+                    <DialogTitle className="text-title-3 text-fg-primary">
+                        {run
+                            ? `${run.runNumber}회차 ${DRAW_TYPE_LABEL[run.drawType]} 상세`
+                            : '추첨 실행 상세'}
+                    </DialogTitle>
+                    <DialogDescription className="text-body-sm text-fg-secondary">
+                        선정 결과·후보·정합성 검증·운영 이력을 확인하고 당첨자 공개·취소·재추첨을
+                        진행합니다.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 pb-6">
+                    {isPending && (
+                        <LoadingBlock>
+                            <CardSkeleton rows={8} />
+                        </LoadingBlock>
+                    )}
+                    {isError && (
+                        <div className="flex items-center gap-3">
+                            <p role="alert" className="text-semantic-error-strong text-body-sm">
+                                추첨 실행 상세를 불러오지 못했습니다.
+                            </p>
+                            <Button size="sm" variant="secondary" onClick={() => void refetch()}>
+                                다시 시도
+                            </Button>
+                        </div>
+                    )}
+                    {run && (
+                        <RunDetailBody
+                            run={run}
+                            eventCanceled={eventCanceled}
+                            eventReady={eventReady}
+                            onRunCreated={onRunCreated}
+                            refreshing={isFetching}
+                            updatedAt={dataUpdatedAt}
+                            refreshFailed={isRefetchError}
+                            onRefresh={() => void refetch()}
+                        />
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }
 
@@ -139,8 +171,11 @@ interface RunDetailBodyProps {
     eventCanceled: boolean;
     eventReady: boolean;
     onRunCreated: (drawId: string) => void;
-    actionSlot?: HTMLElement | null;
     refreshing: boolean;
+    /** 마지막 성공 조회 시각(ms) — TanStack Query의 dataUpdatedAt */
+    updatedAt: number;
+    /** 이전 데이터를 둔 채 배경 재조회만 실패한 상태 — 거짓 완료로 보이지 않게 구분한다 */
+    refreshFailed: boolean;
     onRefresh: () => void;
 }
 
@@ -149,8 +184,9 @@ function RunDetailBody({
     eventCanceled,
     eventReady,
     onRunCreated,
-    actionSlot,
     refreshing,
+    updatedAt,
+    refreshFailed,
     onRefresh,
 }: RunDetailBodyProps) {
     const [cancelTarget, setCancelTarget] = useState<DrawResult | null>(null);
@@ -169,7 +205,7 @@ function RunDetailBody({
     const confirmed = run.status === 'CONFIRMED';
     const inProgress = isDrawRunInProgress(run.status);
 
-    // 이벤트의 실행 목록 — 최신 실행 판정(최초 발표는 최신 실행으로만 요청한다, GD-199)과
+    // 이벤트의 실행 목록 — 최신 실행 판정(당첨자 공개는 최신 실행으로만 요청한다, GD-199)과
     // 취소 원본 결과가 있는 더 이른 실행의 식별에 쓴다
     const { data: runList } = useEventDraws(run.eventId, { page: 1, size: RUN_LIST_PAGE_SIZE });
     const isLatestRun = runList?.items[0]?.id === run.id;
@@ -272,12 +308,12 @@ function RunDetailBody({
     }
     for (const r of searchedResults) resultIndex.set(r.id, r);
     for (const r of run.results) resultIndex.set(r.id, r);
-    // 취소한 원본 결과가 최초 발표 이후 공개된 적이 있는지 — 발표 후 취소·재추첨인지 구분한다
+    // 취소한 원본 결과가 공개된 적이 있는지 — 공개 후 취소·재추첨인지 공개 전인지 구분한다
     const publicationOf = (resultId: string) => {
         const result = resultIndex.get(resultId);
         if (result) return result.wasPublished ? ('after' as const) : ('before' as const);
         if (earlierRuns.some((q) => q.isError) || earlierSearchFailed) return 'error' as const;
-        // 이전 실행을 끝까지 뒤졌는데도 없으면 서버 데이터 불일치다 — 반영을 막는다
+        // 이전 실행을 끝까지 뒤졌는데도 없으면 서버 데이터 불일치다 — 갱신을 막는다
         if (earlierSearchDone) return 'error' as const;
         return 'loading' as const;
     };
@@ -286,8 +322,8 @@ function RunDetailBody({
     const stillLoading = publicationStates.includes('loading');
     const publicationCheckFailed = publicationStates.includes('error');
 
-    // 최초 발표 여부 — 공개 명단 변경 이력(AD07)이 하나라도 있으면 발표된 이벤트다.
-    // 조회 실패는 미공개로 오판하면 안 된다 — 이미 발표된 이벤트에 최초 발표를 보내면 PUBLICATION-005다
+    // 당첨자 공개 여부 — 공개 명단 변경 이력(AD07)이 하나라도 있으면 공개된 이벤트다.
+    // 조회 실패는 미공개로 오판하면 안 된다 — 이미 공개된 이벤트에 당첨자 공개를 보내면 PUBLICATION-005다
     const {
         data: changePage,
         isPending: changePending,
@@ -302,12 +338,47 @@ function RunDetailBody({
     const selectedResults = run.results.filter((r) => r.resultType === 'SELECTED');
     const alreadyPublished =
         selectedResults.length > 0 && selectedResults.every((r) => r.wasPublished);
-    // 공개 전에 취소된 결과가 남은 실행을 반영하면 공개 명단에 빈 자리가 생긴다 — 취소의 재추첨 결과로 반영한다
+    // 공개 전에 취소된 결과가 남은 실행을 갱신하면 공개 명단에 빈 자리가 생긴다 — 취소의 재추첨 결과로 갱신한다
     const hasUnpublishedCanceledResult = selectedResults.some(
         (r) => r.isCanceled && !r.wasPublished,
     );
 
-    // 최초 발표(GD-199) — 이벤트가 공개되지 않았고 이 실행이 최신·확정일 때만 연다
+    // 확정된 실행들을 회차 순으로 겹쳐 슬롯별 최종 상태를 만든다 — 공개 요청 전에 검토할 명단이다
+    const rosterRows = useMemo(() => {
+        const details = [
+            run,
+            ...earlierRuns.map((q) => q.data).filter((r): r is DrawRunDetailData => r != null),
+        ].sort((a, b) => a.runNumber - b.runNumber);
+        const slots = new Map<string, { result: DrawResult; runNumber: number }>();
+        for (const r of details) {
+            if (r.status !== 'CONFIRMED') continue;
+            for (const res of r.results) {
+                slots.set(`${res.prizeId}:${res.slotNumber}`, {
+                    result: res,
+                    runNumber: r.runNumber,
+                });
+            }
+        }
+        return [...slots.values()].sort(
+            (a, b) =>
+                a.result.prizeRank - b.result.prizeRank ||
+                a.result.slotNumber - b.result.slotNumber,
+        );
+    }, [run, earlierRuns]);
+    // 공개 직전 확인 모달에 보여 줄 최종 명단 요약 — 당첨·미충원·취소 규모
+    const publicationSummary = useMemo(() => {
+        let winners = 0;
+        let unfilled = 0;
+        let canceled = 0;
+        for (const { result } of rosterRows) {
+            if (result.resultType === 'UNFILLED') unfilled += 1;
+            else if (result.isCanceled) canceled += 1;
+            else winners += 1;
+        }
+        return { winners, unfilled, canceled };
+    }, [rosterRows]);
+
+    // 당첨자 공개(GD-199) — 이벤트가 공개되지 않았고 이 실행이 최신·선정 완료일 때만 연다
     const canFirstPublish =
         !changePending &&
         !changeError &&
@@ -316,7 +387,7 @@ function RunDetailBody({
         confirmed &&
         !eventCanceled &&
         eventReady;
-    // 공개 후 재추첨 반영(AD06) — 최초 발표 전에는 호출하지 않는다
+    // 공개 후 재추첨 갱신(AD06) — 당첨자 공개 전에는 호출하지 않는다
     const canPublish =
         firstPublished &&
         isRedraw &&
@@ -357,7 +428,7 @@ function RunDetailBody({
     };
 
     const hasActions = inProgress || canResumeInitial || canResume;
-    // 다음 행동 — 이벤트 머리 카드(actionSlot)로 올려 첫눈에 보이게 한다. 어느 실행의 행동인지 함께 적는다
+    // 다음 행동 — 실행 요약 카드 상단에 둬 첫눈에 보이게 한다. 어느 실행의 행동인지 함께 적는다
     const actions = hasActions && (
         <div className="flex flex-wrap items-center gap-3">
             <span className="text-body-sm text-fg-secondary">
@@ -385,7 +456,6 @@ function RunDetailBody({
 
     return (
         <div className="flex flex-col gap-6">
-            {actionSlot && actions ? createPortal(actions, actionSlot) : null}
             <section
                 aria-labelledby="draw-run-summary-title"
                 className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6"
@@ -395,7 +465,17 @@ function RunDetailBody({
                         {run.runNumber}회차 {isRedraw ? '재추첨' : '최초 추첨'}
                     </h3>
                     <span className={cn(CHIP, status.chipClass)}>{status.label}</span>
-                    {!actionSlot && actions && <div className="ml-auto">{actions}</div>}
+                    {firstPublished && (
+                        <span className={cn(CHIP, 'bg-status-approved text-status-approved-text')}>
+                            공개됨
+                        </span>
+                    )}
+                    {!firstPublished && (
+                        <span className={cn(CHIP, 'bg-surface-sunken text-fg-secondary')}>
+                            미공개
+                        </span>
+                    )}
+                    {actions && <div className="ml-auto">{actions}</div>}
                 </div>
 
                 <Field label="실행 ID">{run.id}</Field>
@@ -404,17 +484,28 @@ function RunDetailBody({
                     {run.snapshotFixedAt ? formatKst(run.snapshotFixedAt) : '—'} · 같은 실행을
                     재시도하면 고정된 명단·조건을 그대로 씁니다
                 </Field>
-                <Field label="시작 / 확정">
+                <Field label="시작 / 선정 완료">
                     {run.startedAt ? formatKst(run.startedAt) : '—'} /{' '}
                     {run.confirmedAt ? formatKst(run.confirmedAt) : '—'}
                 </Field>
                 <Field label="알고리즘">{run.algorithmVersion ?? '—'}</Field>
 
                 {inProgress && (
-                    <p role="status" className="text-body-sm text-fg-secondary">
-                        서버가 {run.status === 'PREPARING' ? '실행을 준비' : '당첨자를 선정'}하고
-                        있습니다. 완료될 때까지 30초마다 자동으로 확인합니다.
-                    </p>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <p role="status" className="text-body-sm text-fg-secondary">
+                            {run.status === 'PREPARING'
+                                ? '서버가 실행을 준비하고 있습니다.'
+                                : '서버가 당첨자를 선정하고 있습니다.'}
+                        </p>
+                        <RefreshStatus
+                            fetching={refreshing}
+                            updatedAt={updatedAt}
+                            error={refreshFailed}
+                            errorLabel="상태 조회 실패"
+                            onRefresh={onRefresh}
+                            interval="30초마다 자동 확인"
+                        />
+                    </div>
                 )}
                 {start.isError && (
                     <p role="alert" className="text-semantic-error-strong text-body-sm">
@@ -428,12 +519,12 @@ function RunDetailBody({
                 )}
                 {eventCanceled && (
                     <p className="text-body-sm text-fg-secondary">
-                        취소된 이벤트라 당첨 취소·재추첨·공개 반영을 할 수 없습니다.
+                        취소된 이벤트라 당첨 취소·재추첨·공개 갱신을 할 수 없습니다.
                     </p>
                 )}
                 {!eventReady && (
                     <p className="text-body-sm text-fg-secondary">
-                        이벤트 정보를 확인하지 못해 당첨 취소·재추첨·공개 반영을 사용할 수 없습니다.
+                        이벤트 정보를 확인하지 못해 당첨 취소·재추첨·공개 갱신을 사용할 수 없습니다.
                     </p>
                 )}
             </section>
@@ -493,13 +584,22 @@ function RunDetailBody({
                                     <p className="text-body-sm text-fg-primary">{c.reason}</p>
                                     <p className="text-caption text-fg-tertiary">
                                         {c.canceledBy} · {formatKst(c.canceledAt)} · 취소 ID {c.id}
-                                        {c.replacementRunId &&
-                                            ` · 재추첨 실행 ${c.replacementRunId}`}
                                     </p>
+                                    {/* 취소 근거에서 대체 재추첨 실행으로 바로 이동 — 같은 모달 안에서 상세가 바뀐다 */}
+                                    {c.replacementRunId && c.replacementRunId !== run.id && (
+                                        <Button
+                                            size="sm"
+                                            variant="secondary"
+                                            className="self-start"
+                                            onClick={() => onRunCreated(c.replacementRunId!)}
+                                        >
+                                            재추첨 실행 보기
+                                        </Button>
+                                    )}
                                     <p className="text-caption text-fg-secondary">
                                         {state === 'loading' && '공개 이력 확인 중…'}
-                                        {state === 'after' && '최초 발표 후 취소한 당첨입니다.'}
-                                        {state === 'before' && '최초 공개 전에 취소한 당첨입니다.'}
+                                        {state === 'after' && '공개 이후에 취소한 당첨입니다.'}
+                                        {state === 'before' && '공개 전에 취소한 당첨입니다.'}
                                         {state === 'error' && '공개 이력을 불러오지 못했습니다.'}
                                     </p>
                                     {state === 'error' && (
@@ -538,7 +638,7 @@ function RunDetailBody({
                             id="draw-run-first-publish-title"
                             className="text-body-bold text-fg-primary"
                         >
-                            최초 발표
+                            당첨자 공개
                         </h3>
                         {isLatestRun && !changeError && (
                             <Button
@@ -546,14 +646,14 @@ function RunDetailBody({
                                 disabled={!canFirstPublish}
                                 onClick={() => setFirstPublishOpen(true)}
                             >
-                                최초 발표
+                                당첨자 공개
                             </Button>
                         )}
                     </div>
                     {changeError ? (
                         <div className="flex items-center gap-3">
                             <p role="alert" className="text-semantic-error-strong text-body-sm">
-                                공개 명단 변경 이력을 불러오지 못해 발표 여부를 확인할 수 없습니다.
+                                공개 명단 변경 이력을 불러오지 못해 공개 여부를 확인할 수 없습니다.
                             </p>
                             <Button
                                 size="sm"
@@ -565,17 +665,18 @@ function RunDetailBody({
                         </div>
                     ) : !isLatestRun ? (
                         <p className="text-body-sm text-fg-secondary">
-                            최초 발표는 가장 최근 실행으로만 요청할 수 있습니다. 실행 목록에서 최신
-                            실행을 선택해 주세요.
+                            당첨자 공개는 가장 최근 실행으로만 요청할 수 있습니다. 실행 목록에서
+                            최신 실행을 선택해 주세요.
                         </p>
                     ) : !confirmed ? (
                         <p className="text-body-sm text-fg-secondary">
-                            이 실행이 확정되면 결과를 검토하고 최초 발표할 수 있습니다.
+                            이 실행의 선정이 완료되면 결과를 검토하고 당첨자 공개를 요청할 수
+                            있습니다.
                         </p>
                     ) : (
                         <p className="text-body-sm text-fg-secondary">
-                            이 실행의 결과를 검토한 뒤 발표 버튼 한 번으로 확인·공개가 함께
-                            확정됩니다. 발표 전까지 사용자에게 결과가 공개되지 않습니다.
+                            이 실행의 결과를 검토한 뒤 당첨자 공개 버튼 한 번으로 확인·공개가 함께
+                            확정됩니다. 공개 전까지 사용자에게 결과가 노출되지 않습니다.
                         </p>
                     )}
                 </section>
@@ -588,44 +689,135 @@ function RunDetailBody({
                 >
                     <div className="flex items-center gap-3">
                         <h3 id="draw-run-publish-title" className="text-body-bold text-fg-primary">
-                            공개 명단 반영
+                            공개 명단 갱신
                         </h3>
                         <Button
                             size="sm"
                             disabled={!canPublish}
                             onClick={() => setPublishOpen(true)}
                         >
-                            공개 명단 반영
+                            공개 명단 갱신
                         </Button>
                     </div>
                     {alreadyPublished && (
                         <p className="text-body-sm text-fg-secondary">
-                            이 재추첨 결과는 이미 공개 명단에 반영됐습니다.
+                            이 재추첨 결과는 이미 공개 명단을 갱신했습니다.
                         </p>
                     )}
                     {!confirmed && (
                         <p className="text-body-sm text-fg-secondary">
-                            재추첨이 확정되면 공개 명단에 반영할 수 있습니다.
+                            재추첨의 선정이 완료되면 공개 명단을 갱신할 수 있습니다.
                         </p>
                     )}
                     {confirmed && publicationCheckFailed && (
                         <p className="text-body-sm text-fg-secondary">
                             취소한 원본 실행의 공개 이력을 불러오지 못했습니다. 확인이 끝날 때까지
-                            공개 명단에 반영할 수 없습니다.
+                            공개 명단을 갱신할 수 없습니다.
                         </p>
                     )}
                     {confirmed && !publicationCheckFailed && anyBeforeFirstPublication && (
                         <p className="text-body-sm text-fg-secondary">
-                            최초 공개 전 취소가 포함돼 이 API(AD06)로 반영할 수 없습니다. 최초 공개
-                            전 재추첨은 최초 발표 요청으로 함께 공개됩니다.
+                            공개 전 취소가 포함돼 이 API(AD06)로 갱신할 수 없습니다. 공개 전
+                            재추첨은 당첨자 공개 요청으로 함께 공개됩니다.
                         </p>
                     )}
                     {confirmed && !anyBeforeFirstPublication && !alreadyPublished && (
                         <p className="text-body-sm text-fg-secondary">
-                            반영 전까지 취소자 표시와 본인 중간 결과는 <PolicyPendingChip /> 입니다.
+                            갱신 전까지 취소자 표시와 본인 중간 결과는 <PolicyPendingChip /> 입니다.
                             관리자 미확인 결과는 사용자에게 노출되지 않습니다.
                         </p>
                     )}
+                </section>
+            )}
+
+            {rosterRows.length > 0 && (
+                <section
+                    aria-labelledby="draw-run-roster-title"
+                    className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6"
+                >
+                    <div className="flex flex-col gap-1">
+                        <h3 id="draw-run-roster-title" className="text-body-bold text-fg-primary">
+                            {firstPublished ? '공개 명단' : '공개 예정 최종 명단'}
+                        </h3>
+                        <p className="text-caption text-fg-tertiary">
+                            확정된 실행을 회차 순으로 합친 슬롯별 최종 상태입니다.
+                            {!firstPublished && ' 공개 요청 전에 이 명단을 검토해 주세요.'}
+                        </p>
+                    </div>
+                    <p className="text-body-sm text-fg-primary">
+                        당첨 {publicationSummary.winners}명
+                        {publicationSummary.unfilled > 0 &&
+                            ` · 미충원 ${publicationSummary.unfilled}자리`}
+                        {publicationSummary.canceled > 0 &&
+                            ` · 취소 ${publicationSummary.canceled}자리`}
+                    </p>
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="hover:bg-transparent">
+                                <TableHead>등수</TableHead>
+                                <TableHead>슬롯</TableHead>
+                                <TableHead>당첨자</TableHead>
+                                <TableHead>구분</TableHead>
+                                <TableHead>공개 이력</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {rosterRows.map(({ result, runNumber }) => (
+                                <TableRow
+                                    key={`${result.prizeId}:${result.slotNumber}`}
+                                    className="hover:bg-transparent"
+                                >
+                                    <TableCell>{result.prizeRank}등</TableCell>
+                                    <TableCell>{result.slotNumber}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {result.userId ?? '—'}
+                                    </TableCell>
+                                    <TableCell>
+                                        {result.resultType === 'UNFILLED' ? (
+                                            <span
+                                                className={cn(
+                                                    CHIP,
+                                                    'bg-surface-sunken text-fg-secondary',
+                                                )}
+                                            >
+                                                미충원
+                                            </span>
+                                        ) : result.isCanceled ? (
+                                            <span
+                                                className={cn(
+                                                    CHIP,
+                                                    'bg-status-rejected text-status-rejected-text',
+                                                )}
+                                            >
+                                                취소됨
+                                            </span>
+                                        ) : runNumber > 1 ? (
+                                            <span
+                                                className={cn(
+                                                    CHIP,
+                                                    'bg-status-active text-status-active-text',
+                                                )}
+                                            >
+                                                대체 선정
+                                            </span>
+                                        ) : (
+                                            <span
+                                                className={cn(
+                                                    CHIP,
+                                                    'bg-status-approved text-status-approved-text',
+                                                )}
+                                            >
+                                                선정
+                                            </span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="text-body-sm text-fg-secondary">
+                                        {result.wasPublished ? '공개됨' : '미공개'}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </section>
             )}
 
@@ -697,7 +889,9 @@ function RunDetailBody({
             {section === 'verifications' && (
                 <DrawVerificationsSection drawId={run.id} canVerify={confirmed} />
             )}
-            {section === 'candidates' && <DrawCandidatesSection drawId={run.id} />}
+            {section === 'candidates' && (
+                <DrawCandidatesSection drawId={run.id} results={run.results} />
+            )}
             {section === 'operations' && <DrawOperationsSection drawId={run.id} />}
 
             <CancelWinDialog
@@ -711,6 +905,7 @@ function RunDetailBody({
             <PublishRedrawDialog run={run} open={publishOpen} onOpenChange={setPublishOpen} />
             <ConfirmPublicationDialog
                 run={run}
+                summary={publicationSummary}
                 open={firstPublishOpen}
                 onOpenChange={setFirstPublishOpen}
             />

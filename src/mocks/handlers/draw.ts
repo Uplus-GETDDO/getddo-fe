@@ -35,8 +35,8 @@ const api = (path: string) => `${env.apiBaseUrl}${path}`;
  */
 
 const MINUTE = 60 * 1000;
-/** ADR-009 — 마감 + 5분에 최초 발표한다 */
-const ANNOUNCE_DELAY_MS = 5 * MINUTE;
+/** ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이 된다. 공개 예정 시각이 아니다 */
+const DRAW_DELAY_MS = 1 * MINUTE;
 /** 이벤트당 후보 명단 규모 */
 const CANDIDATE_COUNT = 33;
 /** 재추첨 실행이 준비 → 선정 → 확정으로 넘어가는 경과 시간 (실제 시계 기준, 가상 시계와 무관) */
@@ -56,7 +56,7 @@ interface MockPrize {
 /** 관리자 목업(adminEvent.ts)에만 있는 시드 이벤트 — 시연용 운영 상태를 추첨 쪽에서도 재현한다 */
 const EXTRA_EVENTS: Record<
     string,
-    { endsAtOffsetMin: number; prizes: MockPrize[]; canceled?: boolean }
+    { endsAtOffsetMin: number; prizes: MockPrize[]; canceled?: boolean; published?: boolean }
 > = {
     // 취소된 이벤트 — AD06·AD05의 이벤트 취소 409 시연용
     '20000000-0000-4000-8000-000000000902': {
@@ -80,11 +80,6 @@ const EXTRA_EVENTS: Record<
         prizes: [{ id: '20000000-0000-4000-8000-000000000906-p1', rank: 1, winnerCount: 3 }],
     },
 };
-// 최초 추첨이 확정되지 않았거나 확인 대기인 이벤트는 시계가 지나도 최초 발표하지 않는다
-const HELD_BEFORE_PUBLICATION = new Set([
-    '20000000-0000-4000-8000-000000000905',
-    '20000000-0000-4000-8000-000000000906',
-]);
 const FAILED_INITIAL_EVENT = '20000000-0000-4000-8000-000000000906';
 
 interface MockRun {
@@ -122,6 +117,8 @@ interface DrawStore {
     runs: MockRun[];
     canceled: boolean;
     firstPublished: boolean;
+    /** 최초 공개가 성공한 시각 — 미공개면 null */
+    publishedAt: string | null;
     /** `${prizeId}:${slotNumber}` → 공개 명단의 사용자 */
     publicList: Map<string, string | null>;
     revision: number;
@@ -210,13 +207,14 @@ function buildCandidates(eventId: string): DrawCandidate[] {
 
 function eventInfoOf(
     eventId: string,
-): { endsAt: string; prizes: MockPrize[]; canceled: boolean } | null {
+): { endsAt: string; prizes: MockPrize[]; canceled: boolean; publishedSeed: boolean } | null {
     const extra = EXTRA_EVENTS[eventId];
     if (extra) {
         return {
             endsAt: new Date(mockNow().getTime() + extra.endsAtOffsetMin * MINUTE).toISOString(),
             prizes: extra.prizes,
             canceled: extra.canceled ?? false,
+            publishedSeed: extra.published ?? false,
         };
     }
     const event = mockEvents.find((e) => e.id === eventId);
@@ -225,11 +223,10 @@ function eventInfoOf(
         endsAt: event.endsAt,
         prizes: [{ id: `${event.id}-prize-1`, rank: 1, winnerCount: event.winnerCount }],
         canceled: false,
+        // 사용자 시드의 status:'drawn'은 이미 공개된 과거 이벤트를 뜻한다 — 시각과 무관한 명시적 시드다
+        publishedSeed: event.status === 'drawn',
     };
 }
-
-const isPublishedByClock = (eventId: string, endsAt: string, now: number) =>
-    !HELD_BEFORE_PUBLICATION.has(eventId) && now >= new Date(endsAt).getTime() + ANNOUNCE_DELAY_MS;
 
 const slotKey = (prizeId: string, slotNumber: number) => `${prizeId}:${slotNumber}`;
 
@@ -325,11 +322,14 @@ function markFirstPublication(
         confirmedAt: string | null;
         reason?: string | null;
         executions?: PublicListChange['executions'];
+        /** 공개 시각 — 과거 공개 시드는 과거 시각을 넘기고, 생략하면 현재 시각 */
+        at?: string;
     },
 ) {
     store.firstPublished = true;
     store.revision = 1;
-    const now = mockNow().toISOString();
+    const at = confirmation.at ?? mockNow().toISOString();
+    store.publishedAt = at;
     // 최초 공개 전에 확정된 재추첨 결과도 관리자 확인을 거쳤다면 최초 명단에 함께 실린다
     const confirmedRuns = store.runs.filter((r) => r.detail.status === 'CONFIRMED');
     for (const run of confirmedRuns) {
@@ -343,11 +343,11 @@ function markFirstPublication(
         publicationId: `pub-${store.eventId}-1`,
         revision: 1,
         drawRunId: latest?.detail.id ?? '',
-        // 시계 자동 발표는 확인 근거가 없는 과거 공개를 재현한다 — 수동 발표는 호출부가 채운다
+        // 공개 시드는 확인 근거가 없는 과거 공개를 재현한다 — 수동 발표는 호출부가 채운다
         reason: confirmation.reason ?? null,
         confirmedBy: confirmation.confirmedBy,
         confirmedAt: confirmation.confirmedAt,
-        updatedAt: now,
+        updatedAt: at,
         changes: [...effectiveList(store)].map(([key, afterUserId]) => {
             const [prizeId, slot] = key.split(':') as [string, string];
             return { prizeId, slotNumber: Number(slot), beforeUserId: null, afterUserId };
@@ -521,13 +521,13 @@ function getStore(eventId: string): DrawStore | null {
     const now = mockNow().getTime();
     const existing = stores.get(eventId);
     if (existing) {
-        advanceStore(existing, now);
+        advanceStore(existing);
         return existing;
     }
     const info = eventInfoOf(eventId);
     if (!info) return null;
-    // 마감 전에는 추첨 실행이 없다 — 스토어를 만들지 않고 빈 목록으로 응답한다
-    if (now < new Date(info.endsAt).getTime()) return null;
+    // 최초 추첨은 마감 + 1분부터 대상이다 — 그 전에는 스토어를 만들지 않고 빈 목록으로 응답한다
+    if (now < new Date(info.endsAt).getTime() + DRAW_DELAY_MS) return null;
 
     const store: DrawStore = {
         eventId,
@@ -536,6 +536,7 @@ function getStore(eventId: string): DrawStore | null {
         runs: [],
         canceled: info.canceled,
         firstPublished: false,
+        publishedAt: null,
         publicList: new Map(),
         revision: 0,
         changes: [],
@@ -555,8 +556,14 @@ function getStore(eventId: string): DrawStore | null {
         afterData: 'drawType:INITIAL,status:CONFIRMED',
         requestId: null,
     });
-    if (isPublishedByClock(eventId, info.endsAt, now)) {
-        markFirstPublication(store, { confirmedBy: null, confirmedAt: null });
+    if (info.publishedSeed) {
+        // 공개 시드 — 당첨자 공개 요청 없이 시간만 지나도 공개되지 않는다는 규칙의 유일한 예외다.
+        // 근거 없는 과거 공개로 재현하고, 공개 시각은 최초 추첨 확정 뒤로 고정한다
+        markFirstPublication(store, {
+            confirmedBy: null,
+            confirmedAt: null,
+            at: new Date(new Date(info.endsAt).getTime() + 2 * MINUTE).toISOString(),
+        });
     }
     if (eventId === '20000000-0000-4000-8000-000000000904') seedFailedRedraw(store);
     if (eventId === FAILED_INITIAL_EVENT) seedFailedInitialRun(store);
@@ -564,12 +571,8 @@ function getStore(eventId: string): DrawStore | null {
     return store;
 }
 
-/** 이벤트 마감 시각 — 발표 시계를 따라가려고 다시 계산한다 */
-function advanceStore(store: DrawStore, now: number) {
-    const info = eventInfoOf(store.eventId);
-    if (info && !store.firstPublished && isPublishedByClock(store.eventId, info.endsAt, now)) {
-        markFirstPublication(store, { confirmedBy: null, confirmedAt: null });
-    }
+/** 진행 중인 실행만 시간에 따라 전이시킨다 — 공개는 요청 성공으로만 생겨 여기서 만들지 않는다 (ADR-022) */
+function advanceStore(store: DrawStore) {
     for (const run of store.runs) advanceRun(store, run);
 }
 
@@ -731,6 +734,27 @@ const cancellationBody = (stored: StoredCancellation, run: MockRun) => ({
 /** 테스트에서 상태를 초기화할 때 쓴다 */
 export function resetMockDraws() {
     stores.clear();
+}
+
+/**
+ * 다른 목업(이벤트·관리자 이벤트·공개 결과)이 같은 공개 사실을 읽을 때 쓴다.
+ * 공개는 추첨 확정·정합성 검증·시간 경과가 아니라 당첨자 공개 요청 성공으로만 생긴다 (ADR-022).
+ * 스토어가 없으면(추첨 대상 전·없는 이벤트) 공개되지 않은 것으로 본다.
+ */
+export function getMockDrawOverview(eventId: string) {
+    const store = getStore(eventId);
+    return {
+        published: store?.firstPublished ?? false,
+        publishedAt: store?.publishedAt ?? null,
+        revision: store?.revision ?? null,
+        hasConfirmedRun: store?.runs.some((r) => r.detail.status === 'CONFIRMED') ?? false,
+        hasRunningReplacement:
+            store?.runs.some(
+                (r) =>
+                    r.detail.drawType === 'REPLACEMENT' &&
+                    (r.detail.status === 'PREPARING' || r.detail.status === 'RUNNING'),
+            ) ?? false,
+    } as const;
 }
 
 export const drawHandlers = [

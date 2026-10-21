@@ -12,8 +12,16 @@ import {
     useAdminEvent,
 } from '@entities/event';
 import { EventActionDialog } from '@features/manageEvent';
+import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
@@ -37,6 +45,49 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
     );
 }
 
+// 작은 썸네일로는 올린 사진의 상태를 확인할 수 없다 — 누르면 원본 크기에 가깝게 확대해서 보여 준다
+function ZoomableThumbnail({
+    src,
+    label,
+    className,
+    onPreview,
+}: {
+    src: string;
+    label: string;
+    className: string;
+    onPreview: () => void;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onPreview}
+            aria-label={`${label} 크게 보기`}
+            className="cursor-zoom-in"
+        >
+            <EventThumbnail src={src} className={className} />
+        </button>
+    );
+}
+
+function PreviewImage({ src }: { src: string }) {
+    const image = useImageFallback(src);
+    if (!image.shown) {
+        return (
+            <div className="bg-surface-sunken text-body-sm text-fg-tertiary flex h-64 items-center justify-center rounded-lg">
+                이미지를 불러오지 못했습니다
+            </div>
+        );
+    }
+    return (
+        <img
+            src={src}
+            alt=""
+            onError={image.onError}
+            className="mx-auto max-h-[70vh] max-w-full object-contain"
+        />
+    );
+}
+
 export function AdminEventDetailPage() {
     const { eventId = '' } = useParams();
     const navigate = useNavigate();
@@ -49,6 +100,7 @@ export function AdminEventDetailPage() {
     const close = () => void navigate(closeTo);
     const { data: event, isPending, isError } = useAdminEvent(eventId);
     const [action, setAction] = useState<EventActionKind | null>(null);
+    const [preview, setPreview] = useState<{ src: string; label: string } | null>(null);
 
     if (isPending) {
         return (
@@ -170,7 +222,14 @@ export function AdminEventDetailPage() {
                 <InfoRow label="대표 이미지">
                     {event.imageUrl ? (
                         <span className="flex items-center gap-3">
-                            <EventThumbnail src={event.imageUrl} className="size-14" />
+                            <ZoomableThumbnail
+                                src={event.imageUrl}
+                                label="대표 이미지"
+                                className="size-14"
+                                onPreview={() =>
+                                    setPreview({ src: event.imageUrl!, label: '대표 이미지' })
+                                }
+                            />
                             <span className="text-caption text-fg-tertiary truncate">
                                 {event.imageKey}
                             </span>
@@ -198,7 +257,21 @@ export function AdminEventDetailPage() {
                         {event.prizes.map((prize) => (
                             <TableRow key={prize.id} className="hover:bg-transparent">
                                 <TableCell>
-                                    <EventThumbnail src={prize.imageUrl} className="size-12" />
+                                    {prize.imageUrl ? (
+                                        <ZoomableThumbnail
+                                            src={prize.imageUrl}
+                                            label={`${prize.rank}등 경품 이미지`}
+                                            className="size-12"
+                                            onPreview={() =>
+                                                setPreview({
+                                                    src: prize.imageUrl!,
+                                                    label: `${prize.rank}등 경품 이미지`,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        <EventThumbnail src={null} className="size-12" />
+                                    )}
                                 </TableCell>
                                 <TableCell>{prize.rank}등</TableCell>
                                 <TableCell className="font-medium">{prize.name}</TableCell>
@@ -211,6 +284,18 @@ export function AdminEventDetailPage() {
                     </TableBody>
                 </Table>
             </section>
+
+            <Dialog open={preview !== null} onOpenChange={(open) => !open && setPreview(null)}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>{preview?.label}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            이미지 확대 미리보기
+                        </DialogDescription>
+                    </DialogHeader>
+                    {preview && <PreviewImage src={preview.src} />}
+                </DialogContent>
+            </Dialog>
 
             <EventActionDialog
                 event={event}

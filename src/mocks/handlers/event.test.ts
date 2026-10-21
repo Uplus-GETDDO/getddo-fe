@@ -4,7 +4,12 @@ import type { AdminEventStatus } from '@entities/event';
 
 import { apiClient } from '@shared/api/client';
 
-import { ANNOUNCE_DELAY_MS } from './event';
+import { mockEvents } from './event';
+
+// 시드에 status:'drawn'으로 적어 둔 이벤트만 공개됐다 — 시각이 아니라 명시적 공개 시드로 판정한다
+const SEED_PUBLISHED = new Set(
+    mockEvents.filter((event) => event.status === 'drawn').map((event) => event.id),
+);
 
 interface EventResponse {
     id: string;
@@ -52,9 +57,9 @@ describe('이벤트 목업 핸들러', () => {
                     ? 'SCHEDULED'
                     : now < ends
                       ? 'OPEN'
-                      : now < ends + ANNOUNCE_DELAY_MS
-                        ? 'CLOSED'
-                        : 'PUBLISHED';
+                      : SEED_PUBLISHED.has(event.id)
+                        ? 'PUBLISHED'
+                        : 'CLOSED';
 
             expect(event.status, `${event.id} ${event.title}`).toBe(expected);
         }
