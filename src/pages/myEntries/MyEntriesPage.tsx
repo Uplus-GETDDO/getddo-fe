@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import type { MyEntryRow } from '@widgets/myEntryRows';
+import type { MyEntryGroup } from '@widgets/myEntryRows';
 
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { PageHeader } from '@shared/ui/page-header';
@@ -19,9 +19,9 @@ import type { StatusTile } from './ui/EntryStatusTiles';
 import { EntryStatusTiles } from './ui/EntryStatusTiles';
 import { ENTRY_GRID, EntryTableRow } from './ui/EntryTableRow';
 import {
-    filterEntryRows,
+    filterEntryGroups,
     readEntryFilters,
-    scopeEntryRows,
+    scopeEntryGroups,
     type EntryKindFilter,
     type EntryPeriod,
     type EntrySort,
@@ -46,11 +46,11 @@ const PERIOD_LABEL: Record<EntryPeriod, string> = {
 const SORT_LABEL: Record<EntrySort, string> = { NEWEST: '최신순', OLDEST: '오래된순' };
 
 /** 월(KST)별로 묶는다 — 들어온 순서를 유지한다 */
-function byMonth(rows: MyEntryRow[]) {
-    const months = new Map<string, MyEntryRow[]>();
-    for (const row of rows) {
-        const label = formatKst(row.entry.requestedAt, { year: 'numeric', month: 'long' });
-        months.set(label, [...(months.get(label) ?? []), row]);
+function byMonth(groups: MyEntryGroup[]) {
+    const months = new Map<string, MyEntryGroup[]>();
+    for (const group of groups) {
+        const label = formatKst(group.latestRequestedAt, { year: 'numeric', month: 'long' });
+        months.set(label, [...(months.get(label) ?? []), group]);
     }
     return [...months.entries()];
 }
@@ -68,10 +68,10 @@ export function MyEntriesPage() {
     const [page, setPage] = useState(1);
     const entriesQuery = useMyEntryRows({
         // 화면 목록과 같은 pageSlice로 자른다 — 줄이 줄어 쪽 수가 당겨져도 보이는 쪽의 발표 대기를 계속 폴링한다
-        selectVisibleRows: (rows) =>
+        selectVisibleGroups: (groups) =>
             pageSlice(
-                filterEntryRows(
-                    scopeEntryRows(rows, filters.kind, filters.period, now),
+                filterEntryGroups(
+                    scopeEntryGroups(groups, filters.kind, filters.period, now),
                     filters.status,
                     filters.sort,
                 ),
@@ -79,7 +79,7 @@ export function MyEntriesPage() {
                 PAGE_SIZE,
             ).items,
     });
-    const { rows, isPending, isError, isResultPending } = entriesQuery;
+    const { groups, isPending, isError, isResultPending } = entriesQuery;
 
     const setFilter = (key: string, value: string, fallback: string) => {
         setParams(
@@ -94,14 +94,14 @@ export function MyEntriesPage() {
         setPage(1);
     };
 
-    const scoped = scopeEntryRows(rows, filters.kind, filters.period, now);
-    const shown = filterEntryRows(scoped, filters.status, filters.sort);
+    const scoped = scopeEntryGroups(groups, filters.kind, filters.period, now);
+    const shown = filterEntryGroups(scoped, filters.status, filters.sort);
     const paged = pageSlice(shown, page, PAGE_SIZE);
-    const pending = scoped.filter((row) => row.result === 'PENDING');
-    const won = scoped.filter((row) => row.result === 'WON');
-    const lost = scoped.filter((row) => row.result === 'LOST');
+    const pending = scoped.filter((group) => group.result === 'PENDING');
+    const won = scoped.filter((group) => group.result === 'WON');
+    const lost = scoped.filter((group) => group.result === 'LOST');
     const lastWonAt = latestWonAt(won);
-    const lostTickets = lost.reduce((sum, row) => sum + row.entry.deductedTicketCount, 0);
+    const lostTickets = lost.reduce((sum, group) => sum + group.usedTicketCount, 0);
 
     const tiles: StatusTile[] = [
         { value: 'ALL', label: '전체', count: scoped.length, note: PERIOD_LABEL[filters.period] },
@@ -219,7 +219,7 @@ export function MyEntriesPage() {
                     !(entriesQuery.isResultInitialError && filters.status !== 'ALL') &&
                     shown.length === 0 && (
                         <p className="text-body-sm text-fg-tertiary py-10 text-center">
-                            {rows.length === 0
+                            {groups.length === 0
                                 ? '아직 응모한 내역이 없어요.'
                                 : '조건에 맞는 응모 내역이 없어요.'}
                         </p>
@@ -230,8 +230,8 @@ export function MyEntriesPage() {
                             {month}
                         </h2>
                         <ul className="divide-border-default divide-y">
-                            {monthRows.map((row) => (
-                                <EntryTableRow key={row.entry.id} row={row} />
+                            {monthRows.map((group) => (
+                                <EntryTableRow key={group.key} group={group} />
                             ))}
                         </ul>
                     </div>
