@@ -1,5 +1,6 @@
 import type { Event } from '@entities/event';
 
+import { useMyEventEntries } from '@entities/entry';
 import { GradeTicketTiles, TICKET_GRADES, useMyTickets } from '@entities/ticket';
 import { formatNumber } from '@shared/utils/format';
 
@@ -12,11 +13,14 @@ import { formatNumber } from '@shared/utils/format';
  */
 export function MyTicketCard({ event }: { event: Event }) {
     const { data: ticket, isPending } = useMyTickets();
+    const { data: myEntries } = useMyEventEntries(event.id);
 
     const usesTickets = event.eventType === 'TICKET';
-    const entryCount = event.myEntryCount ?? 0;
+    const entryCount = myEntries?.length ?? 0;
     // 한 번에 여러 장을 쓸 수 있어 횟수 × 차감량으로는 실제 사용량이 나오지 않는다
-    const usedTickets = event.myTicketCount ?? entryCount * event.requiredTickets;
+    const usedTickets =
+        myEntries?.reduce((sum, entry) => sum + entry.deductedTicketCount, 0) ??
+        entryCount * event.requiredTickets;
     const limit = usesTickets ? event.maxTicketsPerUser : null;
 
     return (
