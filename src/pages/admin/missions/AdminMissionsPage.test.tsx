@@ -157,4 +157,103 @@ describe('관리자 미션', () => {
         const answersCall = get.mock.calls.find(([url]) => url.includes('survey-answers'));
         expect(answersCall?.[1]?.params).toMatchObject({ questionId: 'q1', page: 1 });
     });
+    it('집계 기간을 바꾸면 서술 답변 페이지를 1로 되돌린다', async () => {
+        Element.prototype.scrollIntoView = vi.fn();
+        const summary = {
+            id: 'm-1',
+            title: '설문 미션',
+            description: '',
+            missionType: 'SURVEY',
+            startsAt: '2026-10-01T00:00:00+09:00',
+            endsAt: '2026-10-20T00:00:00+09:00',
+            rewardTicketCount: 1,
+            status: 'ACTIVE',
+            rewardPolicyId: 'rp-1',
+            createdBy: 'admin',
+            createdAt: '2026-09-01T00:00:00Z',
+            updatedAt: '2026-09-01T00:00:00Z',
+        };
+        const get = vi
+            .spyOn(apiClient, 'get')
+            .mockImplementation((url: string, config?: { params?: Record<string, unknown> }) => {
+                if (url === '/v1/admin/missions') {
+                    return Promise.resolve({
+                        data: {
+                            success: true,
+                            data: { items: [summary], page: 1, size: 20, totalElements: 1 },
+                        },
+                    });
+                }
+                if (url === '/v1/admin/missions/m-1') {
+                    return Promise.resolve({
+                        data: {
+                            success: true,
+                            data: {
+                                ...summary,
+                                questions: [
+                                    {
+                                        id: 'q1',
+                                        questionType: 'FREE_TEXT',
+                                        questionText: '자유 의견',
+                                        displayOrder: 1,
+                                        required: false,
+                                    },
+                                ],
+                            },
+                        },
+                    });
+                }
+                if (url === '/v1/admin/missions/m-1/survey-summary') {
+                    return Promise.resolve({
+                        data: {
+                            success: true,
+                            data: { dailyResponses: [], questions: [] },
+                        },
+                    });
+                }
+                if (url === '/v1/admin/missions/m-1/survey-answers') {
+                    const page = Number(config?.params?.page ?? 1);
+                    return Promise.resolve({
+                        data: {
+                            success: true,
+                            data: {
+                                items: [
+                                    {
+                                        answerText: `답변 ${page}페이지`,
+                                        submittedAt: '2026-10-10T05:00:00Z',
+                                    },
+                                ],
+                                page,
+                                size: 20,
+                                totalElements: 21,
+                            },
+                        },
+                    });
+                }
+                return Promise.reject(new Error(`unexpected ${url}`));
+            });
+        render(
+            <QueryClientProvider client={new QueryClient()}>
+                <AdminMissionsPage />
+            </QueryClientProvider>,
+        );
+        await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
+        await userEvent.click(await screen.findByRole('button', { name: '집계 조회' }));
+        await screen.findByText('답변 1페이지');
+        // 미션 목록 페이저의 비활성 버튼과 구분해 서술 답변 페이저를 누른다
+        const nextButtons = screen.getAllByRole('button', { name: '다음 페이지' });
+        await userEvent.click(nextButtons.find((b) => !b.hasAttribute('disabled'))!);
+        await screen.findByText('답변 2페이지');
+        expect(
+            get.mock.calls.filter(([url]) => url.includes('survey-answers')).at(-1)?.[1]?.params,
+        ).toMatchObject({ page: 2 });
+        // 기간을 바꿔 다시 조회하면 새 기간의 첫 페이지부터 요청한다
+        await userEvent.clear(screen.getByLabelText('집계 종료일'));
+        await userEvent.type(screen.getByLabelText('집계 종료일'), '2026-10-15');
+        await userEvent.click(screen.getByRole('button', { name: '집계 조회' }));
+        await screen.findByText('답변 1페이지');
+        expect(
+            get.mock.calls.filter(([url]) => url.includes('survey-answers')).at(-1)?.[1]?.params,
+        ).toMatchObject({ questionId: 'q1', page: 1, to: '2026-10-15' });
+    });
 });

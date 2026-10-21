@@ -130,7 +130,7 @@ export function SurveySummaryPanel({
                     ) : (
                         freeTextQuestions.map((q) => (
                             <FreeTextAnswers
-                                key={q.id}
+                                key={`${q.id}-${range.from}-${range.to}`}
                                 missionId={missionId}
                                 questionId={q.id}
                                 questionText={q.questionText}
