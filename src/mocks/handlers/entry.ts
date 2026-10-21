@@ -1,9 +1,10 @@
 import { http, HttpResponse } from 'msw';
 
-import type { Entry, TicketsByGrade } from '@entities/entry';
+import type { Entry, EntryStatus, TicketsByGrade } from '@entities/entry';
 import type { MembershipRule } from '@entities/event';
 import type { TicketGrade } from '@entities/ticket';
 
+import { entryStatusSchema } from '@entities/entry';
 import { ticketGradeSchema } from '@entities/ticket';
 import { env } from '@shared/config/env';
 import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
@@ -281,10 +282,20 @@ export function mockEventEntrantIds(eventId: string): string[] {
 }
 
 export const entryHandlers = [
-    // E06 초안 — Page<EntryReceipt> 봉투, page·size 파라미터를 적용한다 (페이지는 1부터)
+    // E06 — Page<EntryReceipt> 봉투, page·size·eventId·status 파라미터를 적용한다 (페이지는 1부터)
     http.get(api('/v1/users/me/entries'), ({ request }) => {
-        const all = myEntriesFor(userIdOf(request));
         const url = new URL(request.url);
+        const eventId = url.searchParams.get('eventId');
+        const status = url.searchParams.get('status');
+        // 알 수 없는 status는 형식 오류라 400이다 — 업무 거절 영수증으로 남기지 않는다 (spec COMMON-005)
+        if (status !== null && !entryStatusSchema.options.includes(status as EntryStatus)) {
+            return fail(400, 'COMMON-005', 'status 값이 올바르지 않습니다');
+        }
+        const all = myEntriesFor(userIdOf(request)).filter(
+            (entry) =>
+                (eventId === null || entry.eventId === eventId) &&
+                (status === null || entry.status === status),
+        );
         const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
         const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
         return ok({
