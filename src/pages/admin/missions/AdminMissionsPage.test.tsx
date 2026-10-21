@@ -1,3 +1,5 @@
+import type { AxiosRequestConfig } from 'axios';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -175,7 +177,7 @@ describe('관리자 미션', () => {
         };
         const get = vi
             .spyOn(apiClient, 'get')
-            .mockImplementation((url: string, config?: { params?: Record<string, unknown> }) => {
+            .mockImplementation((url: string, config?: AxiosRequestConfig) => {
                 if (url === '/v1/admin/missions') {
                     return Promise.resolve({
                         data: {
@@ -212,7 +214,8 @@ describe('관리자 미션', () => {
                     });
                 }
                 if (url === '/v1/admin/missions/m-1/survey-answers') {
-                    const page = Number(config?.params?.page ?? 1);
+                    const params = config?.params as { page?: number } | undefined;
+                    const page = Number(params?.page ?? 1);
                     return Promise.resolve({
                         data: {
                             success: true,
