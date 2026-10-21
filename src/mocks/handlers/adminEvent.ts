@@ -43,8 +43,13 @@ function readMultipartFile(buffer: ArrayBuffer): { contentType: string; dataUrl:
     const header = /filename="[^"]*"[^]*?content-type:\s*([^\r\n]+)\r?\n\r?\n/i.exec(text);
     if (!header) return null;
 
+    /*
+     * 끝은 첫 줄에 통째로 적혀 온 경계 문자열로 찾는다. '\r\n--'만 보고 자르면 사진 바이트가
+     * 우연히 그 네 바이트를 품었을 때 거기서 끊겨 반쪽 그림이 된다.
+     */
+    const boundary = /^(--[^\r\n]+)\r?\n/.exec(text)?.[1];
     const start = header.index + header[0].length;
-    const end = text.indexOf('\r\n--', start);
+    const end = boundary ? text.indexOf(`\r\n${boundary}`, start) : -1;
     const body = bytes.slice(start, end === -1 ? bytes.length : end);
 
     let binary = '';
