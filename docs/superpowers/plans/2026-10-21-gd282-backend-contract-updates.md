@@ -1,6 +1,6 @@
 # GD-282 백엔드 계약 반영 (설문 서술 답변·출석 예약 수정·홈 미션 카드 필터) Implementation Plan
 
-> **For agentic workers:** Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 백엔드 PR #146·#147·#148(GD-269·270·271) 머지에 맞춰 프론트를 갱신한다 — 홈 미션 카드의 진행 중 판정을 serverTime으로 통일, 관리자 설문 화면 개선(기본 기간·문구·스크롤), AM05 서술 답변 조회, AP05·AP06 예약 정책 수정.
 
@@ -56,7 +56,7 @@
 
 - Produces: `isMissionOpenByServerTime(mission: { startsAt: string; endsAt: string; serverTime: string }): boolean` — `entities/mission` 배럴에서 export
 
-- [ ] **Step 1: 실패하는 테스트 작성** — `missionPeriod.test.ts`에 추가 (기존 describe 패턴 유지)
+- [x] **Step 1: 실패하는 테스트 작성** — `missionPeriod.test.ts`에 추가 (기존 describe 패턴 유지)
 
 ```ts
 it('serverTime이 [startsAt, endsAt) 안이면 진행 중이다', () => {
@@ -85,7 +85,7 @@ it('serverTime이 시작 전이면 열리지 않았다', () => {
 });
 ```
 
-- [ ] **Step 2: 구현** — `missionPeriod.ts`에 추가
+- [x] **Step 2: 구현** — `missionPeriod.ts`에 추가
 
 ```ts
 /**
@@ -99,8 +99,8 @@ export const isMissionOpenByServerTime = (mission: {
 }) => isMissionOpen(mission, new Date(mission.serverTime));
 ```
 
-- [ ] **Step 3: `index.ts`에 `isMissionOpenByServerTime` export 추가**
-- [ ] **Step 4: TicketBalanceWidget 필터**
+- [x] **Step 3: `index.ts`에 `isMissionOpenByServerTime` export 추가**
+- [x] **Step 4: TicketBalanceWidget 필터**
 
 ```ts
 // 진행 중이고 아직 완료하지 않은 미션만 카드로 — 목록(M01)은 끝난 미션도 내려주므로
@@ -112,7 +112,7 @@ export const isMissionOpenByServerTime = (mission: {
 
 import에 `isMissionOpenByServerTime` 추가 (`@entities/mission`).
 
-- [ ] **Step 5: TodayRewardsBanner 판정 교체**
+- [x] **Step 5: TodayRewardsBanner 판정 교체**
 
 ```ts
 // 지금 참여할 수 있는 미션만 센다 — 판정은 응답의 serverTime 기준이다 (완료 여부는 그대로 반영)
@@ -121,9 +121,9 @@ missions: missions?.filter((mission) => isMissionOpenByServerTime(mission)),
 
 `isMissionOpen` import 제거(다른 사용 없으면).
 
-- [ ] **Step 6: QuickLinks 판정 교체** — 같은 방식으로 `isMissionOpenByServerTime(mission)` 사용. `now`가 이 파일에서 다른 곳에 안 쓰이면 `useVirtualClock`·`now` 관련 코드 정리 여부를 확인한다(남아 있으면 유지).
+- [x] **Step 6: QuickLinks 판정 교체** — 같은 방식으로 `isMissionOpenByServerTime(mission)` 사용. `now`가 이 파일에서 다른 곳에 안 쓰이면 `useVirtualClock`·`now` 관련 코드 정리 여부를 확인한다(남아 있으면 유지).
 
-- [ ] **Step 7: 검증** — `npm run test:ci -- missionPeriod` 통과 후 `git add -A && git commit -m "feat: 홈 미션 카드를 serverTime 진행 중으로 필터 (GD-282)"` — 형식은 팀 컨벤션 확인 후 조정
+- [x] **Step 7: 검증** — `npm run test:ci -- missionPeriod` 통과 후 `git add -A && git commit -m "feat: 홈 미션 카드를 serverTime 진행 중으로 필터 (GD-282)"` — 형식은 팀 컨벤션 확인 후 조정
 
 ### Task 2: A-3 — 설문 집계 패널 개선 + 상세 패널 스크롤
 
@@ -138,7 +138,7 @@ missions: missions?.filter((mission) => isMissionOpenByServerTime(mission)),
 - Consumes: `formatYmd`(KST YYYY-MM-DD), `surveyRangeSchema`(양끝 포함 ≤31일)
 - Produces: `SurveySummaryPanel({ missionId, startsAt, endsAt, questions })` — `questions`는 Task 3에서 사용. 이번 태스크에서는 props에만 추가하고 미사용이면 lint에 걸리므로 Task 3과 함께 도입한다
 
-- [ ] **Step 1: 기본 기간 계산** — 패널 상단에
+- [x] **Step 1: 기본 기간 계산** — 패널 상단에
 
 ```ts
 const DAY_MS = 86_400_000;
@@ -157,13 +157,13 @@ const { register, handleSubmit } = useForm<{ from: string; to: string }>({
 
 `MissionDetailPanel`에서 `startsAt={mission.startsAt} endsAt={mission.endsAt}` 전달. `defaultRange.clamped`이면 안내 문구 노출: `'미션 기간이 31일을 넘어 시작일부터 31일만 잘랐습니다.'`
 
-- [ ] **Step 2: 문구 분기** — 기존 `마지막 성공 조회의 집계입니다.`를
+- [x] **Step 2: 문구 분기** — 기존 `마지막 성공 조회의 집계입니다.`를
 
 ```tsx
 <p role="status">{query.isError ? '마지막 성공 조회의 집계입니다.' : '조회 결과입니다.'}</p>
 ```
 
-- [ ] **Step 3: 상세 패널 스크롤·포커스** — `MissionDetailPanel`
+- [x] **Step 3: 상세 패널 스크롤·포커스** — `MissionDetailPanel`
 
 ```tsx
 const panelRef = useRef<HTMLElement>(null);
@@ -176,8 +176,8 @@ useEffect(() => {
 
 `<section ref={panelRef} tabIndex={-1} ...>` — 부작용: 패널이 viewport에 이미 있어도 상단 정렬로 스크롤된다(의도된 단순화, 허용).
 
-- [ ] **Step 4: 테스트** — jsdom은 `scrollIntoView` 미구현이라 테스트에서 `Element.prototype.scrollIntoView = vi.fn()` 스텁 후, `상세` 클릭 시 호출됨 + 패널이 문서에 존재함을 확인. jsdom `focus({preventScroll})`는 무시 가능(HTMLElement.prototype.focus 존재).
-- [ ] **Step 5: 검증·커밋** — 대상 테스트 통과 후 `fix: 미션 관리 상세 패널 표시와 설문 집계 기본 기간 (GD-282)`
+- [x] **Step 4: 테스트** — jsdom은 `scrollIntoView` 미구현이라 테스트에서 `Element.prototype.scrollIntoView = vi.fn()` 스텁 후, `상세` 클릭 시 호출됨 + 패널이 문서에 존재함을 확인. jsdom `focus({preventScroll})`는 무시 가능(HTMLElement.prototype.focus 존재).
+- [x] **Step 5: 검증·커밋** — 대상 테스트 통과 후 `fix: 미션 관리 상세 패널 표시와 설문 집계 기본 기간 (GD-282)`
 
 ### Task 3: A-2 — 설문 자유 서술 답변 조회 (AM05)
 
@@ -195,7 +195,7 @@ useEffect(() => {
 - Consumes: `surveyRangeSchema`, `envelopeSchema(pageSchema(...))`, `ADMIN_MISSIONS_PATH`, `PagedResult`
 - Produces: `useSurveyAnswers(missionId: string, questionId: string | null, range: { from: string; to: string } | null, page: number)` → `UseQueryResult<Page<SurveyFreeTextAnswer>>`
 
-- [ ] **Step 1: 스키마** — `adminTypes.ts`
+- [x] **Step 1: 스키마** — `adminTypes.ts`
 
 ```ts
 export const surveyFreeTextAnswerSchema = z.object({
@@ -205,7 +205,7 @@ export const surveyFreeTextAnswerSchema = z.object({
 export type SurveyFreeTextAnswer = z.infer<typeof surveyFreeTextAnswerSchema>;
 ```
 
-- [ ] **Step 2: 조회 훅** — `api/admin.ts`, `useSurveySummary` 패턴 복제
+- [x] **Step 2: 조회 훅** — `api/admin.ts`, `useSurveySummary` 패턴 복제
 
 ```ts
 export function useSurveyAnswers(
@@ -236,7 +236,7 @@ export function useSurveyAnswers(
 
 `index.ts`에 훅·스키마·타입 export 추가.
 
-- [ ] **Step 3: 패널 UI** — `SurveySummaryPanel`에 `questions` prop 추가(`AdminMission['questions']`), FREE_TEXT 필터 후 집계 결과 아래 섹션:
+- [x] **Step 3: 패널 UI** — `SurveySummaryPanel`에 `questions` prop 추가(`AdminMission['questions']`), FREE_TEXT 필터 후 집계 결과 아래 섹션:
 
 ```tsx
 const freeTextQuestions = questions.filter((q) => q.questionType === 'FREE_TEXT');
@@ -271,9 +271,9 @@ const freeTextQuestions = questions.filter((q) => q.questionType === 'FREE_TEXT'
 </li>
 ```
 
-- [ ] **Step 4: `MissionDetailPanel`에서 `questions={mission.questions}` 전달**
-- [ ] **Step 5: 테스트** — apiClient.get 모킹으로 survey-answers 페이지 응답을 주고 `answerText`가 텍스트로 렌더되는지 확인 (`<b>` 포함 문자열이 태그로 해석되지 않는지)
-- [ ] **Step 6: 검증·커밋** — `feat: 설문 자유 서술 답변 조회 연동 (GD-282)`
+- [x] **Step 4: `MissionDetailPanel`에서 `questions={mission.questions}` 전달**
+- [x] **Step 5: 테스트** — apiClient.get 모킹으로 survey-answers 페이지 응답을 주고 `answerText`가 텍스트로 렌더되는지 확인 (`<b>` 포함 문자열이 태그로 해석되지 않는지)
+- [x] **Step 6: 검증·커밋** — `feat: 설문 자유 서술 답변 조회 연동 (GD-282)`
 
 ### Task 4: B-1 — 출석 예약 정책 수정 (AP05·AP06)
 
@@ -293,7 +293,7 @@ const freeTextQuestions = questions.filter((q) => q.questionType === 'FREE_TEXT'
 - Consumes: `ADMIN_ATTENDANCE_PATH`, `dailyPolicyWriteSchema`/`streakPolicyWriteSchema`, `dailyAttendancePolicySchema`/`streakPolicySetSchema`, `useVirtualClock`, `toKst`, `Dialog` (`@shared/ui/dialog`)
 - Produces: `useUpdateAttendancePolicy()` mutation — 요청 `{ kind: 'daily' | 'streak'; id: string; body: DailyPolicyWrite | StreakPolicyWrite }`; `AttendancePolicyEditDialog({ kind, policy, open, onOpenChange })`
 
-- [ ] **Step 1: 에러 코드 매핑** — `errorMessage.ts` 번호 코드 블록에 추가
+- [x] **Step 1: 에러 코드 매핑** — `errorMessage.ts` 번호 코드 블록에 추가
 
 ```ts
 'ATTENDANCE-002': '관리자 권한이 필요합니다.',
@@ -303,9 +303,9 @@ const freeTextQuestions = questions.filter((q) => q.questionType === 'FREE_TEXT'
 'MISSION-006': '관리자 권한이 필요합니다.',
 ```
 
-- [ ] **Step 2: `useUpdateAttendancePolicy`** — `useCreateAttendancePolicy`와 같은 busy/lastError 가드 패턴, `apiClient.put(`${ADMIN_ATTENDANCE_PATH}/${request.kind}/${request.id}`, body)`, 응답은 동일 스키마로 검증, `onSettled`에서 `ADMIN_ATTENDANCE_KEY` 무효화. `apiClient.put` 존재 여부 먼저 확인(없으면 axios 인스턴스 메서드 확인 후 보고).
-- [ ] **Step 3: `PolicyFields` 추출** — `AttendancePolicyForm`의 daily 입력·streak field-array 마크업을 `ui/PolicyFields.tsx`로 이동. props: `{ kind, register, fields, append, remove }` (RHF 제네릭은 `DailyPolicyWrite & StreakPolicyWrite` 폼 타입). 폼은 이를 사용하도록 교체, 동작 동일.
-- [ ] **Step 4: `AttendancePolicyEditDialog`** — MissionFormDialog 패턴. `defaultValues`는 policy에서 주입(일일: `rewardTicketCount`, 연속: `milestones`의 id 제외한 write 형태). 성공 시 `'수정했습니다.'` 후 닫기, 실패는 코드 분기:
+- [x] **Step 2: `useUpdateAttendancePolicy`** — `useCreateAttendancePolicy`와 같은 busy/lastError 가드 패턴, `apiClient.put(`${ADMIN_ATTENDANCE_PATH}/${request.kind}/${request.id}`, body)`, 응답은 동일 스키마로 검증, `onSettled`에서 `ADMIN_ATTENDANCE_KEY` 무효화. `apiClient.put` 존재 여부 먼저 확인(없으면 axios 인스턴스 메서드 확인 후 보고).
+- [x] **Step 3: `PolicyFields` 추출** — `AttendancePolicyForm`의 daily 입력·streak field-array 마크업을 `ui/PolicyFields.tsx`로 이동. props: `{ kind, register, fields, append, remove }` (RHF 제네릭은 `DailyPolicyWrite & StreakPolicyWrite` 폼 타입). 폼은 이를 사용하도록 교체, 동작 동일.
+- [x] **Step 4: `AttendancePolicyEditDialog`** — MissionFormDialog 패턴. `defaultValues`는 policy에서 주입(일일: `rewardTicketCount`, 연속: `milestones`의 id 제외한 write 형태). 성공 시 `'수정했습니다.'` 후 닫기, 실패는 코드 분기:
 
 ```ts
 error instanceof ApiError && error.code === 'ATTENDANCE-007'
@@ -313,7 +313,7 @@ error instanceof ApiError && error.code === 'ATTENDANCE-007'
     : `${getErrorMessage(error)} 처리 여부가 불확실하면 목록을 먼저 확인해 주세요.`;
 ```
 
-- [ ] **Step 5: 페이지에 수정 버튼** — 각 행에
+- [x] **Step 5: 페이지에 수정 버튼** — 각 행에
 
 ```ts
 const now = useVirtualClock().now();
@@ -328,17 +328,17 @@ const editableStreak = (p: StreakPolicySet) => p.effectiveMonth > kstMonthOf(now
 
 `editing` state(`{ kind: 'daily'; policy: DailyAttendancePolicy } | { kind: 'streak'; policy: StreakPolicySet } | null`) + 버튼 → `AttendancePolicyEditDialog` 렌더.
 
-- [ ] **Step 6: `AttendancePolicyForm` 004/005 문구 갱신**
+- [x] **Step 6: `AttendancePolicyForm` 004/005 문구 갱신**
 
 ```ts
 '이미 예약된 정책이 있습니다. 목록에서 예약된 정책을 수정해 주세요.';
 ```
 
-- [ ] **Step 7: 테스트** — 미래 `effectiveFrom` 정책에만 수정 버튼, PUT 호출 본문 확인, ATTENDANCE-007 응답 문구 확인. 기존 테스트의 004 문구 검증(`이미 예약된 정책`)은 새 문구에 맞춰 갱신.
-- [ ] **Step 8: 검증·커밋** — `feat: 출석 예약 정책 수정 연동 (GD-282)`
+- [x] **Step 7: 테스트** — 미래 `effectiveFrom` 정책에만 수정 버튼, PUT 호출 본문 확인, ATTENDANCE-007 응답 문구 확인. 기존 테스트의 004 문구 검증(`이미 예약된 정책`)은 새 문구에 맞춰 갱신.
+- [x] **Step 8: 검증·커밋** — `feat: 출석 예약 정책 수정 연동 (GD-282)`
 
 ### Task 5: 전체 검증
 
-- [ ] `npm run format:check && npm run lint && npm run test:ci && npm run build` 전부 통과
-- [ ] `git diff dev` 셀프 리뷰 — 주석 규칙·토큰 색상·FSD 경계 확인
-- [ ] **배포 후 확인 예약 항목(이번 세션 불가)**: 백엔드 일일 릴리스(오전 7시) 이후 `https://getddo-fe.vercel.app/`에서 ① AM05 답변 조회 200 ② AP05·AP06 수정 200/409 ③ 미션 ENDED 자동 반영 확인
+- [x] `npm run format:check && npm run lint && npm run test:ci && npm run build` 전부 통과
+- [x] `git diff dev` 셀프 리뷰 — 주석 규칙·토큰 색상·FSD 경계 확인
+- [x] **배포 후 확인 예약 항목(이번 세션 불가)**: 백엔드 일일 릴리스(오전 7시) 이후 `https://getddo-fe.vercel.app/`에서 ① AM05 답변 조회 200 ② AP05·AP06 수정 200/409 ③ 미션 ENDED 자동 반영 확인
