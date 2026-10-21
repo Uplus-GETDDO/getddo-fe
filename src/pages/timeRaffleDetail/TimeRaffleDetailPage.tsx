@@ -14,7 +14,6 @@ import { getErrorMessage } from '@shared/api/errorMessage';
 import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
-import { formatKst } from '@shared/utils/date';
 import { DrawResultSection } from '@widgets/drawResult';
 import {
     EntryCompleteDialog,
@@ -237,64 +236,46 @@ export function TimeRaffleDetailPage() {
                         )
                     }
                 />
-                {/* 발표 전에는 발표 대기 카드가, 발표 후에는 결과 영역의 배너가 본인 결과를 맡는다 */}
+                {/* 결과는 발표되면 바뀌지 않아 조회 시각·받는 중은 보이지 않는다 — 실패했을 때만 한 줄로 알리고 다시 시도를 연다.
+                    받아 둔 결과가 있으면 그대로 둔다. 취소된 이벤트는 결과가 없어 알리지 않는다 */}
                 {isAfterClose &&
+                    event.status !== 'canceled' &&
                     (
                         [
-                            ['공개 결과', resultsQuery],
-                            ['본인 결과', myResultQuery],
+                            ['당첨자 명단', '당첨자 명단을', resultsQuery],
+                            ['내 결과', '내 결과를', myResultQuery],
                         ] as const
-                    ).map(([label, query]) => (
-                        <div key={label} role="status" className="text-body-sm text-fg-secondary">
-                            {!query.data && query.isPending && <p>{label}를 불러오는 중이에요.</p>}
-                            {query.data && (
+                    ).map(([label, object, query]) => {
+                        const retryDelay = getPollingRetryDelay(query.error ?? query.failureReason);
+                        if (!query.isError && retryDelay === 0) return null;
+                        return (
+                            <div
+                                key={label}
+                                role="status"
+                                className="text-body-sm text-fg-secondary flex flex-wrap items-center gap-x-3 gap-y-1"
+                            >
                                 <p>
-                                    {label} 마지막 조회{' '}
-                                    {formatKst(new Date(query.dataUpdatedAt), {
-                                        month: 'numeric',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        second: '2-digit',
-                                    })}
+                                    {retryDelay > 0
+                                        ? `요청이 많아 ${object} 잠시 후 다시 불러올게요.`
+                                        : query.data
+                                          ? `${object} 새로 불러오지 못해 이전 결과를 보여 주고 있어요.`
+                                          : `${object} 불러오지 못했어요.`}
                                 </p>
-                            )}
-                            {query.data && query.isFetching && <p>{label} 갱신 중이에요.</p>}
-                            {(query.isError ||
-                                getPollingRetryDelay(query.error ?? query.failureReason) > 0) && (
-                                <>
-                                    <p>
-                                        {query.data
-                                            ? `${label}를 갱신하지 못했어요. 이전 값을 표시해요.`
-                                            : `${label}를 불러오지 못했어요.`}
-                                    </p>
-                                    <p>{getErrorMessage(query.error ?? query.failureReason)}</p>
-                                    {getPollingRetryDelay(query.error ?? query.failureReason) >
-                                        0 && <p>요청이 많아요. 잠시 후 다시 시도해 주세요.</p>}
-                                    <Button
-                                        type="button"
-                                        variant="secondary"
-                                        disabled={
-                                            query.isFetching ||
-                                            getPollingRetryDelay(
-                                                query.error ?? query.failureReason,
-                                            ) > 0
-                                        }
-                                        onClick={() => {
-                                            if (
-                                                getPollingRetryDelay(
-                                                    query.error ?? query.failureReason,
-                                                ) === 0
-                                            )
-                                                void query.refetch({ cancelRefetch: false });
-                                        }}
-                                    >
-                                        {label} 다시 시도
-                                    </Button>
-                                </>
-                            )}
-                        </div>
-                    ))}
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    size="sm"
+                                    disabled={query.isFetching || retryDelay > 0}
+                                    onClick={() => {
+                                        if (retryDelay === 0)
+                                            void query.refetch({ cancelRefetch: false });
+                                    }}
+                                >
+                                    {label} 다시 불러오기
+                                </Button>
+                            </div>
+                        );
+                    })}
                 {/* 발표 대기·추첨 없음·취소·당첨자 명단은 결과 영역이 스스로 가른다 (GD-247과 합침) */}
                 {event.status === 'canceled' && (
                     <p role="status">

@@ -116,12 +116,12 @@ describe('TimeRaffleDetailPage의 E07 사유별 버튼', () => {
         await act(() =>
             client.setQueryData(['events', 'detail', 'evt-001'], { ...cached, status: 'CLOSED' }),
         );
-        await screen.findByRole('button', { name: '공개 결과 다시 시도' });
+        await screen.findByRole('button', { name: '당첨자 명단 다시 불러오기' });
         expect(screen.queryByText('아직 발표 전이에요')).not.toBeInTheDocument();
         client.clear();
     });
 
-    it('공개 결과와 본인 결과 갱신 실패에도 이전 결과와 조회 시각을 유지한다', async () => {
+    it('당첨자 명단과 내 결과 갱신 실패에도 이전 결과를 유지한다', async () => {
         const { client } = renderPage('evt-001');
         await settle(client);
         const cached = client.getQueryData<Record<string, unknown>>([
@@ -132,8 +132,11 @@ describe('TimeRaffleDetailPage의 E07 사유별 버튼', () => {
         await act(() =>
             client.setQueryData(['events', 'detail', 'evt-001'], { ...cached, status: 'CLOSED' }),
         );
-        await screen.findByText(/공개 결과 마지막 조회/);
-        await screen.findByText(/본인 결과 마지막 조회/);
+        await waitFor(() => {
+            expect(client.getQueryData(['draw-results', 'evt-001'])).toBeDefined();
+            expect(client.getQueryData(['draw-results', 'evt-001', 'me'])).toBeDefined();
+        });
+        expect(screen.queryByText(/마지막 조회/)).not.toBeInTheDocument();
         const previous = client.getQueryData(['draw-results', 'evt-001']);
         const myPrevious = client.getQueryData(['draw-results', 'evt-001', 'me']);
         const updatedAt = client.getQueryState(['draw-results', 'evt-001'])?.dataUpdatedAt;
@@ -142,8 +145,10 @@ describe('TimeRaffleDetailPage의 E07 사유별 버튼', () => {
             http.get('*/v1/events/evt-001/my-result', () => HttpResponse.json({}, { status: 403 })),
         );
         await act(() => client.refetchQueries({ queryKey: ['draw-results', 'evt-001'] }));
-        expect(await screen.findByRole('button', { name: '공개 결과 다시 시도' })).toBeEnabled();
-        expect(await screen.findByRole('button', { name: '본인 결과 다시 시도' })).toBeEnabled();
+        expect(
+            await screen.findByRole('button', { name: '당첨자 명단 다시 불러오기' }),
+        ).toBeEnabled();
+        expect(await screen.findByRole('button', { name: '내 결과 다시 불러오기' })).toBeEnabled();
         expect(client.getQueryData(['draw-results', 'evt-001'])).toEqual(previous);
         expect(client.getQueryData(['draw-results', 'evt-001', 'me'])).toEqual(myPrevious);
         expect(client.getQueryState(['draw-results', 'evt-001'])?.dataUpdatedAt).toBe(updatedAt);

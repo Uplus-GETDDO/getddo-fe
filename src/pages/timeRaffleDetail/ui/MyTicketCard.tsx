@@ -4,7 +4,7 @@ import { GradeTicketTiles, TICKET_GRADES, useMyTickets } from '@entities/ticket'
 import { formatNumber } from '@shared/utils/format';
 
 /**
- * 내 응모권 현황 — 왼쪽은 이 래플에 낸 것, 오른쪽은 지금 가진 것.
+ * 내 응모권 현황 — 왼쪽은 이번 겟또타임에 낸 것, 오른쪽은 지금 가진 것.
  *
  * 흰 카드 안을 회색 칸으로 다시 채우면 칸이 겹겹이 무거워 보여, 두 묶음은 세로 선으로만 나눈다.
  * 보유 응모권은 등급 soft 색 칸에 등급 그림·이름·장수를 둬 배너의 응모권 지갑과 같은 꼴로 읽히게 하고,
@@ -24,7 +24,7 @@ export function MyTicketCard({ event }: { event: Event }) {
             <h2 className="text-subhead text-fg-primary">내 응모권 현황</h2>
             <div className="divide-border-default grid gap-5 max-lg:divide-y lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-0 lg:divide-x">
                 <div className="flex flex-col gap-3 max-lg:pb-5 lg:pr-6">
-                    <p className="text-body-sm text-fg-tertiary">이번 래플</p>
+                    <p className="text-body-sm text-fg-tertiary">이번 겟또타임</p>
                     <p className="text-body-sm text-fg-secondary flex flex-wrap items-baseline gap-x-2">
                         <span className="text-body-bold text-fg-primary tabular-nums">
                             {formatNumber(entryCount)}회 응모
@@ -35,7 +35,7 @@ export function MyTicketCard({ event }: { event: Event }) {
                         <div className="mt-auto flex flex-col gap-1.5">
                             <div
                                 role="progressbar"
-                                aria-label="이 래플에 쓴 응모권"
+                                aria-label="이번 겟또타임에 쓴 응모권"
                                 aria-valuemin={0}
                                 aria-valuemax={limit}
                                 aria-valuenow={Math.min(usedTickets, limit)}
