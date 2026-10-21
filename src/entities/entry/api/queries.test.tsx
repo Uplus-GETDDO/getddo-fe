@@ -11,6 +11,7 @@ import {
     useEntryStatistics,
     useEntryStatisticsList,
     useMyEntries,
+    useMyEventEntries,
 } from './queries';
 
 afterEach(() => {
@@ -70,6 +71,28 @@ function setup() {
     );
     return { client, wrapper };
 }
+
+describe('useMyEventEntries', () => {
+    it('eventId와 status=ACCEPTED 파라미터로 E06을 조회해 접수 건만 돌려준다', async () => {
+        const get = vi.spyOn(apiClient, 'get');
+        const { client, wrapper } = setup();
+        const { result } = renderHook(() => useMyEventEntries('evt-101'), { wrapper });
+
+        await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+        const request = get.mock.calls.find(([path]) => path === '/v1/users/me/entries');
+        expect(request?.[1]?.params).toMatchObject({
+            eventId: 'evt-101',
+            status: 'ACCEPTED',
+        });
+        expect(
+            result.current.data?.every(
+                (entry) => entry.eventId === 'evt-101' && entry.status === 'ACCEPTED',
+            ),
+        ).toBe(true);
+        client.clear();
+    });
+});
 
 describe('useEntryStatistics', () => {
     it('활성 행만 두 주기 조회하고 숨긴 탭에서는 멈춘 뒤 다시 활성화하면 재개한다', async () => {

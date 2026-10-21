@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import type { Event } from '@entities/event';
 
+import { useMyEventEntries } from '@entities/entry';
 import { useEventList } from '@entities/event';
 import { useSessionStore } from '@entities/user';
 import { Button } from '@shared/ui/button';
@@ -46,8 +47,10 @@ export function LoseBanner({ event }: { event: Event }) {
         );
     };
 
-    const entryCount = event.myEntryCount ?? 0;
-    const usedTickets = event.myTicketCount ?? entryCount * event.requiredTickets;
+    // 이벤트 상세에는 내 응모 수가 없어 E06 접수 내역으로 계산한다 — 도착 전에는 pill을 숨긴다
+    const { data: myEntries } = useMyEventEntries(event.id);
+    const entryCount = myEntries?.length ?? 0;
+    const usedTickets = myEntries?.reduce((sum, entry) => sum + entry.deductedTicketCount, 0) ?? 0;
 
     return (
         <motion.section

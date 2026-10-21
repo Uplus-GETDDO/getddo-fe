@@ -11,14 +11,14 @@ const NOOP = () => {};
 const renderDialog = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>);
 
 describe('EntryConfirmDialog', () => {
-    it('등급별 사용 장수·합계와 응모 후 남는 장수를 보여준다', () => {
+    it('쓰는 등급마다 응모 후 남는 장수를 보여주고 총합은 작게 유지한다', () => {
         render(
             <EntryConfirmDialog
                 open
                 onOpenChange={NOOP}
                 title="테스트 래플"
                 tickets={{ GOLD: 2, SILVER: 1 }}
-                balance={10}
+                balanceByGrade={{ BRONZE: 4, SILVER: 9, GOLD: 7, PLATINUM: 0 }}
                 onConfirm={NOOP}
             />,
         );
@@ -32,9 +32,32 @@ describe('EntryConfirmDialog', () => {
         expect(tiles.getByText('골드')).toBeInTheDocument();
         expect(tiles.getByText('2장')).toBeInTheDocument();
         expect(screen.queryByText('브론즈')).not.toBeInTheDocument();
-        expect(screen.getByText('10장')).toBeInTheDocument();
-        expect(screen.getByText('7장')).toBeInTheDocument();
+        // 쓰는 등급만 '보유 → 잔여' 줄로 보인다 — 실버 9→8, 골드 7→5, 합계 16→13
+        const rows = within(screen.getByRole('group', { name: '응모 후 남는 응모권' }));
+        expect(rows.getByText('실버')).toBeInTheDocument();
+        expect(rows.getByText('9장')).toBeInTheDocument();
+        expect(rows.getByText('8장')).toBeInTheDocument();
+        expect(rows.getByText('골드')).toBeInTheDocument();
+        expect(rows.getByText('7장')).toBeInTheDocument();
+        expect(rows.getByText('5장')).toBeInTheDocument();
+        expect(rows.getByText('합계')).toBeInTheDocument();
+        expect(rows.getByText('16장')).toBeInTheDocument();
+        expect(rows.getByText('13장')).toBeInTheDocument();
         expect(screen.getByText('응모 후에는 취소할 수 없어요.')).toBeInTheDocument();
+    });
+
+    it('balanceByGrade가 null이면 잔여를 -로 표시한다', () => {
+        render(
+            <EntryConfirmDialog
+                open
+                onOpenChange={NOOP}
+                title="테스트 래플"
+                tickets={{ BRONZE: 1 }}
+                balanceByGrade={null}
+                onConfirm={NOOP}
+            />,
+        );
+        expect(screen.getAllByText('-').length).toBeGreaterThan(0);
     });
 
     it('빈 tickets 맵이면 응모권 없이 참여한다고 안내한다', () => {
@@ -44,7 +67,7 @@ describe('EntryConfirmDialog', () => {
                 onOpenChange={NOOP}
                 title="무료 이벤트"
                 tickets={{}}
-                balance={10}
+                balanceByGrade={null}
                 onConfirm={NOOP}
             />,
         );

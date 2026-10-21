@@ -28,6 +28,26 @@ export const MY_ENTRIES_API_PATH = '/v1/users/me/entries';
 
 const ENTRIES_PAGE_SIZE = 50;
 
+// Page<Entry>는 기본 20건씩이라 totalElements까지 전부 모아야 합계·목록이 정확하다 (페이지는 1부터)
+const fetchAllMyEntries = async (
+    signal: AbortSignal,
+    filter: { eventId?: string; status?: 'ACCEPTED' | 'REJECTED' } = {},
+) => {
+    const entries = [];
+    for (let page = 1; ; page += 1) {
+        const { data } = await apiClient.get<unknown>(MY_ENTRIES_API_PATH, {
+            params: { page, size: ENTRIES_PAGE_SIZE, ...filter },
+            signal,
+        });
+        const parsed = envelopeSchema(myEntryPageSchema).parse(data).data;
+        entries.push(...parsed.items);
+        if (entries.length >= parsed.totalElements) break;
+        if (parsed.items.length === 0)
+            throw new Error('응모 전체 내역을 받지 못했습니다. 다시 조회해 주세요.');
+    }
+    return entries;
+};
+
 /**
  * 내가 응모한 내역 — 응모가 접수되면 features/enter-event가 이 쿼리를 무효화한다.
  * Page<T>는 기본 20건씩이라 totalElements까지 전부 모아야 합계·목록이 정확하다
@@ -37,22 +57,24 @@ export function useMyEntries() {
         ...pollingReadPolicy,
         queryKey: [...ENTRIES_KEY, 'me'],
         queryFn: (context) =>
-            withPollingReadGuard(context, async () => {
-                const entries = [];
-                // 페이지는 1부터 시작한다 (spec 공통 계약)
-                for (let page = 1; ; page += 1) {
-                    const { data } = await apiClient.get<unknown>(MY_ENTRIES_API_PATH, {
-                        params: { page, size: ENTRIES_PAGE_SIZE },
-                        signal: context.signal,
-                    });
-                    const parsed = envelopeSchema(myEntryPageSchema).parse(data).data;
-                    entries.push(...parsed.items);
-                    if (entries.length >= parsed.totalElements) break;
-                    if (parsed.items.length === 0)
-                        throw new Error('응모 전체 내역을 받지 못했습니다. 다시 조회해 주세요.');
-                }
-                return entries;
-            }),
+            withPollingReadGuard(context, () => fetchAllMyEntries(context.signal)),
+    });
+}
+
+/**
+ * 이 이벤트에 접수된 내 응모 내역 (E06, status=ACCEPTED).
+ * 이벤트 상세의 '이번 래플' 카운터가 쓴다 — 이벤트 상세 응답에는 myEntryCount·myTicketCount가
+ * 없어(백엔드 미합의) 여기서 직접 계산한다. 응모 접수 시 ENTRIES_KEY 무효화로 함께 갱신된다.
+ */
+export function useMyEventEntries(eventId: string) {
+    return useQuery({
+        ...pollingReadPolicy,
+        queryKey: [...ENTRIES_KEY, 'me', 'event', eventId],
+        queryFn: (context) =>
+            withPollingReadGuard(context, () =>
+                fetchAllMyEntries(context.signal, { eventId, status: 'ACCEPTED' }),
+            ),
+        enabled: eventId !== '',
     });
 }
 

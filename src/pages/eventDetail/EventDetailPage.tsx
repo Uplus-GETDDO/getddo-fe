@@ -186,7 +186,7 @@ export function EventDetailPage() {
                 onOpenChange={setConfirmOpen}
                 title={event.title}
                 tickets={requestedTickets}
-                balance={balance}
+                balanceByGrade={ticket?.countByGrade ?? null}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
                 disabled={balanceBlocked || !canEnter || !hasEnoughTickets}

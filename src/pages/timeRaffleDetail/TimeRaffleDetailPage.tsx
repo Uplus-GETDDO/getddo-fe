@@ -6,7 +6,7 @@ import type { EntryTickets, TicketsByGrade } from '@entities/entry';
 import type { Event } from '@entities/event';
 
 import { useEventResults, useMyResult } from '@entities/drawResult';
-import { useEntryEligibility } from '@entities/entry';
+import { useEntryEligibility, useMyEventEntries } from '@entities/entry';
 import { useEvent } from '@entities/event';
 import { TicketBalanceStatus, ticketGradeSchema, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
@@ -55,6 +55,7 @@ export function TimeRaffleDetailPage() {
     const { data: eligibility } = useEntryEligibility(id, {
         enabled: event?.status === 'open',
     });
+    const { data: myEntries } = useMyEventEntries(id);
     // 마감 전에는 결과가 존재하지 않으므로 묻지 않는다
     const isAfterClose = event != null && !['open', 'upcoming'].includes(event.status);
     const resultsQuery = useEventResults(id, isAfterClose);
@@ -115,11 +116,9 @@ export function TimeRaffleDetailPage() {
     const isWeighted = event.eventType === 'TICKET' && event.weightingEnabled;
     const selectedTotal = tickets.BRONZE + tickets.SILVER + tickets.GOLD + tickets.PLATINUM;
 
-    // 자격 판정이 아직 안 왔으면 이벤트 카운터로 근사한다 — 서버 판정(E07)이 오면 그 값을 따른다
-    const alreadyUsed =
-        eligibility?.usedTicketCount ??
-        event.myTicketCount ??
-        (event.myEntryCount ?? 0) * event.requiredTickets;
+    // 자격 판정이 아직 안 왔으면 E06 접수 내역 합계로 근사한다 — 서버 판정(E07)이 오면 그 값을 따른다
+    const entriesUsed = myEntries?.reduce((sum, entry) => sum + entry.deductedTicketCount, 0);
+    const alreadyUsed = eligibility?.usedTicketCount ?? entriesUsed ?? 0;
     const remainingLimit =
         eligibility?.remainingTicketLimit ??
         (event.maxTicketsPerUser == null
@@ -159,7 +158,7 @@ export function TimeRaffleDetailPage() {
                           (grade) => tickets[grade] <= ticket.countByGrade[grade],
                       )
                     : ticket.countByGrade.BRONZE >= 1)));
-    // 확인 모달은 응모 후 남는 전체 응모권을 보인다 — 브론즈만 쓰는 래플이어도 전체에서 그만큼 줄어든다
+    // 완료 모달의 남는 총합 계산용 — 확인 모달은 등급별 잔액을 따로 받는다
     const dialogBalance = ticket?.availableCount ?? null;
     const submitBlocked =
         balanceBlocked || needsSelection || invalidSelection || !canEnter || !hasEnoughTickets;
@@ -326,7 +325,7 @@ export function TimeRaffleDetailPage() {
                 onOpenChange={setConfirmOpen}
                 title={event.title}
                 tickets={requestedTickets}
-                balance={dialogBalance}
+                balanceByGrade={ticket?.countByGrade ?? null}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
                 disabled={submitBlocked}
