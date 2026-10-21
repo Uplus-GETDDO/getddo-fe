@@ -95,4 +95,20 @@ describe('virtualUserLabel', () => {
         expect(virtualUserLabel({ personaLabel: null, role: 'USER' })).toBe('시연 계정');
         expect(virtualUserLabel({ personaLabel: null, role: 'ADMIN' })).toBe('시스템 관리 계정');
     });
+
+    it('빈 문자열·공백뿐인 페르소나는 없는 것으로 보고 폴백 라벨을 보인다', async () => {
+        const { virtualUserLabel } = await loadModule();
+
+        expect(virtualUserLabel({ personaLabel: '', role: 'USER' })).toBe('시연 계정');
+        expect(virtualUserLabel({ personaLabel: '   ', role: 'USER' })).toBe('시연 계정');
+        expect(virtualUserLabel({ personaLabel: '  ', role: 'ADMIN' })).toBe('시스템 관리 계정');
+    });
+
+    it('앞뒤 공백이 있는 페르소나는 다듬어서 보인다', async () => {
+        const { virtualUserLabel } = await loadModule();
+
+        expect(virtualUserLabel({ personaLabel: '  데일리 루틴러  ', role: 'USER' })).toBe(
+            '데일리 루틴러',
+        );
+    });
 });
