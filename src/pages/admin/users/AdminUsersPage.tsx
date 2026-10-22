@@ -73,12 +73,10 @@ export function AdminUsersPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-title-2 text-fg-primary">사용자 조회</h1>
-                <p className="text-body-sm text-fg-secondary">
-                    데이터베이스에 등록된 사용자를 검색하고 운영 정보로 연결합니다.
-                </p>
-            </div>
+            {/* 화면 이름은 관리자 레이아웃 위쪽 바가 이미 띄운다 — 본문에서 또 적지 않고 설명만 둔다 */}
+            <p className="text-body-sm text-fg-secondary">
+                데이터베이스에 등록된 사용자를 검색하고 운영 정보로 연결합니다.
+            </p>
 
             <form
                 className="flex flex-wrap items-center gap-2"
