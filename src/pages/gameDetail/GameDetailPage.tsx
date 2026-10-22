@@ -10,6 +10,7 @@ import {
     preloadGamePlayer,
     useGamePlaySession,
 } from '@features/playGame';
+import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
 import { GameRail } from '@widgets/gameRail';
@@ -101,39 +102,47 @@ function GameDetailContent({
                             {content.tagline && (
                                 <p className="text-body-sm text-border-strong">{content.tagline}</p>
                             )}
+                            {/* 관리자 체험 안내는 작은 알약으로 — 넓은 화면은 제목 줄 오른쪽 끝, 좁아서 줄이 넘어가면 소개 아래 왼쪽(오른쪽 끝에 혼자 뜨면 어색했다) */}
+                            {!isUser && (
+                                <Badge className="bg-surface-inverse-muted text-fg-inverse lg:ml-auto">
+                                    관리자 체험 · 점수·보상 저장 안 함
+                                </Badge>
+                            )}
                         </div>
-                        {play.visible && (
+                        {/* 관리자 체험은 기록·보상이 없어 서버 확정 안내가 맞지 않는다 — 제목 줄 관리자 칩이 대신 알린다 */}
+                        {play.visible && isUser && (
                             <p className="text-body-sm text-fg-on-brand">
                                 플레이 화면의 점수는 잠정 점수이며, 기록과 보상은 서버 확정 결과를
                                 따릅니다.
                             </p>
                         )}
-                        {!isUser && (
-                            <p className="text-body-sm text-fg-on-brand">
-                                관리자 체험입니다. 점수 기록·통계·보상은 저장하지 않습니다.
-                            </p>
-                        )}
-                        {play.visible && play.session ? (
-                            <GamePlayer
-                                key={play.session.playId}
-                                code={game.code}
-                                session={play.session}
-                                bestScore={statistics.data?.bestScore}
-                                onExit={play.exit}
-                                onRestart={startGame}
-                                onRecordingError={play.recordingError}
-                                onGameOver={play.complete}
-                            />
-                        ) : (
-                            <GameHero
-                                title={game.name}
-                                tagline={content.tagline}
-                                image={content.heroImage}
-                                imagePosition={content.heroImagePosition}
-                                onStart={startGame}
-                                onGuide={() => setGuideOpen(true)}
-                            />
-                        )}
+                        {/*
+                          휴대폰(640px 미만)은 판을 화면 끝까지 붙여 조금이라도 크게 보여 준다.
+                          화면 끝에 닿으니 둥근 모서리·좌우 테두리는 없앤다 — 남겨 두면 잘린 것처럼 보인다
+                        */}
+                        <div className="max-sm:-mx-6 max-sm:*:rounded-none max-sm:*:border-x-0">
+                            {play.visible && play.session ? (
+                                <GamePlayer
+                                    key={play.session.playId}
+                                    code={game.code}
+                                    session={play.session}
+                                    bestScore={statistics.data?.bestScore}
+                                    onExit={play.exit}
+                                    onRestart={startGame}
+                                    onRecordingError={play.recordingError}
+                                    onGameOver={play.complete}
+                                />
+                            ) : (
+                                <GameHero
+                                    title={game.name}
+                                    tagline={content.tagline}
+                                    image={content.heroImage}
+                                    imagePosition={content.heroImagePosition}
+                                    onStart={startGame}
+                                    onGuide={() => setGuideOpen(true)}
+                                />
+                            )}
+                        </div>
                         <div
                             role="status"
                             aria-live="polite"

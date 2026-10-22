@@ -433,7 +433,7 @@ export function TakkoRunGame({
                       } as CSSProperties)
                     : undefined
             }
-            className="bg-surface-page border-fg-primary relative aspect-[840/546] w-full touch-none overflow-hidden rounded-2xl border-2 shadow-md outline-none select-none"
+            className="bg-surface-page border-fg-primary @container relative aspect-[840/546] w-full touch-none overflow-hidden rounded-2xl border-2 shadow-md outline-none select-none"
         >
             {/* 부딪히면 이 판이 좌우로 흔들린다 */}
             <div ref={shakeScope} className="absolute inset-0">

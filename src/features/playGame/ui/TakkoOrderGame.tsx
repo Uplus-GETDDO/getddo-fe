@@ -1,4 +1,5 @@
 import { motion, useAnimate } from 'framer-motion';
+import { Delete } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import type { TicketGrade } from '@entities/ticket';
@@ -11,9 +12,10 @@ import { createXorshift32, ActiveClock } from '../model/gameSession';
 import { PIXEL_FONT } from '../model/pixelFont';
 import {
     TAKKO_ORDER_LIVES,
+    TAKKO_ORDER_MIN_REWARD_SCORE,
     TAKKO_ORDER_MENU,
     createTakkoOrder,
-    isTakkoOrderPrefix,
+    judgeTakkoOrder,
     takkoOrderPoints,
     takkoOrderCustomerLabel,
     takkoOrderShowMs,
@@ -40,6 +42,7 @@ import {
     GameStartHintLine,
     GamePauseOverlay,
 } from './GameOverlays';
+import { GameRewardProgress } from './GameRewardProgress';
 import { RewardDialog } from './RewardDialog';
 import { ScoreBoard } from './ScoreBoard';
 import { VolumeControl } from './VolumeControl';
@@ -58,6 +61,7 @@ const nameOf = (id: TakkoOrderItemId) => TAKKO_ORDER_MENU.find((item) => item.id
 
 /**
  * 타꼬 주문 — 손님 주문(타코야끼 순서)을 잠깐 보여 주고 가린 뒤, 아래 메뉴 버튼으로 같은 순서대로 내준다 (키보드 1~4도 된다).
+ * 틀려도 주문 개수만큼 끝까지 내준 뒤에 판정한다 — 중간에 바로 끊기면 무엇을 틀렸는지 알기 어렵다.
  * 맞히면 주문이 하나씩 길어지고, 틀리면 목숨이 하나 줄고 같은 길이의 새 주문을 받는다. 목숨 3개를 다 쓰면 끝.
  * 결과 표시 중에도 멈춰 탭 밖에서 다음 주문의 노출 시간이 소비되지 않게 한다
  */
@@ -80,6 +84,10 @@ export function TakkoOrderGame({
     const [order, setOrder] = useState<TakkoOrderItemId[]>(() => []);
     const [picked, setPicked] = useState<TakkoOrderItemId[]>([]);
     const [ok, setOk] = useState(false);
+    // 주문을 보여 주는 남은 시간 — 어느 주문의 값인지 함께 둬, 새 주문으로 바뀐 첫 화면에 앞 주문의 값이 보이지 않게 한다
+    const [showLeft, setShowLeft] = useState<{ order: TakkoOrderItemId[]; ms: number } | null>(
+        null,
+    );
     const [customer, setCustomer] = useState(1);
     // 손님 그림 번호 — 새 손님마다 바뀐다
     const [look, setLook] = useState(() =>
@@ -150,7 +158,7 @@ export function TakkoOrderGame({
             .catch(() => undefined);
     };
 
-    // 메뉴 하나를 내준다 — 주문 앞부분과 다르면 그 자리에서 틀리고, 끝까지 같으면 맞는다
+    // 메뉴 하나를 내준다 — 주문 개수만큼 다 내면 판정한다. 기록은 서버 규칙대로 맞히면 주문 전체, 틀리면 처음 틀린 메뉴까지
     const pick = (id: TakkoOrderItemId) => {
         if (phase !== 'input' || revealedRef.current) return;
         if (roundsRef.current.length >= 10000) {
@@ -162,31 +170,31 @@ export function TakkoOrderGame({
         const next = [...pickedRef.current, id];
         pickedRef.current = next;
         setPicked(next);
-        if (!isTakkoOrderPrefix(order, next)) {
-            setOk(false);
-            revealedRef.current = true;
-            roundsRef.current.push({ sequence: roundsRef.current.length + 1, picks: [...next] });
-            setPhase('reveal');
-            setLives((n) => n - 1);
-            playSound('wrong');
-            // 틀리면 주문서가 좌우로 짧게 흔들린다 (동작 줄이기 설정이면 흔들리지 않는다)
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                void animateBoard(
-                    boardScope.current,
-                    { x: [0, -8, 7, -5, 3, 0] },
-                    { duration: 0.35 },
-                );
-            }
-            return;
-        }
-        if (next.length === order.length) {
-            setOk(true);
-            revealedRef.current = true;
-            roundsRef.current.push({ sequence: roundsRef.current.length + 1, picks: [...next] });
-            setPhase('reveal');
+        if (next.length < order.length) return;
+        revealedRef.current = true;
+        setPhase('reveal');
+        const { ok: correct, record } = judgeTakkoOrder(order, next);
+        roundsRef.current.push({ sequence: roundsRef.current.length + 1, picks: record });
+        setOk(correct);
+        if (correct) {
             setScore((n) => n + takkoOrderPoints(order.length));
             playSound('correct');
+            return;
         }
+        setLives((n) => n - 1);
+        playSound('wrong');
+        // 틀리면 주문서가 좌우로 짧게 흔들린다 (동작 줄이기 설정이면 흔들리지 않는다)
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            void animateBoard(boardScope.current, { x: [0, -8, 7, -5, 3, 0] }, { duration: 0.35 });
+        }
+    };
+
+    // 판정 전에 마지막으로 낸 메뉴 하나를 되돌린다 — 서버에는 지운 뒤의 최종 순서만 간다
+    const undo = () => {
+        if (phase !== 'input' || revealedRef.current || pickedRef.current.length === 0) return;
+        const next = pickedRef.current.slice(0, -1);
+        pickedRef.current = next;
+        setPicked(next);
     };
 
     // 3, 2, 1 — 다 세면 첫 주문을 보여 준다
@@ -199,16 +207,22 @@ export function TakkoOrderGame({
         return () => clearTimeout(timer);
     }, [phase, countdown]);
 
-    // 주문을 보여 준 뒤 가리고 내주기로
+    // 주문을 보여 준 뒤 가리고 내주기로. 보여 주는 동안 남은 시간을 매 화면마다 다시 읽어 막대·초로 보여 준다
     useEffect(() => {
         if (phase !== 'showing') return;
         showClock.resume(performance.now());
+        const total = takkoOrderShowMs(order.length);
         const timer = setTimeout(
             () => setPhase('input'),
-            Math.max(0, takkoOrderShowMs(order.length) - showClock.read(performance.now())),
+            Math.max(0, total - showClock.read(performance.now())),
         );
+        let frame = requestAnimationFrame(function tick() {
+            setShowLeft({ order, ms: Math.max(0, total - showClock.read(performance.now())) });
+            frame = requestAnimationFrame(tick);
+        });
         return () => {
             clearTimeout(timer);
+            cancelAnimationFrame(frame);
             showClock.pause(performance.now());
         };
     }, [phase, order, showClock]);
@@ -293,6 +307,11 @@ export function TakkoOrderGame({
             return;
         }
         if (phase === 'input') {
+            if (event.key === 'Backspace') {
+                event.preventDefault();
+                undo();
+                return;
+            }
             const item = TAKKO_ORDER_MENU[Number(event.key) - 1];
             if (!item) return;
             event.preventDefault();
@@ -316,6 +335,10 @@ export function TakkoOrderGame({
 
     // 주문 말풍선 — 보여 주는 동안과 결과를 보여 줄 때는 주문, 내주는 동안은 가린 칸(?)
     const showOrder = phase === 'showing' || phase === 'reveal';
+    const showTotal = takkoOrderShowMs(order.length);
+    const showMs = showLeft?.order === order ? showLeft.ms : showTotal;
+    // 주문 칸 크기 — 짧은 주문은 크게, 길어지면 말풍선이 판 왼쪽 밖으로 나가지 않게 줄인다 (판 너비 34% 안에 다 들어가게)
+    const slotSize = `min(5.4cqw, ${34 / order.length}cqw)`;
     const customerSrc = TAKKO_ORDER_CUSTOMERS[look % TAKKO_ORDER_CUSTOMERS.length]!;
     const playing = phase === 'showing' || phase === 'input' || phase === 'reveal';
     const line =
@@ -330,7 +353,7 @@ export function TakkoOrderGame({
     return (
         <div
             // 타코야끼 가게 — 타꼬 타이밍과 같은 들보·미색 벽에 노렌·문어 장식·선반, 아래 나무 카운터(그림이라 다크에서도 라이트 색)
-            className="force-light border-fg-primary relative aspect-[840/546] w-full overflow-hidden rounded-2xl border-2 bg-cover bg-top shadow-md select-none"
+            className="force-light border-fg-primary @container relative aspect-[840/546] w-full overflow-hidden rounded-2xl border-2 bg-cover bg-top shadow-md select-none"
             style={{ backgroundImage: `url(${TAKKO_ORDER_WALL.wall})` }}
         >
             {/* 문어 장식(image 248) — 노렌 양옆 들보에 매달아 둔다 */}
@@ -419,6 +442,11 @@ export function TakkoOrderGame({
                 className="pointer-events-none absolute right-[3%] bottom-[21%] h-[9.5%] w-auto [image-rendering:pixelated]"
             />
 
+            {/* 보상 기준까지 남은 점수 — 점수판 아래, 말풍선보다 먼저 그린다 */}
+            {phase !== 'ready' && (
+                <GameRewardProgress score={score} goal={TAKKO_ORDER_MIN_REWARD_SCORE} />
+            )}
+
             {/* 주문 말풍선 — 손님 머리 위, 다른 게임 말풍선과 같은 도트 그림체(바탕은 가게 나무색과 어울리는 연한 브론즈). 틀리면 흔들리며 정답 주문을 보여 준다 */}
             {playing && (
                 <div
@@ -439,7 +467,9 @@ export function TakkoOrderGame({
                         {order.map((id, index) => (
                             <div
                                 key={index}
-                                className="bg-grade-bronze/20 flex aspect-square w-[clamp(2rem,5.6vw,3.25rem)] items-center justify-center rounded-sm"
+                                style={{ width: slotSize }}
+                                // 타코야끼 모양에 맞춰 둥근 칸. 틀렸을 때는 정답 주문을 보여 주며 내가 다르게 낸 칸에 빨간 테두리를 두른다
+                                className={`bg-grade-bronze/20 flex aspect-square items-center justify-center rounded-full ${phase === 'reveal' && !ok && picked[index] !== id ? 'ring-semantic-error ring-2' : ''}`}
                             >
                                 {showOrder ? (
                                     <motion.img
@@ -457,13 +487,31 @@ export function TakkoOrderGame({
                                         className="size-[90%] [image-rendering:pixelated]"
                                     />
                                 ) : (
-                                    <span className={`text-grade-bronze text-base ${PIXEL_FONT}`}>
+                                    <span
+                                        className={`text-grade-bronze text-[min(1rem,3cqw)] ${PIXEL_FONT}`}
+                                    >
                                         ?
                                     </span>
                                 )}
                             </div>
                         ))}
                     </div>
+                    {/* 주문을 보여 주는 남은 시간 — 막대가 줄어들고 옆에 남은 초를 적는다 */}
+                    {phase === 'showing' && (
+                        <div className="flex w-full items-center gap-1.5" aria-hidden>
+                            <div className="bg-grade-bronze/20 h-1.5 flex-1 overflow-hidden rounded-full">
+                                <div
+                                    className="bg-grade-bronze h-full rounded-full"
+                                    style={{ width: `${(showMs / showTotal) * 100}%` }}
+                                />
+                            </div>
+                            <span
+                                className={`text-fg-secondary text-[0.625rem] sm:text-xs ${PIXEL_FONT}`}
+                            >
+                                {Math.ceil(showMs / 1000)}초
+                            </span>
+                        </div>
+                    )}
                     {/* 꼬리 — 테두리색 삼각형 위에 바탕색 삼각형을 겹쳐 도트 테두리처럼 (GameSpeechBubble과 같은 방식) */}
                     <span className="bg-fg-primary absolute top-full left-1/2 size-3 -translate-x-1/2 [clip-path:polygon(0_0,100%_0,50%_100%)]" />
                     <span className="bg-grade-bronze-soft absolute top-full left-1/2 -mt-[3px] size-2 -translate-x-1/2 [clip-path:polygon(0_0,100%_0,50%_100%)]" />
@@ -550,7 +598,7 @@ export function TakkoOrderGame({
                         // 마우스로 눌러도 초점이 남지 않게 — 남으면 다음 키 입력이 이 버튼을 누른다
                         onMouseDown={(event) => event.preventDefault()}
                         aria-label={`${index + 1}번 ${item.name} 내주기`}
-                        className="border-fg-primary bg-ticket-accent focus-visible:ring-border-focus relative flex aspect-square w-[clamp(2.75rem,8.5vw,4.75rem)] cursor-pointer items-center justify-center rounded-md border-[3px] shadow-[3px_3px_0_0_var(--color-fg-primary)] transition-transform focus-visible:ring-2 focus-visible:outline-none enabled:hover:-translate-y-0.5 enabled:active:translate-x-0.75 enabled:active:translate-y-0.75 enabled:active:shadow-none disabled:cursor-default"
+                        className="border-fg-primary bg-ticket-accent focus-visible:ring-border-focus relative flex aspect-square w-[clamp(2rem,7.9cqw,4.75rem)] cursor-pointer items-center justify-center rounded-md border-[3px] shadow-[3px_3px_0_0_var(--color-fg-primary)] transition-transform focus-visible:ring-2 focus-visible:outline-none enabled:hover:-translate-y-0.5 enabled:active:translate-x-0.75 enabled:active:translate-y-0.75 enabled:active:shadow-none disabled:cursor-default"
                     >
                         {/* 틀리면 메뉴가 잠깐 어지러운 타코야끼(image 235)로 바뀐다 */}
                         <motion.img
@@ -577,13 +625,27 @@ export function TakkoOrderGame({
                         </span>
                     </button>
                 ))}
+                {/* 지우기 — 마지막으로 낸 메뉴 하나를 되돌린다 (Backspace). 메뉴 버튼과 구분되게 흰 바탕, 조금 떨어뜨려 둔다 */}
+                <button
+                    type="button"
+                    disabled={phase !== 'input' || picked.length === 0}
+                    onClick={undo}
+                    onMouseDown={(event) => event.preventDefault()}
+                    aria-label="마지막으로 낸 메뉴 지우기"
+                    className="border-fg-primary bg-surface-page text-fg-primary focus-visible:ring-border-focus relative ml-[2%] flex aspect-square w-[clamp(2rem,7.9cqw,4.75rem)] cursor-pointer flex-col items-center justify-center gap-0.5 rounded-md border-[3px] shadow-[3px_3px_0_0_var(--color-fg-primary)] transition-transform focus-visible:ring-2 focus-visible:outline-none enabled:hover:-translate-y-0.5 enabled:active:translate-x-0.75 enabled:active:translate-y-0.75 enabled:active:shadow-none disabled:cursor-default disabled:opacity-50"
+                >
+                    <Delete aria-hidden className="size-[40%]" />
+                    <span className={`text-[0.625rem] leading-none @lg:text-xs ${PIXEL_FONT}`}>
+                        지우기
+                    </span>
+                </button>
             </div>
 
             {/* 맞힘·틀림 — 게임 판 테두리를 초록·빨강으로 잠깐 바꾼다 */}
             {phase === 'reveal' && (
                 <div
                     aria-hidden
-                    className={`pointer-events-none absolute inset-0 rounded-2xl border-4 ${ok ? 'border-semantic-success' : 'border-semantic-error'}`}
+                    className={`pointer-events-none absolute inset-0 rounded-[inherit] border-4 ${ok ? 'border-semantic-success' : 'border-semantic-error'}`}
                 />
             )}
 
@@ -592,13 +654,15 @@ export function TakkoOrderGame({
                     <GameStartHintLine>
                         <span className="flex items-center gap-1.5 [@media(hover:none)]:hidden">
                             주문을 외웠다가 클릭 또는 <GameKey>1</GameKey>~<GameKey>4</GameKey>로
-                            내주기
+                            내주기 · <GameKey>Backspace</GameKey> 지우기
                         </span>
                         <span className="hidden [@media(hover:none)]:inline">
                             주문을 외웠다가 버튼을 순서대로 누르기
                         </span>
                     </GameStartHintLine>
-                    <GameStartHintLine>목숨 3개 · 맞힐수록 주문이 길어져요</GameStartHintLine>
+                    <GameStartHintLine>
+                        다 내면 판정 · 목숨 3개 · 맞힐수록 주문이 길어져요
+                    </GameStartHintLine>
                 </GameStartHint>
             )}
 

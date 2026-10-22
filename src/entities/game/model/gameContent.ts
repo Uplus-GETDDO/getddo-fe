@@ -1,13 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
 
-import { Gamepad2, Target, Ticket } from 'lucide-react';
+import { Delete, Gamepad2, Target, Ticket } from 'lucide-react';
 
 import colorWordGuide from '../assets/color-word-guide.jpg';
 import guideBanner from '../assets/guide-banner.jpg';
 import takkoOrderGuide from '../assets/takko-order-guide.jpg';
 import takkoRunGuide from '../assets/takko-run-guide.jpg';
 import takkoTimingGuide from '../assets/takko-timing-guide.jpg';
-import takoyakiHero from '../assets/takoyaki-hero.jpg';
 
 export interface GameGuideStep {
     icon: LucideIcon;
@@ -123,6 +122,12 @@ const CONTENTS: Record<string, GameContent> = {
                     text: '또는 메뉴 버튼을 눌러 주문한 순서대로 내줘요.',
                 },
                 {
+                    // 판정은 주문 개수만큼 다 낸 뒤에 한다 — 그 전에는 잘못 낸 메뉴를 하나씩 되돌릴 수 있다
+                    icon: Delete,
+                    keys: ['Backspace'],
+                    text: '또는 지우기 버튼으로 마지막에 낸 메뉴를 하나씩 되돌려요.\n주문 개수만큼 다 내면 맞았는지 알려 줘요.',
+                },
+                {
                     icon: Target,
                     text: '목숨은 3개, 맞힐수록 주문이 하나씩 길어져요.\n시간 제한은 없어요.',
                 },
@@ -130,20 +135,6 @@ const CONTENTS: Record<string, GameContent> = {
             ],
             // 게임 방법 모달 이미지 — 피그마 image 257 (게임 장면)
             image: takkoOrderGuide,
-        },
-    },
-    'game-takoyaki': {
-        tagline: '60초 안에 타코야끼를 구워내세요.',
-        heroImage: takoyakiHero,
-        guide: {
-            title: '게임 방법',
-            subtitle: '타이밍 맞춰 누르기만 하면 돼요',
-            steps: [
-                { icon: Gamepad2, text: '노릇하게 익었을 때 눌러서 뒤집어요.' },
-                { icon: Target, text: '많이 구울수록 점수가 올라가요.' },
-                REWARD_STEP,
-            ],
-            image: guideBanner,
         },
     },
 };

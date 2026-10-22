@@ -15,6 +15,8 @@ export const TAKKO_ORDER_MENU = [
 export type TakkoOrderItemId = (typeof TAKKO_ORDER_MENU)[number]['id'];
 
 export const TAKKO_ORDER_LIVES = 3;
+/** 하루 보상 기준 점수 — 시작 응답 rules에 없어 계약값(getddo-spec game-takko-order 18점)을 둔다 */
+export const TAKKO_ORDER_MIN_REWARD_SCORE = 18;
 /** 첫 주문 길이 — 맞힐 때마다 하나씩 늘고 최대 길이에서 멈춘다 */
 export const TAKKO_ORDER_START_LENGTH = 3;
 export const TAKKO_ORDER_MAX_LENGTH = 8;
@@ -27,12 +29,16 @@ export function nextTakkoOrderLength(length: number, ok: boolean): number {
 /** 맞힌 주문 점수 — 주문 길이만큼 (긴 주문일수록 많이) */
 export const takkoOrderPoints = (length: number) => length;
 
+/** 이 개수를 넘는 주문부터는 한 개당 보여 주는 시간을 더 준다 */
+const LONG_ORDER_FROM = 4;
+
 /**
  * 주문을 보여 주는 시간(ms) — 한 개당 0.6초 + 훑어볼 여유 0.8초.
- * 길어질수록 외울 게 많아지는 만큼만 늘려 난이도는 길이로 올린다
+ * 다섯 개부터는 한 번에 외우기 어렵다는 의견에 따라 넘는 개수마다 0.4초를 더 준다 (5개 4.2초 · 8개 7.2초).
+ * 서버는 보여 준 시간을 검증하지 않는다 — 화면 연출 값이다
  */
 export function takkoOrderShowMs(length: number): number {
-    return 800 + length * 600;
+    return 800 + length * 600 + Math.max(0, length - LONG_ORDER_FROM) * 400;
 }
 
 /**
@@ -50,12 +56,18 @@ export function createTakkoOrder(length: number, random: () => number): TakkoOrd
     return order;
 }
 
-/** 지금까지 고른 것이 주문 앞부분과 맞는지 — 하나라도 다르면 그 자리에서 틀린 것으로 친다 */
-export function isTakkoOrderPrefix(
+/**
+ * 주문 개수만큼 다 낸 뒤의 판정 — 화면에서는 틀려도 끝까지 내게 하지만,
+ * 서버 기록(picks)은 규칙대로 맞히면 주문 전체, 틀리면 처음 틀린 메뉴까지만 남긴다 (getddo-spec game-takko-order)
+ */
+export function judgeTakkoOrder(
     order: readonly TakkoOrderItemId[],
     picked: readonly TakkoOrderItemId[],
-) {
-    return picked.length <= order.length && picked.every((id, index) => order[index] === id);
+): { ok: boolean; record: TakkoOrderItemId[] } {
+    const wrongAt = picked.findIndex((id, index) => id !== order[index]);
+    return wrongAt === -1
+        ? { ok: true, record: [...picked] }
+        : { ok: false, record: picked.slice(0, wrongAt + 1) };
 }
 
 const ORDINAL_WORDS = ['첫', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'];

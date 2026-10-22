@@ -1,7 +1,7 @@
 import {
     TAKKO_ORDER_MAX_LENGTH,
     createTakkoOrder,
-    isTakkoOrderPrefix,
+    judgeTakkoOrder,
     nextTakkoOrderLength,
     takkoOrderCustomerLabel,
     takkoOrderShowMs,
@@ -19,12 +19,20 @@ describe('타꼬 주문 규칙', () => {
         }
     });
 
-    it('고른 것이 주문 앞부분과 같으면 맞고, 하나라도 다르면 틀린다', () => {
+    it('다 낸 주문을 판정하고, 틀리면 처음 틀린 메뉴까지만 기록한다', () => {
         const order = ['scallion', 'cheese', 'shrimp'] as const;
-        expect(isTakkoOrderPrefix(order, ['scallion'])).toBe(true);
-        expect(isTakkoOrderPrefix(order, ['scallion', 'cheese', 'shrimp'])).toBe(true);
-        expect(isTakkoOrderPrefix(order, ['cheese'])).toBe(false);
-        expect(isTakkoOrderPrefix(order, ['scallion', 'cheese', 'shrimp', 'scallion'])).toBe(false);
+        expect(judgeTakkoOrder(order, ['scallion', 'cheese', 'shrimp'])).toEqual({
+            ok: true,
+            record: ['scallion', 'cheese', 'shrimp'],
+        });
+        expect(judgeTakkoOrder(order, ['scallion', 'nori', 'nori'])).toEqual({
+            ok: false,
+            record: ['scallion', 'nori'],
+        });
+        expect(judgeTakkoOrder(order, ['cheese', 'cheese', 'shrimp'])).toEqual({
+            ok: false,
+            record: ['cheese'],
+        });
     });
 
     it('맞히면 주문이 하나 길어지고 최대 길이에서 멈춘다, 틀리면 그대로', () => {
@@ -35,6 +43,10 @@ describe('타꼬 주문 규칙', () => {
 
     it('보여 주는 시간은 주문이 길수록 늘어난다', () => {
         expect(takkoOrderShowMs(4)).toBeGreaterThan(takkoOrderShowMs(3));
+        // 네 개까지는 한 개당 0.6초, 다섯 개부터는 넘는 개수마다 0.4초를 더 준다
+        expect(takkoOrderShowMs(4)).toBe(3200);
+        expect(takkoOrderShowMs(5)).toBe(4200);
+        expect(takkoOrderShowMs(8)).toBe(7200);
     });
 });
 
