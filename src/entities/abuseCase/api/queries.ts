@@ -10,7 +10,7 @@ const abuseCasePageSchema = pageSchema(abuseCaseSchema);
 
 export const ABUSE_CASES_KEY = ['admin', 'abuse-cases'] as const;
 
-// 차단 내역 조회 엔드포인트 — spec AR01·AR02 (getddo-spec 05-api/abuse.md 초안, 조회 전용)
+// 차단 내역 조회 엔드포인트 — spec AR01·AR02 (getddo-spec 05-api/abuse.md 채택 계약, 조회 전용)
 export const ABUSE_CASES_API_PATH = '/v1/admin/abuse-cases';
 export const abuseCaseApiPath = (caseId: string) => `${ABUSE_CASES_API_PATH}/${caseId}`;
 
