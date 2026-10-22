@@ -126,18 +126,19 @@ async function run() {
             text: await r.text(),
         }))
         .catch((error) => ({ status: 0, text: '', error: String(error).slice(0, 200) }));
+    const entryChunk = page.text.match(/assets\/index-([A-Za-z0-9_-]+)\.js/)?.[0] ?? null;
     push({
         name: '배포 식별(엔트리 청크)',
         method: 'GET',
         path: '/',
         status: page.status,
         at: new Date().toISOString(),
-        entryChunk: page.text.match(/assets\/index-([A-Za-z0-9_-]+)\.js/)?.[0] ?? null,
+        entryChunk,
         ...(page.error ? { error: page.error } : {}),
     });
 
     // ── GD-268 drawScheduledAt — 이벤트별 endsAt 대비 델타(초) 측정 ──
-    const events = await get('/admin/events?page=1&size=50');
+    const events = await get('/admin/events?page=1&size=50&sort=endsAt,desc');
     const eventItems = events.body?.items ?? [];
     // 마감 시각 최신순으로 정렬해 상위 15건만 상세 조회한다 — 호출 수를 제한한다.
     const recent = [...eventItems]
@@ -167,6 +168,8 @@ async function run() {
         });
     }
     const passed =
+        page.status === 200 &&
+        entryChunk !== null &&
         events.status === 200 &&
         deltas.length > 0 &&
         deltas.every((d) => d.deltaSeconds === 60 && d.zod === 'pass' && d.httpStatus === 200);
