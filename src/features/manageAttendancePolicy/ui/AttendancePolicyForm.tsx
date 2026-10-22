@@ -42,12 +42,12 @@ export function AttendancePolicyForm({ kind }: { kind: 'daily' | 'streak' }) {
         setNotice('');
         mutation.mutate(request, {
             onSuccess: () =>
-                setNotice('예약했습니다. 적용일·기준월은 아래 서버 정책에서 확인해 주세요.'),
+                setNotice('예약했습니다. 적용일·기준월은 예약된 변경에서 확인해 주세요.'),
             onError: (error) =>
                 setNotice(
                     error instanceof ApiError &&
                         ['ATTENDANCE-004', 'ATTENDANCE-005'].includes(error.code)
-                        ? '이미 예약된 정책이 있습니다. 목록에서 예약된 정책을 수정해 주세요.'
+                        ? '이미 예약된 정책이 있습니다. 예약된 변경에서 수정해 주세요.'
                         : `${getErrorMessage(error)} 처리 여부가 불확실하면 목록을 먼저 확인해 주세요.`,
                 ),
         });

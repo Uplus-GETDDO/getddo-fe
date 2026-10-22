@@ -121,7 +121,7 @@ describe('관리자 출석 정책', () => {
         await userEvent.click(await screen.findByRole('button', { name: '수정' }));
         await userEvent.click(await screen.findByRole('button', { name: '정책 수정' }));
         expect(
-            await screen.findByText(/이미 적용이 시작된 정책이라 수정할 수 없습니다/),
+            await screen.findByText(/이미 적용이 시작된 정책입니다\. 목록을 새로고침해 주세요/),
         ).toBeInTheDocument();
     });
 });

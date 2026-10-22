@@ -60,7 +60,7 @@ export function AttendancePolicyEditDialog({
         onError: (error: Error) =>
             setNotice(
                 error instanceof ApiError && error.code === 'ATTENDANCE-007'
-                    ? '이미 적용이 시작된 정책이라 수정할 수 없습니다. 목록을 새로 확인해 주세요.'
+                    ? '이미 적용이 시작된 정책입니다. 목록을 새로고침해 주세요'
                     : `${getErrorMessage(error)} 처리 여부가 불확실하면 목록을 먼저 확인해 주세요.`,
             ),
     };
