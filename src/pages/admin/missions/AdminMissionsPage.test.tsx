@@ -82,7 +82,10 @@ describe('관리자 미션', () => {
         expect(screen.getByText(/SURVEY · 진행 중 · 보상 1장/)).toBeInTheDocument();
         await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
         const dialog = await screen.findByRole('dialog');
-        expect(within(dialog).getByRole('heading', { name: '설문 미션' })).toBeInTheDocument();
+        // 다이얼로그는 마운트 즉시 뜨고 상세는 useAdminMission 응답 뒤에 온다 — 첫 의존 요소는 findBy로 기다린다
+        expect(
+            await within(dialog).findByRole('heading', { name: '설문 미션' }),
+        ).toBeInTheDocument();
         expect(within(dialog).getByText(/진행 중 · 보상 1장/)).toBeInTheDocument();
         expect(within(dialog).getByText('작성 박운영')).toBeInTheDocument();
         // 기본 기간은 미션 시작~종료 — 31일을 넘으면 시작일부터 31일로 자르고 안내한다
@@ -319,8 +322,8 @@ describe('관리자 미션', () => {
         );
         await userEvent.click(await screen.findByRole('button', { name: '퀴즈 미션 상세' }));
         const dialog = await screen.findByRole('dialog');
-        // 종료된 미션은 '종료' 라벨로 표시된다
-        expect(within(dialog).getByText(/종료 · 보상 1장/)).toBeInTheDocument();
+        // 종료된 미션은 '종료' 라벨로 표시된다 — 상세 응답 대기를 위해 findBy로 확인한다
+        expect(await within(dialog).findByText(/종료 · 보상 1장/)).toBeInTheDocument();
         await userEvent.keyboard('{Escape}');
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });

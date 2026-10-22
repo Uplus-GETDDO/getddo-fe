@@ -32,27 +32,30 @@ export function MissionDetailDialog({ id, onClose }: { id: string; onClose: () =
                 if (!next) onClose();
             }}
         >
-            <DialogContent className="overflow-y-auto max-sm:top-0 max-sm:left-0 max-sm:h-dvh max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none sm:max-h-[90dvh] sm:max-w-2xl">
+            <DialogContent className="flex flex-col overflow-hidden max-sm:top-0 max-sm:left-0 max-sm:h-dvh max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none sm:max-h-[90dvh] sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>미션 상세</DialogTitle>
                     <DialogDescription>
                         기본 정보·문항·설문 응답 집계·서술 답변을 확인합니다.
                     </DialogDescription>
                 </DialogHeader>
-                {query.isPending && <p role="status">상세를 불러오는 중입니다.</p>}
-                {query.isError && (
-                    <p role="alert">
-                        {getErrorMessage(query.error)} 이전 성공값이 있으면 유지합니다.
-                    </p>
-                )}
-                <Button
-                    variant="secondary"
-                    disabled={query.isFetching}
-                    onClick={() => void query.refetch()}
-                >
-                    상세 다시 조회
-                </Button>
-                {mission && <MissionDetail mission={mission} />}
+                {/* 스크롤은 이 래퍼가 담당한다 — DialogContent가 스크롤되면 절대 위치 닫기 버튼이 함께 밀려난다 */}
+                <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
+                    {query.isPending && <p role="status">상세를 불러오는 중입니다.</p>}
+                    {query.isError && (
+                        <p role="alert">
+                            {getErrorMessage(query.error)} 이전 성공값이 있으면 유지합니다.
+                        </p>
+                    )}
+                    <Button
+                        variant="secondary"
+                        disabled={query.isFetching}
+                        onClick={() => void query.refetch()}
+                    >
+                        상세 다시 조회
+                    </Button>
+                    {mission && <MissionDetail mission={mission} />}
+                </div>
             </DialogContent>
         </Dialog>
     );
