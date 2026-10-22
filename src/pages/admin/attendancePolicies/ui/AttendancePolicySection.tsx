@@ -14,6 +14,7 @@ interface PolicyQueryState {
     isError: boolean;
     isFetching: boolean;
     error: unknown;
+    data: unknown;
     refetch: () => Promise<unknown>;
 }
 
@@ -38,7 +39,9 @@ export function AttendancePolicySection<T extends DailyAttendancePolicy | Streak
     onEdit: (policy: T) => void;
     renderPolicy: (policy: T) => ReactNode;
 }) {
-    const { isPending, isError, isFetching, error, refetch } = query;
+    const { isPending, isError, isFetching, error, data, refetch } = query;
+    // 재조회 실패라도 이전 성공값이 남아 있으면 판정 가능 — 카드를 유지하고 alert만 띄운다
+    const hasData = data != null;
     // 429 대기 중에는 수동 재조회도 서버가 정한 대기 시간을 우회하지 않는다
     const retry = () => {
         if (!getPollingRetryDelay(error)) void refetch();
@@ -64,12 +67,12 @@ export function AttendancePolicySection<T extends DailyAttendancePolicy | Streak
                             '정책을 조회하지 못했습니다. 이전 성공값이 있으면 유지합니다.',
                         )}
                     </p>
-                    <Button size="sm" variant="secondary" onClick={retry}>
+                    <Button size="sm" variant="secondary" disabled={isFetching} onClick={retry}>
                         다시 시도
                     </Button>
                 </div>
             )}
-            {!isPending && !isError && (
+            {!isPending && (!isError || hasData) && (
                 <>
                     <article
                         className="border-border-default flex min-w-0 flex-col gap-2 rounded-lg border p-4"
@@ -96,7 +99,15 @@ export function AttendancePolicySection<T extends DailyAttendancePolicy | Streak
                         {scheduled ? (
                             <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
                                 {renderPolicy(scheduled)}
-                                <Button variant="secondary" onClick={() => onEdit(scheduled)}>
+                                <Button
+                                    variant="secondary"
+                                    aria-label={
+                                        kind === 'daily'
+                                            ? '일일 예약 정책 수정'
+                                            : '연속 예약 정책 수정'
+                                    }
+                                    onClick={() => onEdit(scheduled)}
+                                >
                                     수정
                                 </Button>
                             </div>

@@ -89,12 +89,16 @@ describe('관리자 출석 정책', () => {
         const currentCards = screen.getAllByRole('article', { name: '현재 정책' });
         expect(currentCards).toHaveLength(2);
         for (const card of currentCards) {
-            expect(within(card).queryByRole('button', { name: '수정' })).not.toBeInTheDocument();
+            expect(
+                within(card).queryByRole('button', { name: /예약 정책 수정/ }),
+            ).not.toBeInTheDocument();
         }
         const scheduledCards = screen.getAllByRole('article', { name: '예약된 변경' });
         expect(scheduledCards).toHaveLength(2);
         for (const card of scheduledCards) {
-            expect(within(card).getByRole('button', { name: '수정' })).toBeInTheDocument();
+            expect(
+                within(card).getByRole('button', { name: /예약 정책 수정/ }),
+            ).toBeInTheDocument();
         }
         // 예약이 있으면 새 예약 폼은 렌더하지 않는다
         expect(screen.queryByRole('button', { name: '일일 정책 예약' })).not.toBeInTheDocument();
@@ -138,7 +142,7 @@ describe('관리자 출석 정책', () => {
             data: { success: true, data: dailyPolicy('p-future', future, 5) },
         });
         mount();
-        await userEvent.click(await screen.findByRole('button', { name: '수정' }));
+        await userEvent.click(await screen.findByRole('button', { name: '일일 예약 정책 수정' }));
         const dialog = await screen.findByRole('dialog');
         const countInput = within(dialog).getByLabelText('일일 보상 장수');
         await userEvent.clear(countInput);
@@ -157,7 +161,7 @@ describe('관리자 출석 정책', () => {
             new ApiError('ATTENDANCE-007', '이미 시작', 409),
         );
         mount();
-        await userEvent.click(await screen.findByRole('button', { name: '수정' }));
+        await userEvent.click(await screen.findByRole('button', { name: '일일 예약 정책 수정' }));
         await userEvent.click(await screen.findByRole('button', { name: '정책 수정' }));
         expect(
             await screen.findByText(/이미 적용이 시작된 정책입니다\. 목록을 새로고침해 주세요/),
