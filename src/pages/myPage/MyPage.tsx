@@ -69,8 +69,9 @@ export function MyPage() {
                 />
             )}
 
-            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24.5rem]">
-                <div className="flex flex-col gap-6">
+            {/* 좁은 화면도 칸 너비를 화면에 묶는다 — 칸을 정하지 않으면 가장 긴 줄(응모 내역·사용자 ID)만큼 넓어져 오른쪽이 잘렸다 */}
+            <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24.5rem]">
+                <div className="flex min-w-0 flex-col gap-6">
                     <RecentEntriesCard
                         rows={entries.rows}
                         isPending={entries.isPending}
@@ -92,7 +93,7 @@ export function MyPage() {
                     <RecentNotificationsCard now={now} />
                 </div>
                 {/* 화면 설정·계정 정보는 스크롤해도 헤더(76) 아래 20 자리에 붙어 따라온다 — 넓은 화면(두 칸)에서만 */}
-                <div className="flex flex-col gap-6 lg:sticky lg:top-24">
+                <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-24">
                     <AppearanceSettings />
                     {/* 계정을 바꾸면 ID 보기 상태를 처음(가림)으로 */}
                     {user && <AccountInfoCard key={user.id} user={user} />}
