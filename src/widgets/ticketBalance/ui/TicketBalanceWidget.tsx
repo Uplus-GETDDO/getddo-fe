@@ -13,10 +13,11 @@ import {
     getGameContent,
     useGameStatisticsList,
 } from '@entities/game';
-import { missionThumbnail, useMissionList } from '@entities/mission';
+import { isMissionOpen, missionThumbnail, useMissionList } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
@@ -62,6 +63,7 @@ export function TicketBalanceWidget({
     const { data: attendance, isPending: attendancePending } = attendanceQuery;
     const { data: missions, isPending: missionsPending } = missionsQuery;
     const { data: games, isPending: gamesPending } = gamesQuery;
+    const now = useVirtualClock().now();
     const anyError = attendanceQuery.isError || missionsQuery.isError || gamesQuery.isError;
     const retryAll = () => {
         if (attendanceQuery.isError) void attendanceQuery.refetch();
@@ -101,20 +103,23 @@ export function TicketBalanceWidget({
                   },
               ]
             : []),
-        ...(missions ?? []).map((mission) => ({
-            id: mission.id,
-            category: 'MISSION' as const,
-            title: mission.title,
-            description: '미션 완료 시 등급 추첨 응모권을 받아요',
-            rewardKind: '등급 응모권',
-            rewardTickets: mission.rewardTicketCount,
-            // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
-            href: `/missions?mission=${mission.id}`,
-            actionLabel: '미션하러 가기',
-            completed: mission.completed,
-            thumbnailUrl: missionThumbnail(mission),
-            thumbnailIcon: ClipboardList,
-        })),
+        // 지금 참여할 수 있는 미션만 — 기간이 끝났거나 아직 시작 전인 미션은 오늘 받을 수 없다 (미션 페이지 배너와 같은 기준)
+        ...(missions ?? [])
+            .filter((mission) => isMissionOpen(mission, now))
+            .map((mission) => ({
+                id: mission.id,
+                category: 'MISSION' as const,
+                title: mission.title,
+                description: '미션 완료 시 등급 추첨 응모권을 받아요',
+                rewardKind: '등급 응모권',
+                rewardTickets: mission.rewardTicketCount,
+                // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
+                href: `/missions?mission=${mission.id}`,
+                actionLabel: '미션하러 가기',
+                completed: mission.completed,
+                thumbnailUrl: missionThumbnail(mission),
+                thumbnailIcon: ClipboardList,
+            })),
         ...(games ?? [])
             .filter((game) => hasGamePlayer(game.code))
             .map((game) => ({
