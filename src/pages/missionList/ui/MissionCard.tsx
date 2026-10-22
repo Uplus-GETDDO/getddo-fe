@@ -3,6 +3,7 @@ import type { MissionSummary } from '@entities/mission';
 import { useMissionDetail } from '@entities/mission';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { StatusDot } from '@shared/ui/status-dot';
 import { formatKst } from '@shared/utils/date';
 
 import {
@@ -18,8 +19,9 @@ const MISSION_ACTION = { QUIZ: '퀴즈 풀기', SURVEY: '설문 참여' } as con
 const START_FORMAT: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
 
 /**
- * 설문·퀴즈 카드 — 위에 설문/퀴즈 칩과 급한 마감 칩(오늘 마감·D-7 이내만), 제목,
- * 보상과 문항 요약 한 줄("🎟 +1 · 2문항 · 필수 1개"), 오른쪽에 Medium(40) 버튼.
+ * 설문·퀴즈 카드 — 위에 종류 라벨(게임 카드의 'GAME'처럼 작은 글)과 급한 마감 칩(오늘 마감·D-7 이내만), 제목,
+ * 요약 한 줄("응모권 1장 · 2문항 · 필수 1개" — 보상은 진한 글자), 오른쪽에 Medium(40) 버튼.
+ * 보상을 카드마다 노랑 칩으로 두면 모두 같은 강조라 눈에 띄지 않아, 노랑은 섹션 머리의 '더 받을 수 있는 양' 한 곳에만 쓴다
  * 완료·종료한 미션은 버튼을 흐리게 두고 요약 줄도 흐리게 한다 (상태는 버튼이 말해 준다). 종료된 미션은 보상만 남긴다.
  * 문항 수는 목록 계약(MissionSummary)에 없어 종료되지 않았거나 참여 완료한 미션만 상세를 미리 불러와 센다 —
  * 모달과 같은 쿼리라 모달이 바로 열린다. 목록에 questionCount가 생기면 그걸로 바꾼다
@@ -48,11 +50,11 @@ export function MissionCard({
             className={`border-border-default flex items-center justify-between gap-4 rounded-2xl border p-5 ${muted ? 'bg-surface-sunken' : 'bg-surface-page shadow-md'}`}
         >
             <div className="flex min-w-0 flex-col gap-1">
-                <div className="flex items-center gap-2">
-                    {/* 완료·종료 카드는 회색 바탕이라 칩을 흰 바탕+테두리로 바꿔 묻히지 않게 한다 */}
-                    <Badge variant={muted ? 'outline' : 'neutral'}>
+                <div className="flex min-h-5.5 items-center gap-2">
+                    {/* 종류는 칩 대신 작은 라벨 — 칩이 줄어 급한 마감 칩만 눈에 띈다 */}
+                    <span className="text-caption text-fg-tertiary">
                         {MISSION_KIND_LABEL[mission.missionType]}
-                    </Badge>
+                    </span>
                     {/* 참여 완료한 미션에는 마감 정보가 필요 없다. 마감은 7일 이내만 칩으로 — 멀리 남은 D-day는 급한 정보가 아니다 */}
                     {!mission.completed &&
                         (phase === 'upcoming' ? (
@@ -60,20 +62,24 @@ export function MissionCard({
                                 {formatKst(mission.startsAt, START_FORMAT)} 시작
                             </Badge>
                         ) : (
-                            deadline && (
-                                // 오늘 마감은 겟또타임·이벤트 카드의 D-day처럼 검정 알약, 그 밖에는 종류 칩(회색)과
-                                // 겹치지 않게 흰 바탕+테두리
-                                <Badge variant={deadline === '오늘 마감' ? 'inverse' : 'outline'}>
-                                    {deadline}
-                                </Badge>
-                            )
+                            deadline &&
+                            // 오늘 마감은 '지금' 신호(마젠타 점+글자) — 검정 알약 대신 작은 색 신호로 급한 카드만 눈에 띄게. 그 밖에는 흰 바탕+테두리
+                            (deadline === '오늘 마감' ? (
+                                <StatusDot>{deadline}</StatusDot>
+                            ) : (
+                                <Badge variant="outline">{deadline}</Badge>
+                            ))
                         ))}
                 </div>
                 <h3 className={`text-body-bold ${muted ? 'text-fg-secondary' : 'text-fg-primary'}`}>
                     {mission.title}
                 </h3>
                 <p className="text-body-sm text-fg-tertiary flex flex-wrap items-center gap-x-1.5">
-                    <MissionReward count={mission.rewardTicketCount} muted={muted} />
+                    <MissionReward
+                        count={mission.rewardTicketCount}
+                        received={mission.completed}
+                        muted={muted}
+                    />
                     {summary && <span>· {summary}</span>}
                 </p>
             </div>

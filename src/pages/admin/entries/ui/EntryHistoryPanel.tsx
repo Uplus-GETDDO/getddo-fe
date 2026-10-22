@@ -158,7 +158,7 @@ export function EntryHistoryPanel() {
                             <TableRow>
                                 <TableHead>응모일</TableHead>
                                 <TableHead>이벤트</TableHead>
-                                <TableHead>사용자 ID</TableHead>
+                                <TableHead>사용자</TableHead>
                                 <TableHead>상태</TableHead>
                                 <TableHead>요청</TableHead>
                                 <TableHead>차감</TableHead>
@@ -173,12 +173,18 @@ export function EntryHistoryPanel() {
                                     </TableCell>
                                     <TableCell>{row.eventTitle}</TableCell>
                                     <TableCell>
+                                        {/* 이름은 표시용 부가 정보 — 동일인 식별·링크는 userId를 쓴다 (ADR-028) */}
                                         <Link
-                                            className="text-fg-brand text-caption hover:underline"
+                                            className="text-fg-brand text-body-sm hover:underline"
                                             to={`/admin/users?detail=${row.userId}`}
                                         >
-                                            {row.userId}
+                                            {row.userName ?? row.userId}
                                         </Link>
+                                        {row.userName && (
+                                            <span className="text-caption text-fg-secondary block">
+                                                {row.userId}
+                                            </span>
+                                        )}
                                     </TableCell>
                                     <TableCell>{STATUS_LABEL[row.status]}</TableCell>
                                     <TableCell>{row.requestedTicketCount}장</TableCell>

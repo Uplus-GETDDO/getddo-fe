@@ -5,8 +5,9 @@ import type { MyResult, Prize, PublicResults, PublishedPrize } from '@entities/d
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
+import { getMockDrawOverview } from './draw';
 import { mockEventEntrantIds, mockMyEntrySummary } from './entry';
-import { ANNOUNCE_DELAY_MS, findMockEvent, type MockEvent } from './event';
+import { findMockEvent, type MockEvent } from './event';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
@@ -95,10 +96,10 @@ function buildPrizes(event: MockEvent): PublishedPrize[] {
 }
 
 function buildResults(event: MockEvent, now: number): PublicResults {
-    const ends = new Date(event.endsAt).getTime();
-    const scheduledAt = ends + ANNOUNCE_DELAY_MS;
-    // 예정 시각이 지나야 공개한다. 서버가 판정할 몫이라 목업도 같은 기준을 쓴다
-    const isPublished = now >= scheduledAt;
+    // 공개 여부는 시각이 아니라 당첨자 공개 요청의 성공으로 판정한다 (ADR-022) —
+    // 관리자 상태·공개 이력과 같은 추첨 목업의 사실을 읽는다
+    const draw = getMockDrawOverview(event.id);
+    const isPublished = draw.published;
     const hasEntrants = (event.participantCount ?? 0) > 0;
 
     const displayStatus: PublicResults['displayStatus'] = !isPublished
@@ -111,9 +112,9 @@ function buildResults(event: MockEvent, now: number): PublicResults {
         eventId: event.id,
         isPublished,
         // 발표 전에는 공개 정보를 하나도 싣지 않는다 (05-api/drawing.md)
-        publishedAt: isPublished ? new Date(scheduledAt).toISOString() : null,
-        revision: isPublished ? 1 : null,
-        updatedAt: isPublished ? new Date(scheduledAt).toISOString() : null,
+        publishedAt: isPublished ? draw.publishedAt : null,
+        revision: isPublished ? draw.revision : null,
+        updatedAt: isPublished ? draw.publishedAt : null,
         serverTime: new Date(now).toISOString(),
         displayStatus,
         prizes: isPublished && hasEntrants ? buildPrizes(event) : [],

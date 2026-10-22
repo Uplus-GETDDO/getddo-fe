@@ -3,8 +3,9 @@ import type { ReactNode, RefObject } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 import type { EntryTickets } from '@entities/entry';
+import type { TicketGrade } from '@entities/ticket';
 
-import { GradeTicketTiles, ticketGradeSchema } from '@entities/ticket';
+import { GradeTicketTiles, TICKET_GRADE_LABEL, ticketGradeSchema } from '@entities/ticket';
 import { Button } from '@shared/ui/button';
 import {
     Dialog,
@@ -21,8 +22,8 @@ interface EntryConfirmDialogProps {
     title: string;
     /** 이번 응모에 쓰는 등급별 장수 — 생략된 등급은 0이다 */
     tickets: EntryTickets;
-    /** 지금 보유 중인 응모권 전체 — 잔액을 못 불러왔으면 null */
-    balance: number | null;
+    /** 등급별 보유 장수 — 잔액을 못 불러왔으면 null */
+    balanceByGrade: Record<TicketGrade, number> | null;
     onConfirm: () => void;
     /** 접수 요청이 진행 중이면 버튼을 잠근다 — 연타로 중복 요청이 나가지 않게 한다 */
     pending?: boolean;
@@ -37,7 +38,7 @@ export function EntryConfirmDialog({
     onOpenChange,
     title,
     tickets,
-    balance,
+    balanceByGrade,
     onConfirm,
     pending = false,
     disabled = false,
@@ -82,43 +83,98 @@ export function EntryConfirmDialog({
                                     count: tickets[grade] ?? 0,
                                 }))}
                             />
-                            <dl className="border-border-default flex flex-col gap-2.5 border-t border-dashed pt-4">
+                            <div className="border-border-default flex flex-col gap-2.5 border-t border-dashed pt-4">
                                 <div className="flex items-center justify-between gap-3">
-                                    <dt className="text-body-sm text-fg-secondary">
+                                    <span className="text-body-sm text-fg-secondary">
                                         사용할 응모권
-                                    </dt>
-                                    <dd className="text-body-bold text-fg-primary tabular-nums">
+                                    </span>
+                                    <span className="text-body-bold text-fg-primary tabular-nums">
                                         {total}장
-                                    </dd>
+                                    </span>
                                 </div>
-                                <div className="flex items-center justify-between gap-3">
-                                    <dt className="text-body-sm text-fg-secondary">
+                                {/* 사용자가 궁금한 건 등급마다 얼마나 남는지다 — 쓰는 등급만 한 줄씩, 총합은 작게 */}
+                                <div
+                                    role="group"
+                                    aria-label="응모 후 남는 응모권"
+                                    className="flex flex-col gap-2.5"
+                                >
+                                    <span className="text-body-sm text-fg-secondary">
                                         응모 후 남는 응모권
-                                    </dt>
-                                    <dd className="flex items-center gap-1.5 tabular-nums">
-                                        {balance == null ? (
-                                            <span className="text-body-bold text-fg-primary">
-                                                -
-                                            </span>
-                                        ) : (
-                                            <>
-                                                <span className="text-body-sm text-fg-tertiary">
-                                                    {balance}장
+                                    </span>
+                                    {used.map((grade) => {
+                                        const owned = balanceByGrade?.[grade];
+                                        return (
+                                            <div
+                                                key={grade}
+                                                className="flex items-center justify-between gap-3 pl-3"
+                                            >
+                                                <span className="text-body-sm text-fg-secondary">
+                                                    {TICKET_GRADE_LABEL[grade]}
                                                 </span>
-                                                {/* 화면 읽기에는 '10장에서 6장'으로 읽힌다 */}
-                                                <span className="sr-only">에서</span>
-                                                <ArrowRight
-                                                    aria-hidden
-                                                    className="text-fg-tertiary size-3.5"
-                                                />
-                                                <span className="text-body-bold text-fg-primary">
-                                                    {Math.max(0, balance - total)}장
+                                                <span className="flex items-center gap-1.5 tabular-nums">
+                                                    {owned == null ? (
+                                                        <span className="text-body-bold text-fg-primary">
+                                                            -
+                                                        </span>
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-body-sm text-fg-tertiary">
+                                                                {owned}장
+                                                            </span>
+                                                            {/* 화면 읽기에는 '10장에서 6장'으로 읽힌다 */}
+                                                            <span className="sr-only">에서</span>
+                                                            <ArrowRight
+                                                                aria-hidden
+                                                                className="text-fg-tertiary size-3.5"
+                                                            />
+                                                            <span className="text-body-bold text-fg-primary">
+                                                                {Math.max(
+                                                                    0,
+                                                                    owned - (tickets[grade] ?? 0),
+                                                                )}
+                                                                장
+                                                            </span>
+                                                        </>
+                                                    )}
                                                 </span>
-                                            </>
-                                        )}
-                                    </dd>
+                                            </div>
+                                        );
+                                    })}
+                                    <div className="flex items-center justify-between gap-3 pl-3">
+                                        <span className="text-caption text-fg-tertiary">합계</span>
+                                        <span className="text-caption text-fg-tertiary flex items-center gap-1 tabular-nums">
+                                            {balanceByGrade == null ? (
+                                                '-'
+                                            ) : (
+                                                <>
+                                                    <span>
+                                                        {used.reduce(
+                                                            (sum, grade) =>
+                                                                sum + (balanceByGrade[grade] ?? 0),
+                                                            0,
+                                                        )}
+                                                        장
+                                                    </span>
+                                                    <ArrowRight aria-hidden className="size-3" />
+                                                    <span>
+                                                        {used.reduce(
+                                                            (sum, grade) =>
+                                                                sum +
+                                                                Math.max(
+                                                                    0,
+                                                                    (balanceByGrade[grade] ?? 0) -
+                                                                        (tickets[grade] ?? 0),
+                                                                ),
+                                                            0,
+                                                        )}
+                                                        장
+                                                    </span>
+                                                </>
+                                            )}
+                                        </span>
+                                    </div>
                                 </div>
-                            </dl>
+                            </div>
                         </>
                     ) : (
                         <p className="text-body-sm text-fg-secondary">

@@ -40,6 +40,12 @@ const ERROR_MESSAGES: Record<string, string> = {
     'MISSION-004': '지금은 참여할 수 있는 미션이 아닙니다.',
     'MISSION-005':
         '이미 처리 중인 요청과 내용이 다릅니다. 화면을 새로고침한 뒤 다시 시도해 주세요.',
+    'MISSION-006': '관리자 권한이 필요합니다.',
+    // 관리자 출석 정책 — getddo-spec 05-api/attendance.md의 업무 오류 코드
+    'ATTENDANCE-002': '관리자 권한이 필요합니다.',
+    'ATTENDANCE-003': '출석 정책 값을 확인해 주세요.',
+    'ATTENDANCE-006': '수정할 정책을 찾을 수 없습니다. 목록을 새로 확인해 주세요.',
+    'ATTENDANCE-007': '이미 적용이 시작된 정책이라 수정할 수 없습니다.',
     'TICKET-006': '보유한 응모권이 부족합니다.',
     // 관리자 추첨 — getddo-spec 05-api/drawing.md의 업무 오류 코드
     'DRAW-001': '이벤트를 찾을 수 없습니다.',

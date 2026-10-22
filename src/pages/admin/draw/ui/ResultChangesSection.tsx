@@ -81,9 +81,16 @@ export function ResultChangesSection({ eventId }: { eventId: string }) {
                                                     >
                                                         슬롯 {c.slotNumber} ·{' '}
                                                         <span className="text-fg-tertiary line-through">
-                                                            {c.beforeUserId ?? '—'}
+                                                            {c.beforeUserName ??
+                                                                c.beforeUserId ??
+                                                                '—'}
                                                         </span>{' '}
-                                                        → <b>{c.afterUserId ?? '미충원'}</b>
+                                                        →{' '}
+                                                        <b>
+                                                            {c.afterUserName ??
+                                                                c.afterUserId ??
+                                                                '미충원'}
+                                                        </b>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -94,7 +101,7 @@ export function ResultChangesSection({ eventId }: { eventId: string }) {
                                         {change.reason ?? '—'}
                                     </TableCell>
                                     <TableCell className="text-body-sm text-fg-secondary whitespace-nowrap">
-                                        {change.confirmedBy ?? '—'}
+                                        {change.confirmedByName ?? change.confirmedBy ?? '—'}
                                         <br />
                                         {change.confirmedAt ? formatKst(change.confirmedAt) : '—'}
                                     </TableCell>
@@ -107,8 +114,9 @@ export function ResultChangesSection({ eventId }: { eventId: string }) {
                                                     <li key={exec.runId}>
                                                         <span className="text-fg-secondary">
                                                             실행 {exec.runId} · 확인{' '}
-                                                            {exec.confirmedBy} ·{' '}
-                                                            {formatKst(exec.confirmedAt)}
+                                                            {exec.confirmedByName ??
+                                                                exec.confirmedBy}{' '}
+                                                            · {formatKst(exec.confirmedAt)}
                                                         </span>
                                                         {exec.cancellations.length > 0 && (
                                                             <ul className="text-caption text-fg-tertiary mt-0.5 flex list-disc flex-col gap-0.5 pl-4">

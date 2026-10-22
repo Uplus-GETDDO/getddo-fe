@@ -56,7 +56,7 @@ export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHe
                         src={event.bannerImageUrl!}
                         alt=""
                         onError={banner.onError}
-                        className="absolute inset-0 size-full object-contain p-6 mix-blend-multiply dark:mix-blend-normal"
+                        className="absolute inset-0 size-full object-cover"
                     />
                 ) : (
                     <div className="size-full" />

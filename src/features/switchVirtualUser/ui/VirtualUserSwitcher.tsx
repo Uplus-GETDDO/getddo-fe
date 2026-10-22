@@ -1,7 +1,7 @@
 import { Check, CircleUserRound, ShieldCheck } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 
-import { useSessionStore, useVirtualUsers } from '@entities/user';
+import { useSessionStore, useVirtualUsers, virtualUserLabel } from '@entities/user';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { SkeletonList } from '@shared/ui/skeleton';
@@ -23,9 +23,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger
                 asChild={!!trigger}
-                aria-label={
-                    current ? `가상 사용자 전환, 현재 사용자 ${current.name}` : '가상 사용자 전환'
-                }
+                aria-label={current ? `계정 전환, 현재 사용자 ${current.name}` : '계정 전환'}
                 className={
                     trigger
                         ? undefined
@@ -40,7 +38,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
                 className="w-80 max-w-[calc(100vw-2rem)]"
             >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-body-sm-bold text-fg-primary">가상 사용자 전환</p>
+                    <p className="text-body-sm-bold text-fg-primary">계정 전환</p>
                     {current && (
                         <p className="text-fg-tertiary text-caption min-w-0 break-all">
                             현재: {current.name}
@@ -104,7 +102,7 @@ export function VirtualUserSwitcher({ trigger }: VirtualUserSwitcherProps) {
                                         )}
                                     </span>
                                     <span className="text-fg-secondary text-caption break-all">
-                                        {user.personaLabel ?? '시스템 관리 계정'}
+                                        {virtualUserLabel(user)}
                                     </span>
                                 </div>
                                 {isCurrent && <Check className="text-fg-brand size-4 shrink-0" />}

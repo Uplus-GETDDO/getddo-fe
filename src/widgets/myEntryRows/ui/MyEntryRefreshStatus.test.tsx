@@ -10,6 +10,7 @@ function query(
 ): ReturnType<typeof useMyEntryRows> {
     return {
         rows: [],
+        groups: [],
         isPending: false,
         isError: false,
         isEntriesRefreshError: false,

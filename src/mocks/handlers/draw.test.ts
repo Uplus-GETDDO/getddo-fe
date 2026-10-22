@@ -85,7 +85,7 @@ const call = <T = unknown>(
         validateStatus: () => true,
     });
 
-// evt-009는 오래전에 마감돼 최초 발표가 끝난 시드 이벤트다 (당첨 30명 / 후보 33명)
+// evt-009는 이미 공개된 시드 이벤트다 (status:'drawn', 당첨 30명 / 후보 33명)
 const EVENT = 'evt-009';
 // 발표 전(20000000-0000-4000-8000-000000000905), 취소됨(20000000-0000-4000-8000-000000000902), 재추첨 실패(20000000-0000-4000-8000-000000000904) 시드
 const UNPUBLISHED_EVENT = '20000000-0000-4000-8000-000000000905';
@@ -498,14 +498,22 @@ describe('추첨 목업', () => {
                 revision: number;
                 reason: string | null;
                 confirmedBy: string | null;
-                changes: { beforeUserId: string | null; afterUserId: string | null }[];
+                confirmedByName: string | null;
+                changes: {
+                    beforeUserId: string | null;
+                    beforeUserName: string | null;
+                    afterUserId: string | null;
+                    afterUserName: string | null;
+                }[];
                 executions: {
                     runId: string;
+                    confirmedBy: string;
+                    confirmedByName: string;
                     cancellations: { id: string; resultId: string; reason: string }[];
                 }[];
             }>
         >('get', `/v1/admin/events/${EVENT}/result-changes`);
-        // 시계 자동 발표의 revision 1(근거 없는 과거 공개)과 AD06 반영의 revision 2다
+        // 공개 시드의 revision 1(근거 없는 과거 공개)과 AD06 반영의 revision 2다
         expect(changes.data.data.totalElements).toBe(2);
         const change = changes.data.data.items[0]!;
         expect(change.revision).toBe(2);
@@ -516,14 +524,20 @@ describe('추첨 목업', () => {
             (await firstRun(EVENT)).results.find((r) => r.id === win.id)?.userId,
         );
         expect(change.changes[0]?.afterUserId).toBeTruthy();
+        // ADR-028 — ID 옆에 표시용 현재 이름이 온다. 처리자·당첨자 모두 이름을 싣는다
+        expect(change.confirmedByName).toBeTruthy();
+        expect(change.changes[0]?.beforeUserName).toBeTruthy();
+        expect(change.changes[0]?.afterUserName).toBeTruthy();
+        expect(change.executions[0]?.confirmedByName).toBeTruthy();
         // 이 재추첨을 발생시킨 취소가 실행별 근거로 남는다
         expect(change.executions[0]?.runId).toBe(redrawId);
         expect(change.executions[0]?.cancellations[0]?.reason).toBe('본인 확인 실패');
-        // 시계 자동 발표는 확인자·사유·실행 근거가 없는 과거 공개다
+        // 공개 시드는 확인자·사유·실행 근거가 없는 과거 공개다 — 확인자가 null이면 이름도 null이다
         expect(changes.data.data.items[1]).toMatchObject({
             revision: 1,
             reason: null,
             confirmedBy: null,
+            confirmedByName: null,
             executions: [],
         });
     });
@@ -610,7 +624,7 @@ describe('추첨 목업', () => {
         });
 
         it('발표된 이벤트의 다른 실행은 PUBLICATION-005, 취소됨·비관리자·없는 실행도 거절이다', async () => {
-            const first = await firstRun(EVENT); // evt-009는 시계 발표 완료
+            const first = await firstRun(EVENT); // evt-009는 공개 시드라 이미 발표됐다
             const rejected = await confirm(first.id);
             expect(rejected.status).toBe(409);
             expect(rejected.data.code).toBe('PUBLICATION-005');

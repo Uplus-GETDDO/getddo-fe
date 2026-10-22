@@ -11,6 +11,7 @@ import { useEvent } from '@entities/event';
 import { TicketBalanceStatus, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
 import { getErrorMessage } from '@shared/api/errorMessage';
+import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { Loading } from '@shared/ui/loading';
 import { formatYmd } from '@shared/utils/date';
 import { DrawResultSection } from '@widgets/drawResult';
@@ -85,6 +86,8 @@ export function EventDetailPage() {
     const [lastBalance, setLastBalance] = useState<number | null>(null);
     // 모달을 닫으면 방금 누른 응모 버튼으로 포커스를 되돌린다
     const entryButtonRef = useRef<HTMLButtonElement>(null);
+    // 운영자가 올린 대표 이미지 — 주소가 열리지 않으면 칸째로 뺀다
+    const hero = useImageFallback(event?.bannerImageUrl);
 
     if (isPending) {
         return (
@@ -129,14 +132,36 @@ export function EventDetailPage() {
             ) : (
                 <>
                     {/*
-                     * 목록에서 바로 들어오는 최상위 화면이라 겟또타임·미션 상세와 같은 title-1을 쓴다.
-                     * title-2는 마이페이지가 여는 하위 화면(PageHeader) 크기다
+                     * 운영자가 올린 대표 이미지는 제목 옆에 둔다.
+                     *
+                     * 본문 폭(1248)만큼 늘이면 권장 크기(IMAGE_GUIDE.EVENT 800×450)가 두 배로
+                     * 늘어나 흐려지므로 칸을 400으로 묶는다 — 화면 배율 200%에서 정확히 800이다.
+                     * 그만큼 좁은 그림을 위에 쌓으면 제목이 첫 화면에서 밀려나므로 옆으로 세운다.
                      */}
-                    <h1 className="text-title-1 text-fg-primary mt-2">{event.title}</h1>
+                    <div className="mt-2 flex flex-col gap-5 sm:flex-row sm:items-center">
+                        {hero.shown && (
+                            <div className="bg-surface-sunken aspect-video w-full max-w-100 shrink-0 overflow-hidden rounded-2xl">
+                                <img
+                                    src={event.bannerImageUrl!}
+                                    alt=""
+                                    onError={hero.onError}
+                                    className="size-full object-cover"
+                                />
+                            </div>
+                        )}
 
-                    <p className="text-body-sm text-fg-tertiary mt-2">
-                        {formatYmd(event.startsAt)} ~ {formatYmd(event.endsAt)}
-                    </p>
+                        <div className="flex min-w-0 flex-col">
+                            {/*
+                             * 목록에서 바로 들어오는 최상위 화면이라 겟또타임·미션 상세와 같은 title-1을 쓴다.
+                             * title-2는 마이페이지가 여는 하위 화면(PageHeader) 크기다
+                             */}
+                            <h1 className="text-title-1 text-fg-primary">{event.title}</h1>
+
+                            <p className="text-body-sm text-fg-tertiary mt-2">
+                                {formatYmd(event.startsAt)} ~ {formatYmd(event.endsAt)}
+                            </p>
+                        </div>
+                    </div>
 
                     <hr className="border-border-default mt-6" />
 
@@ -186,7 +211,7 @@ export function EventDetailPage() {
                 onOpenChange={setConfirmOpen}
                 title={event.title}
                 tickets={requestedTickets}
-                balance={balance}
+                balanceByGrade={ticket?.countByGrade ?? null}
                 returnFocusTo={entryButtonRef}
                 pending={enterEvent.isPending}
                 disabled={balanceBlocked || !canEnter || !hasEnoughTickets}

@@ -192,10 +192,10 @@ export const eventSchema = z.object({
     prizeName: z.string().optional(),
     winnerCount: z.number().int().positive().optional(),
     // 응모 현황(응모자 수·차감 합계)은 E03 전용 조회(entities/entry의 useEntryStatistics)로 받는다 — ADR-0007
+    // TODO: 백엔드는 아래 두 필드를 제공하지 않는다 — 화면은 entities/entry의 useMyEventEntries로 직접 계산한다. 필드 추가는 이벤트 담당 백엔드 후속 과제
     myEntryCount: z.number().int().nonnegative().nullable().optional(),
     // 내가 이 이벤트에 지금까지 쓴 응모권 수 — 추가 응모로 한도(ADR-010)까지 얼마나 남았는지 계산하는 값.
     // 한 번에 여러 장을 쓸 수 있어서 myEntryCount × requiredTickets로는 실제 사용량을 알 수 없다.
-    // TODO: 필드명·제공 여부는 백엔드와 미합의. 없으면 myEntryCount × requiredTickets로 근사한다.
     myTicketCount: z.number().int().nonnegative().nullable().optional(),
 });
 

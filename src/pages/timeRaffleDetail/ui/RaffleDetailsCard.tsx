@@ -1,6 +1,7 @@
 import type { Event } from '@entities/event';
 
-import { useEntryStatistics } from '@entities/entry';
+import { useEntryStatistics, useMyEventEntries } from '@entities/entry';
+import { describeTicketUsage } from '@entities/event';
 import { useMyTickets } from '@entities/ticket';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
@@ -9,11 +10,11 @@ export function RaffleDetailsCard({ event }: { event: Event }) {
     const { data: ticket, isPending: ticketsPending } = useMyTickets();
     // 히어로와 같은 쿼리 키라 요청은 합쳐진다
     const { data: statistics } = useEntryStatistics(event.id, { isOpen: event.status === 'open' });
+    const { data: myEntries, isPending: entriesPending } = useMyEventEntries(event.id);
 
     const detail = event.raffleDetail;
-    const entryCount = event.myEntryCount ?? 0;
-    // 한 번에 여러 장을 쓸 수 있어 횟수 × 차감량으로는 실제 사용량이 나오지 않는다
-    const usedTickets = event.myTicketCount ?? entryCount * event.requiredTickets;
+    // 한 번에 여러 장을 쓸 수 있어 횟수 × 차감량으로는 실제 사용량이 나오지 않는다 — E06 실내역 합계로 계산
+    const usedTickets = myEntries?.reduce((sum, entry) => sum + entry.deductedTicketCount, 0);
     const paragraphs = detail?.paragraphs ?? [event.description];
 
     type Spec = { label: string; value: string | null };
@@ -33,16 +34,14 @@ export function RaffleDetailsCard({ event }: { event: Event }) {
         { label: '배송 일정', value: detail?.shippingSchedule ?? null },
         {
             label: '모집 시각',
-            value: `KST ${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · KST ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
+            value: `${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
         },
         { label: '멤버십 자격', value: detail?.membershipNote ?? null },
-        {
-            label: '1회 차감 수량',
-            value:
-                event.requiredTickets === 0
-                    ? '응모권 없이 참여'
-                    : `1회 응모 시 ${event.requiredTickets}장`,
-        },
+        /*
+         * '1회 차감 수량'으로 두면 가중치 래플이 '1회 1장'으로 읽힌다 — 등급을 골라
+         * 누적 상한까지 여러 번 나눠 낼 수 있는 래플이라 쓰는 방식 자체를 적는다 (ADR-010)
+         */
+        { label: '응모권 사용', value: describeTicketUsage(event) },
     ];
     const entrySpecs: Spec[] = [
         {
@@ -55,7 +54,12 @@ export function RaffleDetailsCard({ event }: { event: Event }) {
         },
         {
             label: '이번 이벤트 차감',
-            value: `${formatNumber(usedTickets)}장`,
+            value:
+                usedTickets != null
+                    ? `${formatNumber(usedTickets)}장`
+                    : entriesPending
+                      ? '불러오는 중'
+                      : '조회 실패',
         },
         {
             label: '응모자 수',

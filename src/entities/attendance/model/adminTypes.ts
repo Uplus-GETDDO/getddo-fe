@@ -21,6 +21,8 @@ export const dailyAttendancePolicySchema = dailyPolicyWriteSchema.extend({
     effectiveFrom: z.iso.datetime({ offset: true }),
     effectiveUntil: z.iso.datetime({ offset: true }).nullable(),
     createdBy: z.string(),
+    // ADR-028 표시용 작성자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    createdByName: z.string().nullish(),
     createdAt: z.iso.datetime({ offset: true }),
 });
 export const streakPolicySetSchema = z.object({
@@ -28,7 +30,10 @@ export const streakPolicySetSchema = z.object({
     effectiveMonth: z.string().regex(/^\d{4}-\d{2}$/),
     milestones: z.array(milestoneWriteSchema.extend({ id: z.string() })),
     createdBy: z.string(),
+    createdByName: z.string().nullish(),
     createdAt: z.iso.datetime({ offset: true }),
 });
 export type DailyPolicyWrite = z.infer<typeof dailyPolicyWriteSchema>;
 export type StreakPolicyWrite = z.infer<typeof streakPolicyWriteSchema>;
+export type DailyAttendancePolicy = z.infer<typeof dailyAttendancePolicySchema>;
+export type StreakPolicySet = z.infer<typeof streakPolicySetSchema>;

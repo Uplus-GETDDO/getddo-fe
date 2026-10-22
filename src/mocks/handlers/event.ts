@@ -6,6 +6,8 @@ import { MEMBERSHIP_LABEL } from '@entities/event';
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
+// draw.ts도 이 모듈의 mockEvents를 읽는 순환이지만, 호출이 요청 시점으로 미뤄져 초기화 순서에 영향이 없다
+import { getMockDrawOverview } from './draw';
 import { mockUserHasAcceptedEntry } from './entry';
 import { fail, ok } from './response';
 
@@ -89,7 +91,7 @@ const UPCOMING_OPENS_AT = demoTime(3 * 60 * MINUTE);
  * 세션 시작 시점에 고정되므로 새로고침해도 기준이 밀리지 않고, 시간이 실제로 흐른다.
  * 더 빨리 보고 싶으면 관리자 가상 시계(/admin/virtual-clock)로 시간을 앞으로 옮기면 된다.
  */
-// 지금 응모할 수 있고 10분 뒤 마감된다 (발표는 ADR-009에 따라 마감 + 5분)
+// 지금 응모할 수 있고 10분 뒤 마감된다 (최초 자동 추첨은 ADR-026에 따라 마감 + 1분)
 const FLOW_STARTS_AT = demoTime(-5 * MINUTE);
 const FLOW_ENDS_AT = demoTime(10 * MINUTE);
 // 이미 마감돼 발표를 기다리는 래플 — 화면을 열자마자 발표 대기 상태를 볼 수 있다
@@ -728,7 +730,8 @@ export const mockEvents: MockEvent[] = [
         bannerImageUrl: '/images/events/banners/reusable-cup.svg',
         /*
          * 방금 마감돼 발표를 기다리는 이벤트 — 화면을 열자마자 '발표 대기'를 볼 수 있다.
-         * 마감 + 5분이 지나면 '발표 완료'로 넘어간다. 다시 보려면 새로고침하거나
+         * 마감 + 1분이 지나면 최초 자동 추첨이 확정된다(ADR-026). '발표 완료'는 시간이 아니라
+         * 관리자의 당첨자 공개 요청 성공으로만 넘어간다 (ADR-022). 다시 보려면 새로고침하거나
          * 관리자 가상 시계(/admin/virtual-clock)로 시간을 되돌리면 된다.
          */
         startsAt: kstAt(-20, 0),
@@ -928,7 +931,8 @@ export const mockEvents: MockEvent[] = [
         bannerImageUrl: null,
         startsAt: kstAt(-1, 13),
         endsAt: kstAt(-1, 14),
-        status: 'closed',
+        // 어제 끝나고 발표까지 끝난 래플 — 공개 시드다 (추첨 목업이 이 값으로 과거 공개를 재현한다)
+        status: 'drawn',
         isTimeRaffle: true,
         raffleDetail: raffleDetail(
             '무너 시즌 굿즈를 한 상자에 담았습니다. 머그컵과 에코백은 이번 시즌에만 제작된 구성입니다.',
@@ -1112,34 +1116,36 @@ export function getMockEventStatistics(event: NonNullable<ReturnType<typeof find
     };
 }
 
-/** ADR-009 — 유형과 무관하게 마감 + 5분 검토 후 자동으로 최초 발표한다 */
-export const ANNOUNCE_DELAY_MS = 5 * 60 * 1000;
+/** ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이 된다. 공개 예정 시각이 아니다 */
+export const DRAW_DELAY_MS = 60 * 1000;
 
 /**
  * 응답 시점의 이벤트 상태.
  *
  * 목 데이터에 적어 둔 status는 작성 당시의 값이라 시간이 지나면 기간과 어긋난다
  * (마감일이 지났는데 계속 진행 중으로 남는 식). 서버가 할 일이므로 응답을 만들 때 다시 계산해
- * 진행 예정 → 진행 중 → 마감(발표 대기) → 발표 완료가 실제로 이어지게 한다.
+ * 진행 예정 → 진행 중 → 마감이 실제로 이어지게 한다.
+ * 발표 완료('drawn')는 시간이 아니라 당첨자 공개 요청의 성공으로만 생긴다 (ADR-022).
  */
-function statusAt(startsAt: string, endsAt: string, now: number): EventStatus {
+function statusAt(startsAt: string, endsAt: string, now: number, published: boolean): EventStatus {
     const starts = new Date(startsAt).getTime();
     const ends = new Date(endsAt).getTime();
 
     if (now < starts) return 'upcoming';
     if (now < ends) return 'open';
-    // 마감 후 발표까지는 '발표 대기' 구간이다 (ADR-009 — 마감 + 5분 자동 발표)
-    if (now < ends + ANNOUNCE_DELAY_MS) return 'closed';
-    return 'drawn';
+    // 마감 후 당첨자 공개까지는 '발표 대기' 구간이다 — 시각이 지나도 공개되지 않는다
+    return published ? 'drawn' : 'closed';
 }
+
+/** 이 이벤트가 공개됐는지 — 추첨 목업의 공개 사실과 같은 값을 읽는다 */
+const isPublishedEvent = (eventId: string): boolean => getMockDrawOverview(eventId).published;
 
 /** 응모·자격 목업이 응모 가능 상태를 판정할 때 쓴다 — 저장값이 아니라 시간으로 재계산한 상태 */
 export function mockEventEffectiveStatus(event: MockEvent): EventStatus {
-    return statusAt(event.startsAt, event.endsAt, mockNow().getTime());
+    return statusAt(event.startsAt, event.endsAt, mockNow().getTime(), isPublishedEvent(event.id));
 }
 
-// spec의 원시 상태(enum) — 화면 상태와 다른 계약 값이다. 목업은 마감 + 5분 후 자동 발표(ADR-009)를
-// 흉내 내므로 발표 완료는 PUBLISHED로 싣는다
+// spec의 원시 상태(enum) — 화면 상태와 다른 계약 값이다. 발표 완료는 PUBLISHED로 싣는다
 const SPEC_STATUS: Record<EventStatus, AdminEventStatus> = {
     upcoming: 'SCHEDULED',
     open: 'OPEN',
@@ -1166,7 +1172,9 @@ function toResponse(event: MockEvent, now: number) {
         detailImageUrl: event.detailImageUrl ?? null,
         startsAt: event.startsAt,
         endsAt: event.endsAt,
-        status: SPEC_STATUS[statusAt(event.startsAt, event.endsAt, now)],
+        status: SPEC_STATUS[
+            statusAt(event.startsAt, event.endsAt, now, isPublishedEvent(event.id))
+        ],
         serverTime: new Date(now).toISOString(),
         ...rule,
         prizes: [
@@ -1212,11 +1220,11 @@ function toSummary(event: MockEvent, now: number, userId: string | null) {
 }
 
 /**
- * 마감 + 5분의 최초 자동 추첨 기준 시각 — 관리자 응답에만 싣는다 (05-api/event.md AdminEvent).
- * 실제 추첨 실행·명단 확인·결과 공개가 끝났다는 뜻이 아니다.
+ * 마감 + 1분의 최초 자동 추첨 기준 시각 — 관리자 응답에만 싣는다 (05-api/event.md AdminEvent).
+ * 실제 추첨 실행·명단 확인·결과 공개가 끝났다는 뜻이 아니다 (ADR-026).
  */
 export function mockDrawScheduledAt(endsAt: string): string {
-    return new Date(new Date(endsAt).getTime() + ANNOUNCE_DELAY_MS).toISOString();
+    return new Date(new Date(endsAt).getTime() + DRAW_DELAY_MS).toISOString();
 }
 
 export const eventHandlers = [

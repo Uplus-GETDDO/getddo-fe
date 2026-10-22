@@ -1,9 +1,9 @@
-import { Ticket } from 'lucide-react';
+import { formatNumber } from '@shared/utils/format';
 
 /**
- * 미션 보상 — "🎟 +N" (응모권은 아이콘으로). 카드 설명 줄과 풀이 모달 정보 줄 앞에 둔다.
- * 종류 칩·마감 칩과 한 줄에 섞으면 칩·글자·칩이 번갈아 줄이 끊겨 보여 보상은 설명 쪽으로 뺐다.
- * received: 받은 뒤 "받았어요"로, muted: 흐린 글자(완료·종료 카드), small: 모달 정보 줄처럼 12px 줄에 맞출 때
+ * 미션 보상 — 요약 줄 앞의 진한 글자 "응모권 1장" (받은 뒤 "응모권 1장 받았어요").
+ * 아이콘+'+1'은 장식처럼 보이고, 카드마다 노랑 칩이면 모두 같은 강조라 눈에 띄지 않아 회색 요약 줄 안의 굵은 글자로 둔다.
+ * muted: 흐린 글자(완료·종료 카드), small: 모달 정보 줄처럼 12px 줄에 맞출 때
  */
 export function MissionReward({
     count,
@@ -18,17 +18,9 @@ export function MissionReward({
 }) {
     return (
         <span
-            className={`inline-flex shrink-0 items-center gap-1 ${small ? 'text-xs leading-[1.125rem] font-semibold' : 'text-body-sm-bold'} ${muted ? 'text-fg-tertiary' : 'text-fg-primary'}`}
+            className={`shrink-0 ${small ? 'text-xs leading-4.5 font-semibold' : 'text-body-sm-bold'} ${muted ? 'text-fg-tertiary' : 'text-fg-primary'}`}
         >
-            <Ticket aria-hidden className={small ? 'size-3.5' : 'size-4'} />
-            <span aria-hidden>
-                +{count}
-                {received && ' 받았어요'}
-            </span>
-            {/* 화면 읽기 프로그램에는 아이콘 대신 낱말로 읽어 준다 */}
-            <span className="sr-only">
-                보상 응모권 {count}장{received && ' 받음'}
-            </span>
+            응모권 {formatNumber(count)}장{received && ' 받았어요'}
         </span>
     );
 }

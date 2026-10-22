@@ -6,6 +6,7 @@ import { z } from 'zod';
 import type { AdminBanner } from '@entities/banner';
 
 import { BANNER_IMAGE_KEY_MAX_LENGTH } from '@entities/banner';
+import { ImageUploadField } from '@entities/image';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
 import {
@@ -16,7 +17,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@shared/ui/dialog';
-import { Input } from '@shared/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 
 import { useCreateBanner, useUpdateBanner } from '../api/queries';
@@ -26,7 +26,7 @@ const bannerFormSchema = z.object({
     imageKey: z
         .string()
         .trim()
-        .min(1, '이미지 키를 입력하세요')
+        .min(1, '배너 이미지를 올려주세요')
         .max(
             BANNER_IMAGE_KEY_MAX_LENGTH,
             `이미지 키는 ${BANNER_IMAGE_KEY_MAX_LENGTH}자 이하입니다`,
@@ -69,7 +69,6 @@ function BannerForm({
     const mutation = isEdit ? updateBanner : createBanner;
 
     const {
-        register,
         control,
         handleSubmit,
         formState: { errors },
@@ -169,15 +168,22 @@ function BannerForm({
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="banner-image-key" className="text-body-bold text-fg-primary">
-                    이미지 키
-                </label>
-                <Input
-                    id="banner-image-key"
-                    placeholder="이미지 업로드 계약 확정 전까지 키를 직접 입력"
-                    aria-invalid={Boolean(errors.imageKey)}
-                    aria-describedby={errors.imageKey ? 'banner-image-key-error' : undefined}
-                    {...register('imageKey')}
+                {/*
+                 * 배너 전용 업로드 경로가 없어 이벤트 쪽으로 올린다 — 실서버 target은 EVENT·PRIZE뿐이다.
+                 * 받은 키는 어디에 쓰든 통한다. 서버가 키 앞에 /images/만 붙이기 때문이다.
+                 */}
+                <Controller
+                    control={control}
+                    name="imageKey"
+                    render={({ field }) => (
+                        <ImageUploadField
+                            label="배너 이미지"
+                            slot="BANNER"
+                            value={field.value}
+                            onChange={field.onChange}
+                            initialPreviewUrl={banner?.imageUrl}
+                        />
+                    )}
                 />
                 {errors.imageKey && (
                     <p
@@ -187,9 +193,6 @@ function BannerForm({
                         {errors.imageKey.message}
                     </p>
                 )}
-                <p className="text-fg-tertiary text-caption">
-                    업로드 방법·허용 형식·용량 기준은 담당자 확인이 필요합니다.
-                </p>
             </div>
 
             {mutation.isError && (

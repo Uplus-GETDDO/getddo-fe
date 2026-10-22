@@ -41,10 +41,10 @@ export function MyPage() {
     const daily = useTicketHistoryCounts([{ operationType: 'GRANT', ...ticketDayRange(now) }]);
     // 보이는 줄의 결과만 폴링한다
     const entries = useMyEntryRows({
-        selectVisibleRows: (rows) => rows.slice(0, RECENT_ENTRY_COUNT),
+        selectVisibleGroups: (groups) => groups.slice(0, RECENT_ENTRY_COUNT),
     });
 
-    const won = entries.rows.filter((row) => row.result === 'WON');
+    const won = entries.groups.filter((group) => group.result === 'WON');
     const lastWonAt = latestWonAt(won);
 
     return (
@@ -54,7 +54,8 @@ export function MyPage() {
                     user={user}
                     ticketsQuery={ticketsQuery}
                     stats={{
-                        pendingCount: entries.rows.filter((row) => row.result === 'PENDING').length,
+                        pendingCount: entries.groups.filter((group) => group.result === 'PENDING')
+                            .length,
                         wonCount: won.length,
                         lastWonLabel: lastWonAt ? formatKstDot(lastWonAt) : null,
                         todayGranted: daily.counts[0],
@@ -72,7 +73,7 @@ export function MyPage() {
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24.5rem]">
                 <div className="flex flex-col gap-6">
                     <RecentEntriesCard
-                        rows={entries.rows}
+                        groups={entries.groups}
                         isPending={entries.isPending}
                         isError={entries.isError}
                         onRetry={() => void entries.refetch()}
@@ -94,7 +95,8 @@ export function MyPage() {
                 {/* 화면 설정·계정 정보는 스크롤해도 헤더(76) 아래 20 자리에 붙어 따라온다 — 넓은 화면(두 칸)에서만 */}
                 <div className="flex flex-col gap-6 lg:sticky lg:top-24">
                     <AppearanceSettings />
-                    {user && <AccountInfoCard user={user} />}
+                    {/* 계정을 바꾸면 ID 보기 상태를 처음(가림)으로 */}
+                    {user && <AccountInfoCard key={user.id} user={user} />}
                 </div>
             </div>
         </main>

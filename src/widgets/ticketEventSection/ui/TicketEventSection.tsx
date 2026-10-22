@@ -177,51 +177,53 @@ function UpcomingEventCarousel({
                     />
                 )}
             </div>
-            {events.length === 0 && (
+            {/* 비었으면 빈 상태만 — 아래 넘김 칸(flex-1)까지 그리면 남은 높이를 반씩 나눠 안내가 위로 떠 보였다 */}
+            {events.length === 0 ? (
                 <EmptyState
                     title="오픈 예정인 겟또타임이 없어요"
                     description="새 겟또타임이 잡히면 여기에 보여드릴게요."
                 />
-            )}
-            {/* 행 안쪽 여백(16)만큼 목록을 좌우로 넓혀, 썸네일이 '오픈 예정' 제목과 같은 선에서 시작하게 한다 */}
-            <div className={cn('relative -mx-4', fillHeight && 'min-h-0 flex-1')}>
-                <div className={cn('overflow-hidden', fillHeight && 'h-full')}>
-                    <div
-                        className={cn(
-                            'flex transition-transform duration-300 ease-out motion-reduce:transition-none',
-                            fillHeight && 'h-full',
-                        )}
-                        style={{ transform: `translateX(-${current * 100}%)` }}
-                    >
-                        {Array.from({ length: totalPages }, (_, pageIndex) => (
-                            <div
-                                key={pageIndex}
-                                // 화면 밖 슬라이드도 렌더되므로 Tab 포커스·보조 기술 접근을 inert로 차단한다
-                                inert={pageIndex !== current}
-                                className={cn(
-                                    // 피그마 홈 — 한 쪽에 2행 칸을 고정해 1개만 있어도 2개일 때와 같은 높이·위치로 보인다.
-                                    // 행 사이 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다
-                                    '[&>*+*]:before:bg-border-default grid w-full shrink-0 grid-rows-2 [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px',
-                                    fillHeight && 'h-full',
-                                )}
-                            >
-                                {events
-                                    .slice(
-                                        pageIndex * UPCOMING_PAGE_SIZE,
-                                        (pageIndex + 1) * UPCOMING_PAGE_SIZE,
-                                    )
-                                    .map((event) => (
-                                        <UpcomingEventCard key={event.id} event={event} />
-                                    ))}
-                                {/* 쪽에 한 줄만 남으면 빈 아래 칸을 같은 꼴의 안내 줄로 채운다 — 다른 쪽과 모양이 같아 비어 보이지 않는다 */}
-                                {events.length > 0 &&
-                                    events.length - pageIndex * UPCOMING_PAGE_SIZE <
-                                        UPCOMING_PAGE_SIZE && <UpcomingMoreRow />}
-                            </div>
-                        ))}
+            ) : (
+                // 행 안쪽 여백(16)만큼 목록을 좌우로 넓혀, 썸네일이 '오픈 예정' 제목과 같은 선에서 시작하게 한다
+                <div className={cn('relative -mx-4', fillHeight && 'min-h-0 flex-1')}>
+                    <div className={cn('overflow-hidden', fillHeight && 'h-full')}>
+                        <div
+                            className={cn(
+                                'flex transition-transform duration-300 ease-out motion-reduce:transition-none',
+                                fillHeight && 'h-full',
+                            )}
+                            style={{ transform: `translateX(-${current * 100}%)` }}
+                        >
+                            {Array.from({ length: totalPages }, (_, pageIndex) => (
+                                <div
+                                    key={pageIndex}
+                                    // 화면 밖 슬라이드도 렌더되므로 Tab 포커스·보조 기술 접근을 inert로 차단한다
+                                    inert={pageIndex !== current}
+                                    className={cn(
+                                        // 피그마 홈 — 한 쪽에 2행 칸을 고정해 1개만 있어도 2개일 때와 같은 높이·위치로 보인다.
+                                        // 행 사이 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다
+                                        '[&>*+*]:before:bg-border-default grid w-full shrink-0 grid-rows-2 [&>*+*]:relative [&>*+*]:before:absolute [&>*+*]:before:inset-x-2 [&>*+*]:before:top-0 [&>*+*]:before:h-px',
+                                        fillHeight && 'h-full',
+                                    )}
+                                >
+                                    {events
+                                        .slice(
+                                            pageIndex * UPCOMING_PAGE_SIZE,
+                                            (pageIndex + 1) * UPCOMING_PAGE_SIZE,
+                                        )
+                                        .map((event) => (
+                                            <UpcomingEventCard key={event.id} event={event} />
+                                        ))}
+                                    {/* 쪽에 한 줄만 남으면 빈 아래 칸을 같은 꼴의 안내 줄로 채운다 — 다른 쪽과 모양이 같아 비어 보이지 않는다 */}
+                                    {events.length > 0 &&
+                                        events.length - pageIndex * UPCOMING_PAGE_SIZE <
+                                            UPCOMING_PAGE_SIZE && <UpcomingMoreRow />}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </>
     );
 }

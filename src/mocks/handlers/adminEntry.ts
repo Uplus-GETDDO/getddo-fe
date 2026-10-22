@@ -16,6 +16,13 @@ const eventId = (n: number) => `10000000-0000-4000-8000-${String(n).padStart(12,
 const zero = { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 };
 const sum = (m: Record<string, number>) => Object.values(m).reduce((a, b) => a + b, 0);
 
+// ADR-028 — 표시용 현재 이름. 4번 사용자는 BE 미배포 구간의 이름 생략 경로를 검증하기 위해 비워 둔다
+const ENTRY_USER_NAMES: Record<string, string> = {
+    [userId(1)]: '김도윤',
+    [userId(2)]: '박서연',
+    [userId(3)]: '이하늘',
+};
+
 // AO06/AO07 목업 — 거절 건은 participantId=null·차감 0을 보존한다.
 // 이벤트·사용자 ID는 계약상 UUID라 evt-*/vu-* 목업 식별자와 별도 체계를 쓴다.
 const mkEntry = (
@@ -38,6 +45,7 @@ const mkEntry = (
         rejectionCode: accepted ? null : 'INSUFFICIENT_TICKETS',
         rejectionReason: accepted ? null : '응모권이 부족합니다.',
         userId: userId(1),
+        userName: ENTRY_USER_NAMES[overrides.userId ?? userId(1)] ?? null,
         participantId: accepted ? uuid(8000 + n) : null,
         ...overrides,
         status: overrides.status,
@@ -135,6 +143,7 @@ export const adminEntryHandlers = [
                     id: e.participantId!,
                     eventId: e.eventId,
                     userId: e.userId,
+                    userName: e.userName ?? null,
                     usedTicketCount: e.deductedTicketCount,
                     createdAt: e.requestedAt,
                 });

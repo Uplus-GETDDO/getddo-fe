@@ -24,6 +24,7 @@ export {
     useEntryStatistics,
     useEntryStatisticsList,
     useMyEntries,
+    useMyEventEntries,
 } from './api/queries';
 export { MyEntryItem } from './ui/MyEntryItem';
 export {

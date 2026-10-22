@@ -47,6 +47,7 @@ describe('관리자 응모권 스키마', () => {
     it('AO04 불일치 항목은 상태 enum이 닫혀 있다', () => {
         const ok = {
             userId: 'u1',
+            userName: '김도윤',
             availableCount: 1,
             isConsistent: false,
             inconsistencies: [
@@ -70,6 +71,7 @@ describe('관리자 응모권 스키마', () => {
     it('AO04 불일치 항목의 마지막 이력 상태는 null을 허용한다', () => {
         const parsed = ticketConsistencySchema.safeParse({
             userId: 'u1',
+            // ADR-028 — 이름은 표시용 부가 정보라 생략·null을 모두 허용한다 (BE 미배포)
             availableCount: 1,
             isConsistent: false,
             inconsistencies: [

@@ -35,8 +35,8 @@ const api = (path: string) => `${env.apiBaseUrl}${path}`;
  */
 
 const MINUTE = 60 * 1000;
-/** ADR-009 — 마감 + 5분에 최초 발표한다 */
-const ANNOUNCE_DELAY_MS = 5 * MINUTE;
+/** ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이 된다. 공개 예정 시각이 아니다 */
+const DRAW_DELAY_MS = 1 * MINUTE;
 /** 이벤트당 후보 명단 규모 */
 const CANDIDATE_COUNT = 33;
 /** 재추첨 실행이 준비 → 선정 → 확정으로 넘어가는 경과 시간 (실제 시계 기준, 가상 시계와 무관) */
@@ -56,7 +56,7 @@ interface MockPrize {
 /** 관리자 목업(adminEvent.ts)에만 있는 시드 이벤트 — 시연용 운영 상태를 추첨 쪽에서도 재현한다 */
 const EXTRA_EVENTS: Record<
     string,
-    { endsAtOffsetMin: number; prizes: MockPrize[]; canceled?: boolean }
+    { endsAtOffsetMin: number; prizes: MockPrize[]; canceled?: boolean; published?: boolean }
 > = {
     // 취소된 이벤트 — AD06·AD05의 이벤트 취소 409 시연용
     '20000000-0000-4000-8000-000000000902': {
@@ -80,11 +80,6 @@ const EXTRA_EVENTS: Record<
         prizes: [{ id: '20000000-0000-4000-8000-000000000906-p1', rank: 1, winnerCount: 3 }],
     },
 };
-// 최초 추첨이 확정되지 않았거나 확인 대기인 이벤트는 시계가 지나도 최초 발표하지 않는다
-const HELD_BEFORE_PUBLICATION = new Set([
-    '20000000-0000-4000-8000-000000000905',
-    '20000000-0000-4000-8000-000000000906',
-]);
 const FAILED_INITIAL_EVENT = '20000000-0000-4000-8000-000000000906';
 
 interface MockRun {
@@ -122,6 +117,8 @@ interface DrawStore {
     runs: MockRun[];
     canceled: boolean;
     firstPublished: boolean;
+    /** 최초 공개가 성공한 시각 — 미공개면 null */
+    publishedAt: string | null;
     /** `${prizeId}:${slotNumber}` → 공개 명단의 사용자 */
     publicList: Map<string, string | null>;
     revision: number;
@@ -197,6 +194,8 @@ function buildCandidates(eventId: string): DrawCandidate[] {
             id: `cand-${eventId}-${seq}`,
             participantId: `part-${eventId}-${seq}`,
             userId: `user-${seq}`,
+            // ADR-028 표시용 현재 이름 — 스냅샷 객체에는 넣지 않고 응답 필드로만 싣는다
+            userName: `사용자${seq}`,
             ticketCount,
             weight: Math.max(1, weight),
             entrySnapshot: { bronze, silver, gold },
@@ -210,13 +209,14 @@ function buildCandidates(eventId: string): DrawCandidate[] {
 
 function eventInfoOf(
     eventId: string,
-): { endsAt: string; prizes: MockPrize[]; canceled: boolean } | null {
+): { endsAt: string; prizes: MockPrize[]; canceled: boolean; publishedSeed: boolean } | null {
     const extra = EXTRA_EVENTS[eventId];
     if (extra) {
         return {
             endsAt: new Date(mockNow().getTime() + extra.endsAtOffsetMin * MINUTE).toISOString(),
             prizes: extra.prizes,
             canceled: extra.canceled ?? false,
+            publishedSeed: extra.published ?? false,
         };
     }
     const event = mockEvents.find((e) => e.id === eventId);
@@ -225,11 +225,10 @@ function eventInfoOf(
         endsAt: event.endsAt,
         prizes: [{ id: `${event.id}-prize-1`, rank: 1, winnerCount: event.winnerCount }],
         canceled: false,
+        // 사용자 시드의 status:'drawn'은 이미 공개된 과거 이벤트를 뜻한다 — 시각과 무관한 명시적 시드다
+        publishedSeed: event.status === 'drawn',
     };
 }
-
-const isPublishedByClock = (eventId: string, endsAt: string, now: number) =>
-    !HELD_BEFORE_PUBLICATION.has(eventId) && now >= new Date(endsAt).getTime() + ANNOUNCE_DELAY_MS;
 
 const slotKey = (prizeId: string, slotNumber: number) => `${prizeId}:${slotNumber}`;
 
@@ -256,6 +255,7 @@ function drawInitialResults(store: DrawStore): DrawResult[] {
                 resultType: winner ? 'SELECTED' : 'UNFILLED',
                 candidateId: winner?.id ?? null,
                 userId: winner?.userId ?? null,
+                userName: winner?.userName ?? null,
                 wasPublished: false,
                 isCanceled: false,
             });
@@ -266,7 +266,8 @@ function drawInitialResults(store: DrawStore): DrawResult[] {
 
 function drawFirstRun(store: DrawStore, endsAt: string): MockRun {
     const results = drawInitialResults(store);
-    const confirmedAt = new Date(endsAt).toISOString();
+    // ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이다. getStore도 같은 시각에 실행을 만든다
+    const confirmedAt = new Date(new Date(endsAt).getTime() + DRAW_DELAY_MS).toISOString();
     return {
         detail: {
             id: runIdOf(store.eventId, 1),
@@ -325,11 +326,14 @@ function markFirstPublication(
         confirmedAt: string | null;
         reason?: string | null;
         executions?: PublicListChange['executions'];
+        /** 공개 시각 — 과거 공개 시드는 과거 시각을 넘기고, 생략하면 현재 시각 */
+        at?: string;
     },
 ) {
     store.firstPublished = true;
     store.revision = 1;
-    const now = mockNow().toISOString();
+    const at = confirmation.at ?? mockNow().toISOString();
+    store.publishedAt = at;
     // 최초 공개 전에 확정된 재추첨 결과도 관리자 확인을 거쳤다면 최초 명단에 함께 실린다
     const confirmedRuns = store.runs.filter((r) => r.detail.status === 'CONFIRMED');
     for (const run of confirmedRuns) {
@@ -343,16 +347,27 @@ function markFirstPublication(
         publicationId: `pub-${store.eventId}-1`,
         revision: 1,
         drawRunId: latest?.detail.id ?? '',
-        // 시계 자동 발표는 확인 근거가 없는 과거 공개를 재현한다 — 수동 발표는 호출부가 채운다
+        // 공개 시드는 확인 근거가 없는 과거 공개를 재현한다 — 수동 발표는 호출부가 채운다
         reason: confirmation.reason ?? null,
         confirmedBy: confirmation.confirmedBy,
+        confirmedByName: actorNameOf(confirmation.confirmedBy),
         confirmedAt: confirmation.confirmedAt,
-        updatedAt: now,
+        updatedAt: at,
         changes: [...effectiveList(store)].map(([key, afterUserId]) => {
             const [prizeId, slot] = key.split(':') as [string, string];
-            return { prizeId, slotNumber: Number(slot), beforeUserId: null, afterUserId };
+            return {
+                prizeId,
+                slotNumber: Number(slot),
+                beforeUserId: null,
+                beforeUserName: null,
+                afterUserId,
+                afterUserName: candidateNameOf(store, afterUserId),
+            };
         }),
-        executions: confirmation.executions ?? [],
+        executions: (confirmation.executions ?? []).map((exec) => ({
+            ...exec,
+            confirmedByName: actorNameOf(exec.confirmedBy),
+        })),
     });
     store.publicList = effectiveList(store);
 }
@@ -370,6 +385,7 @@ const runCancellations = (store: DrawStore, run: MockRun): CancellationSummary[]
             resultId: c.resultId,
             replacementRunId: c.replacementRunId,
             canceledBy: c.canceledBy,
+            canceledByName: actorNameOf(c.canceledBy),
             reason: c.reason,
             canceledAt: c.canceledAt,
         }))
@@ -521,13 +537,13 @@ function getStore(eventId: string): DrawStore | null {
     const now = mockNow().getTime();
     const existing = stores.get(eventId);
     if (existing) {
-        advanceStore(existing, now);
+        advanceStore(existing);
         return existing;
     }
     const info = eventInfoOf(eventId);
     if (!info) return null;
-    // 마감 전에는 추첨 실행이 없다 — 스토어를 만들지 않고 빈 목록으로 응답한다
-    if (now < new Date(info.endsAt).getTime()) return null;
+    // 최초 추첨은 마감 + 1분부터 대상이다 — 그 전에는 스토어를 만들지 않고 빈 목록으로 응답한다
+    if (now < new Date(info.endsAt).getTime() + DRAW_DELAY_MS) return null;
 
     const store: DrawStore = {
         eventId,
@@ -536,6 +552,7 @@ function getStore(eventId: string): DrawStore | null {
         runs: [],
         canceled: info.canceled,
         firstPublished: false,
+        publishedAt: null,
         publicList: new Map(),
         revision: 0,
         changes: [],
@@ -555,8 +572,14 @@ function getStore(eventId: string): DrawStore | null {
         afterData: 'drawType:INITIAL,status:CONFIRMED',
         requestId: null,
     });
-    if (isPublishedByClock(eventId, info.endsAt, now)) {
-        markFirstPublication(store, { confirmedBy: null, confirmedAt: null });
+    if (info.publishedSeed) {
+        // 공개 시드 — 당첨자 공개 요청 없이 시간만 지나도 공개되지 않는다는 규칙의 유일한 예외다.
+        // 근거 없는 과거 공개로 재현하고, 공개 시각은 최초 추첨 확정 뒤로 고정한다
+        markFirstPublication(store, {
+            confirmedBy: null,
+            confirmedAt: null,
+            at: new Date(new Date(info.endsAt).getTime() + 2 * MINUTE).toISOString(),
+        });
     }
     if (eventId === '20000000-0000-4000-8000-000000000904') seedFailedRedraw(store);
     if (eventId === FAILED_INITIAL_EVENT) seedFailedInitialRun(store);
@@ -564,12 +587,8 @@ function getStore(eventId: string): DrawStore | null {
     return store;
 }
 
-/** 이벤트 마감 시각 — 발표 시계를 따라가려고 다시 계산한다 */
-function advanceStore(store: DrawStore, now: number) {
-    const info = eventInfoOf(store.eventId);
-    if (info && !store.firstPublished && isPublishedByClock(store.eventId, info.endsAt, now)) {
-        markFirstPublication(store, { confirmedBy: null, confirmedAt: null });
-    }
+/** 진행 중인 실행만 시간에 따라 전이시킨다 — 공개는 요청 성공으로만 생겨 여기서 만들지 않는다 (ADR-022) */
+function advanceStore(store: DrawStore) {
     for (const run of store.runs) advanceRun(store, run);
 }
 
@@ -622,6 +641,7 @@ function confirmRun(store: DrawStore, run: MockRun) {
             resultType: winner ? 'SELECTED' : 'UNFILLED',
             candidateId: winner?.id ?? null,
             userId: winner?.userId ?? null,
+            userName: winner?.userName ?? null,
             wasPublished: false,
             isCanceled: false,
         },
@@ -664,6 +684,7 @@ function toExecution(detail: DrawRunDetail): DrawExecutionResponse {
                           selectionOrder: r.selectionOrder,
                           candidateId: r.candidateId,
                           userId: r.userId,
+                          userName: r.userName,
                           resultType: r.resultType,
                       })),
                   }
@@ -687,6 +708,15 @@ const conflict = (message: string, code = 'STATE_CONFLICT') => fail(409, code, m
 const forbidden = () => fail(403, 'ACCESS_DENIED', '이 작업을 수행할 권한이 없습니다.');
 
 const actorOf = (request: Request) => request.headers.get('X-User-ID') || DEFAULT_ACTOR;
+
+// ADR-028 — ID 옆에 싣는 표시용 현재 이름. ID가 null(시스템 처리·빈 자리)이면 이름도 null이다.
+// 가상 사용자 목록에 없는 ID는 이름 조회가 불가하므로 ID를 그대로 대신 보여 준다
+const actorNameOf = (actorId: string | null) =>
+    actorId === null ? null : (findMockVirtualUser(actorId)?.name ?? actorId);
+const candidateNameOf = (store: DrawStore, userId: string | null) =>
+    userId === null
+        ? null
+        : (store.candidates.find((c) => c.userId === userId)?.userName ?? userId);
 
 /** X-User-ID가 없으면 시연 기본 관리자로 본다. 있으면 가상 사용자의 역할이 ADMIN이어야 한다 */
 const isAdminContext = (request: Request) => {
@@ -731,6 +761,27 @@ const cancellationBody = (stored: StoredCancellation, run: MockRun) => ({
 /** 테스트에서 상태를 초기화할 때 쓴다 */
 export function resetMockDraws() {
     stores.clear();
+}
+
+/**
+ * 다른 목업(이벤트·관리자 이벤트·공개 결과)이 같은 공개 사실을 읽을 때 쓴다.
+ * 공개는 추첨 확정·정합성 검증·시간 경과가 아니라 당첨자 공개 요청 성공으로만 생긴다 (ADR-022).
+ * 스토어가 없으면(추첨 대상 전·없는 이벤트) 공개되지 않은 것으로 본다.
+ */
+export function getMockDrawOverview(eventId: string) {
+    const store = getStore(eventId);
+    return {
+        published: store?.firstPublished ?? false,
+        publishedAt: store?.publishedAt ?? null,
+        revision: store?.revision ?? null,
+        hasConfirmedRun: store?.runs.some((r) => r.detail.status === 'CONFIRMED') ?? false,
+        hasRunningReplacement:
+            store?.runs.some(
+                (r) =>
+                    r.detail.drawType === 'REPLACEMENT' &&
+                    (r.detail.status === 'PREPARING' || r.detail.status === 'RUNNING'),
+            ) ?? false,
+    } as const;
 }
 
 export const drawHandlers = [
@@ -823,6 +874,7 @@ export const drawHandlers = [
             checks,
             verifiedAt: mockNow().toISOString(),
             verifiedBy: actorOf(request),
+            verifiedByName: actorNameOf(actorOf(request)),
         };
         store.verifications.push(verification);
         return ok(verification, 201);
@@ -930,7 +982,14 @@ export const drawHandlers = [
             const beforeUserId = store.publicList.get(key) ?? null;
             if (beforeUserId === afterUserId) continue;
             const [prizeId, slot] = key.split(':') as [string, string];
-            changes.push({ prizeId, slotNumber: Number(slot), beforeUserId, afterUserId });
+            changes.push({
+                prizeId,
+                slotNumber: Number(slot),
+                beforeUserId,
+                beforeUserName: candidateNameOf(store, beforeUserId),
+                afterUserId,
+                afterUserName: candidateNameOf(store, afterUserId),
+            });
         }
 
         const now = mockNow().toISOString();
@@ -944,6 +1003,7 @@ export const drawHandlers = [
             publishedAt: now,
             updatedAt: now,
             updatedBy: actor,
+            updatedByName: actorNameOf(actor),
         };
         // 계약은 본문 없음 — 이력의 사유·실행별 취소 근거는 이 재추첨을 만든 취소에서 가져온다
         const causing = store.cancellations.filter((c) => c.replacementRunId === detail.id);
@@ -954,6 +1014,7 @@ export const drawHandlers = [
             drawRunId: detail.id,
             reason: causing[0]?.reason ?? null,
             confirmedBy: actor,
+            confirmedByName: actorNameOf(actor),
             confirmedAt: now,
             updatedAt: now,
             changes,
@@ -962,6 +1023,7 @@ export const drawHandlers = [
                     runId: detail.id,
                     confirmationId: `conf-${detail.id}`,
                     confirmedBy: actor,
+                    confirmedByName: actorNameOf(actor),
                     confirmedAt: now,
                     cancellations: causing.map((c) => ({
                         id: c.cancellationId,
@@ -1056,6 +1118,7 @@ export const drawHandlers = [
             runId: r.detail.id,
             confirmationId: `conf-${r.detail.id}`,
             confirmedBy: actor,
+            confirmedByName: actorNameOf(actor),
             confirmedAt: now,
             cancellations: runCancellations(store, r)
                 .filter((c) => c.replacementRunId === r.detail.id)
@@ -1080,6 +1143,7 @@ export const drawHandlers = [
             confirmationId: `conf-${run.detail.id}`,
             runId: run.detail.id,
             confirmedBy: actor,
+            confirmedByName: actorNameOf(actor),
             confirmedAt: now,
             isPublished: true,
             publicationId: `pub-${store.eventId}-1`,
@@ -1111,6 +1175,7 @@ export const drawHandlers = [
             .map((a) => ({
                 id: a.id,
                 actorId: a.actorId,
+                actorName: actorNameOf(a.actorId),
                 action: a.action,
                 reason: a.reason,
                 beforeData: a.beforeData,

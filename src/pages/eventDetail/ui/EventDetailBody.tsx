@@ -1,5 +1,6 @@
 import type { Event } from '@entities/event';
 
+import { describeTicketUsage } from '@entities/event';
 import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { BulletList } from '@shared/ui/bullet-list';
 import { KST_HOUR_MINUTE, formatKst, formatYmd } from '@shared/utils/date';
@@ -74,13 +75,8 @@ function EventTextBody({ event }: { event: Event }) {
             label: '응모 기간',
             value: `${formatYmd(event.startsAt)} ~ ${formatYmd(event.endsAt)} (${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감)`,
         },
-        {
-            label: '참여 방법',
-            value:
-                event.eventType === 'NO_TICKET'
-                    ? '응모권 없이 한 번 참여'
-                    : `응모권 ${event.requiredTickets}장으로 참여`,
-        },
+        // 장수를 그대로 적으면 가중치 이벤트가 '1장으로 참여'로 잘못 읽힌다 (describeTicketUsage)
+        { label: '참여 방법', value: describeTicketUsage(event) },
         { label: '참여 자격', value: MEMBERSHIP_NOTE[event.membershipRule] },
     ];
 

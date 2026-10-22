@@ -29,7 +29,12 @@ export {
     dailyAttendancePolicySchema,
     streakPolicySetSchema,
 } from './model/adminTypes';
-export type { DailyPolicyWrite, StreakPolicyWrite } from './model/adminTypes';
+export type {
+    DailyAttendancePolicy,
+    DailyPolicyWrite,
+    StreakPolicySet,
+    StreakPolicyWrite,
+} from './model/adminTypes';
 export {
     ADMIN_ATTENDANCE_KEY,
     ADMIN_ATTENDANCE_PATH,

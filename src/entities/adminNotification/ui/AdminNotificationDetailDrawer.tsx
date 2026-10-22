@@ -70,7 +70,11 @@ export function AdminNotificationDetailDrawer({
                             </span>
                         </Field>
                         <Field label="읽음">{notification.isRead ? '읽음' : '읽지 않음'}</Field>
-                        <Field label="사용자">{notification.userId}</Field>
+                        <Field label="사용자">
+                            {notification.userName
+                                ? `${notification.userName} (${notification.userId})`
+                                : notification.userId}
+                        </Field>
                         <Field label="작업">{notification.jobId}</Field>
                         <Field label="이벤트">{notification.eventId ?? '-'}</Field>
                         <Field label="발송 차수">{notification.deliveryAttemptCount}회</Field>

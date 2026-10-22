@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList, useGameStatisticsList } from '@entities/game';
-import { isMissionOpen, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, useMissionList } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import stepAttendance from '@shared/assets/step/step-attendance.png';
 import stepGame from '@shared/assets/step/step-game.png';
 import stepMission from '@shared/assets/step/step-mission.png';
-import { useVirtualClock } from '@shared/model/virtualClock';
-
 /** 오늘 이 바로가기의 할 일 — 남음(점)·다 함(체크)·아직 모름(받기 전) */
 type Today = 'pending' | 'done' | 'unknown';
 
@@ -39,7 +37,6 @@ export function QuickLinks() {
     const { data: attendance } = useAttendanceToday();
     const { data: missions } = useMissionList();
     const { data: games } = useGameList();
-    const now = useVirtualClock().now();
 
     // 플레이 화면이 있는 게임만 센다 — 후보·준비 중 게임은 홈 어디에도 두지 않는다
     const playable = games?.filter((game) => hasGamePlayer(game.code));
@@ -73,11 +70,12 @@ export function QuickLinks() {
             label: '퀴즈·설문',
             doneLabel: '퀴즈·설문 완료',
             image: stepMission,
-            // 지금 열린 미션만 센다 — 목록에는 지난·예정 미션도 있어, 열린 걸 다 해도 지난 미션 때문에 점이 남았다 (미션 배너와 같은 기준)
+            // 지금 열린 미션만 센다 — 목록에는 지난·예정 미션도 있어, 열린 걸 다 해도 지난 미션 때문에 점이 남았다 (미션 배너와 같은 serverTime 기준)
             today: todayOf(
                 !!missions,
-                missions?.some((mission) => !mission.completed && isMissionOpen(mission, now)) ??
-                    false,
+                missions?.some(
+                    (mission) => !mission.completed && isMissionOpenByServerTime(mission),
+                ) ?? false,
             ),
         },
     ];
@@ -112,7 +110,7 @@ function QuickLinkButton({ link }: { link: QuickLink }) {
     return (
         <Link
             to={link.to}
-            className={`${tone} group focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-[background-color,border-color,filter,transform] focus-visible:ring-2 focus-visible:outline-none active:translate-y-px sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
+            className={`${tone} group focus-visible:ring-border-focus flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-[background-color,border-color,filter] focus-visible:ring-2 focus-visible:outline-none sm:h-12 sm:shrink-0 sm:flex-row sm:gap-2 sm:px-4 sm:py-0`}
         >
             <span className="relative shrink-0">
                 <img

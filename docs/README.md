@@ -5,9 +5,10 @@
 ## 현재 작업의 진입점
 
 1. [도메인 맥락](CONTEXT.md): 계약을 사용할 때 지켜야 할 경계와 코드 위치.
-2. [백엔드 연동 현황](backend-integration-status.md): 2026-10-20 코드 대조 결과, 남은 목업, 확인이 필요한 계약.
+2. [백엔드 연동 현황](backend-integration-status.md): 2026-10-22 코드 대조 결과, 남은 목업, 확인이 필요한 계약.
 3. [백엔드 연동·프로젝트 완성 로드맵](superpowers/plans/2026-10-20-backend-integration-roadmap.md): 송동현 중심의 6개 통합 작업, Jira 제목, 순서와 완료 조건.
 4. [작업별 실행 프롬프트](superpowers/plans/2026-10-20-backend-integration-prompts.md): 각 작업을 시작할 때 복사할 입력.
+5. [관리자 추첨·이미지·UI·UX 개선 실행 문서](superpowers/plans/2026-10-21-admin-ui-ux-execution.md): 전체 개선 범위, 시작 프롬프트, 작업 순서와 인수 기준.
 
 ## 기준 문서
 

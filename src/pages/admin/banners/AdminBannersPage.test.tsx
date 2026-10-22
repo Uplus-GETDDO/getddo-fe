@@ -73,16 +73,30 @@ describe('이전 배너 관리', () => {
 
     it('비연속 순서 목록에서도 새 배너를 N+1 위치에 등록한다', async () => {
         const user = userEvent.setup();
-        const post = vi.spyOn(apiClient, 'post').mockResolvedValue({
-            data: { success: true, code: 'SUCCESS', message: '', data: banners[0] },
-        });
+        // 이미지 키는 이제 손으로 적지 않고 업로드가 받아 온다 — 같은 post를 두 번 쓴다
+        const post = vi.spyOn(apiClient, 'post').mockImplementation((url: string) =>
+            Promise.resolve({
+                data: url.includes('/images')
+                    ? {
+                          success: true,
+                          code: 'SUCCESS',
+                          message: '',
+                          data: { imageKey: 'new.png', imageUrl: 'https://cdn/new.png' },
+                      }
+                    : { success: true, code: 'SUCCESS', message: '', data: banners[0] },
+            }),
+        );
         try {
             renderPage();
             await user.click(screen.getByRole('button', { name: '배너 등록' }));
             screen.getByRole('combobox', { name: '연결 이벤트' }).focus();
             await user.keyboard('{ArrowDown}');
             await user.keyboard('{Enter}');
-            await user.type(screen.getByLabelText('이미지 키'), 'new.png');
+            await user.upload(
+                screen.getByLabelText('배너 이미지'),
+                new File(['x'], 'new.png', { type: 'image/png' }),
+            );
+            await waitFor(() => expect(screen.getByText('new.png')).toBeInTheDocument());
             await user.click(screen.getByRole('button', { name: '등록' }));
             await waitFor(() =>
                 expect(post).toHaveBeenCalledWith('/v1/admin/banners', {

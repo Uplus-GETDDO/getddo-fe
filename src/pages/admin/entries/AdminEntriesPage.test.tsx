@@ -143,11 +143,20 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByText('접수된 참여자가 없습니다.')).toBeInTheDocument();
     });
 
-    it('응모 이력의 사용자 ID 링크가 사용자 상세로 연결된다', async () => {
+    it('응모 이력의 사용자 링크는 이름을 보여주고 ID로 사용자 상세에 연결된다', async () => {
         renderPage();
         await screen.findAllByText('10월 럭키 드로우');
-        const links = screen.getAllByRole('link', { name: USER_ID });
+        // ADR-028 — 링크 텍스트는 현재 이름, 동일인 식별은 사용자 ID다
+        const links = screen.getAllByRole('link', { name: '김도윤' });
         expect(links[0]).toHaveAttribute('href', `/admin/users?detail=${USER_ID}`);
+        // 이름이 없는 응모 건은 기존처럼 사용자 ID를 보여준다
+        const unnamed = screen.getAllByRole('link', {
+            name: '00000000-0000-4000-8000-000000000004',
+        });
+        expect(unnamed[0]).toHaveAttribute(
+            'href',
+            '/admin/users?detail=00000000-0000-4000-8000-000000000004',
+        );
     });
 
     it('보기 탭을 바꾸면 참여자 보기로 전환된다', async () => {

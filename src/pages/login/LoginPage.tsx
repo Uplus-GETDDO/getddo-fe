@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import type { VirtualUser } from '@entities/user';
 
-import { useSessionStore, useVirtualUsers } from '@entities/user';
+import { useSessionStore, useVirtualUsers, virtualUserLabel } from '@entities/user';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 
@@ -74,7 +74,7 @@ export function LoginPage() {
                                         )}
                                     </div>
                                     <span className="text-body-sm text-fg-tertiary">
-                                        {user.personaLabel ?? '시스템 관리 계정'} · {user.id}
+                                        {virtualUserLabel(user)} · {user.id}
                                     </span>
                                 </div>
                             </button>

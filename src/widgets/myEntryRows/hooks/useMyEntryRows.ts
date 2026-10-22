@@ -9,6 +9,8 @@ import { useMyEntries } from '@entities/entry';
 import { useEventList } from '@entities/event';
 import { getPollingRetryDelay } from '@shared/api/queryPresets';
 
+import { groupEntryRows, type MyEntryGroup } from '../utils/groupEntryRows';
+
 /** 응모(E06) + 이벤트(E01) + 본인 결과(E09) */
 export interface MyEntryRow {
     entry: Entry;
@@ -19,11 +21,11 @@ export interface MyEntryRow {
 }
 
 interface Options {
-    /** 화면의 필터·정렬·더보기 적용 후 실제 렌더링하는 행 */
-    selectVisibleRows?: (rows: MyEntryRow[]) => readonly MyEntryRow[];
+    /** 화면의 필터·정렬·쪽 나누기 적용 후 실제 렌더링하는 줄(그룹) */
+    selectVisibleGroups?: (groups: MyEntryGroup[]) => readonly MyEntryGroup[];
 }
 
-export function useMyEntryRows({ selectVisibleRows = (rows) => rows }: Options = {}) {
+export function useMyEntryRows({ selectVisibleGroups = (groups) => groups }: Options = {}) {
     const client = useQueryClient();
     const entriesQuery = useMyEntries();
     const { data: events } = useEventList();
@@ -59,9 +61,9 @@ export function useMyEntryRows({ selectVisibleRows = (rows) => rows }: Options =
     }
     const pollingEventIds = [
         ...new Set(
-            selectVisibleRows(makeRows(cachedResults))
-                .filter((row) => row.entry.status === 'ACCEPTED')
-                .map((row) => row.entry.eventId),
+            selectVisibleGroups(groupEntryRows(makeRows(cachedResults)))
+                .filter((group) => group.status === 'ACCEPTED')
+                .map((group) => group.eventId),
         ),
     ];
     const resultQueries = useMyResults(acceptedEventIds, pollingEventIds);
@@ -71,12 +73,14 @@ export function useMyEntryRows({ selectVisibleRows = (rows) => rows }: Options =
         if (eventId && query.data) results.set(eventId, query.data.result);
     });
     const rows = makeRows(results);
+    const groups = groupEntryRows(rows);
     const successTimes = resultQueries
         .filter((query) => query.data)
         .map((query) => query.dataUpdatedAt);
     const isResultPending = resultQueries.some((query) => query.isPending);
     return {
         rows,
+        groups,
         isPending: entriesQuery.isPending && !entriesQuery.data,
         isError: entriesQuery.isError && !entriesQuery.data,
         isEntriesRefreshError: entriesQuery.isError && Boolean(entriesQuery.data),

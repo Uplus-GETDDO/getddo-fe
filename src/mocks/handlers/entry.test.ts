@@ -622,6 +622,52 @@ describe('응모 목업 핸들러', () => {
         });
     });
 
+    describe('E06 내역 필터 (GD-267)', () => {
+        it('eventId와 status 필터로 해당 이벤트의 접수 건만 돌려준다', async () => {
+            const { data } = await apiClient.get<{
+                data: {
+                    items: { eventId: string; status: string }[];
+                    totalElements: number;
+                };
+            }>('/v1/users/me/entries', {
+                params: { eventId: 'evt-101', status: 'ACCEPTED' },
+            });
+
+            expect(data.data.items.length).toBeGreaterThan(0);
+            expect(data.data.items.every((item) => item.eventId === 'evt-101')).toBe(true);
+            expect(data.data.items.every((item) => item.status === 'ACCEPTED')).toBe(true);
+            expect(data.data.totalElements).toBe(data.data.items.length);
+        });
+
+        it('status 필터 없이 eventId만 주면 거절 건도 함께 돌려준다', async () => {
+            const userId = uniqueUser('e06-filter');
+            const rejected = await enter(
+                uniqueKey('e06-filter'),
+                { GOLD: 2 },
+                WEIGHTED_EVENT_ID,
+                userId,
+            );
+            expect(rejected.status).toBe(409);
+
+            const { data } = await apiClient.get<{
+                data: { items: { eventId: string; status: string }[] };
+            }>('/v1/users/me/entries', {
+                params: { eventId: WEIGHTED_EVENT_ID },
+                headers: { 'X-User-ID': userId },
+            });
+            const statuses = data.data.items
+                .filter((item) => item.eventId === WEIGHTED_EVENT_ID)
+                .map((item) => item.status);
+            expect(statuses).toContain('REJECTED');
+        });
+
+        it('알 수 없는 status는 400 COMMON-005다', async () => {
+            await expect(
+                apiClient.get('/v1/users/me/entries', { params: { status: 'BOGUS' } }),
+            ).rejects.toMatchObject({ code: 'COMMON-005' });
+        });
+    });
+
     describe('응모 빈도 제한 (GD-146)', () => {
         it('짧은 창에 새 응모 요청이 몰리면 429와 Retry-After를 돌려준다', async () => {
             const userId = uniqueUser('rate');

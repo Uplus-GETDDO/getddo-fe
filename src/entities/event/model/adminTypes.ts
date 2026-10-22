@@ -40,10 +40,16 @@ export const adminEventSchema = z.object({
     startsAt: z.iso.datetime(),
     endsAt: z.iso.datetime(),
     status: adminEventStatusSchema,
-    // 마감+5분 최초 자동 추첨 기준 — 공개 예정이 아니다 (ADR-022, GD-203)
+    // 마감+1분 최초 자동 추첨 기준 — 공개 예정이 아니다 (ADR-026, GD-268)
     drawScheduledAt: z.iso.datetime(),
     serverTime: z.iso.datetime(),
     prizes: z.array(adminPrizeSchema),
+    /*
+     * 경품 이미지의 저장 키 — prizes[].imageUrl과 같은 이미지를 가리키지만 쓰임이 다르다.
+     * imageUrl은 화면에 보여 줄 주소이고, 이쪽은 수정 요청에 다시 실어 기존 연결을 지키는 키다.
+     * 이 스키마를 쓰는 AE01~AE04 네 응답 모두 싣는 것을 실서버로 확인했다 (2026-10-21).
+     */
+    prizeImages: z.array(z.object({ prizeId: z.string(), imageKey: z.string().nullable() })),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
     canceledAt: z.iso.datetime().nullable(),

@@ -1,4 +1,5 @@
 export { eventDetailPath } from './utils/eventPath';
+export { describeTicketUsage } from './utils/ticketUsage';
 export { toEvent } from './utils/toEvent';
 export { eventSchema, eventStatusSchema } from './model/types';
 export type { Event, EventStatus } from './model/types';
@@ -34,6 +35,7 @@ export {
     adminEventApiPath,
     useAdminEvent,
     useAdminEvents,
+    useAdminEventsByStatus,
     useAdminEventStatusCounts,
 } from './api/adminQueries';
 export {

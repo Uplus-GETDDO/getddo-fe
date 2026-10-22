@@ -60,6 +60,8 @@ export const adminMissionSummarySchema = writeBase.extend({
     status: z.enum(['ACTIVE', 'ENDED']),
     rewardPolicyId: z.string(),
     createdBy: z.string(),
+    // ADR-028 표시용 작성자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    createdByName: z.string().nullish(),
     createdAt: z.string(),
     updatedAt: z.string(),
 });
@@ -95,5 +97,11 @@ export const surveyRangeSchema = z
         const days = (Date.parse(to) - Date.parse(from)) / 86_400_000;
         return days >= 0 && days <= 30;
     }, '설문 집계 기간은 양끝 포함 1~31일입니다.');
+// AM05 — 익명이라 사용자·제출 식별자가 없다. 원문은 가공하지 않으므로 화면은 텍스트로만 표시한다
+export const surveyFreeTextAnswerSchema = z.object({
+    answerText: z.string(),
+    submittedAt: z.string(),
+});
 export type MissionWrite = z.infer<typeof missionWriteSchema>;
 export type AdminMission = z.infer<typeof adminMissionSchema>;
+export type SurveyFreeTextAnswer = z.infer<typeof surveyFreeTextAnswerSchema>;

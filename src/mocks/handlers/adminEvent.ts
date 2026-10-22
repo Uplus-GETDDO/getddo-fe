@@ -6,6 +6,7 @@ import type { AdminEventStatus, AdminPrize, MembershipRule } from '@entities/eve
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
+import { getMockDrawOverview } from './draw';
 import { mockEntryTicketTotals, mockEventHasEntries } from './entry';
 import { entryRuleOf, mockEvents, sessionFixedTime } from './event';
 import { fail, ok } from './response';
@@ -20,6 +21,9 @@ const api = (path: string) => `${env.apiBaseUrl}${path}`;
  * 새로고침하면 사라진다(목업은 메모리에만 둔다) — 그때는 키만 남아 회색 칸이 된다.
  */
 const mockUploadedImages = new Map<string, string>();
+
+/** 업로드 거절 문구 — 실서버가 EVENT-018로 보내는 문장 그대로다 */
+const IMAGE_REJECTED_MESSAGE = '5MB 이하의 JPG·PNG 이미지 파일이 필요합니다.';
 
 /** 등록·수정이 실어 온 키를 화면 주소로 바꾼다 — 모르는 키는 주소가 없다 */
 export function resolveMockImageUrl(imageKey: string | null | undefined): string | null {
@@ -39,8 +43,13 @@ function readMultipartFile(buffer: ArrayBuffer): { contentType: string; dataUrl:
     const header = /filename="[^"]*"[^]*?content-type:\s*([^\r\n]+)\r?\n\r?\n/i.exec(text);
     if (!header) return null;
 
+    /*
+     * 끝은 첫 줄에 통째로 적혀 온 경계 문자열로 찾는다. '\r\n--'만 보고 자르면 사진 바이트가
+     * 우연히 그 네 바이트를 품었을 때 거기서 끊겨 반쪽 그림이 된다.
+     */
+    const boundary = /^(--[^\r\n]+)\r?\n/.exec(text)?.[1];
     const start = header.index + header[0].length;
-    const end = text.indexOf('\r\n--', start);
+    const end = boundary ? text.indexOf(`\r\n${boundary}`, start) : -1;
     const body = bytes.slice(start, end === -1 ? bytes.length : end);
 
     let binary = '';
@@ -49,14 +58,22 @@ function readMultipartFile(buffer: ArrayBuffer): { contentType: string; dataUrl:
     return { contentType, dataUrl: `data:${contentType};base64,${btoa(binary)}` };
 }
 
-/** ADR-009 — 유형과 무관하게 마감 + 5분 검토 후 자동으로 최초 발표한다 */
-const ANNOUNCE_DELAY_MS = 5 * 60 * 1000;
+/** ADR-026 — 최초 자동 추첨은 마감 + 1분부터 대상이 된다. 공개 예정 시각이 아니다 */
+const DRAW_DELAY_MS = 60 * 1000;
 const MINUTE = 60 * 1000;
 
 /**
  * 관리자 목업의 이벤트 항목 — AdminEvent(spec AE01/AE02) + 내부 카운터.
  * entryCount·usedTicketTotal은 응답 DTO에 없고 취소 시 반환 수량 계산에만 쓴다.
  */
+/**
+ * 목업이 들고 있는 경품 — 응답의 prizes[]에는 imageKey가 없고 prizeImages로 따로 나간다.
+ * 씨앗 데이터는 이미지가 없어 키를 적지 않으므로 선택 속성으로 둔다.
+ */
+interface MockAdminPrize extends AdminPrize {
+    imageKey?: string | null;
+}
+
 interface MockAdminEvent {
     id: string;
     title: string;
@@ -71,7 +88,7 @@ interface MockAdminEvent {
     endsAt: string;
     /** 저장 상태 — SCHEDULED/OPEN/CLOSED는 응답 시각에 시간으로 재계산된다 */
     status: AdminEventStatus;
-    prizes: AdminPrize[];
+    prizes: MockAdminPrize[];
     createdAt: string;
     updatedAt: string;
     canceledAt: string | null;
@@ -263,16 +280,22 @@ const mockAdminEvents: MockAdminEvent[] = [...mockEvents.map(toAdminSeed), ...ex
 
 /**
  * 응답 시점의 운영 상태 — 서버가 시간·운영으로 바꾸는 값이라 저장값을 그대로 쓰지 않고 재계산한다.
+ * 공개 여부는 시각이 아니라 당첨자 공개 요청의 성공으로 판정한다 (ADR-022) — 추첨 목업과 같은
+ * 사실을 읽어 사용자 결과·공개 이력과 어긋나지 않게 한다.
  */
 function effectiveStatus(item: MockAdminEvent, now: number): AdminEventStatus {
-    const starts = new Date(item.startsAt).getTime();
-    const ends = new Date(item.endsAt).getTime();
+    const draw = getMockDrawOverview(item.id);
+    if (draw.published) return 'PUBLISHED';
 
     if (item.status === 'SCHEDULED' || item.status === 'OPEN' || item.status === 'CLOSED') {
+        const starts = new Date(item.startsAt).getTime();
+        const ends = new Date(item.endsAt).getTime();
         if (now < starts) return 'SCHEDULED';
         if (now < ends) return 'OPEN';
-        if (now < ends + ANNOUNCE_DELAY_MS) return 'CLOSED';
-        return 'PUBLISHED';
+        // 마감 뒤 추첨 실행 상태를 따른다 — 확정됐어도 공개 전이면 선정 완료(발표 대기)다
+        if (draw.hasRunningReplacement) return 'REDRAWING';
+        if (draw.hasConfirmedRun) return 'DRAW_CONFIRMED';
+        return 'CLOSED';
     }
     return item.status;
 }
@@ -284,10 +307,24 @@ function toAdminResponse(item: MockAdminEvent, now: number) {
     delete rest.usedTicketTotal;
     return {
         ...rest,
+        // 실서버와 같이 키는 prizes[]가 아니라 prizeImages로 나간다 (05-api/event.md AdminEvent)
+        prizes: item.prizes.map(
+            ({ id, rank, name, description, imageUrl, winnerCount }): AdminPrize => ({
+                id,
+                rank,
+                name,
+                description,
+                imageUrl,
+                winnerCount,
+            }),
+        ),
+        prizeImages: item.prizes.map((prize) => ({
+            prizeId: prize.id,
+            imageKey: prize.imageKey ?? null,
+        })),
         status: effectiveStatus(item, now),
-        drawScheduledAt: new Date(
-            new Date(item.endsAt).getTime() + ANNOUNCE_DELAY_MS,
-        ).toISOString(),
+        // 마감 + 1분의 최초 자동 추첨 기준 — 공개 예정 시각이 아니다 (ADR-026)
+        drawScheduledAt: new Date(new Date(item.endsAt).getTime() + DRAW_DELAY_MS).toISOString(),
         serverTime: new Date(now).toISOString(),
     };
 }
@@ -449,6 +486,7 @@ function writeBodyToItem(body: EventWriteBody, id: string, nowIso: string): Mock
         name: (p.name as string).trim(),
         description: typeof p.description === 'string' && p.description ? p.description : null,
         imageUrl: resolveMockImageUrl(p.imageKey as string | null),
+        imageKey: (p.imageKey as string | null) ?? null,
         winnerCount: p.winnerCount as number,
     }));
     return {
@@ -598,17 +636,17 @@ export const adminEventHandlers = [
         const file = buffer && readMultipartFile(buffer);
         if (!file) return fail(400, 'COMMON-002', '파일이 없습니다');
 
+        // 실서버는 형식·용량 위반을 한 코드·한 문구로 묶어 돌려준다 (2026-10-21 실서버 확인)
         const png = file.contentType === 'image/png';
         if (!png && file.contentType !== 'image/jpeg') {
-            return fail(400, 'EVENT-009', 'PNG 또는 JPG만 올릴 수 있습니다');
+            return fail(400, 'EVENT-018', IMAGE_REJECTED_MESSAGE);
         }
-        if (buffer.byteLength > 5_000_000)
-            return fail(400, 'EVENT-009', '5MB까지 올릴 수 있습니다');
+        if (buffer.byteLength > 5_000_000) return fail(400, 'EVENT-018', IMAGE_REJECTED_MESSAGE);
 
         const directory = target === 'EVENT' ? 'events' : 'prizes';
         const key = `${directory}/${crypto.randomUUID()}.${png ? 'png' : 'jpg'}`;
         mockUploadedImages.set(key, file.dataUrl);
-        return ok({ key, url: file.dataUrl }, 201);
+        return ok({ imageKey: key, imageUrl: file.dataUrl }, 201);
     }),
 
     // AE03 — 등록: 이벤트와 경품이 함께 성공하거나 함께 실패한다
