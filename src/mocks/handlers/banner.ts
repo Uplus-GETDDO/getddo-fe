@@ -4,7 +4,7 @@ import { BANNER_MAX_COUNT } from '@entities/banner';
 import { env } from '@shared/config/env';
 
 import { mockNow } from '../now';
-import { mockAdminEventIsCanceled } from './adminEvent';
+import { mockAdminEventIsCanceled, resolveMockImageUrl } from './adminEvent';
 import { findMockEvent } from './event';
 import { fail, ok } from './response';
 
@@ -20,9 +20,19 @@ interface MockBanner {
     updatedAt: string;
 }
 
-// 실제 이미지 변환 계약이 없으므로 imageKey를 새긴 단색 SVG를 imageUrl로 돌려준다.
-// 배너 템플릿(1200×365)처럼 왼쪽 55%는 글 자리로 비우고, 오른쪽 그림 자리에만 키를 작게 적는다 — 위에 얹는 이벤트 글과 겹치지 않게
+/*
+ * 올려 둔 그림이 있으면 그것을 돌려주고, 없으면 키를 새긴 자리표시자를 만든다.
+ *
+ * 씨앗 배너의 키(banners/weekly-buds.png 등)는 실제 파일이 없어 자리표시자가 맞다.
+ * 그러나 관리자가 올린 그림까지 덮어 버리면 바꿔도 홈 화면이 그대로여서, 올린 것을 먼저 본다.
+ *
+ * 자리표시자는 배너 템플릿(1200×365)을 따라 왼쪽 55%를 글 자리로 비우고
+ * 오른쪽 그림 자리에만 키를 작게 적는다 — 위에 얹는 이벤트 글과 겹치지 않게.
+ */
 function imageUrlOf(imageKey: string) {
+    const uploaded = resolveMockImageUrl(imageKey);
+    if (uploaded) return uploaded;
+
     const label = imageKey.slice(0, 40).replace(/[<>&"]/g, '');
     const svg =
         '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="365">' +

@@ -6,29 +6,36 @@ import type * as MissionModule from '@entities/mission';
 
 import { TicketBalanceWidget } from './TicketBalanceWidget';
 
-const NOW = new Date('2026-10-21T03:00:00Z');
+const SERVER_TIME = '2026-10-21T03:00:00Z';
 const state = vi.hoisted(() => ({
     role: 'USER',
     pending: true,
-    missions: [] as { id: string; title: string; startsAt: string; endsAt: string }[],
+    missions: [] as {
+        id: string;
+        title: string;
+        startsAt: string;
+        endsAt: string;
+        completed?: boolean;
+    }[],
 }));
 vi.mock('@entities/attendance', () => ({
     ATTENDANCE_THUMBNAIL: 'attendance.png',
     useAttendanceToday: () => ({ isPending: false }),
 }));
 vi.mock('@entities/mission', async (importOriginal) => ({
-    isMissionOpen: (await importOriginal<typeof MissionModule>()).isMissionOpen,
+    isMissionOpenByServerTime: (await importOriginal<typeof MissionModule>())
+        .isMissionOpenByServerTime,
     missionThumbnail: () => null,
     useMissionList: () => ({
         data: state.missions.map((mission) => ({
-            ...mission,
             rewardTicketCount: 1,
             completed: false,
+            serverTime: SERVER_TIME,
+            ...mission,
         })),
         isPending: false,
     }),
 }));
-vi.mock('@shared/model/virtualClock', () => ({ useVirtualClock: () => ({ now: () => NOW }) }));
 vi.mock('@entities/user', () => ({
     useSessionStore: (select: (value: unknown) => unknown) =>
         select({ user: { role: state.role } }),
@@ -80,7 +87,7 @@ describe('적립 카드의 통계 로딩', () => {
         );
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
-    it('기간이 끝났거나 시작 전인 미션은 오늘 받을 수 있는 카드에서 뺀다', () => {
+    it('기간이 끝났거나 시작 전이거나 이미 완료한 미션은 오늘 받을 수 있는 카드에서 뺀다', () => {
         state.pending = false;
         state.missions = [
             {
@@ -101,6 +108,13 @@ describe('적립 카드의 통계 로딩', () => {
                 startsAt: '2026-10-25T00:00:00Z',
                 endsAt: '2026-10-30T00:00:00Z',
             },
+            {
+                id: 'done',
+                title: '완료한 퀴즈',
+                startsAt: '2026-10-20T00:00:00Z',
+                endsAt: '2026-10-22T00:00:00Z',
+                completed: true,
+            },
         ];
         render(
             <MemoryRouter>
@@ -110,5 +124,6 @@ describe('적립 카드의 통계 로딩', () => {
         expect(screen.getByText('진행 중 설문')).toBeInTheDocument();
         expect(screen.queryByText('끝난 퀴즈')).not.toBeInTheDocument();
         expect(screen.queryByText('예정 설문')).not.toBeInTheDocument();
+        expect(screen.queryByText('완료한 퀴즈')).not.toBeInTheDocument();
     });
 });

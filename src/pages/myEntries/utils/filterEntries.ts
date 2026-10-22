@@ -1,4 +1,4 @@
-import type { MyEntryRow } from '@widgets/myEntryRows';
+import type { MyEntryGroup } from '@widgets/myEntryRows';
 
 export type EntryStatusFilter = 'ALL' | 'PENDING' | 'WON' | 'LOST';
 export type EntryKindFilter = 'ALL' | 'RAFFLE' | 'EVENT';
@@ -31,26 +31,27 @@ export function readEntryFilters(params: URLSearchParams) {
 }
 
 /** 종류·기간으로 먼저 거른다 — 결과 칸의 건수는 이 범위 안에서 센다 */
-export function scopeEntryRows(
-    rows: readonly MyEntryRow[],
+export function scopeEntryGroups(
+    groups: readonly MyEntryGroup[],
     kind: EntryKindFilter,
     period: EntryPeriod,
     now: Date,
-): MyEntryRow[] {
+): MyEntryGroup[] {
     const span = PERIOD_MS[period];
-    return rows.filter((row) => {
-        if (kind === 'RAFFLE' && !row.isTimeRaffle) return false;
-        if (kind === 'EVENT' && row.isTimeRaffle) return false;
-        return span === null || now.getTime() - new Date(row.entry.requestedAt).getTime() <= span;
+    return groups.filter((group) => {
+        if (kind === 'RAFFLE' && !group.isTimeRaffle) return false;
+        if (kind === 'EVENT' && group.isTimeRaffle) return false;
+        return span === null || now.getTime() - new Date(group.latestRequestedAt).getTime() <= span;
     });
 }
 
 /** 결과로 거르고 정렬한다 — 결과 거르기는 접수된 응모의 본인 결과(E09)만 본다 */
-export function filterEntryRows(
-    rows: readonly MyEntryRow[],
+export function filterEntryGroups(
+    groups: readonly MyEntryGroup[],
     status: EntryStatusFilter,
     sort: EntrySort,
-): MyEntryRow[] {
-    const filtered = status === 'ALL' ? [...rows] : rows.filter((row) => row.result === status);
+): MyEntryGroup[] {
+    const filtered =
+        status === 'ALL' ? [...groups] : groups.filter((group) => group.result === status);
     return sort === 'OLDEST' ? filtered.reverse() : filtered;
 }

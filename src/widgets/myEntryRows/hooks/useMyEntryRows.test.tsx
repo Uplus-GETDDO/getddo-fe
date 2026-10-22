@@ -17,6 +17,8 @@ vi.mock('@entities/entry', () => ({
             eventTitle: `이벤트 ${index}`,
             status: 'ACCEPTED',
             requestedAt: new Date(2026, 0, 25 - index).toISOString(),
+            deductedTicketCount: 1,
+            deductedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
         })),
         isPending: false,
         isError: false,
@@ -66,7 +68,7 @@ describe('내 응모 표시 범위', () => {
         const { result, rerender } = renderHook(
             ({ start, count }) =>
                 useMyEntryRows({
-                    selectVisibleRows: (rows) => rows.slice(start, start + count),
+                    selectVisibleGroups: (groups) => groups.slice(start, start + count),
                 }),
             { wrapper, initialProps: { start: 0, count: 20 } },
         );
@@ -114,7 +116,7 @@ describe('내 응모 표시 범위', () => {
             <QueryClientProvider client={client}>{children}</QueryClientProvider>
         );
         const { result } = renderHook(
-            () => useMyEntryRows({ selectVisibleRows: (rows) => rows.slice(0, 4) }),
+            () => useMyEntryRows({ selectVisibleGroups: (groups) => groups.slice(0, 4) }),
             { wrapper },
         );
         await settle();
@@ -169,8 +171,8 @@ describe('내 응모 표시 범위', () => {
         const { result, rerender } = renderHook(
             ({ status }) =>
                 useMyEntryRows({
-                    selectVisibleRows: (rows) =>
-                        rows.filter((row) => row.result === status).slice(0, 4),
+                    selectVisibleGroups: (groups) =>
+                        groups.filter((group) => group.result === status).slice(0, 4),
                 }),
             { wrapper, initialProps: { status: 'PENDING' } },
         );
@@ -213,7 +215,9 @@ describe('내 응모 표시 범위', () => {
         });
         const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
         function Screen() {
-            const query = useMyEntryRows({ selectVisibleRows: (rows) => rows.slice(0, 4) });
+            const query = useMyEntryRows({
+                selectVisibleGroups: (groups) => groups.slice(0, 4),
+            });
             return (
                 <>
                     <MyEntryRefreshStatus query={query} />

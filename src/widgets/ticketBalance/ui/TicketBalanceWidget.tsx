@@ -13,11 +13,10 @@ import {
     getGameContent,
     useGameStatisticsList,
 } from '@entities/game';
-import { isMissionOpen, missionThumbnail, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, missionThumbnail, useMissionList } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
-import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
@@ -63,7 +62,6 @@ export function TicketBalanceWidget({
     const { data: attendance, isPending: attendancePending } = attendanceQuery;
     const { data: missions, isPending: missionsPending } = missionsQuery;
     const { data: games, isPending: gamesPending } = gamesQuery;
-    const now = useVirtualClock().now();
     const anyError = attendanceQuery.isError || missionsQuery.isError || gamesQuery.isError;
     const retryAll = () => {
         if (attendanceQuery.isError) void attendanceQuery.refetch();
@@ -103,9 +101,10 @@ export function TicketBalanceWidget({
                   },
               ]
             : []),
-        // 지금 참여할 수 있는 미션만 — 기간이 끝났거나 아직 시작 전인 미션은 오늘 받을 수 없다 (미션 페이지 배너와 같은 기준)
+        // 진행 중이고 아직 완료하지 않은 미션만 카드로 — 목록(M01)은 끝난 미션도 내려주므로
+        // 응답의 serverTime으로 걸러 완료·종료·시작 전 카드가 홈에 나오지 않게 한다
         ...(missions ?? [])
-            .filter((mission) => isMissionOpen(mission, now))
+            .filter((mission) => !mission.completed && isMissionOpenByServerTime(mission))
             .map((mission) => ({
                 id: mission.id,
                 category: 'MISSION' as const,

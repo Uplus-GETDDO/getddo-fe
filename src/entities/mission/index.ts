@@ -29,7 +29,7 @@ export {
 } from './api/queries';
 export type { MissionSubmissionOutcome } from './api/queries';
 export { buildMissionAnswers, findMissingRequired } from './utils/missionAnswers';
-export { isMissionOpen } from './utils/missionPeriod';
+export { isMissionOpen, isMissionOpenByServerTime } from './utils/missionPeriod';
 export { missionThumbnail } from './utils/missionThumbnail';
 export type { MissionAnswerDraft } from './utils/missionAnswers';
 export { MissionQuestionField } from './ui/MissionQuestionField';
@@ -39,15 +39,17 @@ export {
     missionWriteSchema,
     adminMissionSchema,
     adminMissionSummarySchema,
+    surveyFreeTextAnswerSchema,
     surveyRangeSchema,
     surveySummarySchema,
 } from './model/adminTypes';
-export type { MissionWrite, AdminMission } from './model/adminTypes';
+export type { MissionWrite, AdminMission, SurveyFreeTextAnswer } from './model/adminTypes';
 export {
     ADMIN_MISSIONS_KEY,
     ADMIN_MISSIONS_PATH,
     useAdminMissions,
     useAdminMission,
+    useSurveyAnswers,
     useSurveySummary,
 } from './api/admin';
 export type { AdminMissionsParams } from './api/admin';

@@ -2,7 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
-import { pollingReadPolicy, queryPresets, withPollingReadGuard } from '@shared/api/queryPresets';
+import {
+    pollingReadInterval,
+    pollingReadPolicy,
+    queryPresets,
+    withPollingReadGuard,
+} from '@shared/api/queryPresets';
 
 import type { MissionSummary } from '../model/types';
 import type { MissionSubmissionResult } from '../model/types';
@@ -37,6 +42,8 @@ export function useMissionList() {
         ...queryPresets.standard,
         ...pollingReadPolicy,
         queryKey: [...MISSIONS_KEY, 'list'],
+        // 화면이 열린 채 미션의 시작·종료 시각을 지나도 serverTime 기준 표시가 따라가도록 폴링한다
+        refetchInterval: (query: { state: { error: unknown } }) => pollingReadInterval(query),
         queryFn: (context) =>
             withPollingReadGuard(context, async () => {
                 const missions: MissionSummary[] = [];

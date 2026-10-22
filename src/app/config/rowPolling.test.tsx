@@ -96,7 +96,7 @@ describe('응모 행 조회 통합 요청 카운터', () => {
             defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
         });
         const rendered = renderHook(
-            () => useMyEntryRows({ selectVisibleRows: (rows) => rows.slice(0, 20) }),
+            () => useMyEntryRows({ selectVisibleGroups: (groups) => groups.slice(0, 20) }),
             {
                 wrapper: ({ children }) => (
                     <QueryClientProvider client={client}>{children}</QueryClientProvider>

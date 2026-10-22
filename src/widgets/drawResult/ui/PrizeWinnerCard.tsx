@@ -70,7 +70,7 @@ export function PrizeWinnerCard({
                     src={imageUrl!}
                     alt=""
                     onError={image.onError}
-                    className="absolute inset-0 size-full object-contain p-2 mix-blend-multiply dark:mix-blend-normal"
+                    className="absolute inset-0 size-full object-cover"
                 />
             ) : (
                 <ImagePlaceholder className="size-full" />

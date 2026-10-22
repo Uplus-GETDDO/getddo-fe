@@ -7,6 +7,7 @@ import { pollingReadPolicy, withPollingReadGuard } from '@shared/api/queryPreset
 import {
     adminMissionSchema,
     adminMissionSummarySchema,
+    surveyFreeTextAnswerSchema,
     surveyRangeSchema,
     surveySummarySchema,
 } from '../model/adminTypes';
@@ -46,6 +47,34 @@ export function useAdminMission(id: string | null) {
                     signal: context.signal,
                 });
                 return envelopeSchema(adminMissionSchema).parse(data).data;
+            }),
+    });
+}
+/**
+ * AM05 설문 자유 서술 답변 — questionId는 이 미션의 FREE_TEXT 문항이어야 한다.
+ * 기간 규칙은 집계(AM04)와 같고 완료된 제출만 최신순으로 온다
+ */
+export function useSurveyAnswers(
+    missionId: string,
+    questionId: string | null,
+    range: { from: string; to: string } | null,
+    page: number,
+) {
+    return useQuery({
+        ...pollingReadPolicy,
+        queryKey: [...ADMIN_MISSIONS_KEY, 'surveyAnswers', missionId, questionId, range, page],
+        enabled: !!questionId && !!range,
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const params = surveyRangeSchema.parse(range);
+                const { data } = await apiClient.get<unknown>(
+                    `${ADMIN_MISSIONS_PATH}/${missionId}/survey-answers`,
+                    {
+                        params: { questionId, ...params, page, size: 20 },
+                        signal: context.signal,
+                    },
+                );
+                return envelopeSchema(pageSchema(surveyFreeTextAnswerSchema)).parse(data).data;
             }),
     });
 }
