@@ -14,7 +14,9 @@
     },
     "measurementComplete": true,
     "qualityChecksComplete": true,
-    "prCreated": false,
+    "prCreated": true,
+    "pr": "https://github.com/Uplus-GETDDO/getddo-fe/pull/131",
+    "resultCommit": "14764f7",
     "tests": {
         "baseline": {
             "files": 127,

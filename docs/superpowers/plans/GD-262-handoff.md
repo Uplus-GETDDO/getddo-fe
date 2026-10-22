@@ -2,6 +2,7 @@
 
 ## 2026-10-22 재개 상태
 
+- 결과 커밋 `14764f7`, dev 대상 [PR #131](https://github.com/Uplus-GETDDO/getddo-fe/pull/131)을 작성했다. PR은 OPEN·MERGEABLE이며 최초 확인 시 CI build는 실행 중이었다. 직접 머지·배포 명령은 실행하지 않았다. 저장소의 기존 Vercel 연동이 PR preview를 자동 생성한 것은 직접 프로덕션 배포와 구분한다.
 - 별도 worktree `.claude-worktrees/perf-gd-262`에서 기존 `perf/GD-262`를 사용한다. `origin/dev`의 `aa34107`을 충돌 없이 머지한 후보는 `47d2b54`다. 원본은 별도 detached worktree의 `aa34107`이며, 88f4970 빌드·과거 partial 표본은 이번 전후 비교에 합산하지 않는다.
 - 원본·후보 worktree에서 `npm ci`를 실행했다. 기존 Codex Playwright와 시스템 Chrome을 그대로 사용할 수 있어 도구 경로·dependency를 바꾸지 않았다. self-test와 Chrome headless 구동을 확인했다.
 - 기존 fixture 3종의 SHA-256이 이전 inventory와 일치한다. 원문·사용자 설정은 임시 폴더에만 두며 `.env`를 수정하지 않았다.
@@ -21,7 +22,7 @@
 | 브라우저  | 미실행                     | 직접 진입·키보드·복구·403/429·재연결·전환·320/390px, 7개 그룹 통과 |
 | 채택 판정 | 전환 비용 검증 대기        | 초기 bytes 감소로 채택, 전체 화면 시간 개선은 주장 안 함           |
 | 품질 검증 | 2026-10-21 기록            | 고정 원본 848·후보 849 테스트 및 양쪽 format/lint/build/diff 통과  |
-| PR        | 미작성                     | 검증 후 dev 대상 작성, 머지·배포 미승인                            |
+| PR        | 미작성                     | dev 대상 #131 작성, 머지·직접 배포 미실행                          |
 
 아래 내용은 2026-10-21 중단 당시 기록이며, 이번 측정 결과와 구분한다.
 

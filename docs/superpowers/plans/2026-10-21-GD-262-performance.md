@@ -125,7 +125,7 @@
 - [x] `npm run format:check`, `npm run lint`, `npm run test:ci`, `npm run build`, `git diff --check`를 이번 변경에서 실행하고 종료 코드·실제 테스트 수를 기록한다. 무관한 기존 경고는 임의 수정하지 않는다. — 후보 128개 파일·849개, 종료 코드 0
 - [x] 사용자 전환 캐시 격리, 전체 합계·필터, 직접 진입·뒤로 가기, 403/429·재연결·이전 성공값 보존을 관련 테스트/브라우저로 확인한다. — 전체 회귀와 controlled3-verify 7개 그룹, 합성 B 검증 한계 명시
 - [x] 로드맵의 성능 항목에 보고서를 연결하고 측정 완료·개선 완료·목표 미확정·미검증을 구분한다. 다른 L1~L6 미완료 항목을 완료로 바꾸지 않는다.
-- [ ] verification-before-completion·common-reporting-guide로 증거와 제한을 보고하고 session-handoff 기록을 제안한다. 머지·배포는 수행하지 않는다.
+- [x] verification-before-completion·common-reporting-guide로 증거와 제한을 보고하고 session-handoff 기록을 제안한다. 머지·배포는 수행하지 않는다. — 결과 커밋 14764f7, dev 대상 PR #131. 최종 응답에서 별도 session-handoff 기록을 선택 사항으로 제안한다. 직접 머지·배포 명령은 실행하지 않음
 
 ## BE 후속 항목의 기록 형식
 
