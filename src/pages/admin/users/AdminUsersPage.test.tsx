@@ -57,12 +57,10 @@ describe('AdminUsersPage', () => {
         );
         expect(within(dialog).getByRole('link', { name: '응모권 이력 조회' })).toHaveAttribute(
             'href',
-            `/admin/tickets?tab=histories&userId=${uid}`,
+            `/admin/tickets?userId=${uid}`,
         );
-        expect(within(dialog).getByRole('link', { name: '정합성 조회' })).toHaveAttribute(
-            'href',
-            `/admin/tickets?tab=consistency&userId=${uid}`,
-        );
+        // 정합성 조회는 GD-293에서 화면과 함께 제거됐다
+        expect(within(dialog).queryByRole('link', { name: '정합성 조회' })).not.toBeInTheDocument();
     });
 
     it('직접 연 상세 URL이 없는 사용자면 찾을 수 없다고 안내한다', async () => {

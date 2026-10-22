@@ -69,15 +69,9 @@ export function AdminUserDetailSheet({
                             </Link>
                             <Link
                                 className="text-fg-brand text-body-sm hover:underline"
-                                to={`/admin/tickets?tab=histories&userId=${uid}`}
+                                to={`/admin/tickets?userId=${uid}`}
                             >
                                 응모권 이력 조회
-                            </Link>
-                            <Link
-                                className="text-fg-brand text-body-sm hover:underline"
-                                to={`/admin/tickets?tab=consistency&userId=${uid}`}
-                            >
-                                정합성 조회
                             </Link>
                         </nav>
                     )}
