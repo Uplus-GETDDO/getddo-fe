@@ -1,3 +1,4 @@
+import type { GameSubmission } from '../api/queries';
 import type { ValidationData } from './types';
 
 import { createRun, pressJump, releaseJump, stepRun } from './takkoRun';
@@ -41,6 +42,35 @@ export function snapshotSubmission(playToken: string, validationData: Validation
     if (new TextEncoder().encode(JSON.stringify(body)).length > 1048576)
         throw new Error('게임 입력이 1MiB 한도를 초과했습니다. 기록을 줄여 제출할 수 없습니다.');
     return structuredClone(body);
+}
+
+// 미확정 제출 원본의 보존 — sessionStorage라 탭을 닫으면 함께 지워지고 다른 세션·사용자에게 남지 않는다.
+// 새로고침·화면 이동 후에도 같은 원본으로 결과를 재확인하기 위한 것으로, 쓰기·읽기 실패는
+// 비공개 모드·용량 초과일 수 있으므로 조용히 메모리 상태로만 둔다.
+const PENDING_STORAGE_PREFIX = 'getddo.gamePlay.pending.';
+
+export function loadPendingSubmission(key: string): GameSubmission | undefined {
+    try {
+        const raw = sessionStorage.getItem(PENDING_STORAGE_PREFIX + key);
+        if (!raw) return undefined;
+        return JSON.parse(raw) as GameSubmission;
+    } catch {
+        return undefined;
+    }
+}
+export function savePendingSubmission(key: string, input: GameSubmission) {
+    try {
+        sessionStorage.setItem(PENDING_STORAGE_PREFIX + key, JSON.stringify(input));
+    } catch {
+        /* 저장 불가 환경 — 이번 탭 동안은 메모리 상태가 유지된다 */
+    }
+}
+export function clearPendingSubmission(key: string) {
+    try {
+        sessionStorage.removeItem(PENDING_STORAGE_PREFIX + key);
+    } catch {
+        /* 저장소 접근 불가 시 지울 대상도 없다 */
+    }
 }
 
 export class FixedRun {
