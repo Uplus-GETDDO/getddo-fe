@@ -341,11 +341,16 @@ async function run() {
             drawScheduledAt: d?.drawScheduledAt ?? null,
             deltaSeconds: deltaSec,
             zod: zodCheck(eventAdmin.adminEventSchema, detail.json?.data ?? detail.json),
+            // 호출 단위 증거 — 어느 경로를 언제 쳤는지 집계와 함께 남긴다.
+            method: detail.method,
+            path: detail.path,
             httpStatus: detail.status,
+            at: detail.at,
         });
     }
     push({
         name: 'GD-268 drawScheduledAt 델타 (마감+1분=60초 기대)',
+        ...meta(events),
         listStatus: events.status,
         measured: deltas.length,
         deltas,

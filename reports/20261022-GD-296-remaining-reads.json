@@ -442,6 +442,9 @@
         },
         {
             "name": "GD-268 drawScheduledAt 델타 (마감+1분=60초 기대)",
+            "method": "GET",
+            "path": "/admin/events?page=1&size=50",
+            "detailPathPattern": "/admin/events/{eventId}",
             "listStatus": 200,
             "measured": 15,
             "deltas": [
@@ -600,7 +603,8 @@
                 "plus60": 15,
                 "plus300": 0,
                 "other": 0
-            }
+            },
+            "note": "호출 단위 시각(at)은 수집되지 않았다 — 목록·상세 호출 경로는 스크립트 정의로만 확인 가능하고 deltas[].httpStatus가 호출별 HTTP 결과다. §2의 AP05·AP06 PUT·직후 재조회는 본 JSON에 레코드가 없어 측정 보고서의 요약 전용 주장이다."
         }
     ]
 }

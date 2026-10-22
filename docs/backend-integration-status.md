@@ -88,7 +88,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - 관리자 응답 이름 필드(ADR-028): 추첨·응모·알림·응모권 정합성·미션·출석 DTO에 `userName`·`actorName`·`createdByName` 등 표시용 현재 이름이 확정 계약으로 추가됐다. BE 구현·배포 전이며 FE는 스키마 선택 필드·null 표시로 선대응할 수 있다 — `entities/entry`·`entities/mission`·`entities/attendance` 스키마는 아직 이름 필드를 소비하지 않는다.
 - 관리자 미션·출석 정책: GD-259 사용자 승인으로 새 메뉴/라우트·feature 구조를 확정해 구현했다. 기존 담당 경계는 유지하며 격리 실서버 예약/등록 인수가 남아 있다. (응모 조회 AO06/AO07은 GD-250에서 `/admin/entries`로 확정·구현됨)
 - 관리자 게임: ~~AG01~AG03과 규칙·보상 조건 운영 범위, 진행 중 플레이 보호·다음 KST 기준일 적용 계약을 확정한다.~~ 2026-10-22 전민규 답변으로 관리자 게임 등록·운영은 제공 범위 제외로 확정 — 선행 확인 대상에서 해소. KST 기준일 적용 방향은 맞다고 확인받았으나 적용할 기능이 없다.
-- 시연 계정: 공급 방식은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 확정·구현했고, 실제 등록 6계정(USER 5·ADMIN 1)으로 로컬 실서버 검증을 완료했다. Vercel 환경변수에 실계정 JSON이 설정돼 현재 프로덕션 번들에 베이크돼 있고, 배포 후 검증에서 계정 목록 일치·실서버 응답을 확인했다. 쓰기·서버 일정 의존 인수는 GD-261에서 실측 완료했다(아래 GD-260 절) — 잔여는 INACTIVE 계정·AR01/AR02·추첨 실패 재개·AG01~AG03 계약 미확정과 아래 미확정 항목(자정/월 경계 적용 관측 등)이다.
+- 시연 계정: 공급 방식은 `VITE_VIRTUAL_USERS_JSON` 직접 읽기로 확정·구현했고, 실제 등록 6계정(USER 5·ADMIN 1)으로 로컬 실서버 검증을 완료했다. Vercel 환경변수에 실계정 JSON이 설정돼 현재 프로덕션 번들에 베이크돼 있고, 배포 후 검증에서 계정 목록 일치·실서버 응답을 확인했다. 쓰기·서버 일정 의존 인수는 GD-261에서 실측 완료했다(아래 GD-260 절) — 잔여는 INACTIVE 계정·AR01/AR02·추첨 실패 재개와 아래 미확정 항목(자정/월 경계 적용 관측 등)이다.
 - 이미지: B01 공개 URL·현재 이미지 로딩은 확인했다. 실제 업로드 API·키 공급 절차·형식·용량과 격리 실서버 CRUD는 담당자 후속이며 B01 표시 구현과 구분한다.
 - 결과 성능: 원 기획서의 화면 반영 p95 2초·알림 생성 30초 목표를 실제 발표 흐름에서 측정한다. 달성되지 않으면 개선 또는 명시적 범위 조정 없이 완료 처리하지 않는다.
 
@@ -114,7 +114,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 ## GD-296 잔여 실측·저장소 정리 (2026-10-22)
 
-- 배포본 `getddo-fe.vercel.app`의 읽기 실측 전부 200·Zod 통과 — AM04 집계(일별·선택지 합계 5건), AM05 서술 답변(주 3건·대체 2건), AM01 `ENDED` 필터 8건·잔여 ACTIVE 0, AP01 3건·AP03 2건, GD-268 `drawScheduledAt-endsAt` 15건 전부 60초. AR01은 404 미배포 유지, INACTIVE 표본 0건·추첨 실패 표본 없음·자정/월 경계 시점 미도래로 해당 항목은 관측 불가로 기록. AP05·AP06은 적용 중 정책 대상 동일값 PUT 1회씩으로 409 `ATTENDANCE-007`만 확인했고 200은 격리 데이터 부재로 미측정. 증거: [측정 보고서](../reports/20261022-GD-296-deployment-measurement.md)·[읽기 JSON](../reports/20261022-GD-296-remaining-reads.json).
+- 배포본 `getddo-fe.vercel.app`의 읽기 실측은 AR01을 제외하고 전부 200·Zod 통과 — AM04 집계(일별·선택지 합계 5건), AM05 서술 답변(주 3건·대체 2건), AM01 `ENDED` 필터 8건·잔여 ACTIVE 0, AP01 3건·AP03 2건, GD-268 `drawScheduledAt-endsAt` 15건 전부 60초. AR01은 미배포로 404 유지(완료로 표시하지 않음), INACTIVE 표본 0건·추첨 실패 표본 없음·자정/월 경계 시점 미도래로 해당 항목은 관측 불가로 기록. AP05·AP06은 적용 중 정책 대상 동일값 PUT 1회씩으로 409 `ATTENDANCE-007`만 확인했고 200은 격리 데이터 부재로 미측정. 증거: [측정 보고서](../reports/20261022-GD-296-deployment-measurement.md)·[읽기 JSON](../reports/20261022-GD-296-remaining-reads.json).
 - 배포본은 측정 시점 GD-295 미반영(엔트리 청크 `index-Dx52IYfp.js`, 구 상세 패널·영문 `ENDED`). 모달 접근성은 동일 커밋(`4b6ffd6`)의 로컬 빌드+실서버 프록시(`scripts/serveLocalRealApi.mjs`)로 대체 실측했다 — 배포 갱신 후 재확인 필요.
 - 저장소 잔여물: `feat-gd-294-stale`(미등록 폐기물)·`perf-gd-262`+`perf/GD-262`(PR #131 스쿼시 반영 확인)·`test-gd-264`+`test/GD-264`(PR #132 동일)·`gd262-baseline-dev`(detached)를 미커밋 0건·내용 동등 확인 후 제거. 잠금 원인은 stale `vite preview` 프로세스 2개였다.
 - 메인 `dev`는 `origin/dev`보다 뒤처지며 미커밋 문서 변경과 겹쳐 pull을 보류했다 — 이 문서는 메인 트리 작업본을 기준으로 갱신했다.

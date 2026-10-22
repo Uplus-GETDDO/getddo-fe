@@ -25,11 +25,32 @@ const MIME = {
     '.ico': 'image/x-icon',
 };
 
-const server = http.createServer(async (req, res) => {
+// hop-by-hop 헤더와 Connection이 지명한 헤더를 제거한다 — undici fetch는
+// transfer-encoding 같은 hop-by-hop 전달을 거부해 요청이 실패한다.
+const HOP_BY_HOP = new Set([
+    'connection',
+    'keep-alive',
+    'proxy-authenticate',
+    'proxy-authorization',
+    'te',
+    'trailer',
+    'transfer-encoding',
+    'upgrade',
+]);
+const stripHopByHop = (headers, connectionValue) => {
+    const named = (connectionValue ?? '')
+        .split(',')
+        .map((h) => h.trim().toLowerCase())
+        .filter(Boolean);
+    const drop = new Set([...HOP_BY_HOP, ...named]);
+    return Object.fromEntries(Object.entries(headers).filter(([k]) => !drop.has(k)));
+};
+
+async function handle(req, res) {
     const url = new URL(req.url ?? '/', `http://localhost:${PORT}`);
     if (url.pathname === '/api' || url.pathname.startsWith('/api/')) {
         // Origin·Referer·Host를 빼고 전달 — 브라우저 직접 호출과 달리 same-origin 프록시다.
-        const headers = { ...req.headers };
+        const headers = stripHopByHop({ ...req.headers }, req.headers.connection);
         delete headers.origin;
         delete headers.referer;
         delete headers.host;
@@ -46,9 +67,14 @@ const server = http.createServer(async (req, res) => {
             body,
             redirect: 'manual',
         });
-        res.writeHead(upstream.status, {
-            'content-type': upstream.headers.get('content-type') ?? 'application/json',
-        });
+        // undici가 본문을 해제·디코딩했으므로 content-length·content-encoding은 재계산에 맡긴다.
+        const resHeaders = stripHopByHop(
+            Object.fromEntries(upstream.headers.entries()),
+            upstream.headers.get('connection'),
+        );
+        delete resHeaders['content-length'];
+        delete resHeaders['content-encoding'];
+        res.writeHead(upstream.status, resHeaders);
         res.end(Buffer.from(await upstream.arrayBuffer()));
         return;
     }
@@ -63,6 +89,17 @@ const server = http.createServer(async (req, res) => {
         'content-type': MIME[path.extname(target)] ?? 'application/octet-stream',
     });
     res.end(fs.readFileSync(target));
+}
+
+const server = http.createServer((req, res) => {
+    // 어느 단계의 실패든 서버를 죽이지 않고 응답으로 돌려준다.
+    handle(req, res).catch((error) => {
+        console.error('preview request failed:', error);
+        if (!res.headersSent) {
+            res.writeHead(502, { 'content-type': 'text/plain; charset=utf-8' });
+        }
+        res.end('preview proxy error');
+    });
 });
 
 server.listen(PORT, '127.0.0.1', () => {

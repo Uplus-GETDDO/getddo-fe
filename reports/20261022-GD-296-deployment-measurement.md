@@ -1,8 +1,8 @@
 # GD-296 배포 후 인수 잔여 실측 + GD-295 후속 검증 (2026-10-22)
 
 - 측정 대상: `https://getddo-fe.vercel.app`(Vercel, 프록시 → `dzc8oneey9mmx.cloudfront.net`) + 로컬 실서버 프록시(`http://localhost:5196`, `origin/dev`=`4b6ffd6` 빌드 + `scripts/serveLocalRealApi.mjs`)
-- 측정 계정: 테스트관리자(`X-User-Role: ADMIN`), 읽기 전용 — 쓰기 0건
-- 원시 증거: `reports/20261022-GD-296-remaining-reads.json`(10 checks, 각 호출의 메서드·경로·HTTP·봉투·Zod·시각)
+- 측정 계정: 테스트관리자(`X-User-Role: ADMIN`), 읽기 중심 — 승인 후 동일값 `PUT` 2건(AP05·AP06 수정 거절 확인)을 포함한다. 데이터 변경 0건은 값을 바꾸지 않는 동일값 요청이었고 직후 목록 재조회로 무결성을 확인했다는 뜻이며, 쓰기 요청 자체가 없었다는 뜻은 아니다.
+- 원시 증거: `reports/20261022-GD-296-remaining-reads.json`(10 checks, 각 호출의 메서드·경로·HTTP·봉투·Zod·시각). 단 §2의 AP05·AP06 `PUT`·직후 재조회는 별도 수동 호출이라 호출 단위 레코드가 없고, GD-268의 `/admin/events` 목록·상세 호출도 집계 결과만 수록됐다 — 해당 주장은 원시 JSON에서 독립 검증이 불가한 요약 전용이다.
 - 개인정보 정책: 응답 원문·답변 텍스트 미저장 — 건수·길이·식별자만 기록
 
 ## 1. 배포 식별 — GD-295 미배포
@@ -19,20 +19,20 @@ GD-295 머지(`4b6ffd6`, 17:16 KST) 후 반복 재확인에도 배포본 해시�
 
 ## 2. 읽기 실측 결과 (배포본 API)
 
-| 항목                     | 호출                                                                                           | HTTP                 | Zod  | 결과                                                                                        |
-| ------------------------ | ---------------------------------------------------------------------------------------------- | -------------------- | ---- | ------------------------------------------------------------------------------------------- |
-| AM04 선택형 집계         | `GET /admin/missions/01a143a8-…-86677/survey-summary?from=2026-10-16&to=2026-10-22`            | 200                  | pass | 일별 합계 5건·선택지 합계 5건(커피 쿠폰 5, 나머지 0) — BE 대조값 5건 일치                   |
-| AM05 서술 답변(주)       | `GET /admin/missions/01a143a8-…-b194cb/survey-answers?questionId=…&from=…&to=…&page=1&size=20` | 200                  | pass | totalElements 3 — BE 대조값 3건 일치                                                        |
-| AM05 서술 답변(대체)     | `GET /admin/missions/01a143a8-…-fb668/survey-answers?questionId=…&from=…&to=…`                 | 200                  | pass | totalElements 2 — BE 대조값 2건 일치                                                        |
-| AM01 + ENDED             | `GET /admin/missions?page=1&size=50` + `status=ENDED`                                          | 200                  | pass | ENDED 필터 8건, 종료 시각 경과 후에도 ACTIVE 잔존 0건 — `ENDED` 반영 확인(안내 문구와 일치) |
-| AP01 일일 정책           | `GET /admin/policies/attendance/daily?page=1&size=50`                                          | 200                  | pass | 3건 — 최신 `01a160ee` effectiveFrom 2026-10-22T15:00Z(예약, 윤태형 원복본)                  |
-| AP03 연속 정책           | `GET /admin/policies/attendance/streak?page=1&size=50`                                         | 200                  | pass | 2건(2026-10 적용 중·2026-11 예약)                                                           |
-| AR01 차단 목록           | `GET /admin/abuse-cases?page=1&size=5`                                                         | 404                  | —    | **미배포 유지** — 완료로 표시하지 않음                                                      |
-| AR02 차단 상세           | —                                                                                              | —                    | —    | 목록 404로 상세 도달 불가 — 동일하게 미배포로 기록                                          |
-| INACTIVE 표본            | `GET /admin/users?status=INACTIVE&page=1&size=5`                                               | 200                  | pass | totalElements 0 — 표본 없어 비활성 동작 검증 불가(기록만)                                   |
-| GD-268 +1분 추첨         | `GET /admin/events` 목록 + 이벤트별 `drawScheduledAt`                                          | 200×15               | pass | **15건 전부 `drawScheduledAt - endsAt` = 60초** — 마감+1분 신기준 배포 반영 확인            |
-| AP05 일일 정책 수정 거절 | `PUT /admin/policies/attendance/daily/01a15a5e-b2eb-…` (적용 중, 동일값)                       | 409 `ATTENDANCE-007` | —    | 적용 중 정책 수정 거절 확인 — 직후 목록 재조회로 값 무결성 확인                             |
-| AP06 연속 정책 수정 거절 | `PUT /admin/policies/attendance/streak/01a143a8-b6de-7f01-…` (2026-10 적용 중, 동일값)         | 409 `ATTENDANCE-007` | —    | 동일 — 무결성 확인                                                                          |
+| 항목                     | 호출                                                                                           | HTTP                 | Zod  | 결과                                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------------------------- | -------------------- | ---- | -------------------------------------------------------------------------------------------- |
+| AM04 선택형 집계         | `GET /admin/missions/01a143a8-…-86677/survey-summary?from=2026-10-16&to=2026-10-22`            | 200                  | pass | 일별 합계 5건·선택지 합계 5건(커피 쿠폰 5, 나머지 0) — BE 대조값 5건 일치                    |
+| AM05 서술 답변(주)       | `GET /admin/missions/01a143a8-…-b194cb/survey-answers?questionId=…&from=…&to=…&page=1&size=20` | 200                  | pass | totalElements 3 — BE 대조값 3건 일치                                                         |
+| AM05 서술 답변(대체)     | `GET /admin/missions/01a143a8-…-fb668/survey-answers?questionId=…&from=…&to=…`                 | 200                  | pass | totalElements 2 — BE 대조값 2건 일치                                                         |
+| AM01 + ENDED             | `GET /admin/missions?page=1&size=50` + `status=ENDED`                                          | 200                  | pass | ENDED 필터 8건, 종료 시각 경과 후에도 ACTIVE 잔존 0건 — `ENDED` 반영 확인(안내 문구와 일치)  |
+| AP01 일일 정책           | `GET /admin/policies/attendance/daily?page=1&size=50`                                          | 200                  | pass | 3건 — 최신 `01a160ee` effectiveFrom 2026-10-22T15:00Z(예약, 윤태형 원복본)                   |
+| AP03 연속 정책           | `GET /admin/policies/attendance/streak?page=1&size=50`                                         | 200                  | pass | 2건(2026-10 적용 중·2026-11 예약)                                                            |
+| AR01 차단 목록           | `GET /admin/abuse-cases?page=1&size=5`                                                         | 404                  | —    | **미배포 유지** — 완료로 표시하지 않음                                                       |
+| AR02 차단 상세           | —                                                                                              | —                    | —    | 목록 404로 상세를 요청하지 않음 — 배포 여부 미검증으로 기록                                  |
+| INACTIVE 표본            | `GET /admin/users?status=INACTIVE&page=1&size=5`                                               | 200                  | pass | totalElements 0 — 표본 없어 비활성 동작 검증 불가(기록만)                                    |
+| GD-268 +1분 추첨         | `GET /admin/events` 목록 + 이벤트별 `drawScheduledAt`                                          | 200×15               | pass | **15건 전부 `drawScheduledAt - endsAt` = 60초** — 마감+1분 신기준 배포 반영 확인             |
+| AP05 일일 정책 수정 거절 | `PUT /admin/policies/attendance/daily/01a15a5e-b2eb-…` (적용 중, 동일값)                       | 409 `ATTENDANCE-007` | —    | 적용 중 정책 수정 거절 확인 — 직후 목록 재조회로 값 무결성 확인. 원시 JSON 미수록(요약 전용) |
+| AP06 연속 정책 수정 거절 | `PUT /admin/policies/attendance/streak/01a143a8-b6de-7f01-…` (2026-10 적용 중, 동일값)         | 409 `ATTENDANCE-007` | —    | 동일 — 무결성 확인. 원시 JSON 미수록(요약 전용)                                              |
 
 - ENDED 안내 문구: 목록 페이지에 "종료 시각이 지난 미션은 서버 주기 처리로 최대 약 1분 뒤 '종료'로 표시됩니다" 노출 확인(로컬 GD-295 빌드, 배포본은 구버전이라 해당 문구 없음).
 
