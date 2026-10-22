@@ -325,12 +325,12 @@ export function TakkoTimingGame({
         return () => clearTimeout(timer);
     }, [reveal]);
 
-    // '속도 UP!'은 잠깐만 — 시간이 지나면 지운다
+    // '속도 UP!'은 잠깐만 — 화면에 보이는 동안만 시간을 잰다 (알림 직후 멈추면 이어 할 때 다시 보인다)
     useEffect(() => {
-        if (!speedNotice) return;
+        if (!speedNotice || phase !== 'playing' || speedNotice.roundKey !== roundKey) return;
         const timer = setTimeout(() => setSpeedNotice(null), SPEED_NOTICE_MS);
         return () => clearTimeout(timer);
-    }, [speedNotice]);
+    }, [speedNotice, phase, roundKey]);
 
     // 다른 탭이나 창으로 가면 저절로 멈춘다
     const autoPause = useEffectEvent(() => pause());

@@ -117,9 +117,7 @@ describe('틀려도 끝까지 내주기', () => {
         };
         expect(rounds).toHaveLength(3);
         for (const round of rounds) {
-            expect(round.picks.length).toBeGreaterThan(0);
-            expect(round.picks.length).toBeLessThanOrEqual(3);
-            expect(round.picks.every((item) => item === 'cheese')).toBe(true);
+            expect(round.picks).toEqual(['cheese']);
         }
     });
 });
