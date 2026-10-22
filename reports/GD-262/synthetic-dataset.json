@@ -1,0 +1,11 @@
+{
+    "sourceHash": "c283678400e98457a3434a86bd9a0db0628a4d6731fdb6a8be058145d52b731a",
+    "fixtureHash": "fdbd6d092a02bdb1d3b16631f3399600c7b2f4f1d3df06cae166eb4bc90400f9",
+    "events": 101,
+    "pages": 6,
+    "pageSize": 20,
+    "addedEvents": 73,
+    "addedStatus": "CANCELED",
+    "addedImageUrl": null,
+    "scope": "전체 E01 페이지 수집 비용. 101개 활성 카드·대규모 사용자 부하·BE 성능은 미측정."
+}

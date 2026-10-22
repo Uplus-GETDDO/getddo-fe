@@ -1,0 +1,6 @@
+{
+    "initialGraph": "정적 import만 포함",
+    "routeGraph": "초기 공유 청크 제외",
+    "assertions": 3,
+    "passed": true
+}

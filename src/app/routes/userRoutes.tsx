@@ -1,25 +1,26 @@
+import type { ComponentType } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
 import { lazy, Suspense } from 'react';
 
 import { UserLayout } from '@app/layouts/UserLayout';
 import { UserGuard } from '@app/routes/UserGuard';
-import { EventDetailPage } from '@pages/eventDetail/EventDetailPage';
-import { EventListPage } from '@pages/eventList/EventListPage';
-import { GameDetailPage } from '@pages/gameDetail/GameDetailPage';
 import { HomePage } from '@pages/home/HomePage';
 import { LoginPage } from '@pages/login/LoginPage';
-import { MissionDetailPage } from '@pages/missionDetail/MissionDetailPage';
-import { MissionListPage } from '@pages/missionList/MissionListPage';
-import { MyEntriesPage } from '@pages/myEntries/MyEntriesPage';
-import { MyNotificationsPage } from '@pages/myNotifications/MyNotificationsPage';
-import { MyPage } from '@pages/myPage/MyPage';
-import { MyTicketsPage } from '@pages/myTickets/MyTicketsPage';
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
-import { TimeRafflePage } from '@pages/timeRaffle/TimeRafflePage';
-import { TimeRaffleDetailPage } from '@pages/timeRaffleDetail/TimeRaffleDetailPage';
 import { env } from '@shared/config/env';
 import { RouteErrorFallback } from '@shared/ui/route-error-boundary';
+import { SkeletonDetail } from '@shared/ui/skeleton';
+
+// 관리자 경로와 같은 로딩 경계를 페이지에 둔다. 청크를 받는 동안 사용자 셸을 유지한다.
+const lazyPage = (importer: () => Promise<{ default: ComponentType }>) => {
+    const Page = lazy(importer);
+    return (
+        <Suspense fallback={<SkeletonDetail />}>
+            <Page />
+        </Suspense>
+    );
+};
 
 // 디자인 갤러리는 개발용 화면 — 운영 빌드에서는 라우트 자체를 등록하지 않는다
 const UiGalleryPageLazy = lazy(() =>
@@ -39,22 +40,94 @@ export const userRoutes: RouteObject[] = [
         errorElement: <RouteErrorFallback />,
         children: [
             { path: '/', element: <HomePage /> },
-            { path: '/time-raffle', element: <TimeRafflePage /> },
-            { path: '/time-raffle/:id', element: <TimeRaffleDetailPage /> },
-            { path: '/events', element: <EventListPage /> },
-            { path: '/events/:id', element: <EventDetailPage /> },
-            { path: '/missions', element: <MissionListPage /> },
-            { path: '/missions/:missionId', element: <MissionDetailPage /> },
+            {
+                path: '/time-raffle',
+                element: lazyPage(() =>
+                    import('@pages/timeRaffle/TimeRafflePage').then((m) => ({
+                        default: m.TimeRafflePage,
+                    })),
+                ),
+            },
+            {
+                path: '/time-raffle/:id',
+                element: lazyPage(() =>
+                    import('@pages/timeRaffleDetail/TimeRaffleDetailPage').then((m) => ({
+                        default: m.TimeRaffleDetailPage,
+                    })),
+                ),
+            },
+            {
+                path: '/events',
+                element: lazyPage(() =>
+                    import('@pages/eventList/EventListPage').then((m) => ({
+                        default: m.EventListPage,
+                    })),
+                ),
+            },
+            {
+                path: '/events/:id',
+                element: lazyPage(() =>
+                    import('@pages/eventDetail/EventDetailPage').then((m) => ({
+                        default: m.EventDetailPage,
+                    })),
+                ),
+            },
+            {
+                path: '/missions',
+                element: lazyPage(() =>
+                    import('@pages/missionList/MissionListPage').then((m) => ({
+                        default: m.MissionListPage,
+                    })),
+                ),
+            },
+            {
+                path: '/missions/:missionId',
+                element: lazyPage(() =>
+                    import('@pages/missionDetail/MissionDetailPage').then((m) => ({
+                        default: m.MissionDetailPage,
+                    })),
+                ),
+            },
             // 게임 무대는 헤더 바로 아래에 붙는 어두운 띠라 레이아웃의 위 여백을 받지 않는다
             {
                 path: '/missions/games/:gameId',
-                element: <GameDetailPage />,
+                element: lazyPage(() =>
+                    import('@pages/gameDetail/GameDetailPage').then((m) => ({
+                        default: m.GameDetailPage,
+                    })),
+                ),
                 handle: { fullBleed: true },
             },
-            { path: '/my-tickets', element: <MyTicketsPage /> },
-            { path: '/my-entries', element: <MyEntriesPage /> },
-            { path: '/my-notifications', element: <MyNotificationsPage /> },
-            { path: '/mypage', element: <MyPage /> },
+            {
+                path: '/my-tickets',
+                element: lazyPage(() =>
+                    import('@pages/myTickets/MyTicketsPage').then((m) => ({
+                        default: m.MyTicketsPage,
+                    })),
+                ),
+            },
+            {
+                path: '/my-entries',
+                element: lazyPage(() =>
+                    import('@pages/myEntries/MyEntriesPage').then((m) => ({
+                        default: m.MyEntriesPage,
+                    })),
+                ),
+            },
+            {
+                path: '/my-notifications',
+                element: lazyPage(() =>
+                    import('@pages/myNotifications/MyNotificationsPage').then((m) => ({
+                        default: m.MyNotificationsPage,
+                    })),
+                ),
+            },
+            {
+                path: '/mypage',
+                element: lazyPage(() =>
+                    import('@pages/myPage/MyPage').then((m) => ({ default: m.MyPage })),
+                ),
+            },
             ...(env.isDev
                 ? ([
                       {

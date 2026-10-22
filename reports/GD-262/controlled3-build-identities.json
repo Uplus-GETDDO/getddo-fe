@@ -1,0 +1,37 @@
+{
+    "checkedAt": "2026-10-22T03:09:16.649Z",
+    "builds": {
+        "before": {
+            "source": "aa34107",
+            "port": 5188,
+            "indexSha256": "0bc45f87cdd58b3860b36fa69f0117fbdf90e54469f3c2fb2973239550d1cf11",
+            "artifactSha256": "3aa25adb3d8baa43b27ea29bf23b9315216236103f8defdf503065d1fc6b12da",
+            "files": 224,
+            "apiBaseUrl": "/api",
+            "enableMsw": false,
+            "users": "localStorage USER_A",
+            "servedIndexMatches": true
+        },
+        "after": {
+            "source": "47d2b54",
+            "port": 5189,
+            "indexSha256": "4c33e08bc98d7e481c062db10ef07f13cde0d9f72b372cfffc8b90e69094f445",
+            "artifactSha256": "a0faa637b2d3dbbef0a8596617cbf9df9517ddb52646492b60433f5296cc11d3",
+            "files": 255,
+            "apiBaseUrl": "/api",
+            "enableMsw": false,
+            "users": "localStorage USER_A",
+            "servedIndexMatches": true
+        },
+        "verification": {
+            "source": "47d2b54",
+            "port": 5190,
+            "indexSha256": "658450a50ecb3665fc2d30de2a1948d3eb93150a62a78c46147b8807cbdc2ab2",
+            "artifactSha256": "99a5da7e18e561e86a903e783bf8ab16a14e4cd8674451ea32a5841ce8a0e4d7",
+            "files": 255,
+            "apiBaseUrl": "/api",
+            "enableMsw": false,
+            "users": "기존 시연 계정 설정"
+        }
+    }
+}

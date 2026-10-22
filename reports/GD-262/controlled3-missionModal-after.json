@@ -1,0 +1,143 @@
+{
+    "label": "controlled3-missionModal-after",
+    "checkedAt": "2026-10-22T04:34:28.190Z",
+    "environment": {
+        "platform": "win32",
+        "release": "10.0.26200",
+        "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+        "cores": 8,
+        "totalMemory": 25443966976,
+        "freeMemory": 9409564672,
+        "node": "v24.14.1",
+        "commit": "47d2b5460483a9f56b1890d4c14990c7249c5b7e",
+        "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "api": "https://dzc8oneey9mmx.cloudfront.net/api",
+        "responseMode": "고정 응답 재생",
+        "replayDelayMs": 50,
+        "fixtureHash": "258ec61b8bce024c1b0e06554f646b01c9dc694376217aa4f6d9f4c273b1f528",
+        "profile": "mobile",
+        "viewport": {
+            "width": 390,
+            "height": 844
+        },
+        "cpuSlowdown": 4,
+        "downloadBps": 200000,
+        "uploadBps": 93750,
+        "latencyMs": 150,
+        "headless": true,
+        "concurrency": 1,
+        "user": "USER_A",
+        "serverInternalTime": "미측정",
+        "browser": "155.0.8059.85"
+    },
+    "requested": {
+        "count": 1,
+        "batches": 3,
+        "warmups": 0,
+        "modes": ["missionModal"]
+    },
+    "discovery": {
+        "eventCount": 28,
+        "gameCount": 4,
+        "missionCount": 11,
+        "eventState": "OPEN",
+        "raffleState": "OPEN",
+        "idsHash": "998e43b0124a24317b363e75cc31b81c3d5dd9cf788fe3ec1e3d99212e3c9fba"
+    },
+    "samples": [
+        {
+            "screen": "missions",
+            "mode": "missionModal",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "modalTitleHash": "7e0a335c8c5560affce7b6c90dad97ca0dac04a5f1cfc9e2e73505a213f3f80f",
+            "displayMs": 642.3999999761581,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 1099915,
+            "browserApi": []
+        },
+        {
+            "screen": "missions",
+            "mode": "missionModal",
+            "batch": 2,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "modalTitleHash": "7e0a335c8c5560affce7b6c90dad97ca0dac04a5f1cfc9e2e73505a213f3f80f",
+            "displayMs": 603.7999999523163,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 1063438,
+            "browserApi": []
+        },
+        {
+            "screen": "missions",
+            "mode": "missionModal",
+            "batch": 3,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "modalTitleHash": "7e0a335c8c5560affce7b6c90dad97ca0dac04a5f1cfc9e2e73505a213f3f80f",
+            "displayMs": 753.5999999642372,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 1099915,
+            "browserApi": []
+        }
+    ],
+    "errors": [],
+    "groups": {
+        "missions:missionModal": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 642.3999999761581,
+                    "p95": 642.3999999761581,
+                    "min": 642.3999999761581,
+                    "max": 642.3999999761581
+                },
+                "2": {
+                    "n": 1,
+                    "p50": 603.7999999523163,
+                    "p95": 603.7999999523163,
+                    "min": 603.7999999523163,
+                    "max": 603.7999999523163
+                },
+                "3": {
+                    "n": 1,
+                    "p50": 753.5999999642372,
+                    "p95": 753.5999999642372,
+                    "min": 753.5999999642372,
+                    "max": 753.5999999642372
+                }
+            },
+            "display": {
+                "n": 3,
+                "p50": 642.3999999761581,
+                "p95": 753.5999999642372,
+                "min": 603.7999999523163,
+                "max": 753.5999999642372
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        }
+    }
+}

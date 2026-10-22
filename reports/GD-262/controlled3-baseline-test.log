@@ -1,0 +1,1047 @@
+
+> getddo-fe@0.0.0 test:ci
+> vitest run --pool=threads --maxWorkers=1 --no-file-parallelism --reporter=verbose
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90mC:/Users/s_don/Desktop/Projects/Project_Hub/Ureca-GETDDO/getddo-fe/.claude-worktrees/gd262-baseline-dev[39m
+
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m플래티넘은 가중치 이벤트에서 차감하고 브론즈 전용 이벤트에서는 거절한다[32m 53[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m같은 멱등키로 다시 내면 응모권을 또 차감하지 않는다[32m 29[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m같은 멱등키로 다른 장수 맵을 내면 ENTRY-009로 거절한다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m저장된 멱등키의 재전송은 깨진 본문이어도 처음 결과를 돌려준다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mtickets 맵이 형식에 맞지 않으면 ENTRY-001로 거절하고 잔액을 건드리지 않는다[32m 25[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m멱등키가 없으면 400으로 거절한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m접수한 응모가 영수증 등급별 장수와 함께 내 응모 내역에 쌓인다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m업무 거절도 키에 묶여, 같은 키 재시도는 처음 거절을 그대로 돌려준다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m가중치 이벤트는 등급별 장수대로 차감한다[32m 16[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m등급별 보유가 모자라면 TICKET-006으로 거절한다[32m 12[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m가중치 이벤트는 사용자당 누적 5장까지 받는다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m월말 소진용(maxTicketsPerUser null)은 상한 없이 보유한 만큼 낼 수 있다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m가중치 미적용 이벤트는 브론즈 1장만 받고 다른 등급·장수는 ENTRY-008로 거절한다[32m 21[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m내역 표시용 시드가 있어도 evt-001에 새로 응모되고 1회 제한은 실제 응모로만 판정한다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07은 시드 응모를 참여로 세지 않고 실제 응모 후에만 ALREADY_ENTERED를 돌려준다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m미적용 이벤트에서 브론즈가 없으면 TICKET-006이 아니라 BRONZE_REQUIRED로 거절한다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m관리자는 응모할 수 없다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m멤버십 등급이 미달이면 ENTRY-003으로 거절한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m진행 중 VIP 이벤트는 vip 사용자가 응모하고 우수 등급은 ENTRY-003으로 거절된다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m헤더 멤버십이 사용자 멤버십과 다르면 409로 거절한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m진행 중이 아닌 이벤트는 ENTRY-005로 거절한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m응모권 미사용 이벤트는 빈 tickets만 받고 사용자당 한 번만 접수된다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m응모 내역은 사용자별로 분리된다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m거절 이력 (GD-145)[2m > [22m업무 거절은 거절 영수증으로 E06 내역에 남는다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m거절 이력 (GD-145)[2m > [22mE05 이벤트별 내역에도 같은 거절 건이 포함된다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m거절 이력 (GD-145)[2m > [22m형식 오류·없는 이벤트 거절은 응모 내역에 남지 않는다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m거절 이력 (GD-145)[2m > [22m거절 이력이 있어도 접수된 응모로 세지 않아 1회 제한·차감 합계에 섞이지 않는다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE06 내역 필터 (GD-267)[2m > [22meventId와 status 필터로 해당 이벤트의 접수 건만 돌려준다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE06 내역 필터 (GD-267)[2m > [22mstatus 필터 없이 eventId만 주면 거절 건도 함께 돌려준다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE06 내역 필터 (GD-267)[2m > [22m알 수 없는 status는 400 COMMON-005다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m응모 빈도 제한 (GD-146)[2m > [22m짧은 창에 새 응모 요청이 몰리면 429와 Retry-After를 돌려준다[32m 18[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m응모 빈도 제한 (GD-146)[2m > [22m같은 멱등키의 재전송은 새 요청으로 세지 않아 429가 나지 않는다[32m 23[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22m응모 빈도 제한 (GD-146)[2m > [22m거절된 요청의 멱등키 재전송도 새 요청으로 세지 않고 처음 거절을 돌려준다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE03 응모 통계[2m > [22m공통 봉투에 EntryStatistics 필드를 담아 돌려준다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE03 응모 통계[2m > [22m응모가 접수되면 응모자 수가 오른다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE03 응모 통계[2m > [22m본인 차감 수는 요청 사용자의 접수 기록만 센다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE03 응모 통계[2m > [22m없는 이벤트는 404 봉투로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m가중치 이벤트는 쓸 수 있는 전체 장수를 availableTicketBalance로 돌려준다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m미적용 이벤트는 availableTicketBalance가 브론즈 장수다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m응모권 미사용 이벤트는 수량 관련 값이 0이다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m이미 응모한 1회 이벤트는 ALREADY_ENTERED 이유를 돌려준다[32m 5[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m브론즈가 없는 미적용 이벤트는 BRONZE_REQUIRED 이유를 돌려준다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m오픈 전 이벤트는 EVENT_NOT_OPEN 이유를 돌려준다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m관리자와 멤버십 미달 사용자에게는 각각 이유를 돌려준다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/entry.test.ts[2m > [22m응모 목업 핸들러[2m > [22mE07 응모 자격 조회[2m > [22m없는 이벤트는 404 봉투로 거절한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD01은 최신 실행부터 Page 봉투로 돌려주고, 후보는 33건이다[32m 59[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m없는 이벤트와 실행은 404 봉투를 돌려준다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD04는 확정 실행을 검증해 201로 기록하고 AD08에서 최신순으로 조회된다[32m 18[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD04는 확정되지 않은 실행이면 409다[32m 17[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05는 UUID 멱등키가 없거나 형식이 틀리면 400이다[32m 14[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05는 사유가 공백뿐이거나 1000자를 넘으면 400이고, 양끝 공백 제거 후 1000자는 허용한다[32m 17[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m개별 당첨 취소는 응모권을 반환하거나 회수하지 않는다[32m 18[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05는 202로 취소와 재추첨 실행을 함께 등록하고, 같은 요청 재시도는 200이다[32m 14[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05는 같은 키에 다른 본문이면 IDEMPOTENCY_CONFLICT, 다른 키로 이미 취소된 당첨이면 STATE_CONFLICT 409다[32m 20[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05는 미확정 재추첨이 있으면 다른 당첨의 새 취소를 409로 거절하고, 확정 뒤에는 허용한다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05·AD09는 비관리자면 403이다[32m 18[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD05는 취소된 이벤트의 당첨이면 409다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m재추첨은 시간이 지나면 확정되고 취소자를 제외한 새 당첨자로 빈 자리를 채운다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD09는 진행 중이면 202, 확정 후에는 저장 결과를 200으로 돌려준다[32m 24[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD09는 실패한 실행을 재개해 확정까지 진행시킨다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 추첨 재개 (POST /admin/draws/{runId}/resume)[2m > [22m실패한 최초 실행은 202로 재개하고 확정되면 200으로 저장 결과를 돌려준다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 추첨 재개 (POST /admin/draws/{runId}/resume)[2m > [22m이미 확정된 최초 실행은 저장된 결과를 200으로 돌려준다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 추첨 재개 (POST /admin/draws/{runId}/resume)[2m > [22m비관리자는 403이다[32m 14[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 추첨 재개 (POST /admin/draws/{runId}/resume)[2m > [22m없는 실행은 404, 재추첨(REPLACEMENT) 실행과 취소된 이벤트는 409다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD06은 본문 없이 재추첨 결과를 공개 명단에 반영하고 AD07에 변경 이력을 남기며 재반영은 중복 생성하지 않는다[32m 22[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22mAD06은 최초 발표 전이거나 재추첨이 아닌 실행이면 409다[32m 16[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 발표 (POST /admin/draws/{runId}/result-confirmation)[2m > [22m최신 확정 실행으로 본문 없이 발표하면 200으로 공개되고 같은 실행 재요청은 같은 결과다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 발표 (POST /admin/draws/{runId}/result-confirmation)[2m > [22m최신이 아닌 실행은 PUBLICATION-005, 미확정 최신 실행은 PUBLICATION-002다[32m 18[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m최초 발표 (POST /admin/draws/{runId}/result-confirmation)[2m > [22m발표된 이벤트의 다른 실행은 PUBLICATION-005, 취소됨·비관리자·없는 실행도 거절이다[32m 24[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m운영 이력 (GD-137)[2m > [22m/failures는 실패 이력을 최신순으로 돌려주고 실패 없는 실행은 빈 목록이다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/draw.test.ts[2m > [22m추첨 목업[2m > [22m운영 이력 (GD-137)[2m > [22m/execution-audits는 재개·취소 같은 업무 행위를 최신순으로 돌려준다[32m 24[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m0건도 최초 진입은 size=5 한 번만 요청한다[32m 108[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m5건도 최초 진입은 size=5 한 번만 요청한다[32m 76[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m6건도 최초 진입은 size=5 한 번만 요청한다[32m 153[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m1000건도 최초 진입은 size=5 한 번만 요청한다[32m 165[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m다음 페이지 실패 시 기존 목록을 유지하고 실패한 커서만 재시도한다[32m 233[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m반복 커서 "A"를 더 요청하지 않는다[32m 134[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m반복 커서 "A"를 더 요청하지 않는다[32m 99[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m빈 페이지에 다음 커서가 있으면 무한 순회를 차단한다[32m 84[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m더보기 연타는 같은 페이지 요청 하나만 수행한다[32m 184[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m필터 지연 응답은 새 필터 캐시를 오염시키지 않고 tickets 무효화에 반응한다[32m 219[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m월 합계는 size=1 응답의 totalElements를 사용한다[32m 65[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m합계 요청 실패는 0으로 바꾸지 않고 재시도로 복구한다[32m 148[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m만료·반환 두 스트림을 버퍼로 병합하고 더보기마다 최대 두 번만 요청한다[32m 217[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m동일 시각은 id 내림차순으로 병합한다[32m 99[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m소수 초 표기가 다른 UTC 시각 2026-10-19T00:00:00Z도 실제 시간순으로 병합한다[32m 83[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m소수 초 표기가 다른 UTC 시각 2026-10-19T00:00:00.000000001Z도 실제 시간순으로 병합한다[32m 69[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m소수 초 표기가 다른 UTC 시각 2026-10-19T00:00:00Z도 실제 시간순으로 병합한다[32m 66[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m짧은 페이지의 미조회 커서가 있으면 다른 스트림을 앞질러 노출하지 않는다[32m 233[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/api/history.test.tsx[2m > [22m응모권 이력 페이지 요청[2m > [22m한 스트림이 끝나도 다른 스트림은 이어가고 부분 실패를 재시도한다[32m 201[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m지연 중 로딩을 안내하고 정상 0장을 오류 없이 표시한다[33m 326[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22mHTTP 실패를 구분하고 재조회로 복구한다[32m 121[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m계약 실패를 구분하고 재조회로 복구한다[32m 83[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m네트워크 실패를 구분하고 재조회로 복구한다[32m 83[2mms[22m[39m
+[90mstderr[2m | src/app/config/ticketBalance.test.tsx[2m > [22m[2m응모권 잔액 표시 화면[2m > [22m[2m내 응모권에서 이전 잔액을 보존하고 갱신 실패 뒤 복구한다
+[22m[39mYou have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m미션 지갑에서 이전 잔액을 보존하고 갱신 실패 뒤 복구한다[32m 246[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m내 응모권에서 이전 잔액을 보존하고 갱신 실패 뒤 복구한다[33m 372[2mms[22m[39m
+[90mstderr[2m | src/app/config/ticketBalance.test.tsx[2m > [22m[2m응모권 잔액 표시 화면[2m > [22m[2m마이페이지에서 이전 잔액을 보존하고 갱신 실패 뒤 복구한다
+[22m[39mAn update to VirtualUserSwitcher inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MyPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m마이페이지에서 이전 잔액을 보존하고 갱신 실패 뒤 복구한다[33m 589[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m내 응모권의 최초 오류에서도 재조회할 수 있다[32m 162[2mms[22m[39m
+[90mstderr[2m | src/app/config/ticketBalance.test.tsx[2m > [22m[2m응모권 잔액 표시 화면[2m > [22m[2m마이페이지의 최초 오류에서도 재조회할 수 있다
+[22m[39mAn update to VirtualUserSwitcher inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MyPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액 표시 화면[2m > [22m마이페이지의 최초 오류에서도 재조회할 수 있다[33m 365[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 갱신 경계[2m > [22m200 계약 오류로 갱신에 실패해도 이전 등급별 잔액을 보존한다[32m 78[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 갱신 경계[2m > [22m키보드로 재조회할 수 있고 재조회 중에는 중복 클릭을 잠근다[32m 282[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m가중치 래플에서 최초 실패 중 제출하지 않고 재조회 후 응모할 수 있다[33m 487[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m브론즈 고정 래플에서 최초 실패 중 제출하지 않고 재조회 후 응모할 수 있다[33m 354[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m이벤트 상세에서 최초 실패 중 제출하지 않고 재조회 후 응모할 수 있다[33m 357[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m최초 로딩에는 수량 입력과 응모를 잠근다[33m 347[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m선택 후 갱신 실패에는 값은 남기고 증감과 입력을 잠근다[33m 338[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m래플의 확인 모달을 연 뒤 갱신 실패해도 차감 요청을 보내지 않는다[32m 218[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m이벤트의 확인 모달을 연 뒤 갱신 실패해도 차감 요청을 보내지 않는다[32m 190[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m복구된 잔액보다 많은 선택은 제출을 막고 줄인 뒤 다시 선택할 수 있다[33m 332[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m래플의 응모권 미사용 이벤트는 잔액 장애 때문에 막지 않는다[32m 134[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m이벤트의 응모권 미사용 이벤트는 잔액 장애 때문에 막지 않는다[32m 114[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketBalance.test.tsx[2m > [22m응모권 잔액과 응모 안전성[2m > [22m확인 중 잔액이 줄면 제출을 잠그고 수량 조정을 안내한다[32m 227[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22mcreatedAt 정렬은 방향과 id 동률 순서를 적용한다[32m 45[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22mstartsAt 정렬은 방향과 id 동률 순서를 적용한다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22mendsAt 정렬은 방향과 id 동률 순서를 적용한다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22mtitle 정렬은 방향과 id 동률 순서를 적용한다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 sort=unknown,asc는 EVENT-008로 거절한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 sort=title는 EVENT-008로 거절한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 sort=title,asc,extra는 EVENT-008로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 sort=는 EVENT-008로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 createdFrom=2026-10-20&createdTo=2026-10-19는 EVENT-008로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 createdFrom=2026-02-30는 EVENT-008로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m잘못된 검색 조건 createdTo=는 EVENT-008로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m가중치 true를 생략과 구분해 필터링한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m가중치 false를 생략과 구분해 필터링한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m등록일은 KST 양끝을 포함하고 모집 기간과 독립적이다[32m 12[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m목록이 Page 봉투 모양이고 필터와 페이지가 동작한다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m등록하면 관리자 목록과 사용자 목록 모두에 나타난다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m경품 없이 등록하거나 기간이 거꾸로면 400으로 거절한다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m같은 등수의 경품을 중복 등록하면 400으로 거절한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m취소하면 CANCELED가 되고 사용자 목록에서 사라진다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m이벤트 취소는 사용한 골드 응모권을 원래 등급으로 반환한다[32m 20[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m취소를 반복해도 차감된 응모권을 한 번만 반환한다[32m 22[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m사유 없이 상태 운영을 요청하면 400으로 거절한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminEvent.test.ts[2m > [22m관리자 이벤트 목업 핸들러[2m > [22m진행 예정 이벤트만 삭제되고 진행 중인 이벤트는 삭제되지 않는다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22m관리자 게이트[2m > [22m헤더가 없으면 401 USER-003, 미등록 사용자는 401 USER-002다[32m 41[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22m관리자 게이트[2m > [22m헤더 역할과 DB 역할이 다르면 403 USER-004, 일반 사용자는 403 NOTIFICATION-008이다[32m 5[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22m관리자 게이트[2m > [22m선택 멤버십이 DB와 다르면 409 USER-006이다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN01 알림 작업 목록[2m > [22mPage 봉투에 NotificationJob만 담고 최신순으로 반환한다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN01 알림 작업 목록[2m > [22mstatus·notificationType·eventId로 거른다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN01 알림 작업 목록[2m > [22m기간은 생성 시각의 [from, to)다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN01 알림 작업 목록[2m > [22m페이지·기간 범위 오류는 NOTIFICATION-007, 형식 오류는 COMMON-005다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN01 알림 작업 목록[2m > [22m페이지는 1부터 나뉜다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN02 작업 상세[2m > [22m상세 전용 필드를 포함해 반환한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN02 작업 상세[2m > [22m없는 작업은 404 NOTIFICATION-009, UUID가 아니면 400 COMMON-005다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN03 생성 복구 접수[2m > [22m최종 실패 작업은 202로 접수되고 대기 상태로 돌아간다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN03 생성 복구 접수[2m > [22m이미 접수된 재요청은 409 NOTIFICATION-010이다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN03 생성 복구 접수[2m > [22m최종 실패가 아니거나 중지·자동 재시도 대기 건은 409다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN03 생성 복구 접수[2m > [22m없는 작업은 404 NOTIFICATION-009다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN04 발송 이력 목록[2m > [22mPage 봉투에 AdminNotification을 담고 최신순으로 반환한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN04 발송 이력 목록[2m > [22muserId·jobId·mockDeliveryStatus로 거른다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN04 발송 이력 목록[2m > [22meventId·기간 필터와 페이지 나누기가 동작한다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN05 발송 복구 접수[2m > [22m최종 실패 발송 건은 202로 접수되고 발송 대기로 돌아간다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN05 발송 복구 접수[2m > [22m이미 접수된 재요청과 정상 발송 건은 409 NOTIFICATION-010이다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminNotification.test.ts[2m > [22mAN05 발송 복구 접수[2m > [22m없는 알림은 404 NOTIFICATION-009다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO09 전체 불일치 목록[2m > [22m시드된 불일치 응모권만 상태와 버전 비교 값과 함께 반환한다[32m 41[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO09 전체 불일치 목록[2m > [22m데이터를 고치면 결과가 달라진다 — 상수가 아니다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO09 전체 불일치 목록[2m > [22muserId로 거르고 불일치가 없으면 빈 페이지다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO04 사용자별 정합성[2m > [22m불일치 사용자는 isConsistent=false와 불일치 응모권을 돌려준다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO04 사용자별 정합성[2m > [22m일치 사용자는 isConsistent=true이고 목록이 비어 있다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO04 사용자별 정합성[2m > [22m판정은 데이터에서 계산된다 — 일치하던 사용자도 값이 어긋나면 불일치다[32m 5[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO04 사용자별 정합성[2m > [22m없는 사용자는 404다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22mGRANT 이력만 최신순으로 반환한다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22mkeyword는 이름 부분일치, userId는 정확 일치다[32m 12[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22mmissionId를 쓰면 MISSION 행만 반환한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22msourceType과 grade 필터를 적용한다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22m기간은 [from, to)이다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22m시간대가 없거나 from이 to 이상이면 400이다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22mpage와 size가 범위를 벗어나면 400이다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO03 지급 이력[2m > [22m페이지는 1부터 나뉜다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO05 전체 이력[2m > [22m이름 필드를 싣고 최신순으로 반환한다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO05 전체 이력[2m > [22moperationType·eventId·missionId·userId 필터를 적용한다[32m 16[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO05 전체 이력[2m > [22m내부 필드(version 등)는 응답에 노출하지 않는다[32m 5[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO08 반환 이력[2m > [22m상태·재시도 필드 없이 반환 정보를 돌려준다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/adminTicket.test.ts[2m > [22mAO08 반환 이력[2m > [22meventId·userId·기간으로 거른다[32m 8[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m최초 404 뒤 재마운트는 요청하지 않고 명시적 재조회로 복구한다[32m 31[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m단건 훅도 최초 실패 뒤 재마운트는 요청하지 않는다[32m 5[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m발표 완료 E08과 E09는 최초 조회 뒤 세 주기 동안 추가 요청하지 않는다[32m 8[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m목록을 재마운트해도 숨긴 행의 전체 집계를 자동으로 다시 읽지 않는다[32m 6[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22mCANCELED는 미공개여도 2주기 뒤까지 최초 1회만 요청한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22mNO_ENTRANTS는 미공개여도 2주기 뒤까지 최초 1회만 요청한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m최초 전체 조회 후 표시 ID만 2주기 조회하며 범위 변경을 반영한다[32m 5[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m단건과 다건은 같은 키로 요청을 공유하고 숨긴 탭에서는 2주기를 멈춘다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m429 90초 대기 중 수동 재시도와 재마운트가 요청을 만들지 않고 정상 복구한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m25개 최초 집계와 표시 20개 폴링은 25/45/65회다[32m 15[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22mE09 미공개 CANCELED는 종결로 추측하지 않는다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m400 오류는 최초 1회 뒤 2주기 동안 자동 요청을 중단한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m403 오류는 최초 1회 뒤 2주기 동안 자동 요청을 중단한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m404 오류는 최초 1회 뒤 2주기 동안 자동 요청을 중단한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/drawResult/api/queries.test.tsx[2m > [22m결과 폴링 요청 범위[2m > [22m갱신 실패에도 이전 값과 성공 시각을 유지하고 다음 주기에 복구한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/pages/admin/missions/AdminMissionsPage.test.tsx[2m > [22m관리자 미션[2m > [22m빈 목록과 등록 폼의 즉시 활성·1장 정책을 표시한다[32m 287[2mms[22m[39m
+ [32m✓[39m src/pages/admin/missions/AdminMissionsPage.test.tsx[2m > [22m관리자 미션[2m > [22m상세를 열면 패널로 스크롤하고 설문 집계 기본 기간을 미션 기간으로 채운다[32m 129[2mms[22m[39m
+ [32m✓[39m src/pages/admin/missions/AdminMissionsPage.test.tsx[2m > [22m관리자 미션[2m > [22m집계 기간으로 자유 서술 답변을 조회해 텍스트로만 표시한다[32m 154[2mms[22m[39m
+ [32m✓[39m src/pages/admin/missions/AdminMissionsPage.test.tsx[2m > [22m관리자 미션[2m > [22m집계 기간을 바꾸면 서술 답변 페이지를 1로 되돌린다[33m 560[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m2026-10-20 KST 자정에 기준일과 다음 초기화 시각이 바뀐다[32m 65[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m2026-10-31 KST 자정에 기준일과 다음 초기화 시각이 바뀐다[32m 20[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m31일 연속 일수를 보존하고 월초에는 1일째로 다시 계산한다[32m 86[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m누락 후 같은 달의 7일 단계를 다시 달성해도 추가 단계 보상은 없다[32m 40[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m첫 출석은 DAILY 보상을 담은 영수증을 201로 돌려준다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m같은 날 재요청은 새로 지급하지 않고 처음 영수증을 200으로 돌려준다[32m 5[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m기준일을 되돌려도 이미 지급한 날짜의 영수증을 그대로 반환하고 보상을 다시 지급하지 않는다[32m 6[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m시드 날짜에 다시 출석하면 보상을 다시 지급하지 않는다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m연속 단계에 도달하면 STREAK 보상을 붙이고 그 달에는 한 번만 지급한다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22mAT01은 출석 기준일·일일 보상량·다음 초기화 시각을 준다[32m 2[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22mAT03은 month가 없거나 형식이 아니면 400, 맞으면 그 달 출석일을 준다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/attendance.test.ts[2m > [22m출석 목업 핸들러[2m > [22m출석 상태와 응모권 잔액은 사용자별로 분리된다[32m 17[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m1~N 순서이며 중간 삽입·이동·삭제 시 연속 순서를 유지한다[32m 73[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m등록 0·N+2와 수정 0·N+1 순서는 거절한다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m관리자 목록이 노출 순서대로 오고 공개 목록과 같은 순서다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m등록은 입력을 검증하고 5개를 넘으면 409로 거절한다[32m 21[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m수정은 필드를 바꾸고 없는 배너는 404다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m순서 변경은 전체 ID를 받아 반영하고 목록과 어긋나면 409다[32m 14[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m삭제하면 목록에서 사라지고 다시 삭제하면 404다[32m 20[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m배너 목업 핸들러[2m > [22m이벤트를 삭제하면 사용자에게 숨기고 관리자 배너는 보존한다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/banner.test.ts[2m > [22m취소 이벤트 배너[2m > [22m취소 후 관리자 행과 상대 순서를 보존하고 신규 연결을 거절한다[32m 12[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m상세 갱신 실패 때 기존 이벤트 화면을 유지한다[33m 313[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m공개 결과 최초 조회가 실패하고 미응모 상태이면 발표 대기를 추측하지 않는다[32m 184[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m공개 결과와 본인 결과 갱신 실패에도 이전 결과와 조회 시각을 유지한다[32m 249[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m미공개 CANCELED 결과에는 발표 대기 카드를 표시하지 않는다[32m 149[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m미공개 NO_ENTRANTS 결과에는 발표 대기 카드를 표시하지 않는다[32m 150[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m멤버십이 미달이면 버튼이 "응모할 수 없어요"로 잠긴다[32m 72[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m이미 응모한 이벤트는 "응모 완료"로 잠긴다[32m 72[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/TimeRaffleDetailPage.test.tsx[2m > [22mTimeRaffleDetailPage의 E07 사유별 버튼[2m > [22m브론즈가 모자라도 버튼은 열려 있고 누르면 브론즈 필요 안내가 뜬다[32m 188[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/hooks/useMyEntryRows.test.tsx[2m > [22m내 응모 표시 범위[2m > [22m최초 25건 집계 후 20행만 두 주기 조회하고 표시 범위 교체를 반영한다[32m 55[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/hooks/useMyEntryRows.test.tsx[2m > [22m내 응모 표시 범위[2m > [22m백그라운드 실패에도 결과와 성공 시각을 보존하고 수동 조회로 복구한다[32m 16[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/hooks/useMyEntryRows.test.tsx[2m > [22m내 응모 표시 범위[2m > [22m결과 필터가 바뀌면 새 필터의 표시 행만 주기 조회한다[32m 15[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/hooks/useMyEntryRows.test.tsx[2m > [22m내 응모 표시 범위[2m > [22m화면은 갱신 실패 시 이전 결과와 성공 시각을 유지하고 재조회 버튼으로 복구한다[32m 146[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m다문항 퀴즈는 정답을 누적하고 마지막 문항에서 한 장만 보상한다[32m 90[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m설문 필수 문항을 모두 답하면 201·완료·보상을 받는다[32m 10[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m필수 문항을 빼먹으면 400이다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m선택형 문항에 텍스트 답을내면 400이다[32m 5[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m퀴즈 오답은 isCompleted=false·보상 없음이고 재시도할 수 있다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m단답 퀴즈는 정답과 일치할 때만 완료된다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m완료된 미션 재제출은 기존 결과를 200으로 돌려주고 보상을 중복 지급하지 않는다[32m 14[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m같은 멱등키·다른 본문은 409다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m같은 멱등키·같은 본문 재전송은 처음 결과를 돌려준다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m운영 기간이 끝난 미션은 409를 돌려준다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m완료 시드 미션은 목록에서 completed로 표시된다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/mission.test.ts[2m > [22m미션 목업 핸들러[2m > [22m상세 응답의 문항에는 정답 필드가 없다[32m 5[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m키보드로 재시작하면 포커스를 유지한 채 재생하고 다음 포커스 이동에서 정지한다[33m 359[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22mB01의 비연속 상대 순서와 이미지를 유지하고 이벤트 유형별 상세로 이동한다[32m 110[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m빈 목록은 영역을 숨긴다[32m 28[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m목록 조회 실패를 알리고 재시도로 복구한다[32m 115[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m이미지 실패를 안내하며 이벤트 상세 링크는 유지한다[32m 46[2mms[22m[39m
+[90mstderr[2m | src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m[2m홈 관리 배너[2m > [22m[2m키보드로 넘길 수 있고 포커스·명시적 정지 후 자동 재생하지 않는다
+[22m[39mAn update to BannerSlider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m연결 이벤트 실패 시 잘못된 링크를 막고 재시도로 복구한다[33m 1154[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m키보드로 넘길 수 있고 포커스·명시적 정지 후 자동 재생하지 않는다[32m 152[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m자동 재생으로 다음 배너를 표시한다[32m 37[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m호버가 끝나도 내부 포커스가 남으면 자동 재생을 멈춘다[32m 53[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m홈 관리 배너[2m > [22m동작 줄이기 환경은 수동 넘김만 제공한다[32m 44[2mms[22m[39m
+ [32m✓[39m src/widgets/bannerSlider/ui/BannerSlider.test.tsx[2m > [22m배너 목록 실패[2m > [22m받아 둔 배너가 없으면 기본 배너로 자리를 채우고 실패는 아래 줄 갱신 표시로만 알린다[32m 47[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22m내 응모 전체 합계[2m > [22m50건 뒤 페이지까지 합산하고 수집 실패 시 마지막 전체 내역을 유지한다[33m 1191[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museMyEventEntries[2m > [22meventId와 status=ACCEPTED 파라미터로 E06을 조회해 접수 건만 돌려준다[32m 98[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryStatistics[2m > [22m활성 행만 두 주기 조회하고 숨긴 탭에서는 멈춘 뒤 다시 활성화하면 재개한다[32m 10[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryStatistics[2m > [22m다중 현황 갱신 실패에도 마지막 성공값을 반환한다[32m 89[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryStatistics[2m > [22mE03 응답을 EntryStatistics로 파싱한다[32m 83[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryStatistics[2m > [22mopen 이벤트만 30초 폴링하고 그 외에는 폴링하지 않는다[32m 84[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryStatistics[2m > [22menabled가 false면 요청하지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryEligibility[2m > [22mE07 응답을 EntryEligibility로 파싱한다[32m 65[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/queries.test.tsx[2m > [22museEntryEligibility[2m > [22menabled가 false면 요청하지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m정합성 탭이 기본이고 시드된 불일치 응모권을 보여준다[32m 235[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m불일치 행을 누르면 서랍에 불일치 응모권과 최근 이력이 나온다[32m 214[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m일치하는 사용자도 직접 조회하면 일치로 표시한다[33m 323[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m없는 사용자를 조회하면 찾을 수 없다고 안내한다[32m 275[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m탭을 바꾸면 해당 목록을 보여주고 선택 탭이 URL에 남는다[32m 217[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m방향키로 탭을 순환 이동한다[32m 176[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m사용자 상세 링크의 ?userId= 가 전체 이력 필터로 적용된다[32m 113[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m정합성 링크의 ?userId= 가 해당 사용자 정합성 서랍을 바로 연다[32m 74[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m탭을 바꿔도 ?userId= 가 유지되어 다음 탭 필터에 이어진다[32m 204[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m같은 경로에서 URL의 사용자가 바뀌면 이전 사용자 필터가 남지 않는다[32m 153[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m같은 경로에서 링크 날짜·처리 유형이 바뀌면 이전 조건이 남지 않는다[32m 138[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m같은 경로에서 링크 날짜가 바뀌면 지급 탭의 이전 날짜가 남지 않는다[32m 190[2mms[22m[39m
+ [32m✓[39m src/pages/admin/tickets/AdminTicketsPage.test.tsx[2m > [22mAdminTicketsPage[2m > [22m검색 조건에 맞는 결과가 없으면 빈 목록을 안내한다[33m 394[2mms[22m[39m
+ [32m✓[39m src/pages/admin/draw/ui/DrawRunDetail.test.tsx[2m > [22mDrawRunDetail[2m > [22m공개 이력 조회가 실패하면 당첨자 공개를 미공개로 오판하지 않고 오류·재시도를 보여준다[32m 299[2mms[22m[39m
+ [32m✓[39m src/pages/admin/draw/ui/DrawRunDetail.test.tsx[2m > [22mDrawRunDetail[2m > [22m실행이 첫 페이지를 넘으면 이전 페이지를 조회해 취소 원본의 공개 이력을 찾는다[32m 234[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m기본 보기에서 접수·거절 응모 이력을 보여준다[32m 236[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m사용자 필터 링크로 들어오면 해당 사용자 응모만 보여준다[32m 69[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m전체 응모 조회로 이동하면 이전 사용자 필터가 남지 않는다[32m 185[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m참여자 URL의 eventId가 사라지면 입력 안내로 돌아간다[32m 111[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m참여자 보기에서 이벤트 참여자를 정렬해 보여준다[32m 35[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m참여자 보기에서 이벤트 ID가 없으면 요청 없이 입력을 안내한다[32m 16[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m존재하지 않는 이벤트의 참여자 조회는 찾을 수 없다고 알린다[32m 34[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m잘못된 이벤트 ID를 제출하면 요청 없이 UUID 안내를 보여준다[32m 298[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m응모 이력에서 잘못된 ID 필터를 제출하면 요청 없이 UUID 안내를 보여준다[33m 352[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m이벤트 목록에 있지만 응모가 없는 이벤트의 참여자 조회는 빈 결과로 응답한다[32m 33[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m응모 이력의 사용자 링크는 이름을 보여주고 ID로 사용자 상세에 연결된다[32m 68[2mms[22m[39m
+ [32m✓[39m src/pages/admin/entries/AdminEntriesPage.test.tsx[2m > [22mAdminEntriesPage[2m > [22m보기 탭을 바꾸면 참여자 보기로 전환된다[32m 68[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22m응답 유실 후 새 판을 발급하지 않고 복제한 원본으로 재시도한다[32m 64[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22mADMIN 체험은 시작만 하고 결과를 제출하지 않는다[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22mHTTP 404 오류를 구분하고 같은 입력을 유지한다[32m 9[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22mHTTP 409 오류를 구분하고 같은 입력을 유지한다[32m 7[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22mHTTP 413 오류를 구분하고 같은 입력을 유지한다[32m 7[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22mHTTP 429 오류를 구분하고 같은 입력을 유지한다[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22mPROCESSING 응답 뒤에는 새 판을 만들지 않고 같은 판을 보존한다[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/playGame/hooks/useGamePlaySession.test.tsx[2m > [22m원본 제출과 재시도 수명[2m > [22m화면을 떠나도 같은 사용자의 원본은 보존하고 다른 사용자에게 노출하지 않는다[32m 9[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m열면 알림 목록을 보여주고 삭제 버튼은 없다[33m 322[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m종 버튼에 읽지 않은 수를 알리고, 아래에서 모든 알림 페이지로 이어진다[32m 124[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m재오픈하면 staleTime 안이어도 새 알림 목록을 조회한다[32m 213[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m재조회가 실패해도 더보기를 누르기 전에는 더보기 오류를 보이지 않는다[32m 234[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m모두 읽음을 누르면 미읽음이 0이 된다[32m 161[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m개별 알림을 누르면 읽음 처리되어 미읽음 수가 줄어든다[32m 137[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m목록이 비면 빈 상태를 보여준다[32m 50[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m첫 조회가 실패하면 오류와 다시 시도를 보여준다[32m 150[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/ui/NotificationDrawer.test.tsx[2m > [22mNotificationDrawer[2m > [22m2쪽을 누르면 nextCursor로 다음 쪽을 받아 그 쪽만 보여준다[32m 232[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawPublication.test.ts[2m > [22m공개 경계 (ADR-022)[2m > [22m추첨이 확정되고 정합성 검증·시간 경과가 지나도 공개되지 않는다[32m 87[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawPublication.test.ts[2m > [22m공개 경계 (ADR-022)[2m > [22m응모한 사용자도 공개 전에는 본인 결과를 받지 못한다[32m 12[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawPublication.test.ts[2m > [22m공개 경계 (ADR-022)[2m > [22m당첨자 공개 요청이 성공해야만 공개되고, 재요청은 중복 공개를 만들지 않는다[32m 25[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawPublication.test.ts[2m > [22m공개 경계 (ADR-022)[2m > [22m이미 공개된 시드 이벤트만 처음부터 공개 상태다 — 시각만으로 공개되지 않는다[32m 8[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m공개 추첨 결과 목업 (E08)[2m > [22m발표 전에는 명단과 공개 정보를 하나도 싣지 않는다[32m 52[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m공개 추첨 결과 목업 (E08)[2m > [22m공개 결과 응답에 발표 예정 시각(publicationScheduledAt)을 싣지 않는다[32m 11[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m공개 추첨 결과 목업 (E08)[2m > [22m발표 뒤에는 등수 내림차순으로 명단을 준다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m공개 추첨 결과 목업 (E08)[2m > [22m당첨자는 마스킹된 값만 담는다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m공개 추첨 결과 목업 (E08)[2m > [22m같은 이벤트를 다시 조회해도 명단이 바뀌지 않는다[32m 12[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m공개 추첨 결과 목업 (E08)[2m > [22m없는 이벤트는 404로 답한다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m본인 결과 목업 (E09)[2m > [22m응모하지 않았으면 발표가 끝나도 NOT_ENTERED다[32m 15[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m본인 결과 목업 (E09)[2m > [22m응모했고 공개 전이면 추첨 시각이 지나도 PENDING을 유지한다[32m 22[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m본인 결과 목업 (E09)[2m > [22m공개 요청 성공 후에는 당첨 여부와 경품을 돌려준다[32m 22[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m본인 결과 목업 (E09)[2m > [22m같은 사용자·이벤트면 다시 물어도 결과가 바뀌지 않는다[32m 22[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/drawResult.test.ts[2m > [22m본인 결과 목업 (E09)[2m > [22m없는 이벤트는 404로 답한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22mNO_TICKET은 가중치와 상한을 해제한다[32m 6[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22mNO_TICKET에서 가중치가 켜져 있어도 false로 강제한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22m가중치 미적용 TICKET은 사용자당 1장을 보낸다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22m가중치 적용 TICKET은 입력한 상한을 숫자로 보낸다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22m가중치 적용 + 빈 상한은 null(월말 소진용)로 보낸다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22mKST datetime-local 입력을 UTC ISO로 변환한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormToRequest[2m > [22m경품의 id를 그대로 넘겨 수정 시 기존 경품을 식별하게 한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormSchema[2m > [22m가중치 적용 상한에 0 이하·6 이상·비정수 문자열을 거절한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventFormSchema[2m > [22m같은 등수의 경품 중복을 거절한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventToFormValues[2m > [22mprizeImages의 키를 경품별 폼 값으로 되살린다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventToFormValues[2m > [22m이미지를 건드리지 않은 경품은 받은 키를 그대로 돌려보낸다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/utils/eventFormValues.test.ts[2m > [22meventToFormValues[2m > [22m사용자가 지운 경품만 null로 나간다[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mp95 — 계획서 §5 산식[2m > [22m1..100은 95[32m 2[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mp95 — 계획서 §5 산식[2m > [22m1..30은 29[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mp95 — 계획서 §5 산식[2m > [22m빈 배열·NaN 포함은 null[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mreductionPercent — 계획서 §5 산식[2m > [22m10→1은 90[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mreductionPercent — 계획서 §5 산식[2m > [22m100→85는 15[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mreductionPercent — 계획서 §5 산식[2m > [22m25→20은 20[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mreductionPercent — 계획서 §5 산식[2m > [22m0→0·비수치는 null[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22msummarizeRuns — 집계·결측·실패[2m > [22m시나리오별 중간값·p95·범위·IQR·실패 수를 낸다[32m 1[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22msummarizeRuns — 집계·결측·실패[2m > [22m값이 null인 metric은 missing으로 센다[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22msummarizeRuns — 집계·결측·실패[2m > [22m소수점·증가 감소 부호 없이 그대로 둔다[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mconditionDiff·compareFiles — 비교 가능성[2m > [22mrunId·시각이 달라도 통제 항목이 같으면 비교 가능하다[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mconditionDiff·compareFiles — 비교 가능성[2m > [22m환경·fixture·cache가 다르면 그 키를 돌려준다[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mconditionDiff·compareFiles — 비교 가능성[2m > [22m조건이 다르면 개선율 없이 not-comparable[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mconditionDiff·compareFiles — 비교 가능성[2m > [22m조건이 같으면 시나리오·메트릭별 개선율을 산출한다[32m 0[2mms[22m[39m
+ [32m✓[39m scripts/measureFrontendEvidence.test.mjs[2m > [22mcollectBundleBytes — dist 분류[2m > [22mindex.html 참조는 entry, 나머지는 lazy-or-asset으로 나눈다[32m 10[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m사용자 목록과 필터와 무관한 전체 활성 사용자 수를 보여준다[33m 469[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m검색어를 제출하면 결과가 걸리고 초기화하면 전체로 돌아온다[33m 945[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m행을 누르면 상세 서랍에 7개 필드와 운영 조회 링크가 나온다[33m 407[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m직접 연 상세 URL이 없는 사용자면 찾을 수 없다고 안내한다[32m 168[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m목록 조회가 403이면 권한 오류를 알린다[32m 135[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m검색란에 넣은 UUID는 사용자 ID 필터로 보낸다[33m 1106[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m잘못된 UUID를 사용자 ID로 제출하면 요청하지 않고 안내한다[33m 555[2mms[22m[39m
+ [32m✓[39m src/pages/admin/users/AdminUsersPage.test.tsx[2m > [22mAdminUsersPage[2m > [22m20자를 넘는 검색어는 요청하지 않고 안내한다[33m 560[2mms[22m[39m
+[90mstderr[2m | src/app/config/ticketHistoryPagination.test.tsx[2m > [22m[2m응모권 화면 실제 요청 수와 기간 전체 합계[2m > [22m[2m내 응모권 최초는 목록1+월합계2이고, 첫 쪽을 채우려 다음 커서를 한 번만 이어 받는다
+[22m[39mYou have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+
+ [32m✓[39m src/app/config/ticketHistoryPagination.test.tsx[2m > [22m응모권 화면 실제 요청 수와 기간 전체 합계[2m > [22m지갑은 월 네 유형을 size=1로 조회하고 전체 건수를 합산한다[32m 183[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketHistoryPagination.test.tsx[2m > [22m응모권 화면 실제 요청 수와 기간 전체 합계[2m > [22m내 응모권 최초는 목록1+월합계2이고, 첫 쪽을 채우려 다음 커서를 한 번만 이어 받는다[32m 264[2mms[22m[39m
+[90mstderr[2m | src/app/config/ticketHistoryPagination.test.tsx[2m > [22m[2m응모권 화면 실제 요청 수와 기간 전체 합계[2m > [22m[2m마이페이지는 최근7일 size5와 오늘GRANT size1의 두 요청만 보낸다
+[22m[39mAn update to VirtualUserSwitcher inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MyPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/config/ticketHistoryPagination.test.tsx[2m > [22m응모권 화면 실제 요청 수와 기간 전체 합계[2m > [22m마이페이지는 최근7일 size5와 오늘GRANT size1의 두 요청만 보낸다[33m 342[2mms[22m[39m
+ [32m✓[39m src/app/config/ticketHistoryPagination.test.tsx[2m > [22m응모권 화면 실제 요청 수와 기간 전체 합계[2m > [22m월 합계 실패를 0으로 표시하지 않고 목록을 유지한 채 독립 복구한다[32m 173[2mms[22m[39m
+[90mstderr[2m | src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m[2m대시보드는 공통 감사 조회 없이 기존 운영 패널을 표시한다
+[22m[39mThe width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m[2m대시보드는 공통 감사 조회 없이 기존 운영 패널을 표시한다
+[22m[39mThe width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m[2m요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 조회를 대체한다
+[22m[39mThe width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m[2m요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 조회를 대체한다
+[22m[39mThe width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m대시보드는 공통 감사 조회 없이 기존 운영 패널을 표시한다[33m 424[2mms[22m[39m
+[90mstderr[2m | src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m[2m활성 일반 사용자가 0명이면 참여율을 계산 불가로 표시한다
+[22m[39mThe width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 조회를 대체한다[32m 146[2mms[22m[39m
+ [32m✓[39m src/pages/admin/dashboard/AdminDashboardPage.test.tsx[2m > [22m활성 일반 사용자가 0명이면 참여율을 계산 불가로 표시한다[32m 143[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR01 차단 이력 목록[2m > [22m채택 계약의 요약 필드를 싣고 blockedAt DESC로 내린다[32m 72[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR01 차단 이력 목록[2m > [22muserId·eventId·sourceType으로 거른다[32m 34[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR01 차단 이력 목록[2m > [22m기간 필터는 blockedAt 기준 [from, to)다[32m 12[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR01 차단 이력 목록[2m > [22m오프셋 표기(+09:00)도 같은 순간으로 비교한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR01 차단 이력 목록[2m > [22m시간대가 없거나 page·size가 범위를 벗어나면 400이다[32m 14[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR02 차단 이력 상세[2m > [22m요약 필드에 차단 판정 근거(evidence) 객체를 덧붙여 돌려준다[32m 7[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/abuse.test.ts[2m > [22mAR02 차단 이력 상세[2m > [22m없는 차단 이력은 404다[32m 4[2mms[22m[39m
+ [32m✓[39m src/pages/admin/attendancePolicies/AdminAttendancePoliciesPage.test.tsx[2m > [22m관리자 출석 정책[2m > [22m빈 목록을 표시하고 중복 예약은 기존 예약 확인으로 안내한다[33m 315[2mms[22m[39m
+ [32m✓[39m src/pages/admin/attendancePolicies/AdminAttendancePoliciesPage.test.tsx[2m > [22m관리자 출석 정책[2m > [22m권한 거절을 빈 목록으로 표시하지 않는다[32m 57[2mms[22m[39m
+ [32m✓[39m src/pages/admin/attendancePolicies/AdminAttendancePoliciesPage.test.tsx[2m > [22m관리자 출석 정책[2m > [22m아직 시작하지 않은 정책에만 수정 버튼을 보이고 PUT으로 수정한다[33m 493[2mms[22m[39m
+ [32m✓[39m src/pages/admin/attendancePolicies/AdminAttendancePoliciesPage.test.tsx[2m > [22m관리자 출석 정책[2m > [22m이미 시작한 정책은 서버 409를 안내 문구로 바꾼다[32m 249[2mms[22m[39m
+ [32m✓[39m src/features/manageBanner/api/queries.test.tsx[2m > [22m배너 관리와 홈 갱신[2m > [22m등록·수정·순서·삭제는 같은 세션을 갱신하고 다른 세션은 재조회 후 반영한다[33m 594[2mms[22m[39m
+ [32m✓[39m src/features/manageBanner/api/queries.test.tsx[2m > [22m배너 관리와 홈 갱신[2m > [22m동시 목록 변경으로 전체 순서가 충돌하면 관리자 최신 목록을 다시 받는다[32m 180[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m목록의 myEntered를 반영하고 누락·상세는 false로 매핑한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22mspec 상태 enum을 화면 상태로 변환한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22mimageUrl을 bannerImageUrl로 옮긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m목록이 준 당첨 인원 합계를 그대로 쓴다 — 목록에는 prizes가 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m합계가 오지 않으면 비워 둔다 — 0으로 꾸미지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m상세는 prizes 합계를 쓴다 — 목록 합계와 어긋나도 경품이 근거다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22mprizes를 rank 오름차순으로 요약해 prizeName·winnerCount를 파생한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m경품이 하나면 이름만 쓰고, 없으면 파생 필드를 비운다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22meventType·weightingEnabled로 requiredTickets를 파생한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m목록 응답에는 경품·상세 설명·응모 상한이 없어 파생 필드가 비거나 근사된다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m상한이 spec상 확정된 목록 조합만 채운다 — 미사용은 null, 가중치 미적용은 1[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m상세 응답은 실제 maxTicketsPerUser를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22misTimeRaffle이 없으면 응모권 사용 이벤트를 타임래플로 근사한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/toEvent.test.ts[2m > [22mtoEvent[2m > [22m시연 전용 필드와 응모 수치는 있는 그대로 통과한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstNextMonthStart[2m > [22m다음 달 1일 00:00 KST를 반환한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstNextMonthStart[2m > [22m12월에는 다음 해 1월 1일로 넘어간다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstNextMonthStart[2m > [22m월 경계를 넘은 UTC 시각은 KST 기준 다음 달로 판정한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstInputToUtcIso / utcIsoToKstInput[2m > [22mdatetime-local 입력을 KST로 해석해 UTC ISO로 변환한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstInputToUtcIso / utcIsoToKstInput[2m > [22mUTC ISO를 datetime-local 입력값(KST)으로 되돌린다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstInputToUtcIso / utcIsoToKstInput[2m > [22mKST 자정 경계를 넘나들어도 날짜가 맞다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstDateStartUtcIso / kstNextDateStartUtcIso[2m > [22m날짜 입력을 KST 00:00의 UTC 시각으로 바꾼다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstDateStartUtcIso / kstNextDateStartUtcIso[2m > [22m종료일은 다음 날 00:00 KST로 바꿔 종료일 전체를 포함한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mkstDateStartUtcIso / kstNextDateStartUtcIso[2m > [22m월말·연말 경계를 넘긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mformatKstDot[2m > [22mUTC 시각을 KST 날짜(와 시각)로 짧게 적는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mformatRemaining[2m > [22m하루가 넘으면 일·시간만 적는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mformatRemaining[2m > [22m한 시간이 넘으면 시간·분, 그 안쪽은 분·초[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mformatRemaining[2m > [22m분 단위로 그리는 곳은 초를 올려 분만 적는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mformatKstTimeRange[2m > [22m같은 날이면 시작~마감 시각[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mformatKstTimeRange[2m > [22m날을 넘기면 마감 날짜·시각[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mrecentKstDays[2m > [22mKST 오늘까지 오래된 날부터 하루 구간을 만든다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mrecentKstDays[2m > [22m달이 바뀌어도 이어진다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mparseYmd[2m > [22m달력에 있는 날짜는 그대로 돌려준다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mparseYmd[2m > [22m꼴이 다르거나 비어 있으면 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/date.test.ts[2m > [22mparseYmd[2m > [22m꼴만 맞고 달력에 없는 날짜는 null — 다음 달로 넘어가거나 변환 오류가 나지 않게[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/enterEvent/api/queries.test.tsx[2m > [22m응모 멱등키 수명[2m > [22m응답 유실 뒤 같은 장수로 재시도하면 같은 키를 보낸다[32m 30[2mms[22m[39m
+ [32m✓[39m src/features/enterEvent/api/queries.test.tsx[2m > [22m응모 멱등키 수명[2m > [22m지연 응답 중 같은 장수 연타도 같은 키로 재전송된다[32m 41[2mms[22m[39m
+ [32m✓[39m src/features/enterEvent/api/queries.test.tsx[2m > [22m응모 멱등키 수명[2m > [22m생략된 등급과 0은 같은 요청으로 보고 키를 유지한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/features/enterEvent/api/queries.test.tsx[2m > [22m응모 멱등키 수명[2m > [22m접수 성공 뒤 의도적인 추가 응모는 새 키로 간다[32m 4[2mms[22m[39m
+ [32m✓[39m src/features/enterEvent/api/queries.test.tsx[2m > [22m응모 멱등키 수명[2m > [22m서버가 응답한 거절 뒤 재시도는 새 키로 간다[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/enterEvent/api/queries.test.tsx[2m > [22m응모 멱등키 수명[2m > [22m장수 맵이 바뀌면 같은 키를 쓰지 않는다 — 같은 키+다른 본문 충돌을 만들지 않는다[32m 3[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m매핑에 있는 코드는 서버 문구보다 FE 문구를 우선한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m매핑에 있으면 5xx여도 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m매핑에 없는 업무 오류는 서버 문구를 쓴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m5xx는 서버 문구를 건너뛰고 fallback을 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22mHTTP-* 코드는 서버 문구를 건너뛰고 fallback을 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22mApiError가 아니면 fallback, 없으면 공통 기본 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m429는 Retry-After가 있으면 대기 시간을 표시한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 USER-002는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 USER-003는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 USER-004는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 USER-005는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 USER-006는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 COMMON-001는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 COMMON-005는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 HTTP-404는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 EVENT-008는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 ENTRY-010는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 MISSION-001는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 MISSION-002는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 MISSION-003는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 MISSION-004는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 번호 코드 MISSION-005는 FE 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22mCOMMON-002는 매핑하지 않아 서버의 구체 입력 위반 문구가 살아난다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m실서버 429 COMMON-006도 Retry-After 대기 시간을 표시한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m__proto__ 같은 상속 키는 매핑으로 취급하지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mgetErrorMessage[2m > [22m429에 Retry-After가 없으면 일반 매핑 문구를 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mparseRetryAfter[2m > [22m초 단위 정수를 그대로 돌려준다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mparseRetryAfter[2m > [22mHTTP-date는 남은 초로 환산한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mparseRetryAfter[2m > [22m유한하지 않은 값은 undefined다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/errorMessage.test.ts[2m > [22mparseRetryAfter[2m > [22m해석할 수 없는 값은 undefined다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m대기 중에는 움직이지 않고, 점프 키로 출발한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m점프하면 올라갔다가 땅으로 돌아온다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m점프 키를 일찍 떼면 낮게 뛴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m장애물에 부딪히면 끝나고 기절한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m달린 거리만큼 점수가 오르고 장애물이 나온다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m점수가 기준을 넘으면 스테이지가 오르고 그 스테이지 속도로 달린다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m일시정지하면 멈추고 점프도 안 되며, 이어 하면 다시 달린다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m1스테이지는 높이 90 이하 장애물만, 3스테이지부터는 두 개짜리도 나온다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoRun.test.ts[2m > [22m타꼬런 규칙[2m > [22m스테이지마다 그 스테이지의 장애물 그림만 나온다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m400는 재시도와 주기 조회를 중단한다[32m 5[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m401는 재시도와 주기 조회를 중단한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m403는 재시도와 주기 조회를 중단한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m404는 재시도와 주기 조회를 중단한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m네트워크와 5xx는 한 번만 재시도한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m429 대기는 캐시 오류에 보존해 수동 재시도도 우회하지 못한다[32m 6[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m종결 오류가 남은 쿼리는 데이터가 있어도 재마운트 재조회를 건너뛴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m종결 오류가 남은 쿼리는 네트워크 재연결 시에도 재조회를 건너뛴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m스키마 오류는 재시도와 interval을 중단한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m헤더 없는 429는 30초를 기다리고 시스템 시각 변경으로 단축되지 않는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22mHTTP-date Retry-After도 같은 대기 정책에 전달한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m코드 없는 Axios 429 응답도 Retry-After 헤더를 지킨다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.test.ts[2m > [22m폴링 읽기 오류 정책[2m > [22m서버 대기가 타이머 한계를 넘으면 예약만 자르고 기한은 유지한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/admin/banners/AdminBannersPage.test.tsx[2m > [22m이전 배너 관리[2m > [22m미연결 이전 배너를 유지하고 수정에는 이벤트 선택을 요구한다[33m 543[2mms[22m[39m
+ [32m✓[39m src/pages/admin/banners/AdminBannersPage.test.tsx[2m > [22m이전 배너 관리[2m > [22m비연속 순서 목록에서도 새 배너를 N+1 위치에 등록한다[33m 418[2mms[22m[39m
+ [32m✓[39m src/pages/admin/banners/AdminBannersPage.test.tsx[2m > [22m이전 배너 관리[2m > [22m이전 배너 수정은 저장된 순서값 대신 목록 내 위치를 전송한다[32m 188[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/event.test.ts[2m > [22m이벤트 목업 핸들러[2m > [22m목록의 myEntered는 접수 기록을 따르고 관리자·헤더 없음은 false다[32m 91[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/event.test.ts[2m > [22m이벤트 목업 핸들러[2m > [22m상태를 기간에서 다시 계산해 spec 원시 enum으로 돌려준다 — 적어 둔 status와 어긋나지 않는다[32m 13[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/event.test.ts[2m > [22m이벤트 목업 핸들러[2m > [22m이벤트 응답에 발표 예정 시각(publicationScheduledAt)을 싣지 않는다[32m 9[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/event.test.ts[2m > [22m이벤트 목업 핸들러[2m > [22m목록 항목은 EventSummary 모양이고 상세에는 description·prizes가 있다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/event.test.ts[2m > [22m이벤트 목업 핸들러[2m > [22m시연 플로우를 밟을 수 있도록 각 상태의 타임래플이 하나씩 있다[32m 8[2mms[22m[39m
+ [32m✓[39m src/entities/image/ui/ImageUploadField.test.tsx[2m > [22mImageUploadField[2m > [22m올린 뒤 받은 키를 폼 값으로 넘긴다 — 사람이 키를 알 수 없다[32m 247[2mms[22m[39m
+ [32m✓[39m src/entities/image/ui/ImageUploadField.test.tsx[2m > [22mImageUploadField[2m > [22mPNG·JPG가 아니면 보내지 않고 바로 알린다[32m 74[2mms[22m[39m
+ [32m✓[39m src/entities/image/ui/ImageUploadField.test.tsx[2m > [22mImageUploadField[2m > [22m서버가 거절하면 그 문구를 보여 준다 — 최종 판정은 서버다[32m 48[2mms[22m[39m
+ [32m✓[39m src/entities/image/ui/ImageUploadField.test.tsx[2m > [22mImageUploadField[2m > [22m배너 자리는 작은 그림을 보내지 않고 막는다[32m 61[2mms[22m[39m
+ [32m✓[39m src/entities/image/ui/ImageUploadField.test.tsx[2m > [22mImageUploadField[2m > [22m비율이 엇갈리는 자리에만 안전 영역을 표시한다[32m 106[2mms[22m[39m
+ [32m✓[39m src/app/config/rowPolling.test.tsx[2m > [22m응모 행 조회 통합 요청 카운터[2m > [22mE01/E06 전체 페이지와 집계 최초 조회를 유지하고 중복·거절을 제외한 표시20개만 3주기 갱신한다[32m 91[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/notification.test.ts[2m > [22m알림 목업 핸들러 (N01~N03 확정 계약)[2m > [22m목록은 봉투와 커서 형식으로 반환한다[32m 70[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/notification.test.ts[2m > [22m알림 목업 핸들러 (N01~N03 확정 계약)[2m > [22msize를 넘는 목록은 nextCursor로 이어서 조회한다[32m 24[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/notification.test.ts[2m > [22m알림 목업 핸들러 (N01~N03 확정 계약)[2m > [22misRead 필터와 size 범위 위반 400 NOTIFICATION-001을 처리한다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/notification.test.ts[2m > [22m알림 목업 핸들러 (N01~N03 확정 계약)[2m > [22m없는 알림은 404 NOTIFICATION-002, 헤더 없으면 401 USER-003다[32m 23[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/notification.test.ts[2m > [22m알림 목업 핸들러 (N01~N03 확정 계약)[2m > [22m읽음 상태는 X-User-ID별로 분리된다[32m 26[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/notification.test.ts[2m > [22m알림 목업 핸들러 (N01~N03 확정 계약)[2m > [22m개별 읽음과 전체 읽음을 처리한다[32m 19[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/game.test.ts[2m > [22m게임 계약 목업[2m > [22m2026-10-20 KST 자정에도 누적 통계와 최초 결과를 보존한다[32m 156[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/game.test.ts[2m > [22m게임 계약 목업[2m > [22m2026-10-31 KST 자정에도 누적 통계와 최초 결과를 보존한다[32m 76[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/game.test.ts[2m > [22m게임 계약 목업[2m > [22m미달 VALID 0점은 일일 보상을 소진하지 않으며 ADMIN 통계는 거절한다[32m 17[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m플래티넘도 합계와 10배 가중치에 반영한다[32m 217[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m등급별 라벨과 보유 장수를 보여준다[32m 16[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m등급별 스테퍼로 장수를 고르면 합계가 갱신된다[32m 125[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m숫자를 직접 입력할 수 있고, 보유 장수를 넘기면 보유 장수로 맞춘다[32m 217[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m입력 칸을 비우고 벗어나면 0으로 돌린다[32m 179[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m보유 장수 이상으로 올리지 못한다[32m 63[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m합계가 남은 누적 상한을 넘지 못한다[32m 131[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffleDetail/ui/GradeTicketSteppers.test.tsx[2m > [22mGradeTicketSteppers[2m > [22m잔액을 못 불러오면 모든 스테퍼가 0장에서 잠긴다[32m 12[2mms[22m[39m
+[90mstderr[2m | src/app/routes/adminRoutes.test.tsx[2m > [22m[2m제외된 공통 감사 경로[2m > [22m[2m/admin/audit는 관리자 셸의 404를 표시한다
+[22m[39mAn update to AdminGuard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m/admin/audit는 관리자 셸의 404를 표시한다[33m 529[2mms[22m[39m
+[90mstderr[2m | src/app/routes/adminRoutes.test.tsx[2m > [22m[2m제외된 공통 감사 경로[2m > [22m[2m/admin/audit/sample-id는 관리자 셸의 404를 표시한다
+[22m[39mAn update to AdminGuard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m/admin/audit/sample-id는 관리자 셸의 404를 표시한다[32m 114[2mms[22m[39m
+[90mstderr[2m | src/app/routes/adminRoutes.test.tsx[2m > [22m[2m제외된 공통 감사 경로[2m > [22m[2m/admin/audit?page=2는 관리자 셸의 404를 표시한다
+[22m[39mAn update to AdminGuard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m/admin/audit?page=2는 관리자 셸의 404를 표시한다[32m 121[2mms[22m[39m
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m비로그인은 로그인으로 이동한다[32m 5[2mms[22m[39m
+[90mstderr[2m | src/app/routes/adminRoutes.test.tsx[2m > [22m[2m제외된 공통 감사 경로[2m > [22m[2m/admin/users는 관리자 메뉴에서 사용자 조회 화면을 연다
+[22m[39mAn update to AdminGuard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/app/routes/adminRoutes.test.tsx[2m > [22m[2m제외된 공통 감사 경로[2m > [22m[2m/admin/entries는 관리자 메뉴에서 응모 조회 화면을 연다
+[22m[39mAn update to AdminGuard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m/admin/users는 관리자 메뉴에서 사용자 조회 화면을 연다[32m 83[2mms[22m[39m
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m/admin/entries는 관리자 메뉴에서 응모 조회 화면을 연다[32m 81[2mms[22m[39m
+ [32m✓[39m src/app/routes/adminRoutes.test.tsx[2m > [22m제외된 공통 감사 경로[2m > [22m일반 사용자는 사용자 홈으로 이동한다[32m 5[2mms[22m[39m
+ [32m✓[39m src/entities/user/api/admin.test.tsx[2m > [22m관리자 사용자 조회[2m > [22m필터와 빈 페이지를 그대로 전달하고 전체 활성 사용자 수를 보존한다[32m 179[2mms[22m[39m
+ [32m✓[39m src/entities/user/api/admin.test.tsx[2m > [22m관리자 사용자 조회[2m > [22m전체 사용자 수 누락을 정상 0명으로 바꾸지 않는다[32m 77[2mms[22m[39m
+ [32m✓[39m src/entities/user/api/admin.test.tsx[2m > [22m관리자 사용자 조회[2m > [22m상세는 멤버십 null을 허용하고 목록 집계 필드를 요구하지 않는다[32m 80[2mms[22m[39m
+ [32m✓[39m src/entities/user/api/admin.test.tsx[2m > [22m관리자 사용자 조회[2m > [22m상세 403 오류를 보존하고 자동 재요청하지 않는다[32m 80[2mms[22m[39m
+ [32m✓[39m src/entities/user/api/admin.test.tsx[2m > [22m관리자 사용자 조회[2m > [22m상세 404 오류를 보존하고 자동 재요청하지 않는다[32m 79[2mms[22m[39m
+ [32m✓[39m src/entities/user/api/admin.test.tsx[2m > [22m관리자 사용자 조회[2m > [22m상세 ID가 없으면 요청하지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/utils/groupEntryRows.test.ts[2m > [22mgroupEntryRows[2m > [22m같은 이벤트의 접수 응모를 한 줄로 묶고 장수·횟수를 합산한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/utils/groupEntryRows.test.ts[2m > [22mgroupEntryRows[2m > [22m거절 응모는 묶지 않고 사유를 보존한 개별 줄로 남긴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/utils/groupEntryRows.test.ts[2m > [22mgroupEntryRows[2m > [22m밀리초 유무가 섞인 시각도 실제 시간으로 비교해 최신 응모를 고른다[32m 0[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/utils/groupEntryRows.test.ts[2m > [22mgroupEntryRows[2m > [22m응모권을 쓰지 않은 참여도 그룹에 포함해 횟수를 센다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/SurveyForm.test.tsx[2m > [22mSurveyForm[2m > [22m필수 문항을 비우고 제출하면 확인 모달 없이 오류를 표시한다[32m 176[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/SurveyForm.test.tsx[2m > [22mSurveyForm[2m > [22m필수 문항을 채우면 확인 모달을 거쳐 완료 결과를 올린다[32m 280[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/SurveyForm.test.tsx[2m > [22mSurveyForm[2m > [22m확인 모달에서 취소하면 제출하지 않는다[32m 244[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffle/ui/ClosedRaffleList.test.tsx[2m > [22m마감 래플 표시 범위[2m > [22mpreview는 표시 3행만 읽고 두 주기 뒤에도 추가 요청하지 않는다[32m 139[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffle/ui/ClosedRaffleList.test.tsx[2m > [22m마감 래플 표시 범위[2m > [22mfull는 표시 10행만 읽고 두 주기 뒤에도 추가 요청하지 않는다[32m 121[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffle/ui/ClosedRaffleList.test.tsx[2m > [22m마감 래플 표시 범위[2m > [22m2쪽은 새 10행만 읽고 목록 교체 후 예전 행을 다시 읽지 않는다[33m 358[2mms[22m[39m
+ [32m✓[39m src/pages/timeRaffle/ui/ClosedRaffleList.test.tsx[2m > [22m마감 래플 표시 범위[2m > [22m현황을 못 받으면 참여 인원만 빼고 줄은 그대로 둔다 — 재시도 줄을 따로 띄우지 않는다[32m 128[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mgetVirtualUsers[2m > [22m설정된 JSON을 파싱해 계정 목록을 반환한다[32m 7[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mgetVirtualUsers[2m > [22m미설정이면 missing 오류를 던진다 — 샘플 계정으로 대체하지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mgetVirtualUsers[2m > [22mJSON 해석이 실패하면 invalid 오류를 던진다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mgetVirtualUsers[2m > [22m스키마와 맞지 않는 항목은 invalid 오류를 던진다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mgetVirtualUsers[2m > [22m빈 배열은 invalid 오류를 던진다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mvirtualUserLabel[2m > [22m페르소나가 없는 USER는 중립 라벨을, ADMIN은 시스템 관리 계정을 보인다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mvirtualUserLabel[2m > [22m빈 문자열·공백뿐인 페르소나는 없는 것으로 보고 폴백 라벨을 보인다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/user/model/virtualUsers.test.ts[2m > [22mvirtualUserLabel[2m > [22m앞뒤 공백이 있는 페르소나는 다듬어서 보인다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/admin.test.tsx[2m > [22m관리자 응모 조회[2m > [22m거절의 null 참여자와 4등급 요청량·0장 차감을 읽고 기간 필터를 전달한다[32m 124[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/admin.test.tsx[2m > [22m관리자 응모 조회[2m > [22m응모자 목록은 빈 페이지와 총 인원 수를 구분한다[32m 74[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/admin.test.tsx[2m > [22m관리자 응모 조회[2m > [22m응모자 403를 빈 목록으로 숨기지 않는다[32m 72[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/admin.test.tsx[2m > [22m관리자 응모 조회[2m > [22m응모자 404를 빈 목록으로 숨기지 않는다[32m 75[2mms[22m[39m
+ [32m✓[39m src/entities/entry/api/admin.test.tsx[2m > [22m관리자 응모 조회[2m > [22m이벤트 미선택은 요청하지 않는다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/model/admin.test.ts[2m > [22m관리자 응모권 스키마[2m > [22mAO03 지급 이력은 missionId 없이도 파싱한다[32m 7[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/model/admin.test.ts[2m > [22m관리자 응모권 스키마[2m > [22mAO05는 eventTitle·missionTitle null을 허용한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/model/admin.test.ts[2m > [22m관리자 응모권 스키마[2m > [22mAO04 불일치 항목은 상태 enum이 닫혀 있다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/model/admin.test.ts[2m > [22m관리자 응모권 스키마[2m > [22mAO04 불일치 항목의 마지막 이력 상태는 null을 허용한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/model/admin.test.ts[2m > [22m관리자 응모권 스키마[2m > [22mAO09는 사용자 이름과 등급을 포함한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/model/admin.test.ts[2m > [22m관리자 응모권 스키마[2m > [22mAO08 반환 사유는 EVENT_CANCELED만 허용한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m색깔 공통 seed의 첫 네 문제를 재현한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m주문 seed1의 성공 네 판과 실패 세 판을 재현한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1의 0 ms는 miss이다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1의 304 ms는 perfect이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1의 427 ms는 hit이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 192 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 832 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 191 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 833 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 416 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 608 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 415 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 포함 경계 609 ms[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m정지·카운트다운을 제외하고 누른 순간 정수 ms를 사용한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m제출 후 원본 입력을 바꿔도 재시도 본문은 그대로다[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1 점수 경계를 검증한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1 점수 경계를 검증한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1 점수 경계를 검증한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1 점수 경계를 검증한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m타이밍 seed1 점수 경계를 검증한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/gameSession.test.ts[2m > [22m서버 seed와 원본 입력[2m > [22m본문 1MiB 초과는 원본을 줄이지 않고 제출을 거절한다[32m 6[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mgetMissionPhase[2m > [22m운영 기간 [startsAt, endsAt)으로 단계를 나눈다[32m 2[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionUrgentDeadline[2m > [22m오늘 마감과 7일 이내만 칩으로 보여 준다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionUrgentDeadline[2m > [22m8일 이상 남았거나 끝난 미션은 칩이 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionDeadlineLabel[2m > [22m한국 날짜로 마감일이 오늘이면 오늘 마감[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionDeadlineLabel[2m > [22m남은 날 수를 D-n으로 보여 준다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionDeadlineLabel[2m > [22m자정에 끝나는 미션은 전날을 마감일로 센다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionDeadlineLabel[2m > [22m끝난 미션은 종료[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mfilterMissions[2m > [22m종류·참여 완료로 거른다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22msortMissions[2m > [22m참여 가능(마감 빠른 순) → 시작 전 → 참여 완료 → 종료[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/missionBoard.test.ts[2m > [22mmissionQuestionSummary[2m > [22m문항 수, 선택 문항이 섞이면 필수 개수를 붙인다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/adminStats/api/queries.test.tsx[2m > [22museAdminDailyStats (AS01)[2m > [22mKST 날짜 범위를 그대로 보내고 모든 날의 지표를 파싱한다[32m 113[2mms[22m[39m
+ [32m✓[39m src/entities/adminStats/api/queries.test.tsx[2m > [22museAdminDailyStats (AS01)[2m > [22m범위에 빠진 날이 오면 성공 0으로 채우지 않고 오류로 알린다[32m 71[2mms[22m[39m
+ [32m✓[39m src/entities/adminStats/api/queries.test.tsx[2m > [22museAdminDailyStats (AS01)[2m > [22m32일 범위는 보내지 않고 파라미터 오류를 낸다[32m 7[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mbuildAttendanceWeek[2m > [22m오늘을 마지막 칸으로 7일을 만들고 오늘 칸에 "오늘" 라벨을 붙인다[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mbuildAttendanceWeek[2m > [22m00:00 KST 이전에는 전날(UTC)을 오늘로 본다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mbuildAttendanceWeek[2m > [22mcheckedDates와 attended로 출석 여부를 표시한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mcountMonthlyAttendance[2m > [22m이번 달 출석일만 중복 없이 센다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mbuildAttendanceMonth[2m > [22m이번 달 1일부터 말일까지 만들고 출석일과 오늘을 표시한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mbuildAttendanceMonth[2m > [22m31일까지 있는 달은 31칸을 만든다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mclaimedStreakBonuses[2m > [22m받은 단계만 받은 출석 기준일로 모은다 — 단계 일수와 날짜는 다를 수 있다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22misStreakBonusDate[2m > [22m보상을 받은 날짜만 보상일이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mpickBonusMascotIndex[2m > [22m같은 날짜는 항상 같은 캐릭터를 고른다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/attendanceWeek.test.ts[2m > [22mpickBonusMascotIndex[2m > [22m한 달 안의 보상일끼리는 캐릭터가 겹치지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/AdminEventFormPage.test.tsx[2m > [22mAdminEventFormPage[2m > [22m초기 경품의 라벨 5종이 각각 해당 입력과 연결된다[32m 276[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/AdminEventFormPage.test.tsx[2m > [22mAdminEventFormPage[2m > [22m경품 이미지 라벨이 파일 선택 입력과 연결된다[32m 103[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/AdminEventFormPage.test.tsx[2m > [22mAdminEventFormPage[2m > [22m경품을 추가하면 이미지 라벨도 서로 다른 입력을 가리킨다[32m 197[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/AdminEventFormPage.test.tsx[2m > [22mAdminEventFormPage[2m > [22m경품을 추가하면 경품명 라벨들이 서로 다른 id의 입력을 가리킨다[32m 166[2mms[22m[39m
+ [32m✓[39m src/pages/admin/eventForm/AdminEventFormPage.test.tsx[2m > [22mAdminEventFormPage[2m > [22m첫 경품을 제거해도 남은 경품의 라벨 연결과 id가 유지된다[33m 379[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m첫 조회 로딩 상태를 보조 기술에 알린다[32m 164[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m최근 10건만 받는다[32m 8[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m내역이 더 있으면 전체보기로 마이페이지 응모권 내역에 넘긴다[32m 30[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m마지막 페이지면 전체보기가 없다[32m 5[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m다시 받는 중이면 제목 옆 갱신 표시가 받는 중을 알린다[32m 10[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m재조회 오류에도 기존 이력을 유지하고 다시 시도하면 현재 조건을 재조회한다[32m 13[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m미션 응모권 이력 미리보기[2m > [22m비어 있는 실패는 실패 칸만 띄우고 제목 옆 갱신 표시는 숨긴다[32m 13[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TicketHistoryCard.test.tsx[2m > [22m좁아진 응모권 내역 칸[2m > [22m넓은 화면용 짧은 제목을 두고 갱신 표시 글은 화면 낭독기·툴팁으로 남긴다[32m 15[2mms[22m[39m
+ [32m✓[39m src/widgets/eventEntry/ui/entryDialogs.test.tsx[2m > [22mEntryConfirmDialog[2m > [22m쓰는 등급마다 응모 후 남는 장수를 보여주고 총합은 작게 유지한다[32m 223[2mms[22m[39m
+ [32m✓[39m src/widgets/eventEntry/ui/entryDialogs.test.tsx[2m > [22mEntryConfirmDialog[2m > [22mbalanceByGrade가 null이면 잔여를 -로 표시한다[32m 27[2mms[22m[39m
+ [32m✓[39m src/widgets/eventEntry/ui/entryDialogs.test.tsx[2m > [22mEntryConfirmDialog[2m > [22m빈 tickets 맵이면 응모권 없이 참여한다고 안내한다[32m 19[2mms[22m[39m
+ [32m✓[39m src/widgets/eventEntry/ui/entryDialogs.test.tsx[2m > [22mInsufficientTicketsDialog[2m > [22m브론즈 전용 이벤트면 브론즈 필요 안내를 보여준다[32m 23[2mms[22m[39m
+ [32m✓[39m src/widgets/eventEntry/ui/entryDialogs.test.tsx[2m > [22mInsufficientTicketsDialog[2m > [22m일반 부족 안내를 보여준다[32m 18[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/QuizForm.test.tsx[2m > [22mQuizForm[2m > [22m오답이면 배너를 띄우고 고른 답을 유지한 채 재도전하게 한다[33m 416[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/QuizForm.test.tsx[2m > [22mQuizForm[2m > [22m답을 고치기 시작하면 오답 배너를 거둔다[33m 552[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/QuizForm.test.tsx[2m > [22mQuizForm[2m > [22m정답이면 완료 결과를 올린다[32m 129[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageRejection[2m > [22mPNG·JPG는 통과시킨다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageRejection[2m > [22m다른 형식은 막는다 — 서버가 PNG·JPG만 받는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageRejection[2m > [22m상한을 넘으면 막는다 — 올려 보내고 400을 받느니 먼저 알린다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageSizeIssue[2m > [22m권장 크기를 채우면 아무 말도 하지 않는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageSizeIssue[2m > [22m자리에 따라 판정이 갈린다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageSizeIssue[2m > [22m가로만 넉넉해도 세로가 모자라면 알려 준다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageSizeIssue[2m > [22m작으면 실제 크기와 늘어나는 배율을 알려 준다 — 닫은 뒤의 0이 아니라[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/image/model/upload.test.ts[2m > [22mreadImageSizeIssue[2m > [22m크기를 못 읽으면 조용히 넘어간다 — 최종 판정은 서버다[32m 1[2mms[22m[39m
+ [32m✓[39m src/widgets/liveEntryStatus/ui/LiveEntryStatus.test.tsx[2m > [22m실시간 응모 현황 갱신[2m > [22m최초 429 지연 재시도 중에는 갱신 실패로 표시하고 90초 뒤 복구한다[32m 70[2mms[22m[39m
+ [32m✓[39m src/widgets/liveEntryStatus/ui/LiveEntryStatus.test.tsx[2m > [22m실시간 응모 현황 갱신[2m > [22m갱신 실패에도 이전 수치를 유지하고 갱신 표시를 눌러 복구한다[32m 211[2mms[22m[39m
+ [32m✓[39m src/features/playGame/api/queries.test.tsx[2m > [22m게임 시작과 결과 요청[2m > [22mUUID plays에 본문 없이 시작한다[32m 69[2mms[22m[39m
+ [32m✓[39m src/features/playGame/api/queries.test.tsx[2m > [22m게임 시작과 결과 요청[2m > [22mPROCESSING 이후 원본과 같은 본문을 PUT하고 최초 확정 결과를 받는다[32m 17[2mms[22m[39m
+ [32m✓[39m src/entities/banner/ui/AdminBannerTable.test.tsx[2m > [22mAdminBannerTable[2m > [22m행 전체를 끌 수 있다고 알린다[32m 188[2mms[22m[39m
+ [32m✓[39m src/entities/banner/ui/AdminBannerTable.test.tsx[2m > [22mAdminBannerTable[2m > [22m순서 변경 칸의 버튼은 방향키로 위아래 이동을 부른다[32m 110[2mms[22m[39m
+ [32m✓[39m src/entities/banner/ui/AdminBannerTable.test.tsx[2m > [22mAdminBannerTable[2m > [22m순서 칸은 저장된 값이 아니라 목록 안의 자리를 보여 준다[32m 34[2mms[22m[39m
+ [32m✓[39m src/entities/banner/ui/AdminBannerTable.test.tsx[2m > [22mAdminBannerTable[2m > [22m순서 변경 중에는 끌기 버튼을 잠근다[32m 38[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mreadEventTab[2m > [22m아는 값은 그대로 읽는다[32m 3[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mreadEventTab[2m > [22m모르는 값·없는 값은 진행 중으로 돌린다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mreadEventSort[2m > [22m모르는 값은 최신순으로 돌린다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mfilterEvents[2m > [22m지난 이벤트 탭은 마감과 발표 완료를 함께 담는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mfilterEvents[2m > [22m탭마다 해당 상태만 남긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mfilterEvents[2m > [22m타임래플은 어느 탭에도 넣지 않는다 — 전용 화면이 따로 있다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mfilterEvents[2m > [22m최신순은 시작일 내림차순, 마감 임박순은 마감일 오름차순이다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mfilterEvents[2m > [22m당첨 인원순은 많은 쪽이 먼저다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/utils/filterEvents.test.ts[2m > [22mfilterEvents[2m > [22m받은 배열을 제자리에서 정렬하지 않는다 — 쿼리 캐시가 들고 있는 배열이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/mission/model/adminTypes.test.ts[2m > [22m관리자 미션 계약[2m > [22m선택형 퀴즈는 정답 하나와 보상 1장을 요구한다[32m 8[2mms[22m[39m
+ [32m✓[39m src/entities/mission/model/adminTypes.test.ts[2m > [22m관리자 미션 계약[2m > [22m설문 자유서술에는 정답 없이 필수 여부를 사용한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/mission/model/adminTypes.test.ts[2m > [22m관리자 미션 계약[2m > [22m종료가 시작과 같으면 거절한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/mission/model/adminTypes.test.ts[2m > [22m관리자 미션 계약[2m > [22m관리자 미션은 작성자 이름이 없거나 null이어도 파싱한다 (ADR-028)[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/mission/model/adminTypes.test.ts[2m > [22m관리자 미션 계약[2m > [22m설문 집계는 양끝 포함 최대 31일이다[32m 1[2mms[22m[39m
+[90mstderr[2m | src/features/playGame/ui/TakkoOrderGame.test.tsx[2m > [22m[2m주문 결과 표시 중 정지[2m > [22m[2mhidden에서 다음 주문을 숨겨진 채 진행하지 않는다
+[22m[39mYou have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+
+ [32m✓[39m src/features/playGame/ui/TakkoOrderGame.test.tsx[2m > [22m주문 결과 표시 중 정지[2m > [22mhidden에서 다음 주문을 숨겨진 채 진행하지 않는다[33m 314[2mms[22m[39m
+ [32m✓[39m src/features/playGame/ui/TakkoOrderGame.test.tsx[2m > [22m주문 결과 표시 중 정지[2m > [22mblur에서 다음 주문을 숨겨진 채 진행하지 않는다[32m 125[2mms[22m[39m
+ [32m✓[39m src/features/playGame/ui/TakkoOrderGame.test.tsx[2m > [22m주문 결과 표시 중 정지[2m > [22mbutton에서 다음 주문을 숨겨진 채 진행하지 않는다[32m 133[2mms[22m[39m
+ [32m✓[39m src/features/playGame/ui/TakkoOrderGame.test.tsx[2m > [22m주문 결과 표시 중 정지[2m > [22mSpace에서 다음 주문을 숨겨진 채 진행하지 않는다[32m 118[2mms[22m[39m
+ [32m✓[39m src/features/playGame/ui/TakkoOrderGame.test.tsx[2m > [22m주문 결과 표시 중 정지[2m > [22mEnter에서 다음 주문을 숨겨진 채 진행하지 않는다[32m 107[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mbuildMissionAnswers[2m > [22m답이 있는 문항만 displayOrder 순으로 반환한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mbuildMissionAnswers[2m > [22m선택형 문항에는 answerText를 싣지 않는다[32m 5[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mbuildMissionAnswers[2m > [22m서술형 문항에는 selectedOptionId를 싣지 않는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mbuildMissionAnswers[2m > [22m공백만 있는 서술 답변은 제출 목록에서 제외한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mfindMissingRequired[2m > [22m필수 문항 중 답이 없는 것만 돌려준다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mfindMissingRequired[2m > [22m필수 서술 문항에 공백만 있으면 누락으로 본다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionAnswers.test.ts[2m > [22mfindMissingRequired[2m > [22m모든 필수 문항에 답하면 빈 배열이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.paged.test.tsx[2m > [22mqueryPresets.paged[2m > [22m다음 페이지를 받는 동안 이전 목록을 둔다[32m 143[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.paged.test.tsx[2m > [22mqueryPresets.paged[2m > [22m다음 페이지를 받지 못하면 이전 목록을 새 페이지처럼 보이지 않는다[32m 129[2mms[22m[39m
+ [32m✓[39m src/shared/api/queryPresets.paged.test.tsx[2m > [22mqueryPresets.paged[2m > [22m같은 목록을 다시 받다 실패하면 받아 둔 목록을 유지한다[32m 74[2mms[22m[39m
+ [32m✓[39m src/pages/home/ui/QuickLinks.test.tsx[2m > [22m홈 게임 바로가기 계약 통합[2m > [22mcode로 준비된 게임을 고르고 UUID로 통계를 조회한다[32m 184[2mms[22m[39m
+ [32m✓[39m src/pages/home/ui/QuickLinks.test.tsx[2m > [22m홈 게임 바로가기 계약 통합[2m > [22m횟수 제한 대신 실제 당일 보상을 완료 상태로 표시한다[32m 24[2mms[22m[39m
+ [32m✓[39m src/pages/home/ui/QuickLinks.test.tsx[2m > [22m홈 게임 바로가기 계약 통합[2m > [22m통계 미확인을 보상 완료로 표시하지 않는다[32m 27[2mms[22m[39m
+ [32m✓[39m src/pages/home/ui/QuickLinks.test.tsx[2m > [22m홈 게임 바로가기 계약 통합[2m > [22mADMIN은 통계를 요청하지 않는다[32m 21[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/ui/MyEntryRefreshStatus.test.tsx[2m > [22m응모 갱신 상태 표시[2m > [22m백그라운드 요청은 표시와 다시 받기 버튼에 영향을 주지 않는다[33m 379[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/ui/MyEntryRefreshStatus.test.tsx[2m > [22m응모 갱신 상태 표시[2m > [22m직접 누른 조회만 버튼을 잠그고 중복 요청을 막으며 끝나면 풀린다[32m 28[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/ui/MyEntryRefreshStatus.test.tsx[2m > [22m응모 갱신 상태 표시[2m > [22m갱신 실패는 다시 시도로, 요청 제한은 기다린다는 안내로 보인다[32m 51[2mms[22m[39m
+ [32m✓[39m src/pages/myTickets/ui/TicketHistoryCard.test.tsx[2m > [22m내 응모권 페이지 경계 그룹[2m > [22m쪽을 채우려 다음 이력을 이어 받으면 같은 응모가 한 줄 6장으로 합쳐진다[33m 387[2mms[22m[39m
+ [32m✓[39m src/features/switchVirtualUser/ui/VirtualUserSwitcher.test.tsx[2m > [22m가상 사용자 전환[2m > [22m축약된 트리거도 전체 사용자명을 접근성 이름으로 제공한다[32m 163[2mms[22m[39m
+ [32m✓[39m src/features/switchVirtualUser/ui/VirtualUserSwitcher.test.tsx[2m > [22m가상 사용자 전환[2m > [22m키보드로 열고 Escape로 닫으면 트리거로 포커스가 돌아온다[32m 143[2mms[22m[39m
+ [32m✓[39m src/features/switchVirtualUser/ui/VirtualUserSwitcher.test.tsx[2m > [22m가상 사용자 전환[2m > [22m다른 사용자를 선택하면 닫히고 새 이름을 가진 트리거로 포커스가 돌아온다[32m 138[2mms[22m[39m
+[90mstderr[2m | src/features/playGame/ui/TakkoRunGame.test.tsx[2m > [22m[2m긴 프레임 지연을 따라잡지 않고 다음 프레임은 새 시각부터 계산한다
+[22m[39mYou have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+
+ [32m✓[39m src/features/playGame/ui/TakkoRunGame.test.tsx[2m > [22m긴 프레임 지연을 따라잡지 않고 다음 프레임은 새 시각부터 계산한다[32m 65[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22m프레임 분할이 달라도 동일 입력의 종료 tick과 점수가 같다[32m 4[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22mJava 고정 예제 seed 1[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22mJava 고정 예제 seed 123456789[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22m정지 시간에는 tick을 늘리지 않고 release를 다음 활성 tick에 남긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22m활성 시간 상한의 마지막 번호는 maxTicks-1이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22m충돌 없는 고정 세계에서 72000 tick 뒤 endTick 71999로 종료한다[32m 11[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/fixedRun.test.ts[2m > [22m타꼬런 고정 tick[2m > [22m입력 10000개를 넘기면 정상 종료로 바꾸지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/event/api/queries.test.tsx[2m > [22m이벤트 전체 수집[2m > [22m마지막 페이지까지 수집하고 중간 페이지 유실을 전체 목록으로 확정하지 않는다[33m 1179[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mkstDateKey[2m > [22mKST 자정 직후 응모는 그날로 센다[32m 2[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mkstDateKey[2m > [22mKST 자정 직전 응모는 전날로 센다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mbuildEntryCalendar[2m > [22m시작일과 종료일을 모두 포함한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mbuildEntryCalendar[2m > [22m첫 주의 빈 칸을 요일에 맞춘다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mbuildEntryCalendar[2m > [22m응모한 날에 표시하고 같은 날 여러 건은 한 칸으로 합친다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mbuildEntryCalendar[2m > [22m오늘과 지나간 미응모를 구분한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/entryCalendar.test.ts[2m > [22mbuildEntryCalendar[2m > [22m기간이 아주 길어도 칸 수를 제한한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TodayRewardsBanner.test.tsx[2m > [22m게임 보상 조회 상태[2m > [22m조회 실패를 미수령 수치나 무한 로딩으로 표시하지 않는다[32m 117[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TodayRewardsBanner.test.tsx[2m > [22m게임 보상 조회 상태[2m > [22mADMIN는 비활성 통계 쿼리를 기다리지 않는다[32m 10[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TodayRewardsBanner.test.tsx[2m > [22m게임 보상 조회 상태[2m > [22m는 비활성 통계 쿼리를 기다리지 않는다[32m 7[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/ui/TodayRewardsBanner.test.tsx[2m > [22m게임 보상 조회 상태[2m > [22m조회 성공 시 실제 지급 상태를 표시한다[32m 11[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/types.test.ts[2m > [22m게임 판정과 입력 경계[2m > [22mPROCESSING를 유효 점수·보상으로 바꾸지 않는다[32m 4[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/types.test.ts[2m > [22m게임 판정과 입력 경계[2m > [22mINVALID를 유효 점수·보상으로 바꾸지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/types.test.ts[2m > [22m게임 판정과 입력 경계[2m > [22m유효한 0점과 보상 없음은 실패가 아니다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/types.test.ts[2m > [22m게임 판정과 입력 경계[2m > [22m서로 다른 게임 입력을 섞거나 10000개를 초과하면 제출하지 않는다[32m 8[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/types.test.ts[2m > [22m게임 판정과 입력 경계[2m > [22m알려진 버전의 규칙값 변경은 차단하지만 추가 숫자 필드는 허용한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketBalance/ui/TicketBalanceWidget.test.tsx[2m > [22m적립 카드의 통계 로딩[2m > [22m통계가 도착하기 전 카드를 정렬해 노출하지 않는다[32m 118[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketBalance/ui/TicketBalanceWidget.test.tsx[2m > [22m적립 카드의 통계 로딩[2m > [22mADMIN의 비활성 통계는 로딩에서 제외한다[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/api/queries.test.tsx[2m > [22m미션 제출 원본 재시도[2m > [22m응답 형식이 없는 HTTP 503도 같은 키를 유지한다[32m 24[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/api/queries.test.tsx[2m > [22m미션 제출 원본 재시도[2m > [22m429 이후 같은 키와 원본을 유지한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/api/queries.test.tsx[2m > [22m미션 제출 원본 재시도[2m > [22m503 이후 같은 키와 원본을 유지한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/groupHistories.test.ts[2m > [22mgroupTicketHistories[2m > [22m같은 응모(eventEntryId)에 쓴 여러 장을 한 줄로 묶고 등급별 장수를 센다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/groupHistories.test.ts[2m > [22mgroupTicketHistories[2m > [22m응모 번호가 없으면 처리 종류·사유·분이 같은 것만 묶고 최신순으로 돌려준다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/groupHistories.test.ts[2m > [22mgroupTicketHistories[2m > [22m정정은 장수를 바꾸지 않아 변동이 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/EventDetailPage.test.tsx[2m > [22mEventDetailPage의 대표 이미지[2m > [22m올린 대표 이미지를 상세에도 보인다[32m 189[2mms[22m[39m
+ [32m✓[39m src/pages/admin/draw/ui/DrawEventPicker.test.tsx[2m > [22m추첨 관리 이벤트 표[2m > [22m이벤트를 표의 줄로 보여 주고 유형을 겟또타임·이벤트로 나눈다[32m 150[2mms[22m[39m
+ [32m✓[39m src/pages/admin/draw/ui/DrawEventPicker.test.tsx[2m > [22m추첨 관리 이벤트 표[2m > [22m줄이나 관리 버튼을 누르면 그 이벤트를 연다[32m 26[2mms[22m[39m
+ [32m✓[39m src/app/config/sessionSync.test.ts[2m > [22m사용자 문맥 헤더 인터셉터[2m > [22m일반 사용자의 ID·역할·멤버십을 헤더로 보낸다[32m 6[2mms[22m[39m
+ [32m✓[39m src/app/config/sessionSync.test.ts[2m > [22m사용자 문맥 헤더 인터셉터[2m > [22m관리자는 ID·역할만 보내고 멤버십 헤더는 생략한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/app/config/sessionSync.test.ts[2m > [22m사용자 문맥 헤더 인터셉터[2m > [22m세션이 없으면 사용자 문맥 헤더를 보내지 않는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m일일 보상은 양의 정수이며 적용일을 입력받지 않는다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m중복·역순·범위 밖 단계 7를 거절한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m중복·역순·범위 밖 단계 14를 거절한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m중복·역순·범위 밖 단계 0를 거절한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m중복·역순·범위 밖 단계 7를 거절한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m여러 단계의 수량을 별도로 유지한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/attendance/model/adminTypes.test.ts[2m > [22m출석 예약 입력[2m > [22m정책 응답은 작성자 이름이 없거나 null이어도 파싱한다 (ADR-028)[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/ticketUsage.test.ts[2m > [22mdescribeTicketUsage[2m > [22m응모권 미사용은 한 번만 참여한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/ticketUsage.test.ts[2m > [22mdescribeTicketUsage[2m > [22m가중치 미적용은 브론즈 1장 한 번이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/ticketUsage.test.ts[2m > [22mdescribeTicketUsage[2m > [22m가중치 적용은 누적 상한까지 나눠서 낸다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/ticketUsage.test.ts[2m > [22mdescribeTicketUsage[2m > [22m상한이 없으면 장수를 제한하지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/ticketUsage.test.ts[2m > [22mdescribeTicketUsage[2m > [22m상한이 1장이면 나눠 낼 자리가 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/ticketUsage.test.ts[2m > [22mdescribeTicketUsage[2m > [22m상한을 모르면 장수를 적지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoOrder.test.ts[2m > [22m타꼬 주문 규칙[2m > [22m주문은 정한 길이만큼 만들고 같은 메뉴가 세 번 연달아 나오지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoOrder.test.ts[2m > [22m타꼬 주문 규칙[2m > [22m고른 것이 주문 앞부분과 같으면 맞고, 하나라도 다르면 틀린다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoOrder.test.ts[2m > [22m타꼬 주문 규칙[2m > [22m맞히면 주문이 하나 길어지고 최대 길이에서 멈춘다, 틀리면 그대로[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoOrder.test.ts[2m > [22m타꼬 주문 규칙[2m > [22m보여 주는 시간은 주문이 길수록 늘어난다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoOrder.test.ts[2m > [22m손님 순서 표기[2m > [22m열 번째까지는 말로, 그 뒤는 숫자로 적는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoTiming.test.ts[2m > [22mtakkoTiming[2m > [22m성공할수록 빨라지고 금색 구간이 좁아지되 한계 아래로는 내려가지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoTiming.test.ts[2m > [22mtakkoTiming[2m > [22m타코야끼는 0에서 1까지 갔다가 되돌아온다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoTiming.test.ts[2m > [22mtakkoTiming[2m > [22m금색 구간 가운데는 퍼펙트, 구간 안은 성공, 밖은 실패로 채점한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/takkoTiming.test.ts[2m > [22mtakkoTiming[2m > [22m금색 구간은 길 양 끝에 붙지 않고, 앞 판과 겹치면 반대편으로 옮긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mhexToHsl[2m > [22m무채색은 채도가 0이다[32m 3[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mhexToHsl[2m > [22m사진 기준 라벤더를 읽는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mhexToHsl[2m > [22m#RRGGBB가 아니면 null이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mtintFilter[2m > [22m같은 색이면 필터를 걸지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mtintFilter[2m > [22m형식이 틀리면 필터를 걸지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mtintFilter[2m > [22m색상환을 짧은 쪽으로 돌린다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mtintFilter[2m > [22m밝기를 좁은 범위로 가둔다 — 금속 몸체까지 어두워지지 않게[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mtintFilter[2m > [22m채도를 올려 색을 입힌다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventDetail/utils/tintFilter.test.ts[2m > [22mtintFilter[2m > [22m무채색 사진이면 채도를 건드리지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/api/queries.test.tsx[2m > [22m출석 요청 가드[2m > [22m같은 틱의 중복 요청도 한 번만 전송한다[32m 30[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/api/queries.test.tsx[2m > [22m출석 요청 가드[2m > [22m429 대기 중 재클릭으로 요청을 우회하지 않는다[32m 4[2mms[22m[39m
+ [32m✓[39m src/pages/myEntries/utils/filterEntries.test.ts[2m > [22mreadEntryFilters[2m > [22m모르는 값은 기본값으로 읽는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/pages/myEntries/utils/filterEntries.test.ts[2m > [22mscopeEntryGroups[2m > [22m기간과 종류로 거른다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/myEntries/utils/filterEntries.test.ts[2m > [22mfilterEntryGroups[2m > [22m결과로 거르고 오래된 순으로 뒤집는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/utils/groupNotifications.test.ts[2m > [22mgroupNotifications[2m > [22mKST 날짜별로 오늘·어제·날짜로 묶는다[32m 6[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/utils/groupNotifications.test.ts[2m > [22mgroupNotifications[2m > [22m빈 묶음은 만들지 않고, 같은 날짜 안에서는 받은 순서를 유지한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/utils/groupNotifications.test.ts[2m > [22mgroupNotifications[2m > [22m올해가 아닌 알림은 해를 붙여 같은 날짜의 다른 해와 묶이지 않는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/app/config/serviceWorkerCleanup.test.ts[2m > [22munregisterMockServiceWorker[2m > [22m우리 앱의 mockServiceWorker.js 등록만 해제한다[32m 3[2mms[22m[39m
+ [32m✓[39m src/app/config/serviceWorkerCleanup.test.ts[2m > [22munregisterMockServiceWorker[2m > [22mwaiting·installing 상태의 워커도 script URL로 판별한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/app/config/serviceWorkerCleanup.test.ts[2m > [22munregisterMockServiceWorker[2m > [22mserviceWorker를 지원하지 않는 환경에서는 조용히 통과한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/MissionAnswersForm.test.tsx[2m > [22m미션 부분 제출[2m > [22m퀴즈는 답한 문항만 제출해 서버의 누적 정답 판정을 받는다[32m 282[2mms[22m[39m
+ [32m✓[39m src/features/submitMission/ui/MissionAnswersForm.test.tsx[2m > [22m미션 부분 제출[2m > [22m설문은 필수 문항이 비면 제출하지 않는다[32m 150[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22mrowIndexAt[2m > [22m올라가 있는 행을 돌려준다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22mrowIndexAt[2m > [22m목록 위아래를 벗어나면 첫 행·끝 행이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22mrowIndexAt[2m > [22m행이 없으면 가리킬 자리도 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22mmoveItem[2m > [22m뒤로 옮긴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22mmoveItem[2m > [22m앞으로 옮긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22mmoveItem[2m > [22m제자리나 범위 밖이면 그대로다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/banner/utils/dropOrder.test.ts[2m > [22msameOrder[2m > [22mid가 같은 차례면 같은 순서다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionPeriod.test.ts[2m > [22misMissionOpen[2m > [22m미션은 운영 기간 [시작, 종료) 안에서만 참여할 수 있다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionPeriod.test.ts[2m > [22misMissionOpenByServerTime[2m > [22mserverTime이 [startsAt, endsAt) 안이면 진행 중이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionPeriod.test.ts[2m > [22misMissionOpenByServerTime[2m > [22mserverTime이 종료 정각이면 마감이고 시작 전이면 열리지 않았다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/manageEvent/api/queries.test.tsx[2m > [22m이벤트 취소 후 사용자 상태·응모·반환 응모권·홈 배너를 함께 갱신한다[32m 22[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/colorWord.test.ts[2m > [22mcreateColorWordRound[2m > [22m뜻과 색이 다르게 나오면 다른 색 중에서 고른다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/colorWord.test.ts[2m > [22mcreateColorWordRound[2m > [22m비율을 넘으면 뜻과 같은 색으로 낸다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/colorWord.test.ts[2m > [22mcreateColorWordRound[2m > [22m바로 앞 문제와 똑같으면 다시 뽑는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/colorWord.test.ts[2m > [22mcolorWordTimeLimitMs[2m > [22m3초에서 시작해 맞힐수록 줄고 1.2초 아래로는 내려가지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/playGame/model/colorWord.test.ts[2m > [22misColorWordCorrect[2m > [22m글자 뜻이 아니라 글자 색이 정답이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/ui/EventListCard.test.tsx[2m > [22mEventListCard[2m > [22m내가 응모한 이벤트에만 응모 완료를 적는다[32m 38[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/ui/EventListCard.test.tsx[2m > [22mEventListCard[2m > [22m응모하지 않았으면 적지 않는다[32m 4[2mms[22m[39m
+ [32m✓[39m src/pages/eventList/ui/EventListCard.test.tsx[2m > [22mEventListCard[2m > [22m마감한 이벤트에도 내 응모 여부를 함께 적는다[32m 5[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageItems[2m > [22m7쪽 이하는 번호를 모두 보인다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageItems[2m > [22m앞쪽에 있으면 뒤만 접는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageItems[2m > [22m가운데에 있으면 앞뒤를 접고 현재 앞뒤 한 칸을 둔다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageItems[2m > [22m뒤쪽에 있으면 앞만 접는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageSlice[2m > [22m쪽 번호에 맞는 줄만 자른다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageSlice[2m > [22m줄이 줄어 쪽이 사라지면 마지막 쪽을 보인다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pagination.test.ts[2m > [22mpageSlice[2m > [22m빈 목록도 1쪽으로 센다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0의 등급은 BRONZE다[32m 3[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.799799의 등급은 BRONZE다[32m 1[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.7998의 등급은 SILVER다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.979799의 등급은 SILVER다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.9798의 등급은 GOLD다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.999799의 등급은 GOLD다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.9998의 등급은 PLATINUM다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m난수 0.999999의 등급은 PLATINUM다[32m 0[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m확률 합계는 100이고 플래티넘 가중치는 10이다[32m 1[2mms[22m[39m
+ [32m✓[39m src/mocks/handlers/ticketGrade.test.ts[2m > [22m네 등급 응모권 계약[2m > [22m플래티넘 지급·차감도 보유 장수에 반영한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/ui/pagination.test.tsx[2m > [22mPagination 쪽 번호 입력[2m > [22mjump를 켜면 입력한 쪽으로 이동하고 범위를 넘으면 마지막 쪽으로 맞춘다[33m 427[2mms[22m[39m
+ [32m✓[39m src/shared/ui/pagination.test.tsx[2m > [22mPagination 쪽 번호 입력[2m > [22m숫자가 아닌 글자는 받지 않고, jump를 끄면 입력칸이 없다[32m 96[2mms[22m[39m
+ [32m✓[39m src/widgets/gameRail/ui/GameRail.test.tsx[2m > [22m준비된 code만 표시하고 두 반응형 배치에 서버 보상을 전달한다[32m 114[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketWallet/utils/monthlyTicketSummary.test.ts[2m > [22msummarizeMonthlyTickets[2m > [22m이번 달(KST) 적립과 사용을 나눠 장수를 센다[32m 2[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketWallet/utils/monthlyTicketSummary.test.ts[2m > [22msummarizeMonthlyTickets[2m > [22mKST로 다음 달이 된 이력은 이번 달에서 제외한다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/historyLink.test.ts[2m > [22mgetTicketHistoryLink[2m > [22m응모·반환에 연결된 래플이 있으면 그 래플 상세로 보낸다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/historyLink.test.ts[2m > [22mgetTicketHistoryLink[2m > [22m래플 id에 경로 구분 문자가 있어도 인코딩해 한 경로 조각으로 넣는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/historyLink.test.ts[2m > [22mgetTicketHistoryLink[2m > [22m연결된 래플이 없으면 내 응모 내역으로 보낸다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/historyLink.test.ts[2m > [22mgetTicketHistoryLink[2m > [22m적립에는 링크가 없고, 만료·정정은 내 응모권으로 보낸다[32m 0[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketBalance/utils/orderEarnCards.test.ts[2m > [22morderEarnCards[2m > [22m출석을 앞에 두고 미션·게임을 번갈아 둔다[32m 2[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketBalance/utils/orderEarnCards.test.ts[2m > [22morderEarnCards[2m > [22m같은 종류 안에서는 응모권이 많은 순, 같으면 원래 순서[32m 0[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketBalance/utils/orderEarnCards.test.ts[2m > [22morderEarnCards[2m > [22m오늘 다 한 카드는 출석이어도 맨 뒤로 보낸다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/myPage/ui/AccountInfoCard.test.tsx[2m > [22m계정 정보 카드[2m > [22m사용자 ID는 가려 두고 보기를 눌러야 전체가 보인다[32m 141[2mms[22m[39m
+ [32m✓[39m src/pages/myPage/ui/AccountInfoCard.test.tsx[2m > [22m계정 정보 카드[2m > [22m멤버십 등급 순서 안에 내 등급을 표시한다[32m 12[2mms[22m[39m
+ [32m✓[39m src/pages/myEntries/ui/EntryStatusTiles.test.tsx[2m > [22m응모 집계 최초 실패[2m > [22m응모 목록 자체가 실패하면 전체도 0건으로 확정하지 않는다[32m 132[2mms[22m[39m
+ [32m✓[39m src/pages/myEntries/ui/EntryStatusTiles.test.tsx[2m > [22m응모 집계 최초 실패[2m > [22m결과 일부만 실패하면 정확한 전체 응모 수를 보존한다[32m 13[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketEventSection/ui/TicketEventSection.test.tsx[2m > [22mTicketEventSection 빈 칸[2m > [22m진행 중·오픈 예정이 모두 없으면 두 칸 모두 "없어요"를 보인다[32m 43[2mms[22m[39m
+ [32m✓[39m src/widgets/ticketEventSection/ui/TicketEventSection.test.tsx[2m > [22mTicketEventSection 빈 칸[2m > [22m불러오는 중이거나 실패하면 빈 칸 안내를 띄우지 않는다[32m 9[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/utils/latestWonAt.test.ts[2m > [22mlatestWonAt[2m > [22m응모순이 아니라 마감 시각이 가장 늦은 당첨을 고른다[32m 2[2mms[22m[39m
+ [32m✓[39m src/widgets/myEntryRows/utils/latestWonAt.test.ts[2m > [22mlatestWonAt[2m > [22m당첨이 없으면 undefined, 이벤트 정보가 없으면 최근 응모 시각을 쓴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/todayRewards.test.ts[2m > [22msummarizeTodayRewards[2m > [22m출석·게임·설문퀴즈에서 아직 받지 않은 보상 수를 센다[32m 3[2mms[22m[39m
+ [32m✓[39m src/pages/missionList/utils/todayRewards.test.ts[2m > [22msummarizeTodayRewards[2m > [22m다 받았으면 0이고, 아직 불러오지 못한 항목은 세지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/hooks/useImageFallback.test.ts[2m > [22museImageFallback[2m > [22m주소가 있으면 그린다[32m 14[2mms[22m[39m
+ [32m✓[39m src/shared/hooks/useImageFallback.test.ts[2m > [22museImageFallback[2m > [22m주소가 없으면 그리지 않는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/hooks/useImageFallback.test.ts[2m > [22museImageFallback[2m > [22m깨지면 대체 칸으로 떨어진다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/hooks/useImageFallback.test.ts[2m > [22museImageFallback[2m > [22m주소가 바뀌면 다시 시도한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pointerTarget.test.ts[2m > [22mstartsOnOwnControl[2m > [22m버튼과 그 안의 글자·아이콘에서 시작한 누름은 버튼의 것이다[32m 18[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pointerTarget.test.ts[2m > [22mstartsOnOwnControl[2m > [22m링크·입력도 마찬가지다[32m 6[2mms[22m[39m
+ [32m✓[39m src/shared/utils/pointerTarget.test.ts[2m > [22mstartsOnOwnControl[2m > [22m평범한 칸이나 대상이 없으면 끌기를 시작해도 된다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/home/utils/homeSections.test.ts[2m > [22mmyAwaitingResults[2m > [22m응모하지 않은 이벤트는 빼고 내 것만 남긴다[32m 3[2mms[22m[39m
+ [32m✓[39m src/pages/home/utils/homeSections.test.ts[2m > [22mmyAwaitingResults[2m > [22m마감과 발표 완료를 함께 담는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/pages/home/utils/homeSections.test.ts[2m > [22mmyAwaitingResults[2m > [22m아직 끝나지 않은 이벤트는 넣지 않는다 — 기다릴 결과가 없다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/nextStreakMilestone.test.ts[2m > [22mnextStreakMilestone[2m > [22m지금 연속 일수보다 큰 가장 가까운 단계를 고른다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/nextStreakMilestone.test.ts[2m > [22mnextStreakMilestone[2m > [22m이미 받은 단계는 건너뛴다[32m 1[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/nextStreakMilestone.test.ts[2m > [22mnextStreakMilestone[2m > [22m이번 달 안에 닿을 수 없으면 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/checkAttendance/utils/nextStreakMilestone.test.ts[2m > [22mnextStreakMilestone[2m > [22m남은 단계가 없으면 없다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/game/model/types.test.ts[2m > [22m게임 조회 계약[2m > [22mUUID와 code, nullable 설명을 소비하며 임시 횟수 제한을 요구하지 않는다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/game/model/types.test.ts[2m > [22m게임 조회 계약[2m > [22m누적 통계와 서버의 KST 기준일을 소비한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/banner/model/types.test.ts[2m > [22m사용자 배너는 이전 미연결 행과 필수 필드 누락을 거절한다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/banner/model/types.test.ts[2m > [22m이전 배너 조회 계약[2m > [22m보존된 순서 0를 변환 없이 읽는다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/banner/model/types.test.ts[2m > [22m이전 배너 조회 계약[2m > [22m보존된 순서 10를 변환 없이 읽는다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/banner/model/types.test.ts[2m > [22m이전 배너 조회 계약[2m > [22m보존된 순서 20를 변환 없이 읽는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/widgets/drawResult/ui/MyResultCard.test.tsx[2m > [22mMyResultCard[2m > [22m공개 전에는 발표 대기 상태를 보여 주고 예정 시각은 표시하지 않는다[32m 42[2mms[22m[39m
+ [32m✓[39m src/widgets/drawResult/ui/MyResultCard.test.tsx[2m > [22mMyResultCard[2m > [22m응모한 사람에게는 결과 자리 안내를 보여 준다[32m 4[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionThumbnail.test.ts[2m > [22mmissionThumbnail[2m > [22m서버 그림이 있으면 그대로 쓴다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/mission/utils/missionThumbnail.test.ts[2m > [22mmissionThumbnail[2m > [22m설문·OX 퀴즈·퀴즈 기본 그림을 고른다[32m 1[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/historyPeriod.test.ts[2m > [22m응모권 합계 기간[2m > [22mUTC 월말 오후 3시부터 다음 KST 월의 전체 범위를 조회한다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/ticket/utils/historyPeriod.test.ts[2m > [22m응모권 합계 기간[2m > [22m같은 KST 날짜의 렌더에서는 같은 오늘 범위를 반환한다[32m 1[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/utils/toInternalPath.test.ts[2m > [22mtoInternalPath[2m > [22m내부 경로는 그대로 돌려준다[32m 2[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/utils/toInternalPath.test.ts[2m > [22mtoInternalPath[2m > [22m역슬래시와 제어 문자가 포함된 경로는 null이다[32m 1[2mms[22m[39m
+ [32m✓[39m src/widgets/notificationBell/utils/toInternalPath.test.ts[2m > [22mtoInternalPath[2m > [22mnull·외부 URL·프로토콜 상대 URL은 null이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/manageBanner/utils/bannerOrder.test.ts[2m > [22mmoveBannerId[2m > [22m한 칸 위로 옮긴다[32m 2[2mms[22m[39m
+ [32m✓[39m src/features/manageBanner/utils/bannerOrder.test.ts[2m > [22mmoveBannerId[2m > [22m한 칸 아래로 옮기고 원본을 바꾸지 않는다[32m 0[2mms[22m[39m
+ [32m✓[39m src/features/manageBanner/utils/bannerOrder.test.ts[2m > [22mmoveBannerId[2m > [22m맨 위·맨 아래·없는 ID는 null이다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mPUBLISHED는 더 전이하지 않는 종결 상태다[32m 2[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mNO_ENTRANTS는 더 전이하지 않는 종결 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mNO_ELIGIBLE_ENTRANTS는 더 전이하지 않는 종결 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mCANCELED는 더 전이하지 않는 종결 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mSCHEDULED는 이후 전이가 남은 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mOPEN는 이후 전이가 남은 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mCLOSED는 이후 전이가 남은 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mDRAW_CONFIRMED는 이후 전이가 남은 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/model/eventStatus.test.ts[2m > [22misFinalEventStatus[2m > [22mREDRAWING는 이후 전이가 남은 상태다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/format.test.ts[2m > [22mmaskName[2m > [22m세 글자 이름은 가운데 한 글자를 가린다[32m 2[2mms[22m[39m
+ [32m✓[39m src/shared/utils/format.test.ts[2m > [22mmaskName[2m > [22m네 글자 이상은 첫·끝 글자만 남긴다[32m 0[2mms[22m[39m
+ [32m✓[39m src/shared/utils/format.test.ts[2m > [22mmaskName[2m > [22m두 글자는 뒤 글자를 가리고, 한 글자는 그대로 둔다[32m 0[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/eventPath.test.ts[2m > [22meventDetailPath[2m > [22m겟또타임은 겟또타임 상세로 간다[32m 3[2mms[22m[39m
+ [32m✓[39m src/entities/event/utils/eventPath.test.ts[2m > [22meventDetailPath[2m > [22m그 밖의 이벤트는 이벤트 상세로 간다[32m 1[2mms[22m[39m
+ [32m✓[39m src/shared/ui/button.test.tsx[2m > [22mButton[2m > [22mrenders children and is clickable[32m 136[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m127 passed[39m[22m[90m (127)[39m
+[2m      Tests [22m [1m[32m848 passed[39m[22m[90m (848)[39m
+[2m   Start at [22m 13:53:47
+[2m   Duration [22m 398.08s[2m (setup 53%, environment 30%, tests 13%, transform 3%, import 1%)[22m
+
+[2m    Isolate [22m [33m127 workers spawned[39m[2m · ~1.02s startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~128.68s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m

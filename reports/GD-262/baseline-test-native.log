@@ -1,0 +1,15 @@
+
+> getddo-fe@0.0.0 test:ci
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/s_don/Desktop/Projects/Project_Hub/Ureca-GETDDO/getddo-fe
+
+
+ Test Files  114 passed (114)
+      Tests  758 passed (758)
+   Start at  09:09:51
+   Duration  184.47s (setup 64%, environment 21%, tests 9%, transform 3%, import 3%)
+
+    Isolate  114 workers spawned · ~2.61s startup each (spawn + environment, per file)
+             at least ~39.82s faster with isolate: false — reuses workers across files instead of one per file

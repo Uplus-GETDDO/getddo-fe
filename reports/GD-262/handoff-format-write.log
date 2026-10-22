@@ -1,0 +1,29 @@
+src/app/routes/userRoutes.tsx 218ms (unchanged)
+src/app/routes/userRoutes.test.tsx 15ms (unchanged)
+scripts/measureGd262Bundle.mjs 23ms (unchanged)
+scripts/measureGd262Performance.mjs 92ms
+docs/superpowers/plans/2026-10-20-backend-integration-roadmap.md 254ms (unchanged)
+docs/superpowers/plans/2026-10-21-GD-262-performance.md 117ms (unchanged)
+docs/superpowers/plans/GD-262-handoff.md 45ms
+docs/superpowers/plans/GD-262-devin-prompt.md 17ms (unchanged)
+reports/20261021-GD-262-performance.md 43ms
+reports/GD-262/after-bundle.json 50ms
+reports/GD-262/before-bundle.json 33ms
+reports/GD-262/before.json 317ms
+reports/GD-262/build-identities.json 1ms
+reports/GD-262/controlled-before.json 285ms
+reports/GD-262/diagnostic-before-home-uncompressed.json 152ms
+reports/GD-262/diagnostic-before-ready.json 8ms
+reports/GD-262/diagnostic-before-uncompressed.json 20ms
+reports/GD-262/diagnostic-fixture-capture-cold.json 30ms
+reports/GD-262/diagnostic-fixture-capture-partial.json 11ms
+reports/GD-262/diagnostic-home-uncompressed.json 137ms
+reports/GD-262/diagnostic-live-after-partial.json 107ms
+reports/GD-262/filter-contract-probe.json 1ms
+reports/GD-262/fixture-inventory.json 5ms
+reports/GD-262/handoff-state.json 1ms
+reports/GD-262/live-summary.md 28ms
+reports/GD-262/page-fixture.json 1ms
+reports/GD-262/pilot.json 24ms
+reports/GD-262/synthetic-dataset.json 1ms
+reports/GD-262/transport-proof.json 1ms

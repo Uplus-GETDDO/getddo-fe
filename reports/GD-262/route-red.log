@@ -1,0 +1,52 @@
+
+ RUN  v5.0.1 C:/Users/s_don/Desktop/Projects/Project_Hub/Ureca-GETDDO/getddo-fe
+
+ ❯ src/app/routes/userRoutes.test.tsx (1 test | 1 failed) 115ms
+   ❯ 사용자 초기 경로의 게임 코드 분리 (1)
+     × 게임 코드를 받는 동안 로딩을 알리고 로드되면 상세를 표시한다 108ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/app/routes/userRoutes.test.tsx > 사용자 초기 경로의 게임 코드 분리 > 게임 코드를 받는 동안 로딩을 알리고 로드되면 상세를 표시한다
+TestingLibraryElementError: Unable to find an accessible element with the role "status"
+
+Here are the accessible roles:
+
+  paragraph:
+
+  Name "":
+  <p />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <p>
+      게임 상세
+    </p>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/app/routes/userRoutes.test.tsx:18:23
+     16|         expect(route?.handle).toEqual({ fullBleed: true });
+     17|         render(<>{route?.element}</>);
+     18|         expect(screen.getByRole('status')).toHaveTextContent('불러오는 중…'…
+       |                       ^
+     19|         expect(await screen.findByText('게임 상세')).toBeInTheDocument();
+     20|         expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  09:31:46
+   Duration  5.94s (transform 40%, setup 32%, environment 20%, import 6%, tests 2%)
+
+  Transform  transforming modules took 2.29s · 40% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
