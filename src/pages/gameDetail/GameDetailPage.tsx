@@ -151,7 +151,10 @@ function GameDetailContent({
                             {play.busy && <p>서버 응답을 확인하고 있습니다.</p>}
                             {play.error && <p>{play.error}</p>}
                             {play.result?.status === 'PROCESSING' && (
-                                <p>결과를 처리하고 있습니다. 같은 기록으로 다시 확인해 주세요.</p>
+                                <p>
+                                    결과를 처리하고 있습니다. 같은 기록으로 자동 확인하며 잠시만
+                                    기다려 주세요.
+                                </p>
                             )}
                             {play.result?.status === 'INVALID' && (
                                 <p>
@@ -180,8 +183,8 @@ function GameDetailContent({
                             )}
                             {play.pending && (
                                 <p>
-                                    결과 확인 전에는 새 판을 시작할 수 없습니다. 원본 기록은 이
-                                    브라우저의 메모리에 보존되며 새로고침하면 사라집니다.
+                                    결과 확인 전에는 새 판을 시작할 수 없습니다. 원본 기록은 이 탭에
+                                    보존되어 새로고침해도 유지되며 탭을 닫으면 지워집니다.
                                 </p>
                             )}
                             {!playableCode && <p>아직 지원하지 않는 게임입니다.</p>}

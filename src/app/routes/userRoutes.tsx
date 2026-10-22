@@ -72,6 +72,15 @@ export const userRoutes: RouteObject[] = [
                     })),
                 ),
             },
+            // 서버 알림 linkUrl이 /events/{id}/results를 쓴다 — 상세가 발표 후 결과를 함께 보여주므로 같은 페이지로 연다
+            {
+                path: '/events/:id/results',
+                element: lazyPage(() =>
+                    import('@pages/eventDetail/EventDetailPage').then((m) => ({
+                        default: m.EventDetailPage,
+                    })),
+                ),
+            },
             {
                 path: '/missions',
                 element: lazyPage(() =>

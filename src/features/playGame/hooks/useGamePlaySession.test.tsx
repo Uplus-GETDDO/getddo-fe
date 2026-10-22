@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { server } from '../../../mocks/server';
 import { useGamePlaySession } from './useGamePlaySession';
@@ -26,6 +26,10 @@ function setup(isUser = true, userId = crypto.randomUUID()) {
     });
 }
 describe('원본 제출과 재시도 수명', () => {
+    afterEach(() => {
+        vi.useRealTimers();
+        sessionStorage.clear();
+    });
     it('응답 유실 후 새 판을 발급하지 않고 복제한 원본으로 재시도한다', async () => {
         let starts = 0;
         const bodies: unknown[] = [];
@@ -121,13 +125,16 @@ describe('원본 제출과 재시도 수명', () => {
             if (status === 429) expect(result.current.retryReady).toBe(false);
         },
     );
-    it('PROCESSING 응답 뒤에는 새 판을 만들지 않고 같은 판을 보존한다', async () => {
+    it('PROCESSING 응답은 새 판 없이 같은 원본으로 자동 재확인한다', async () => {
+        vi.useFakeTimers();
+        const bodies: unknown[] = [];
         server.use(
             http.post('*/v1/games/:gameId/plays', () =>
                 HttpResponse.json({ success: true, data: start }, { status: 201 }),
             ),
-            http.put('*/v1/games/:id/plays/:playId/result', () =>
-                HttpResponse.json(
+            http.put('*/v1/games/:id/plays/:playId/result', async ({ request }) => {
+                bodies.push(await request.json());
+                return HttpResponse.json(
                     {
                         success: true,
                         data: {
@@ -139,8 +146,8 @@ describe('원본 제출과 재시도 수명', () => {
                         },
                     },
                     { status: 202 },
-                ),
-            ),
+                );
+            }),
         );
         const { result } = setup();
         await act(async () => {
@@ -151,7 +158,70 @@ describe('원본 제출과 재시도 수명', () => {
         });
         expect(result.current.result?.status).toBe('PROCESSING');
         expect(result.current.pending?.playId).toBe(playId);
-        expect(result.current.retryReady).toBe(false);
+        // 첫 자동 재확인은 1초 뒤 — 수동 재시도 없이 같은 원본이 다시 전송된다
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(1100);
+        });
+        expect(bodies).toHaveLength(2);
+        expect(bodies[1]).toEqual(bodies[0]);
+        // 이후 재확인 대기는 점증한다 (2초)
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(2300);
+        });
+        expect(bodies).toHaveLength(3);
+    });
+    it('PROCESSING이 확정되면 자동 재확인이 멈추고 원본 보존을 해제한다', async () => {
+        vi.useFakeTimers();
+        const bodies: unknown[] = [];
+        server.use(
+            http.post('*/v1/games/:gameId/plays', () =>
+                HttpResponse.json({ success: true, data: start }, { status: 201 }),
+            ),
+            http.put('*/v1/games/:id/plays/:playId/result', async ({ request }) => {
+                bodies.push(await request.json());
+                return bodies.length === 1
+                    ? HttpResponse.json(
+                          {
+                              success: true,
+                              data: {
+                                  playId,
+                                  status: 'PROCESSING',
+                                  score: null,
+                                  completedAt: null,
+                                  reward: null,
+                              },
+                          },
+                          { status: 202 },
+                      )
+                    : HttpResponse.json({
+                          success: true,
+                          data: {
+                              playId,
+                              status: 'VALID',
+                              score: 0,
+                              completedAt: '2026-10-20T01:01:00Z',
+                              reward: null,
+                          },
+                      });
+            }),
+        );
+        const { result } = setup();
+        await act(async () => {
+            await result.current.begin();
+        });
+        await act(async () => {
+            await result.current.complete(0, { taps: [{ sequence: 1, elapsedMs: 0 }] });
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(1100);
+        });
+        expect(result.current.result?.status).toBe('VALID');
+        expect(result.current.pending).toBeUndefined();
+        const calls = bodies.length;
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(60000);
+        });
+        expect(bodies).toHaveLength(calls);
     });
     it('화면을 떠나도 같은 사용자의 원본은 보존하고 다른 사용자에게 노출하지 않는다', async () => {
         const bodies: unknown[] = [];
@@ -187,12 +257,51 @@ describe('원본 제출과 재시도 수명', () => {
         const other = setup();
         expect(other.result.current.pending).toBeUndefined();
         other.unmount();
+        // 복원된 원본은 마운트 시 자동으로 같은 기록을 재전송해 확정되면 보존을 해제한다
+        expect(sessionStorage.getItem(`getddo.gamePlay.pending.${userId}:${gameId}`)).toBeTruthy();
         const restored = setup(true, userId);
-        expect(restored.result.current.pending?.playId).toBe(playId);
-        await act(async () => {
-            await restored.result.current.retry();
-        });
+        await waitFor(() => expect(bodies).toHaveLength(2));
         expect(bodies[1]).toEqual(bodies[0]);
+        await waitFor(() => expect(restored.result.current.pending).toBeUndefined());
+    });
+    it('새로고침으로 세션이 끊겨도 저장된 원본을 복원해 자동으로 결과를 확인한다', async () => {
+        const bodies: unknown[] = [];
+        server.use(
+            http.post('*/v1/games/:gameId/plays', () =>
+                HttpResponse.json({ success: true, data: start }, { status: 201 }),
+            ),
+            http.put('*/v1/games/:id/plays/:playId/result', async ({ request }) => {
+                bodies.push(await request.json());
+                return bodies.length === 1
+                    ? HttpResponse.error()
+                    : HttpResponse.json({
+                          success: true,
+                          data: {
+                              playId,
+                              status: 'VALID',
+                              score: 0,
+                              completedAt: '2026-10-20T01:01:00Z',
+                              reward: null,
+                          },
+                      });
+            }),
+        );
+        const userId = crypto.randomUUID();
+        const first = setup(true, userId);
+        await act(async () => {
+            await first.result.current.begin();
+        });
+        await act(async () => {
+            await first.result.current.complete(0, { taps: [{ sequence: 1, elapsedMs: 0 }] });
+        });
+        expect(first.result.current.pending?.playId).toBe(playId);
+        // 새로고침 — sessionStorage에 남은 원본을 다음 마운트가 되찾아 자동으로 재전송한다
+        expect(sessionStorage.getItem(`getddo.gamePlay.pending.${userId}:${gameId}`)).toBeTruthy();
+        first.unmount();
+        const restored = setup(true, userId);
+        await waitFor(() => expect(bodies).toHaveLength(2));
+        expect(bodies[1]).toEqual(bodies[0]);
+        await waitFor(() => expect(restored.result.current.result?.status).toBe('VALID'));
         expect(restored.result.current.pending).toBeUndefined();
     });
 });

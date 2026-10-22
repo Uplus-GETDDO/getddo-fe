@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError } from '@shared/api/client';
 
@@ -6,24 +6,41 @@ import type { GameSubmission } from '../api/queries';
 import type { GameStart, PlayResult, ValidationData } from '../model/types';
 
 import { useStartGamePlay, useSubmitGamePlay } from '../api/queries';
-import { snapshotSubmission } from '../model/gameSession';
+import {
+    clearPendingSubmission,
+    loadPendingSubmission,
+    savePendingSubmission,
+    snapshotSubmission,
+} from '../model/gameSession';
 
-// 결과가 확정되기 전에는 화면 이동 후에도 같은 사용자·게임의 원본 요청을 되찾는다. 새로고침 시에는 지워진다.
-const pendingSubmissions = new Map<string, GameSubmission>();
+// PROCESSING(202)일 때 같은 원본으로 서버 확정을 자동 재확인한다.
+// 대기는 점증(1s→최대 5s)이고 상한을 넘으면 수동 재확인으로 넘긴다.
+const AUTO_RECHECK_LIMIT = 30;
+const AUTO_RECHECK_BASE_MS = 1000;
+const AUTO_RECHECK_MAX_MS = 5000;
+
 export function useGamePlaySession(gameId: string, userId: string, isUser: boolean, code?: string) {
     const key = `${userId}:${gameId}`;
     const start = useStartGamePlay();
-    const submit = useSubmitGamePlay();
+    const { isPending: submitting, mutateAsync: submitPlay } = useSubmitGamePlay();
     const [session, setSession] = useState<GameStart | null>(null);
     const [result, setResult] = useState<PlayResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [retryReady, setRetryReady] = useState(true);
     const [retryAfter, setRetryAfter] = useState(0);
     const [pending, setPending] = useState<GameSubmission | undefined>(() =>
-        pendingSubmissions.get(key),
+        loadPendingSubmission(key),
     );
     const busy = useRef(false);
+    const autoAttempts = useRef(0);
+    const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [visible, setVisible] = useState(false);
+    useEffect(
+        () => () => {
+            if (autoTimer.current !== null) clearTimeout(autoTimer.current);
+        },
+        [],
+    );
     useEffect(() => {
         if (retryAfter === 0) return;
         const timer = setTimeout(() => {
@@ -32,7 +49,7 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
         }, retryAfter * 1000);
         return () => clearTimeout(timer);
     }, [retryAfter]);
-    const report = (failure: unknown, starting = false) => {
+    const report = useCallback((failure: unknown, starting = false) => {
         if (failure instanceof ApiError) {
             const messages: Record<number, string> = {
                 404: '플레이를 확인할 수 없습니다. 소유권·토큰의 세부 사유는 공개하지 않습니다.',
@@ -64,31 +81,65 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
                     ? failure.message
                     : '응답을 확인하지 못했습니다. 같은 기록으로 다시 확인해 주세요.',
             );
-    };
-    const send = async (input: GameSubmission) => {
-        if (busy.current || !retryReady) return;
-        busy.current = true;
-        setError(null);
-        try {
-            const receipt = await submit.mutateAsync(input);
-            setResult(receipt);
-            if (receipt.status !== 'PROCESSING') {
-                pendingSubmissions.delete(key);
-                setPending(undefined);
-            } else {
-                setRetryReady(false);
-                setRetryAfter(1);
+    }, []);
+    const send = useCallback(
+        async (input: GameSubmission) => {
+            if (busy.current || !retryReady) return;
+            busy.current = true;
+            setError(null);
+            try {
+                const receipt = await submitPlay(input);
+                setResult(receipt);
+                if (receipt.status !== 'PROCESSING') {
+                    autoAttempts.current = 0;
+                    clearPendingSubmission(key);
+                    setPending(undefined);
+                }
+                return {
+                    ticketsGranted: receipt.reward?.ticketCount ?? 0,
+                    reward: receipt.reward,
+                };
+            } catch (failure) {
+                report(failure);
+                return;
+            } finally {
+                busy.current = false;
             }
-            return { ticketsGranted: receipt.reward?.ticketCount ?? 0, reward: receipt.reward };
-        } catch (failure) {
-            report(failure);
+        },
+        [key, report, retryReady, submitPlay],
+    );
+    // 서버가 확정을 미룬 PROCESSING 상태 — 같은 원본 재전송은 멱등이므로 점증 대기 후 자동으로 다시 확인한다.
+    // 상한을 넘으면 수동 재확인으로 넘기고, 새 판 발급 없이 같은 playId·body를 유지한다.
+    useEffect(() => {
+        if (result?.status !== 'PROCESSING' || !pending) return;
+        autoAttempts.current += 1;
+        if (autoAttempts.current > AUTO_RECHECK_LIMIT) {
+            setError('결과 처리가 오래 걸립니다. 잠시 후 원본 기록으로 다시 확인을 눌러 주세요.');
             return;
-        } finally {
-            busy.current = false;
         }
-    };
+        const delay = Math.min(AUTO_RECHECK_BASE_MS * autoAttempts.current, AUTO_RECHECK_MAX_MS);
+        autoTimer.current = setTimeout(() => {
+            autoTimer.current = null;
+            void send(pending);
+        }, delay);
+        return () => {
+            if (autoTimer.current !== null) {
+                clearTimeout(autoTimer.current);
+                autoTimer.current = null;
+            }
+        };
+    }, [result, pending, send]);
+    // 새로고침·재진입으로 저장소에서 되찾은 원본만 마운트 시 한 번 자동 확인한다 — 같은 기록의 PUT은 멱등이다.
+    // 초기 렌더 시점의 pending만 잡아 이후 complete()가 올린 제출에는 발사하지 않는다.
+    const restored = useRef<GameSubmission | undefined>(pending);
+    useEffect(() => {
+        const input = restored.current;
+        if (!input) return;
+        restored.current = undefined;
+        void send(input);
+    }, [send]);
     const begin = async () => {
-        if (pendingSubmissions.has(key)) {
+        if (pending ?? loadPendingSubmission(key)) {
             setError(
                 '이전 플레이의 결과를 먼저 확인해 주세요. 원본 기록으로 다시 확인할 수 있습니다.',
             );
@@ -124,14 +175,15 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
     };
     const complete = async (_score: number, validationData: ValidationData) => {
         if (!session || !isUser) return;
-        if (pendingSubmissions.has(key)) return;
+        if (pending ?? loadPendingSubmission(key)) return;
         try {
             const input = {
                 gameId,
                 playId: session.playId,
                 body: snapshotSubmission(session.playToken, validationData),
             };
-            pendingSubmissions.set(key, input);
+            autoAttempts.current = 0;
+            savePendingSubmission(key, input);
             setPending(input);
             return await send(input);
         } catch (failure) {
@@ -146,7 +198,7 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
         retryReady,
         retryAfter,
         visible,
-        busy: start.isPending || submit.isPending,
+        busy: start.isPending || submitting,
         begin,
         recordingError: (message: string) => {
             setVisible(false);
