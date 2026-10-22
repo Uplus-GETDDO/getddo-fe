@@ -9,6 +9,11 @@ describe('getErrorMessage', () => {
         expect(getErrorMessage(error)).toBe('보유한 응모권이 부족합니다.');
     });
 
+    it('최초 발표와 재추첨의 PUBLICATION-002는 확정 공통 문구를 쓴다', () => {
+        const error = new ApiError('PUBLICATION-002', '이전 재추첨 전용 문구', 409);
+        expect(getErrorMessage(error)).toBe('추첨 결과가 아직 발표 가능한 상태가 아닙니다.');
+    });
+
     it('매핑에 있으면 5xx여도 FE 문구를 쓴다', () => {
         const error = new ApiError('ACCESS_DENIED', '내부 예외 원문', 503);
         expect(getErrorMessage(error, '호출부 문구')).toBe('이 작업을 수행할 권한이 없습니다.');

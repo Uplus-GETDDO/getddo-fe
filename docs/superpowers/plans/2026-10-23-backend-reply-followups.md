@@ -42,7 +42,7 @@
 - Modify: `docs/adr/ADR-0008-api-error-message-mapping.md:38`
 - Modify: `docs/backend-integration-status.md:84`
 
-- [ ] **Step 1: FE 매핑 문구 교체**
+- [x] **Step 1: FE 매핑 문구 교체**
 
 `src/shared/api/errorMessage.ts` — 주석(60행)은 그대로 두고 값만 확정 문구로 바꾼다:
 
@@ -50,11 +50,11 @@
     'PUBLICATION-002': '추첨 결과가 아직 발표 가능한 상태가 아닙니다.',
 ```
 
-- [ ] **Step 2: 목업 응답 문구 교체**
+- [x] **Step 2: 목업 응답 문구 교체**
 
 `src/mocks/handlers/draw.ts:1107-1111` — `fail(409, 'PUBLICATION-002', ...)`의 세 번째 인자를 `'추첨 결과가 아직 발표 가능한 상태가 아닙니다.'`로 교체한다.
 
-- [ ] **Step 3: ADR-0008 후행 표기 갱신**
+- [x] **Step 3: ADR-0008 후행 표기 갱신**
 
 `docs/adr/ADR-0008-api-error-message-mapping.md:38`의 끝 `(05-api/drawing.md, PR 병합 후 적용 예정)`을 확정 상태로 바꾼다:
 
@@ -62,7 +62,7 @@
 (`05-api/drawing.md`, GD-314로 확정 문구 적용 완료)
 ```
 
-- [ ] **Step 4: 연동 현황 문서 갱신**
+- [x] **Step 4: 연동 현황 문서 갱신**
 
 `docs/backend-integration-status.md:84` — BE 요청 중이던 두 질의를 확정 결과로 갱신한다:
 
@@ -70,7 +70,7 @@
 - `PUBLICATION-002` 문구와 `DrawExecutionAudit` 표시는 2026-10-23 BE 회신·GD-314로 확정됐다 — 문구는 "추첨 결과가 아직 발표 가능한 상태가 아닙니다."로 FE 매핑·목업을 정렬했고, 감사 `action`은 `DRAW_EXECUTE`(추첨 실행)·`DRAW_RESUME`(추첨 재개) 두 값만 오며 처리자 UUID와 `beforeData`/`afterData`는 화면에서 숨긴다(`05-api/drawing.md` 실행 감사 표시 계약).
 ```
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋** (`c224d42`)
 
 ```bash
 git add src/shared/api/errorMessage.ts src/mocks/handlers/draw.ts docs/adr/ADR-0008-api-error-message-mapping.md docs/backend-integration-status.md
@@ -92,7 +92,7 @@ git commit -m "fix: PUBLICATION-002 공통 문구를 확정 계약으로 정렬"
 
 - Produces: `DRAW_AUDIT_ACTION_LABEL: Record<string, string>` — `{ DRAW_EXECUTE: '추첨 실행', DRAW_RESUME: '추첨 재개' }`. 표시는 `DRAW_AUDIT_ACTION_LABEL[a.action] ?? a.action`(미확정 값은 원문 유지 — 계약 외 값을 지우지 않는다)
 
-- [ ] **Step 1: action 라벨 상수 추가**
+- [x] **Step 1: action 라벨 상수 추가**
 
 `src/entities/drawResult/model/auditAction.ts`를 만든다 (`runStatus.ts`의 `DRAW_TYPE_LABEL` 관례를 따른다):
 
@@ -107,7 +107,7 @@ export const DRAW_AUDIT_ACTION_LABEL = {
 
 `src/entities/drawResult/index.ts`의 model export 블록(`DRAW_RUN_STATUS_META` 등이 있는 곳)에 `DRAW_AUDIT_ACTION_LABEL`을 추가한다.
 
-- [ ] **Step 2: 실패하는 컴포넌트 테스트 작성**
+- [x] **Step 2: 실패하는 컴포넌트 테스트 작성**
 
 `src/pages/admin/draw/ui/DrawOperationsSection.test.tsx` — `vi.mock('@entities/drawResult')`로 `useDrawExecutionAudits`·`useDrawFailures`를 모킹한다(`QuickLinks.test.tsx`의 `vi.mock('@entities/...')` 패턴 참조). 검증:
 
@@ -122,7 +122,7 @@ expect(screen.getByText('—')).toBeInTheDocument(); // reason null → —
 // action=DRAW_RESUME 행은 '추첨 재개'로 표시
 ```
 
-- [ ] **Step 3: 테스트가 실패함을 확인**
+- [x] **Step 3: 테스트가 실패함을 확인**
 
 ```bash
 npx vitest run src/pages/admin/draw/ui/DrawOperationsSection.test.tsx
@@ -130,7 +130,7 @@ npx vitest run src/pages/admin/draw/ui/DrawOperationsSection.test.tsx
 
 Expected: FAIL — 현재 구현은 raw action·UUID·beforeData/afterData를 그대로 보여준다.
 
-- [ ] **Step 4: DrawOperationsSection 표시 수정**
+- [x] **Step 4: DrawOperationsSection 표시 수정**
 
 `src/pages/admin/draw/ui/DrawOperationsSection.tsx`의 감사 행(143-164행)을 계약대로 바꾼다:
 
@@ -146,7 +146,7 @@ import { DRAW_AUDIT_ACTION_LABEL, useDrawExecutionAudits, useDrawFailures } from
 
 사라지는 것: 처리자 아래 `actorId` 보조 줄, 사유 아래 `beforeData`/`afterData` 원문 줄, 그 주석(156행).
 
-- [ ] **Step 5: 목업 감사 action 정합화**
+- [x] **Step 5: 목업 감사 action 정합화**
 
 `src/mocks/handlers/draw.ts` — 확정 값 집합(`DRAW_EXECUTE`·`DRAW_RESUME`)만 방출하도록 고친다:
 
@@ -175,7 +175,7 @@ recordAudit(store, run.detail.id, {
 - 1209-1216행 `RUN_RESUMED` → `'DRAW_RESUME'`, `afterData: `attemptId:att-${detail.id}-2``로 교체(`beforeData: 'status:FAILED'` 유지)
 - 1239-1246행 `REDRAW_RESUMED` → `'DRAW_RESUME'`로 동일 교체
 
-- [ ] **Step 6: 목업 테스트 갱신**
+- [x] **Step 6: 목업 테스트 갱신**
 
 `src/mocks/handlers/draw.test.ts:668-686` — 감사 테스트를 계약 값으로 맞춘다:
 
@@ -203,7 +203,7 @@ recordAudit(store, run.detail.id, {
         });
 ```
 
-- [ ] **Step 7: 테스트·린트 실행**
+- [x] **Step 7: 테스트·린트 실행**
 
 ```bash
 npx vitest run src/pages/admin/draw/ui/DrawOperationsSection.test.tsx src/mocks/handlers/draw.test.ts
@@ -212,7 +212,7 @@ npm run lint
 
 Expected: 전부 통과.
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋** (`b742928`, 리뷰 반영 `508f13a`)
 
 ```bash
 git add src/entities/drawResult src/pages/admin/draw src/mocks/handlers/draw.ts src/mocks/handlers/draw.test.ts
@@ -226,11 +226,11 @@ git commit -m "fix: 실행 감사 화면을 GD-314 표시 계약으로 정렬"
 - Create: `scripts/verifyGd268Schedule.mjs`
 - Create: `reports/20261023-gd268-drawscheduledat.json` (실행 산출물)
 
-- [ ] **Step 1: 측정 스크립트 작성**
+- [x] **Step 1: 측정 스크립트 작성**
 
 `scripts/verifyL6RemainingReads.mjs`의 GD-268 블록(321-362행)만 발췌한 읽기 전용 스크립트. `L6_DEPLOY_URL` 필수·기본 대상 없음, `X-User-ID`/`X-User-Role: ADMIN` 헤더, `GET /admin/events?page=1&size=50` → endsAt 최신순 15건 → 각 `GET /admin/events/{id}`의 `drawScheduledAt - endsAt` 델타(초)를 `reports/20261023-gd268-drawscheduledat.json`에 기록한다. 기대값 60초, 호출 단위 증거(method·path·httpStatus·at)를 함께 남기는 관례를 유지한다. 실제 추첨 시작 지연은 측정·판정 대상이 아니다(`drawScheduledAt` 값 자체만 본다).
 
-- [ ] **Step 2: 실서버 측정 실행**
+- [x] **Step 2: 실서버 측정 실행**
 
 ```bash
 L6_DEPLOY_URL=https://getddo-fe.vercel.app node scripts/verifyGd268Schedule.mjs
@@ -238,7 +238,7 @@ L6_DEPLOY_URL=https://getddo-fe.vercel.app node scripts/verifyGd268Schedule.mjs
 
 Expected: `summary.plus60` = 측정 건수 전부, `plus300`·`other` = 0. 네트워크·배포 지연으로 실패하면 결과를 그대로 증거에 기록하고 보고한다(성공처럼 표시하지 않는다).
 
-- [ ] **Step 3: 연동 현황 문서에 재측정 반영**
+- [x] **Step 3: 연동 현황 문서에 재측정 반영**
 
 `docs/backend-integration-status.md:86`의 GD-268 항목 끝에 재측정 사실을 한 줄 덧붙인다:
 
@@ -246,7 +246,7 @@ Expected: `summary.plus60` = 측정 건수 전부, `plus300`·`other` = 0. 네�
 fix/GD-268 머지·배포 후 2026-10-23 재측정에서도 delta=60초를 재확인했다(증거: reports/20261023-gd268-drawscheduledat.json).
 ```
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋** (`52cdc7a`, 리뷰 반영 `508f13a`)
 
 ```bash
 git add scripts/verifyGd268Schedule.mjs reports/20261023-gd268-drawscheduledat.json docs/backend-integration-status.md
@@ -255,13 +255,13 @@ git commit -m "test: GD-268 drawScheduledAt 배포 재측정 증거 추가"
 
 ### Task 4: 최종 검증·PR
 
-- [ ] **Step 1: 전체 검증**
+- [x] **Step 1: 전체 검증** (`format:check`, `lint` 경고 0, `test:ci` 132파일/860건, `build`, `git diff --check`)
 
 ```bash
 npm run format:check && npm run lint && npm run test:ci && npm run build && git diff --check
 ```
 
-- [ ] **Step 2: push·PR 생성**
+- [x] **Step 2: push·PR 생성** (#141, 대상 `dev`)
 
 ```bash
 git push -u origin <브랜치>
@@ -270,7 +270,7 @@ gh pr create --base dev --title "<타입>(GD-xxx): ..." --body ...
 
 PR 템플릿(`.github/pull_request_template.md`) 전 항목 작성, 재측정 수치(plus60/N건)를 본문에 기록.
 
-- [ ] **Step 3: CodeRabbit 수동 트리거**
+- [x] **Step 3: CodeRabbit 수동 트리거**
 
 ```bash
 gh pr comment <PR> --body "@coderabbitai review"

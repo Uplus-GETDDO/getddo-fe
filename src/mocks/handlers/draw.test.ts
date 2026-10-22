@@ -399,6 +399,15 @@ describe('추첨 목업', () => {
         expect(resume.status).toBe(202);
         expect(resume.data.data.status).toBe('PREPARING');
 
+        const audits = await call<
+            Page<{ action: string; beforeData: string | null; afterData: string | null }>
+        >('get', `/v1/admin/draws/${failed.id}/execution-audits`);
+        expect(audits.data.data.items[0]).toMatchObject({
+            action: 'DRAW_RESUME',
+            beforeData: 'status:FAILED',
+            afterData: `attemptId:att-${failed.id}-3`,
+        });
+
         settleRedraw();
         const after = await call<DetailBody>('get', `/v1/admin/draws/${failed.id}`);
         expect(after.data.data.status).toBe('CONFIRMED');
@@ -614,7 +623,10 @@ describe('추첨 목업', () => {
             // 최신이지만 미확정 실행은 명단이 준비되지 않았다
             const notReady = await confirm(redrawId);
             expect(notReady.status).toBe(409);
-            expect(notReady.data.code).toBe('PUBLICATION-002');
+            expect(notReady.data).toMatchObject({
+                code: 'PUBLICATION-002',
+                message: '추첨 결과가 아직 발표 가능한 상태가 아닙니다.',
+            });
 
             // 재추첨이 확정되면 최신 실행으로 발표할 수 있다 — 재추첨 결과도 함께 공개된다
             settleRedraw();
