@@ -59,16 +59,26 @@ export function RaffleCompactCard({
     // 카드마다 반복되는 이동이라 secondary — 검정·노랑 버튼은 대표 카드 하나에만 둬 시선을 모은다 (DESIGN-SYSTEM 13절).
     // 오픈 전에는 응모할 수 없어 상세(상품·일정·규칙)를 미리 보는 '자세히 보기'
     const action = (className: string) => (
-        <Button asChild variant="secondary" className={className}>
+        <Button asChild variant="secondary" className={`relative z-2 ${className}`}>
             <Link to={`/time-raffle/${event.id}`}>{live ? '응모하러 가기' : '자세히 보기'}</Link>
         </Button>
     );
 
     return (
         <article
-            className={`bg-surface-page border-border-default flex items-center gap-5 rounded-2xl border p-5 shadow-md ${wide ? 'lg:col-span-2' : ''}`}
+            className={`bg-surface-page border-border-default group relative flex items-center gap-5 rounded-2xl border p-5 shadow-md ${wide ? 'lg:col-span-2' : ''}`}
         >
-            <RaffleThumbnail src={event.bannerImageUrl} className="w-32 shrink-0 rounded-xl" />
+            {/* 카드 어디를 눌러도 상세로 — 버튼과 같은 곳이라 낭독기·키보드에서는 감추고 버튼 하나로만 읽힌다 (게임 카드와 같은 방식) */}
+            <Link
+                to={`/time-raffle/${event.id}`}
+                aria-hidden
+                tabIndex={-1}
+                className="absolute inset-0 z-1 rounded-2xl"
+            />
+            <RaffleThumbnail
+                src={event.bannerImageUrl}
+                className="w-32 shrink-0 rounded-xl [&_img]:transition-transform [&_img]:duration-300 motion-safe:group-hover:[&_img]:scale-105"
+            />
 
             <div className="flex min-w-0 flex-1 flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-2">
