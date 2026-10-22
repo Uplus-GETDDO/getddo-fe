@@ -32,6 +32,7 @@ const duplicates = (requests) =>
             .slice(0, i)
             .some((p) => p.path === r.path && p.started < r.started && p.ended > r.started),
     ).length;
+const apiSucceeded = (requests) => !requests.some((request) => request.status >= 400);
 if (process.argv.includes('--self-test')) {
     assert.equal(
         quantile(
@@ -49,7 +50,11 @@ if (process.argv.includes('--self-test')) {
         ]),
         1,
     );
-    process.stdout.write('분위수·빈 표본·동시 중복/정상 폴링 구분 통과\n');
+    const delayedRequests = [{ status: 200 }];
+    assert.equal(apiSucceeded(delayedRequests), true);
+    delayedRequests.push({ status: 502 });
+    assert.equal(apiSucceeded(delayedRequests), false);
+    process.stdout.write('분위수·빈 표본·동시 중복/정상 폴링·체류 중 지연 오류 판정 통과\n');
     process.exit(0);
 }
 const args = Object.fromEntries(
@@ -284,8 +289,8 @@ const server = createServer((request, response) => {
 await new Promise((done) => server.listen(port, '127.0.0.1', done));
 let browser;
 try {
-    const get = async (path) => {
-        const key = fixtureKey('/api' + path);
+    const get = async (path, owner = 'USER_A') => {
+        const key = fixtureKey('/api' + path, owner);
         if (fixturePath && fixture.responses[key]) {
             const { gunzipSync } = await import('node:zlib');
             const stored = fixture.responses[key];
@@ -295,6 +300,7 @@ try {
             ).data;
         }
         assert.ok(!fixturePath || capture, `고정 사전 조회 누락: ${path.split('?')[0]}`);
+        assert.equal(owner, 'USER_A', '다른 사용자 사전 조회는 고정 응답에서만 허용합니다.');
         const response = await fetch(api + path, { headers, signal: AbortSignal.timeout(20000) });
         assert.equal(response.status, 200, `사전 조회 실패: ${path.split('?')[0]}`);
         const body = await response.text();
@@ -569,14 +575,23 @@ try {
             evidence.afterRetryAfter = calls;
             await navigation;
         });
-        await check('오프라인·재연결 후 이전 목록 보존', async (context, page) => {
+        await check('오프라인·재연결 후 이전 목록 보존', async (context, page, evidence) => {
             await page.goto(base + '/events');
             const target = screens.find((s) => s.name === 'events');
             await ready(page, target);
             await context.setOffline(true);
+            await page.waitForTimeout(500);
             assert.ok((await page.locator('main').innerText()).includes(target.text));
+            const reconnected = page.waitForResponse(
+                (response) =>
+                    new URL(response.url()).pathname === '/api/v1/events' &&
+                    response.status() === 200,
+                { timeout: 10000 },
+            );
             await context.setOffline(false);
-            await page.waitForTimeout(1000);
+            await reconnected;
+            await ready(page, target);
+            evidence.reconnectedStatus = 200;
             assert.ok((await page.locator('main').innerText()).includes(target.text));
         });
         await check('사용자 전환 헤더 격리·새로고침 유지', async (_context, page, evidence) => {
@@ -586,7 +601,7 @@ try {
                 page,
                 screens.find((s) => s.name === 'home'),
             );
-            await page.getByRole('button', { name: /^가상 사용자 전환/ }).click();
+            await page.getByRole('button', { name: /^(계정 전환|가상 사용자 전환)/ }).click();
             const before = performance.now();
             await page
                 .getByRole('button', { name: new RegExp(otherUser.name) })
@@ -602,6 +617,7 @@ try {
             const changed = evidence.requests.filter((r) => r.started >= before);
             assert.ok(changed.some((r) => r.user === 'USER_B'));
             assert.ok(!changed.some((r) => r.user === 'USER_A'));
+            assert.ok(!changed.some((r) => r.status >= 400));
             evidence.afterSwitchRequests = changed.length;
             await page.reload();
             await ready(
@@ -614,6 +630,21 @@ try {
                 ),
                 otherUser.id,
             );
+            assert.ok(fixture.responses[fixtureKey('/api/v1/tickets/me', 'USER_B')]);
+            const initial = await get('/v1/tickets/me');
+            const switched = await get('/v1/tickets/me', 'USER_B');
+            assert.notEqual(initial.availableCount, switched.availableCount);
+            await page.goto(base + '/my-tickets');
+            await ready(
+                page,
+                screens.find((s) => s.name === 'tickets'),
+            );
+            await page
+                .getByRole('region', { name: '내 응모권 요약' })
+                .getByText(`${switched.availableCount.toLocaleString('ko-KR')}장`, { exact: true })
+                .first()
+                .waitFor();
+            evidence.distinctBalanceRendered = true;
         });
         await check('320·390px 목록 넘침', async (_context, page, evidence) => {
             evidence.widths = [];
@@ -737,13 +768,16 @@ try {
                                 sample.browserApi = timing.resources.filter(
                                     (r) => r.start >= (mode === 'cold' ? 0 : timing.start),
                                 );
-                                sample.ok = !sample.requests.some((r) => r.status >= 400);
+                                sample.ok = apiSucceeded(sample.requests);
                                 if (!sample.ok) sample.error = 'API 오류';
                                 if (mode === 'dwell65') {
                                     sample.initialRequestCount = sample.requests.length;
                                     await page.waitForTimeout(65000);
                                     sample.pollingRequestCount =
                                         sample.requests.length - sample.initialRequestCount;
+                                    // 체류 중 발생한 실패도 표본 실패다. 최초 표시 성공으로 덮지 않는다.
+                                    sample.ok = apiSucceeded(sample.requests);
+                                    if (!sample.ok) sample.error = '체류 중 API 오류';
                                 }
                             } catch (error) {
                                 sample.error = safeError(error);

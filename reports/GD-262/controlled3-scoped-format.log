@@ -1,0 +1,47 @@
+[90mscripts/measureGd262Performance.mjs[39m 344ms (unchanged)
+[90mscripts/measureGd262Bundle.mjs[39m 22ms (unchanged)
+[90mscripts/prepareGd262Fixture.mjs[39m 23ms (unchanged)
+[90mscripts/summarizeGd262Performance.mjs[39m 47ms (unchanged)
+[90mreports/GD-262/controlled3-101-inventory.json[39m 19ms (unchanged)
+reports/GD-262/controlled3-after-bundle.json 52ms
+reports/GD-262/controlled3-after.json 535ms
+reports/GD-262/controlled3-before-bundle.json 23ms
+reports/GD-262/controlled3-before.json 332ms
+[90mreports/GD-262/controlled3-build-identities.json[39m 1ms (unchanged)
+[90mreports/GD-262/controlled3-bundle-graph-test.json[39m 1ms (unchanged)
+[90mreports/GD-262/controlled3-completion-audit.json[39m 1ms (unchanged)
+reports/GD-262/controlled3-desktop-after.json 27ms
+reports/GD-262/controlled3-desktop-before.json 29ms
+[90mreports/GD-262/controlled3-dwell-fixture-inventory.json[39m 1ms (unchanged)
+reports/GD-262/controlled3-dwell65-after.json 34ms
+reports/GD-262/controlled3-dwell65-before.json 28ms
+reports/GD-262/controlled3-events101-after.json 7ms
+reports/GD-262/controlled3-events101-before.json 7ms
+[90mreports/GD-262/controlled3-fixture-inventory.json[39m 2ms (unchanged)
+reports/GD-262/controlled3-home-after-1.json 41ms
+reports/GD-262/controlled3-home-after-2.json 49ms
+reports/GD-262/controlled3-home-after-3.json 53ms
+reports/GD-262/controlled3-home-before-1.json 73ms
+reports/GD-262/controlled3-home-before-2.json 42ms
+reports/GD-262/controlled3-home-before-3.json 49ms
+reports/GD-262/controlled3-missionModal-after.json 3ms
+reports/GD-262/controlled3-missionModal-before.json 4ms
+reports/GD-262/controlled3-nextPage-after.json 4ms
+reports/GD-262/controlled3-nextPage-before.json 3ms
+reports/GD-262/controlled3-polling-cadence.json 13ms
+reports/GD-262/controlled3-summary.json 158ms
+[90mreports/GD-262/controlled3-verify-inventory.json[39m 2ms (unchanged)
+reports/GD-262/controlled3-verify.json 23ms
+[90mreports/GD-262/controlled3-methodology.md[39m 75ms (unchanged)
+reports/GD-262/controlled3-summary.md 176ms
+reports/GD-262/diagnostic-envcheck.json 12ms
+reports/GD-262/diagnostic-filtercheck.json 13ms
+reports/GD-262/diagnostic-missingfilter-controlled2-before.json 75ms
+reports/GD-262/diagnostic-wrongenv-controlled2-before.json 12ms
+reports/GD-262/diagnostic-dwell-capture.json 11ms
+reports/GD-262/diagnostic-dwell-late-errors-after.json 37ms
+reports/GD-262/diagnostic-dwell-late-errors-before.json 39ms
+reports/GD-262/diagnostic-dwell-regression.json 16ms
+reports/GD-262/diagnostic-verify-count-unit.json 27ms
+reports/GD-262/diagnostic-verify-tool-before.json 28ms
+[90mreports/GD-262/diagnostic-incomplete-verify-inventory.json[39m 2ms (unchanged)

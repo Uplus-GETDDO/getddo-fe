@@ -1,0 +1,34 @@
+{
+    "checkedAt": "2026-10-22T04:53:12.420Z",
+    "attempts": 372,
+    "valid": 348,
+    "na": 24,
+    "failures": 0,
+    "apiErrors": 0,
+    "duplicates": 0,
+    "browserChecks": 7,
+    "browserChecksPassed": 7,
+    "sourceCommits": {
+        "before": "aa34107",
+        "after": "47d2b54"
+    },
+    "measurementComplete": true,
+    "qualityChecksComplete": true,
+    "prCreated": false,
+    "tests": {
+        "baseline": {
+            "files": 127,
+            "passed": 848,
+            "durationSeconds": 398.08
+        },
+        "candidate": {
+            "files": 128,
+            "passed": 849,
+            "durationSeconds": 376.65
+        }
+    },
+    "checks": ["format:check", "lint", "test:ci", "build", "git diff --check"],
+    "measuredBase": "aa34107",
+    "observedLaterDev": "9ffbf4f",
+    "laterDevIncluded": false
+}

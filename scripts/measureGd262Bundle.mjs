@@ -10,9 +10,9 @@ const roots = [...html.matchAll(/(?:src|href)="([^"?]+\.(?:js|css))"/g)].map((m)
     join(root, m[1].replace(/^\//, '')),
 );
 const initial = new Set();
-function visit(file) {
-    if (initial.has(file)) return;
-    initial.add(file);
+function visit(file, seen = initial) {
+    if (seen.has(file)) return;
+    seen.add(file);
     if (!file.endsWith('.js')) return;
     const source = readFileSync(file, 'utf8');
     const parsed = ts.createSourceFile(
@@ -26,11 +26,11 @@ function visit(file) {
         if (!ts.isImportDeclaration(statement) && !ts.isExportDeclaration(statement)) continue;
         const specifier = statement.moduleSpecifier;
         if (specifier && ts.isStringLiteral(specifier) && specifier.text.startsWith('.')) {
-            visit(resolve(dirname(file), specifier.text));
+            visit(resolve(dirname(file), specifier.text), seen);
         }
     }
 }
-roots.forEach(visit);
+roots.forEach((file) => visit(file));
 const files = readdirSync(join(root, 'assets'))
     .filter((name) => statSync(join(root, 'assets', name)).isFile())
     .map((name) => {
@@ -58,6 +58,28 @@ const result = {
     initialJs: sum(files.filter((f) => f.initial && f.file.endsWith('.js'))),
     initialCss: sum(files.filter((f) => f.initial && f.file.endsWith('.css'))),
     total: sum(files),
+    // 초기 그래프만 캐시됐을 때 필요한 페이지·공유 청크 합계다. 실제 전환에서는 이미 받은 청크만큼 작아진다.
+    routeChunks: files
+        .filter((file) =>
+            /^(EventListPage|EventDetailPage|TimeRafflePage|TimeRaffleDetailPage|MissionListPage|MissionDetailPage|GameDetailPage|MyTicketsPage|MyEntriesPage|MyNotificationsPage|MyPage)-.*\.js$/.test(
+                file.file,
+            ),
+        )
+        .map((entry) => {
+            const reachable = new Set();
+            visit(join(root, 'assets', entry.file), reachable);
+            const incremental = files.filter(
+                (file) =>
+                    !file.initial &&
+                    file.file.endsWith('.js') &&
+                    reachable.has(join(root, 'assets', file.file)),
+            );
+            return {
+                entry: entry.file,
+                files: incremental.map((file) => file.file),
+                ...sum(incremental),
+            };
+        }),
     files,
 };
 writeFileSync(process.argv[2] ?? 'reports/GD-262/bundle.json', JSON.stringify(result, null, 2));

@@ -1,0 +1,251 @@
+{
+    "label": "controlled3-nextPage-after",
+    "checkedAt": "2026-10-22T04:35:40.636Z",
+    "environment": {
+        "platform": "win32",
+        "release": "10.0.26200",
+        "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+        "cores": 8,
+        "totalMemory": 25443966976,
+        "freeMemory": 9776799744,
+        "node": "v24.14.1",
+        "commit": "47d2b5460483a9f56b1890d4c14990c7249c5b7e",
+        "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "api": "https://dzc8oneey9mmx.cloudfront.net/api",
+        "responseMode": "고정 응답 재생",
+        "replayDelayMs": 50,
+        "fixtureHash": "258ec61b8bce024c1b0e06554f646b01c9dc694376217aa4f6d9f4c273b1f528",
+        "profile": "mobile",
+        "viewport": {
+            "width": 390,
+            "height": 844
+        },
+        "cpuSlowdown": 4,
+        "downloadBps": 200000,
+        "uploadBps": 93750,
+        "latencyMs": 150,
+        "headless": true,
+        "concurrency": 1,
+        "user": "USER_A",
+        "serverInternalTime": "미측정",
+        "browser": "155.0.8059.85"
+    },
+    "requested": {
+        "count": 1,
+        "batches": 3,
+        "warmups": 0,
+        "modes": ["nextPage"]
+    },
+    "discovery": {
+        "eventCount": 28,
+        "gameCount": 4,
+        "missionCount": 11,
+        "eventState": "OPEN",
+        "raffleState": "OPEN",
+        "idsHash": "998e43b0124a24317b363e75cc31b81c3d5dd9cf788fe3ec1e3d99212e3c9fba"
+    },
+    "samples": [
+        {
+            "screen": "tickets",
+            "mode": "nextPage",
+            "batch": 1,
+            "trial": 0,
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/api/v1/tickets/histories/me?size=20&from=2026-09-22T04:35:45.080Z&to=2026-10-22T04:35:45.080Z&cursor=cursor-b206136fcc1d",
+                    "started": 7353.9188,
+                    "ended": 7403.8298,
+                    "durationMs": 49.91100000000006,
+                    "ttfbMs": 49.91100000000006,
+                    "status": 200,
+                    "bytes": 531,
+                    "user": "USER_A"
+                }
+            ],
+            "ok": true,
+            "displayMs": 355.69999998807907,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 458107,
+            "browserApi": [
+                {
+                    "path": "/api/v1/tickets/histories/me",
+                    "start": 6625.199999988079,
+                    "duration": 182.19999998807907,
+                    "ttfb": 51.40000003576279
+                }
+            ]
+        },
+        {
+            "screen": "notifications",
+            "mode": "nextPage",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "다음 페이지 데이터 없음"
+        },
+        {
+            "screen": "tickets",
+            "mode": "nextPage",
+            "batch": 2,
+            "trial": 0,
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/api/v1/tickets/histories/me?size=20&from=2026-09-22T04:35:58.379Z&to=2026-10-22T04:35:58.379Z&cursor=cursor-b206136fcc1d",
+                    "started": 20498.9489,
+                    "ended": 20552.9702,
+                    "durationMs": 54.02130000000034,
+                    "ttfbMs": 54.02130000000034,
+                    "status": 200,
+                    "bytes": 531,
+                    "user": "USER_A"
+                }
+            ],
+            "ok": true,
+            "displayMs": 321,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 458107,
+            "browserApi": [
+                {
+                    "path": "/api/v1/tickets/histories/me",
+                    "start": 6785.799999952316,
+                    "duration": 157.20000004768372,
+                    "ttfb": 55.40000003576279
+                }
+            ]
+        },
+        {
+            "screen": "notifications",
+            "mode": "nextPage",
+            "batch": 2,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "다음 페이지 데이터 없음"
+        },
+        {
+            "screen": "tickets",
+            "mode": "nextPage",
+            "batch": 3,
+            "trial": 0,
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/api/v1/tickets/histories/me?size=20&from=2026-09-22T04:36:10.813Z&to=2026-10-22T04:36:10.813Z&cursor=cursor-b206136fcc1d",
+                    "started": 33030.6254,
+                    "ended": 33084.8718,
+                    "durationMs": 54.24640000000363,
+                    "ttfbMs": 54.24640000000363,
+                    "status": 200,
+                    "bytes": 531,
+                    "user": "USER_A"
+                }
+            ],
+            "ok": true,
+            "displayMs": 361.60000002384186,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 458107,
+            "browserApi": [
+                {
+                    "path": "/api/v1/tickets/histories/me",
+                    "start": 6537.100000023842,
+                    "duration": 172.80000001192093,
+                    "ttfb": 55.5
+                }
+            ]
+        },
+        {
+            "screen": "notifications",
+            "mode": "nextPage",
+            "batch": 3,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "다음 페이지 데이터 없음"
+        }
+    ],
+    "errors": [],
+    "groups": {
+        "tickets:nextPage": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 355.69999998807907,
+                    "p95": 355.69999998807907,
+                    "min": 355.69999998807907,
+                    "max": 355.69999998807907
+                },
+                "2": {
+                    "n": 1,
+                    "p50": 321,
+                    "p95": 321,
+                    "min": 321,
+                    "max": 321
+                },
+                "3": {
+                    "n": 1,
+                    "p50": 361.60000002384186,
+                    "p95": 361.60000002384186,
+                    "min": 361.60000002384186,
+                    "max": 361.60000002384186
+                }
+            },
+            "display": {
+                "n": 3,
+                "p50": 355.69999998807907,
+                "p95": 361.60000002384186,
+                "min": 321,
+                "max": 361.60000002384186
+            },
+            "proxyApi": {
+                "n": 3,
+                "p50": 54.02130000000034,
+                "p95": 54.24640000000363,
+                "min": 49.91100000000006,
+                "max": 54.24640000000363
+            },
+            "browserApi": {
+                "n": 3,
+                "p50": 172.80000001192093,
+                "p95": 182.19999998807907,
+                "min": 157.20000004768372,
+                "max": 182.19999998807907
+            },
+            "requestCount": 3,
+            "concurrentDuplicates": 0
+        },
+        "notifications:nextPage": {
+            "failures": 3,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        }
+    }
+}
