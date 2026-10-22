@@ -42,6 +42,8 @@ export function HomePage() {
         <main className="flex w-full flex-col gap-20 pb-28">
             <div className={`${CONTAINER} flex flex-col gap-20`}>
                 <BannerSlider
+                    // 목록 도착 전에도 lazy 모드를 유지하려고 undefined를 빈 배열로 넘긴다
+                    events={events ?? []}
                     renderStatus={(event, isActive) => (
                         <LiveEntryStatus
                             eventId={event.id}

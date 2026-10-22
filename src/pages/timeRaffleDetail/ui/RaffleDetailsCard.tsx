@@ -1,15 +1,21 @@
+import type { EntryStatistics } from '@entities/entry';
 import type { Event } from '@entities/event';
 
-import { useEntryStatistics, useMyEventEntries } from '@entities/entry';
+import { useMyEventEntries } from '@entities/entry';
 import { describeTicketUsage } from '@entities/event';
 import { useMyTickets } from '@entities/ticket';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
 
-export function RaffleDetailsCard({ event }: { event: Event }) {
+export function RaffleDetailsCard({
+    event,
+    statistics,
+}: {
+    event: Event;
+    /** 응모 현황(E03) — 페이지가 같은 키를 한 번만 구독해 나눠 준다 */
+    statistics?: EntryStatistics;
+}) {
     const { data: ticket, isPending: ticketsPending } = useMyTickets();
-    // 히어로와 같은 쿼리 키라 요청은 합쳐진다
-    const { data: statistics } = useEntryStatistics(event.id, { isOpen: event.status === 'open' });
     const { data: myEntries, isPending: entriesPending } = useMyEventEntries(event.id);
 
     const detail = event.raffleDetail;

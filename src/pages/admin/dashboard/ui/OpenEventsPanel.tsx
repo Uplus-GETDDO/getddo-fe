@@ -2,9 +2,9 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import type { EntryStatistics } from '@entities/entry';
 import type { AdminEvent } from '@entities/event';
+import type { useAdminEvents } from '@entities/event';
 
 import { useEntryStatisticsList } from '@entities/entry';
-import { useAdminEvents } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { badgeVariants } from '@shared/ui/badge';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
@@ -17,8 +17,6 @@ import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';
 
 const PREVIEW = 5;
-/** 진행 중 이벤트는 최대치(100)로 받아 마감이 가까운 순으로 고른다 */
-const OPEN_EVENTS_SIZE = 100;
 /** 1시간 안에 마감하면 '마감 임박' */
 const URGENT_MS = 60 * 60 * 1000;
 /** 목록 안 최다 대비 이 비율 미만이면 '응모 저조' */
@@ -118,9 +116,15 @@ function OpenEventRow({
 }
 
 /** 진행 중 이벤트 응모 현황 — 마감이 가까운 순 표. 어느 이벤트에 응모가 몰리는지 막대로 비교한다 */
-export function OpenEventsPanel({ className }: { className?: string }) {
+export function OpenEventsPanel({
+    className,
+    query,
+}: {
+    className?: string;
+    /** 진행 중 이벤트 목록 — 페이지가 같은 키를 한 번만 구독해 나눠 준다 */
+    query: ReturnType<typeof useAdminEvents>;
+}) {
     const now = useVirtualClock().now();
-    const query = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
 
     const events = (query.data?.items ?? [])
         .map((event) => ({ event, remainingMs: new Date(event.endsAt).getTime() - now.getTime() }))

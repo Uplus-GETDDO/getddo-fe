@@ -95,6 +95,11 @@ interface EntryStatisticsOptions {
     enabled?: boolean;
     /** 활성 토글이 잦은 소비자는 폴링 주기를 넘긴다 — 같은 주기 안의 재활성화는 받아 둔 값을 쓴다 */
     staleTime?: number;
+    /**
+     * 같은 키를 폴링하는 observer가 이미 있을 때 켠다 — 이 observer는 자체 폴링과 마운트 재조회를
+     * 걸지 않고 소유자의 갱신·무효화만 받는다. 수동 refetch()는 그대로 동작한다
+     */
+    passive?: boolean;
 }
 
 /**
@@ -103,17 +108,19 @@ interface EntryStatisticsOptions {
  */
 export function useEntryStatistics(
     eventId: string,
-    { isOpen = false, enabled = true, staleTime }: EntryStatisticsOptions = {},
+    { isOpen = false, enabled = true, staleTime, passive = false }: EntryStatisticsOptions = {},
 ) {
     return useQuery({
         ...queryPresets.realtime,
-        ...(staleTime !== undefined ? { staleTime } : {}),
+        ...(staleTime !== undefined || passive
+            ? { staleTime: staleTime ?? queryPresets.realtime.refetchInterval }
+            : {}),
         ...pollingReadPolicy,
         queryKey: entryStatisticsKey(eventId),
         queryFn: (context) =>
             withPollingReadGuard(context, () => fetchEntryStatistics(eventId, context.signal)),
         enabled,
-        refetchInterval: (query) => pollingReadInterval(query, isOpen),
+        refetchInterval: passive ? false : (query) => pollingReadInterval(query, isOpen),
     });
 }
 

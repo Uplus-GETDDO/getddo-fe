@@ -73,13 +73,15 @@ export function LiveEntryStatus({
 
 /**
  * 응모 현황 갱신 표시 — 30초 폴링 중임을 작게 알리고, 실패하면 이전 수치를 둔 채 '갱신 실패 · 다시 시도'로 바뀐다.
- * 같은 쿼리 키라 칩(LiveEntryStatus)과 요청은 한 번만 나간다. 서버가 기다리라고 하면(429) 그동안 다시 받지 않는다
+ * 같은 쿼리 키라 칩(LiveEntryStatus)과 요청은 한 번만 나간다 — 폴링 소유자는 칩이고, 이 표시는
+ * passive로 구독해 갱신 결과만 받는다(중복 주기 타이머 방지). 서버가 기다리라고 하면(429) 그동안 다시 받지 않는다
  */
 export function LiveEntryRefresh({ eventId, isOpen, enabled = true }: LiveEntryStatusProps) {
     const query = useEntryStatistics(eventId, {
         isOpen,
         enabled,
-        staleTime: queryPresets.realtime.refetchInterval,
+        // 폴링 주기는 LiveEntryStatus가 건다 — 이 표시는 소유자의 갱신만 받아 폴링이 겹치지 않는다
+        passive: true,
     });
     const rateLimited = getPollingRetryDelay(query.error ?? query.failureReason) > 0;
 

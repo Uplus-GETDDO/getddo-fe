@@ -1,0 +1,60 @@
+[
+    {
+        "page": "home",
+        "initial_total": 379,
+        "initial_api": {
+            "//notifications/me": 1,
+            "//games": 1,
+            "//banners": 1,
+            "//attendances/today": 2,
+            "//missions": 1,
+            "//events": 2,
+            "//games/:id/statistics/me": 4,
+            "//events/:id": 4,
+            "//events/:id/statistics": 2
+        },
+        "foreground_api": {
+            "//missions": 1,
+            "//events": 2,
+            "//games/:id/statistics/me": 4,
+            "//attendances/today": 1,
+            "//events/:id": 4,
+            "//events/:id/statistics": 2
+        },
+        "hidden_api": {},
+        "window_s": 38.0
+    },
+    {
+        "page": "raffle",
+        "initial_total": 390,
+        "initial_api": {
+            "//banners": 1,
+            "//notifications/me": 1,
+            "//events": 2,
+            "//tickets/me": 1,
+            "//events/:id/statistics": 8
+        },
+        "foreground_api": {
+            "//events": 2,
+            "//events/:id/statistics": 1
+        },
+        "hidden_api": {},
+        "window_s": 38.0
+    },
+    {
+        "page": "admin",
+        "initial_total": 378,
+        "initial_api": {
+            "//admin/events": 12,
+            "//admin/notification-jobs": 1,
+            "//admin/stats/daily": 1,
+            "//events/:id/statistics": 5
+        },
+        "foreground_api": {
+            "//admin/events": 12,
+            "//events/:id/statistics": 5
+        },
+        "hidden_api": {},
+        "window_s": 38.0
+    }
+]

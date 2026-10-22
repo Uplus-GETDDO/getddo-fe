@@ -22,12 +22,14 @@ export const ATTENDANCES_API_PATH = '/v1/attendances';
 export const ATTENDANCE_TODAY_API_PATH = `${ATTENDANCES_API_PATH}/today`;
 
 /** AT01 — 오늘 출석 여부·연속 일수·일일 보상량·이번 달 단계 */
-export function useAttendanceToday() {
+export function useAttendanceToday({ passive = false }: { passive?: boolean } = {}) {
     return useQuery<AttendanceToday>({
         ...pollingReadPolicy,
         // 화면을 열어 둔 채 기준일(00:00 KST)이 지나면 어제의 attended가 남아 버튼이 계속 비활성된다 — 주기적으로 다시 받는다
         ...queryPresets.realtime,
-        refetchInterval: (query) => pollingReadInterval(query),
+        // passive observer는 같은 키를 폴링하는 소유자의 갱신만 받는다 — 자체 폴링·재조회를 누른다
+        ...(passive ? { staleTime: queryPresets.realtime.refetchInterval } : {}),
+        refetchInterval: passive ? false : (query) => pollingReadInterval(query),
         queryKey: ATTENDANCE_TODAY_KEY,
         queryFn: (context) =>
             withPollingReadGuard(context, async () => {

@@ -6,7 +6,7 @@ import type { EntryTickets, TicketsByGrade } from '@entities/entry';
 import type { Event } from '@entities/event';
 
 import { useEventResults, useMyResult } from '@entities/drawResult';
-import { useEntryEligibility, useMyEventEntries } from '@entities/entry';
+import { useEntryEligibility, useEntryStatistics, useMyEventEntries } from '@entities/entry';
 import { useEvent } from '@entities/event';
 import { TicketBalanceStatus, ticketGradeSchema, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
@@ -55,6 +55,10 @@ export function TimeRaffleDetailPage() {
         enabled: event?.status === 'open',
     });
     const { data: myEntries } = useMyEventEntries(id);
+    // 응모 현황은 페이지가 한 번만 구독해 히어로·상세 카드에 나눠 준다 — 같은 키의 폴링 observer를 둘 이상 두지 않는다
+    const { data: statistics, dataUpdatedAt: statisticsUpdatedAt } = useEntryStatistics(id, {
+        isOpen: event?.status === 'open',
+    });
     // 마감 전에는 결과가 존재하지 않으므로 묻지 않는다
     const isAfterClose = event != null && !['open', 'upcoming'].includes(event.status);
     const resultsQuery = useEventResults(id, isAfterClose);
@@ -169,6 +173,8 @@ export function TimeRaffleDetailPage() {
                 {!confirmOpen && <TicketBalanceStatus query={ticketsQuery} />}
                 <RaffleDetailHero
                     event={event}
+                    statistics={statistics}
+                    statisticsUpdatedAt={statisticsUpdatedAt}
                     quantityControl={
                         !isOpen || isFree ? undefined : (
                             // 브론즈만 받는 래플도 같은 제목·(?) 안내를 둔다 — 왜 실버·골드를 못 쓰는지 같은 자리에서 알린다
@@ -297,7 +303,7 @@ export function TimeRaffleDetailPage() {
                     />
                 )}
                 <MyTicketCard event={event} />
-                <RaffleDetailsCard event={event} />
+                <RaffleDetailsCard event={event} statistics={statistics} />
                 <RaffleRulesCard event={event} />
             </div>
 
