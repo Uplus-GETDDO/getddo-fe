@@ -91,7 +91,7 @@ const UPCOMING_OPENS_AT = demoTime(3 * 60 * MINUTE);
  * 세션 시작 시점에 고정되므로 새로고침해도 기준이 밀리지 않고, 시간이 실제로 흐른다.
  * 더 빨리 보고 싶으면 관리자 가상 시계(/admin/virtual-clock)로 시간을 앞으로 옮기면 된다.
  */
-// 지금 응모할 수 있고 10분 뒤 마감된다 (발표는 ADR-009에 따라 마감 + 5분)
+// 지금 응모할 수 있고 10분 뒤 마감된다 (최초 자동 추첨은 ADR-026에 따라 마감 + 1분)
 const FLOW_STARTS_AT = demoTime(-5 * MINUTE);
 const FLOW_ENDS_AT = demoTime(10 * MINUTE);
 // 이미 마감돼 발표를 기다리는 래플 — 화면을 열자마자 발표 대기 상태를 볼 수 있다
@@ -730,7 +730,8 @@ export const mockEvents: MockEvent[] = [
         bannerImageUrl: '/images/events/banners/reusable-cup.svg',
         /*
          * 방금 마감돼 발표를 기다리는 이벤트 — 화면을 열자마자 '발표 대기'를 볼 수 있다.
-         * 마감 + 5분이 지나면 '발표 완료'로 넘어간다. 다시 보려면 새로고침하거나
+         * 마감 + 1분이 지나면 최초 자동 추첨이 확정된다(ADR-026). '발표 완료'는 시간이 아니라
+         * 관리자의 당첨자 공개 요청 성공으로만 넘어간다 (ADR-022). 다시 보려면 새로고침하거나
          * 관리자 가상 시계(/admin/virtual-clock)로 시간을 되돌리면 된다.
          */
         startsAt: kstAt(-20, 0),

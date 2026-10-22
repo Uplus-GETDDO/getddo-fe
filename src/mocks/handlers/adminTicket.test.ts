@@ -43,7 +43,7 @@ describe('AO09 전체 불일치 목록', () => {
         const res = await get('/v1/admin/tickets/inconsistencies');
         expect(res.status).toBe(200);
         const data = page(ticketInconsistencySchema, res.data);
-        expect(data.items.map((i) => i.ticketId)).toEqual(['tk-007', 'tk-010', 'tk-013']);
+        expect(data.items.map((i) => i.ticketId)).toEqual(['tk-007', 'tk-010', 'tk-013', 'tk-016']);
         const statusDrift = data.items.find((i) => i.ticketId === 'tk-007');
         expect(statusDrift).toMatchObject({
             ticketVersion: 2,
@@ -53,6 +53,12 @@ describe('AO09 전체 불일치 목록', () => {
         });
         const versionDrift = data.items.find((i) => i.ticketId === 'tk-010');
         expect(versionDrift?.ticketVersion).not.toBe(versionDrift?.latestHistoryVersion);
+        // 이력이 한 건도 없는 응모권도 불일치다 — 버전 0·상태 null이다 (spec AO04)
+        const noHistory = data.items.find((i) => i.ticketId === 'tk-016');
+        expect(noHistory).toMatchObject({
+            latestHistoryVersion: 0,
+            latestHistoryStatus: null,
+        });
     });
 
     it('데이터를 고치면 결과가 달라진다 — 상수가 아니다', async () => {
@@ -62,7 +68,7 @@ describe('AO09 전체 불일치 목록', () => {
         const res = await get('/v1/admin/tickets/inconsistencies');
         const ids = page(ticketInconsistencySchema, res.data).items.map((i) => i.ticketId);
         expect(ids).not.toContain('tk-007');
-        expect(ids).toHaveLength(2);
+        expect(ids).toHaveLength(3);
     });
 
     it('userId로 거르고 불일치가 없으면 빈 페이지다', async () => {
@@ -244,6 +250,8 @@ describe('AO08 반환 이력', () => {
         expect(data.items[0]).not.toHaveProperty('status');
         expect(data.items[0]).not.toHaveProperty('attemptCount');
         expect(data.items.every((r) => r.reasonType === 'EVENT_CANCELED')).toBe(true);
+        // 반환 대상 이력에 만료 시각이 없는 행은 targetExpiresAt이 null이다 (spec AO08)
+        expect(data.items.some((r) => r.targetExpiresAt === null)).toBe(true);
     });
 
     it('eventId·userId·기간으로 거른다', async () => {
