@@ -56,8 +56,14 @@ export function UserLayout() {
             setIndicator({ left: rect.left - navRect.left, width: rect.width });
         };
         update();
+        // 창 크기가 그대로여도 메뉴 글자 폭이 바뀌면(큰글씨 모드·글꼴 늦게 도착) 다시 잰다 — 창 resize만 들으면 밑줄이 예전 자리에 남았다
+        const observer = new ResizeObserver(update);
+        navRef.current?.querySelectorAll('a').forEach((link) => observer.observe(link));
         window.addEventListener('resize', update);
-        return () => window.removeEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
     }, [pathname]);
 
     return (
