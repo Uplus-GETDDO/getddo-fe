@@ -62,21 +62,11 @@ function Rise({
 }
 
 // 접힌 카드와 펼친 카드가 같은 글자 크기를 쓴다
-function AttendanceStat({
-    label,
-    value,
-    hint,
-}: {
-    label: string;
-    value: string;
-    /** 값 아래 작은 안내 — 예: 다음 연속 출석 보상까지 남은 날 */
-    hint?: string;
-}) {
+function AttendanceStat({ label, value }: { label: string; value: string }) {
     return (
         <div className="flex flex-col gap-2">
             <span className="text-fg-tertiary text-body-sm">{label}</span>
             <span className="text-fg-primary text-body-bold">{value}</span>
-            {hint && <span className="text-caption text-fg-tertiary -mt-1">{hint}</span>}
         </div>
     );
 }
@@ -236,10 +226,10 @@ export function AttendanceCheckCard({
             streak={status.consecutiveDays}
             monthly={countMonthlyAttendance(checkedDates, status.attended, displayDate)}
             // 다음 연속 출석 보너스 — 매일 출석 1장과 별도로 주는 단계 보상이라 '보너스'로 적는다 (getddo-spec attendance.md).
-            // 따로 줄을 두지 않고 연속 일수 바로 아래에 붙인다 (접힌 카드에서만)
+            // 두 칸 아래 한 줄로 둔다 — 연속 일수 칸 안에 넣으면 왼쪽 칸만 길어져 가운데 선과 간격이 어긋나 보였다 (접힌 카드에서만)
             streakHint={
                 nextMilestone && !showExpanded
-                    ? `연속 ${nextMilestone.milestoneDays}일 달성 시 보너스 +${nextMilestone.rewardTicketCount}장`
+                    ? `연속 ${nextMilestone.milestoneDays}일 달성 시 보너스 ${nextMilestone.rewardTicketCount}장`
                     : undefined
             }
             compact={showExpanded}
@@ -348,7 +338,8 @@ export function AttendanceCheckCard({
                                 )
                             ) : (
                                 <>
-                                    <Rise order={1} enter={contentEnter} className="px-1 pt-2">
+                                    {/* 위 여백은 카드 여백(24)만 — 아래(출석 버튼 밑 24)와 같게 둔다 */}
+                                    <Rise order={1} enter={contentEnter} className="px-1">
                                         {stats}
                                     </Rise>
                                     {/* 최근 7일과 출석하기는 한 묶음으로 아래에 붙인다 — 남는 높이는 출석일수와 이 묶음 사이로 간다 */}
@@ -407,11 +398,14 @@ function AttendanceStatPair({
     compact: boolean;
 }) {
     return (
-        <div className={cn('grid grid-cols-2', compact ? 'w-fit gap-x-6' : 'w-full')}>
-            <AttendanceStat label="연속 출석일수" value={`연속 ${streak}일`} hint={streakHint} />
-            <div className="border-border-strong border-l pl-4">
-                <AttendanceStat label="이번 달 출석일수" value={`${monthly}일`} />
+        <div className={cn('flex flex-col gap-3', compact ? 'w-fit' : 'w-full')}>
+            <div className={cn('grid grid-cols-2', compact && 'gap-x-6')}>
+                <AttendanceStat label="연속 출석일수" value={`연속 ${streak}일`} />
+                <div className="border-border-strong border-l pl-4">
+                    <AttendanceStat label="이번 달 출석일수" value={`${monthly}일`} />
+                </div>
             </div>
+            {streakHint && <p className="text-caption text-fg-tertiary">{streakHint}</p>}
         </div>
     );
 }
