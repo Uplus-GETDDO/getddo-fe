@@ -8,6 +8,7 @@ import type { Banner } from '@entities/banner';
 import type { Event } from '@entities/event';
 
 import { eventDetailPath, useEvent } from '@entities/event';
+import { queryPresets } from '@shared/api/queryPresets';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { formatRemaining } from '@shared/utils/date';
@@ -58,15 +59,38 @@ export function BannerSlide({
     banner,
     now,
     isActive,
+    summaryEvent,
+    lazyDetail = false,
     renderStatus,
 }: {
     banner: Banner;
     now: Date;
     /** 지금 보이는 배너인가 — 보이지 않는 배너의 실시간 현황 조회를 멈추는 데 쓴다 */
     isActive: boolean;
+    /**
+     * 페이지가 이미 받은 목록(E01)의 같은 이벤트 — 주면 그걸로 먼저 그린다
+     */
+    summaryEvent?: Event;
+    /**
+     * 페이지가 이벤트 목록을 갖고 있어 상세(E02)를 활성 슬라이드만 받을지 —
+     * 목록 도착 전 로딩 중에도 유지해야 해서 summaryEvent 유무와 별개로 받는다.
+     * false면 배너마다 상세를 받던 종전 동작을 유지한다
+     */
+    lazyDetail?: boolean;
     renderStatus?: (event: Event, isActive: boolean) => ReactNode;
 }) {
-    const { data: event, isPending, isError, refetch, isFetching } = useEvent(banner.eventId);
+    const {
+        data: detail,
+        isPending,
+        isError,
+        refetch,
+        isFetching,
+    } = useEvent(banner.eventId, {
+        enabled: isActive || !lazyDetail,
+        // 활성 슬라이드가 바뀔 때마다 상세를 다시 받지 않도록 폴링 주기 안의 재활성화는 받아 둔 값을 쓴다
+        staleTime: queryPresets.realtime.refetchInterval,
+    });
+    const event = detail ?? summaryEvent;
     const [imageFailed, setImageFailed] = useState(false);
 
     const background = imageFailed ? (

@@ -37,13 +37,16 @@ export interface MissionSubmissionOutcome {
  * 진행 중인 미션 목록 — Page<T>는 기본 20건씩이라 totalElements까지 전부 모은다.
  * 제출이 완료되면 features/submit-survey·submit-quiz가 이 쿼리를 무효화한다.
  */
-export function useMissionList() {
+export function useMissionList({ passive = false }: { passive?: boolean } = {}) {
     return useQuery({
         ...queryPresets.standard,
         ...pollingReadPolicy,
         queryKey: [...MISSIONS_KEY, 'list'],
         // 화면이 열린 채 미션의 시작·종료 시각을 지나도 serverTime 기준 표시가 따라가도록 폴링한다
-        refetchInterval: (query: { state: { error: unknown } }) => pollingReadInterval(query),
+        // passive observer는 같은 키의 소유자 폴링에 태운다 — 자체 주기는 걸지 않는다
+        refetchInterval: passive
+            ? false
+            : (query: { state: { error: unknown } }) => pollingReadInterval(query),
         queryFn: (context) =>
             withPollingReadGuard(context, async () => {
                 const missions: MissionSummary[] = [];

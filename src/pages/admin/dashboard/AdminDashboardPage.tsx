@@ -1,4 +1,5 @@
 import { useAdminDailyStats } from '@entities/adminStats';
+import { useAdminEvents } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { recentKstDays } from '@shared/utils/date';
 import { AdminStatSummary } from '@widgets/adminStatSummary';
@@ -8,6 +9,9 @@ import { ActionQueuePanel } from './ui/ActionQueuePanel';
 import { EventStagePanel } from './ui/EventStagePanel';
 import { OpenEventsPanel } from './ui/OpenEventsPanel';
 import { TicketTrendPanel } from './ui/TicketTrendPanel';
+
+/** 진행 중 이벤트는 최대치(100)로 받아 패널별로 마감 순·임박 필터를 적용한다 */
+const OPEN_EVENTS_SIZE = 100;
 
 /**
  * 관리자 대시보드 — 위에 오늘 숫자, 가운데 추이 그래프와 지금 처리할 일, 그 아래 운영 단계 분포·이벤트 응모 현황 표.
@@ -21,6 +25,8 @@ export function AdminDashboardPage() {
         to: days[days.length - 1]!.ymd,
     });
     const rows = toTrendRows(stats.data?.days ?? []);
+    // 진행 중 이벤트는 페이지가 한 번만 구독해 두 패널에 나눠 준다 — 같은 키의 폴링 observer를 둘 이상 두지 않는다
+    const openEvents = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
 
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
@@ -36,11 +42,11 @@ export function AdminDashboardPage() {
                     onRetry={() => void stats.refetch()}
                     className="lg:col-span-2"
                 />
-                <ActionQueuePanel />
+                <ActionQueuePanel openEvents={openEvents} />
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
                 <EventStagePanel />
-                <OpenEventsPanel className="lg:col-span-2" />
+                <OpenEventsPanel className="lg:col-span-2" query={openEvents} />
             </div>
         </div>
     );

@@ -22,15 +22,20 @@ const AUTO_SLIDE_MS = 5000;
 /** 지금 보이는 배너의 연결 이벤트로 갱신 표시를 그린다 — 상세(E02)는 BannerSlide와 같은 캐시를 쓴다 */
 function ActiveRefresh({
     eventId,
+    summaryEvent,
     render,
 }: {
     eventId: string;
+    summaryEvent?: Event;
     render: (event: Event, isActive: boolean) => ReactNode;
 }) {
     // 슬라이드가 바뀔 때마다 마운트되므로 폴링 주기 안의 재마운트는 받아 둔 값을 쓴다
-    const { data: event } = useEvent(eventId, {
+    // 목록 이벤트가 있으면 그 값으로 충분해 상세를 따로 묻지 않는다 — 슬라이드의 상세 조회가 채운다
+    const { data: detail } = useEvent(eventId, {
         staleTime: queryPresets.realtime.refetchInterval,
+        enabled: !summaryEvent,
     });
+    const event = detail ?? summaryEvent;
     return event && event.status === 'open' ? render(event, true) : null;
 }
 
@@ -45,9 +50,15 @@ export function BannerSlider({
     renderStatus,
     renderRefresh,
     footer,
+    events,
 }: {
     /** 배너 아래 줄 왼쪽에 둘 내용 — 넘김 화살표와 같은 줄에 붙여 배너와 한 덩어리로 보이게 한다 (예: 홈 바로가기) */
     footer?: ReactNode;
+    /**
+     * 페이지가 이미 받은 이벤트 목록(E01) — 주면 비활성 슬라이드는 목록 이벤트로 그리고
+     * 상세(E02) 조회는 활성 슬라이드만 한다. 안 주면 배너마다 상세를 받던 종전 동작을 유지한다
+     */
+    events?: Event[];
     /**
      * 연결 이벤트의 실시간 현황 pill을 배너 안에 그린다 — 위젯 간 참조를 피하려고 페이지가 슬롯으로 주입한다.
      * isActive는 지금 보이는 배너인지라, 보이지 않는 배너의 현황 조회를 멈추는 데 쓴다
@@ -108,6 +119,9 @@ export function BannerSlider({
         setIndex((safeIndex + offset + total) % total);
     };
     const active = banners?.[safeIndex];
+    // 페이지가 목록을 넘겼다는 사실 자체가 lazy 신호다 — 로딩 중(빈 배열)이어도 비활성 슬라이드는 상세를 묻지 않는다
+    const lazyDetail = events !== undefined;
+    const summaryOf = (eventId: string) => events?.find((event) => event.id === eventId);
 
     return (
         <section
@@ -155,6 +169,8 @@ export function BannerSlider({
                                     banner={banner}
                                     now={now}
                                     isActive={slideIndex === safeIndex}
+                                    summaryEvent={summaryOf(banner.eventId)}
+                                    lazyDetail={lazyDetail}
                                     renderStatus={renderStatus}
                                 />
                             </div>
@@ -187,7 +203,11 @@ export function BannerSlider({
                             />
                         )}
                         {active && renderRefresh && (
-                            <ActiveRefresh eventId={active.eventId} render={renderRefresh} />
+                            <ActiveRefresh
+                                eventId={active.eventId}
+                                summaryEvent={summaryOf(active.eventId)}
+                                render={renderRefresh}
+                            />
                         )}
                         {total > 1 && (
                             <div className="flex items-center gap-1">

@@ -34,8 +34,10 @@ const todayOf = (known: boolean, pending: boolean): Today =>
  * 숫자(남은 개수·보유 장수)는 들어간 화면에서 보여주고 여기엔 두지 않는다
  */
 export function QuickLinks() {
-    const { data: attendance } = useAttendanceToday();
-    const { data: missions } = useMissionList();
+    // 출석·미션·게임 현황의 폴링은 아래 TicketBalanceWidget이 같은 키로 이미 건다 —
+    // 여기는 passive로 구독해 그 갱신만 받아 같은 키의 주기 타이머가 겹치지 않게 한다
+    const { data: attendance } = useAttendanceToday({ passive: true });
+    const { data: missions } = useMissionList({ passive: true });
     const { data: games } = useGameList();
 
     // 플레이 화면이 있는 게임만 센다 — 후보·준비 중 게임은 홈 어디에도 두지 않는다
@@ -44,6 +46,7 @@ export function QuickLinks() {
     const statistics = useGameStatisticsList(
         (playable ?? []).map((game) => game.id),
         isUser,
+        { passive: true },
     );
 
     const links: QuickLink[] = [

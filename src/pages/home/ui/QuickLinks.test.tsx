@@ -53,7 +53,7 @@ describe('홈 게임 바로가기 계약 통합', () => {
                 <QuickLinks />
             </MemoryRouter>,
         );
-        expect(state.statistics).toHaveBeenCalledWith(['uuid-order'], true);
+        expect(state.statistics).toHaveBeenCalledWith(['uuid-order'], true, { passive: true });
         expect(
             screen.getByRole('link', { name: '오늘 할 일이 남았어요게임하러 가기' }),
         ).toHaveAttribute('href', '/missions#today-games');
@@ -83,7 +83,7 @@ describe('홈 게임 바로가기 계약 통합', () => {
                 <QuickLinks />
             </MemoryRouter>,
         );
-        expect(state.statistics).toHaveBeenCalledWith(['uuid-order'], false);
+        expect(state.statistics).toHaveBeenCalledWith(['uuid-order'], false, { passive: true });
         expect(screen.queryByRole('link', { name: '게임 보상 완료' })).not.toBeInTheDocument();
     });
 });

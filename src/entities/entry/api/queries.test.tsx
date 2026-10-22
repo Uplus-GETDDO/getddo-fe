@@ -197,6 +197,31 @@ describe('useEntryStatistics', () => {
         expect(intervalOf('evt-002')).toBe(false);
     });
 
+    it('passive observer는 같은 키에 폴링을 걸지 않고 소유자의 값을 받는다', async () => {
+        const { client, wrapper } = setup();
+        const owner = renderHook(() => useEntryStatistics('evt-001', { isOpen: true }), {
+            wrapper,
+        });
+        const passive = renderHook(
+            () => useEntryStatistics('evt-001', { isOpen: true, passive: true }),
+            { wrapper },
+        );
+
+        await waitFor(() => expect(owner.result.current.isSuccess).toBe(true));
+        await waitFor(() => expect(passive.result.current.isSuccess).toBe(true));
+        expect(passive.result.current.data).toEqual(owner.result.current.data);
+
+        const query = client
+            .getQueryCache()
+            .find({ queryKey: ['entries', 'statistics', 'evt-001'] });
+        const intervals = (query?.observers ?? []).map((observer) => {
+            const interval = observer.options.refetchInterval;
+            return typeof interval === 'function' && query ? interval(query) : interval;
+        });
+        expect(intervals).toEqual(expect.arrayContaining([30_000, false]));
+        client.clear();
+    });
+
     it('enabled가 false면 요청하지 않는다', () => {
         const { wrapper } = setup();
         const { result } = renderHook(() => useEntryStatistics('evt-001', { enabled: false }), {

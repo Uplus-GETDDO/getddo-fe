@@ -2,9 +2,9 @@ import type { ReactNode } from 'react';
 
 import { Clock } from 'lucide-react';
 
+import type { EntryStatistics } from '@entities/entry';
 import type { Event } from '@entities/event';
 
-import { useEntryStatistics } from '@entities/entry';
 import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { ImagePlaceholder } from '@shared/ui/image-placeholder';
@@ -30,20 +30,29 @@ const STATUS_CHIP: Record<Event['status'], { label: string; emphasized: boolean 
 
 interface RaffleDetailHeroProps {
     event: Event;
+    /** 응모 현황(E03) — 페이지가 같은 키를 한 번만 구독해 나눠 준다 */
+    statistics?: EntryStatistics;
+    /** 현황 조회 시각 — 'HH:MM 기준' 표시에 쓴다 */
+    statisticsUpdatedAt?: number;
     /** 응모 수량 스테퍼 — 진행 중일 때만 노출한다 */
     quantityControl?: ReactNode;
     cta: ReactNode;
 }
 
 /** 상세 화면 대표 카드 — 목록 히어로와 달리 이미지가 카드에 꽉 차고, 현황은 칩으로 줄어든다 */
-export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHeroProps) {
-    // 응모 현황은 E03 전용 조회로 받는다 — 진행 중일 때만 30초 폴링 (ADR-0007)
+export function RaffleDetailHero({
+    event,
+    statistics,
+    statisticsUpdatedAt,
+    quantityControl,
+    cta,
+}: RaffleDetailHeroProps) {
     const isOpen = event.status === 'open';
     const banner = useImageFallback(event.bannerImageUrl);
-    const { data: statistics, dataUpdatedAt } = useEntryStatistics(event.id, { isOpen });
     const { override } = useVirtualClock();
     // 진행 중에는 30초마다 바뀌는 값이라 언제 기준인지 같이 적는다 — 가상 시계로 멈춰 두면 그 시각으로 맞춘다
-    const fetchedAt = isOpen && dataUpdatedAt ? (override ?? new Date(dataUpdatedAt)) : null;
+    const fetchedAt =
+        isOpen && statisticsUpdatedAt ? (override ?? new Date(statisticsUpdatedAt)) : null;
 
     return (
         <article className="bg-surface-page flex flex-col overflow-hidden rounded-2xl lg:flex-row lg:gap-5">

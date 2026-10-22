@@ -16,8 +16,6 @@ import { DashboardPanel } from './DashboardPanel';
 const PUBLISH_PREVIEW = 3;
 /** 이 시간 안에 마감하는 진행 중 이벤트를 '곧 마감'으로 본다 */
 const CLOSING_SOON_MS = 24 * 60 * 60 * 1000;
-/** 진행 중 이벤트는 한 번에 최대치(100)로 받아 마감 순으로 고른다 */
-const OPEN_EVENTS_SIZE = 100;
 
 /**
  * 결과 발표 대기 — 이제 결과는 관리자가 직접 발표하므로(ADR-022) 가장 먼저 처리할 일로 진하게 띄운다.
@@ -110,7 +108,12 @@ function QueueRow({
  * 지금 처리할 일 — 발표 대기를 맨 위에, 그 아래 실패 알림·곧 마감을 건수와 함께 모은다.
  * 0건인 일은 접어 숨기고, 모두 0건이면 "처리할 일이 없어요" 한 줄만 둔다 — 할 일이 있을 때만 눈에 띄게
  */
-export function ActionQueuePanel() {
+export function ActionQueuePanel({
+    openEvents,
+}: {
+    /** 진행 중 이벤트 목록 — 페이지가 같은 키를 한 번만 구독해 나눠 준다 */
+    openEvents: ReturnType<typeof useAdminEvents>;
+}) {
     const now = useVirtualClock().now();
     const publishWaiting = useAdminEvents({
         page: 1,
@@ -118,7 +121,6 @@ export function ActionQueuePanel() {
         status: 'DRAW_CONFIRMED',
     });
     const failedJobs = useAdminNotificationJobs({ page: 1, size: 1, status: 'FAILED' });
-    const openEvents = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
 
     const closingSoon = (openEvents.data?.items ?? [])
         .map((event) => ({ event, remainingMs: new Date(event.endsAt).getTime() - now.getTime() }))
