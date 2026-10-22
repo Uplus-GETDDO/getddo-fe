@@ -35,5 +35,5 @@
 ## 결과
 
 - 오류 코드가 확정되기 전에도 화면이 깨지지 않는다 — 모르는 업무 오류 코드는 서버 공개 문구, 그 밖의 오류는 기본 문구로 떨어진다
-- 개별 계약이 확정·현행 구현으로 정리되면 매핑 테이블에 행을 추가한다. GD-199 PR 대조의 `PUBLICATION-002`는 최초·재추첨 준비 거절 모두에 재사용되므로 메시지의 재추첨 표현으로 실행 종류를 판정하지 않는다(`05-api/drawing.md`, PR 병합 후 적용 예정)
+- 개별 계약이 확정·현행 구현으로 정리되면 매핑 테이블에 행을 추가한다. GD-199 PR 대조의 `PUBLICATION-002`는 최초·재추첨 준비 거절 모두에 재사용되므로 메시지의 재추첨 표현으로 실행 종류를 판정하지 않는다(`05-api/drawing.md`, GD-314로 확정 문구 적용 완료)
 - 후속 작업(GD-124에서 처리): `shared/api/errorMessage.ts`에 `getErrorMessage` 추가, 기존 `error instanceof ApiError ? error.message` 4곳(`EventActionDialog`, `QuizForm`, `SurveyForm`, `AdminEventFormPage`) 교체, 인터셉터에서 `Retry-After`를 `ApiError.retryAfterSeconds`로 보존

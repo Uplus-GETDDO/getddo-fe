@@ -1104,11 +1104,7 @@ export const drawHandlers = [
             store.runs.some((r) => r.detail.status !== 'CONFIRMED') ||
             run.detail.results.length === 0
         ) {
-            return fail(
-                409,
-                'PUBLICATION-002',
-                '최초·재추첨 실행이 미확정이거나 전체 명단이 아직 준비되지 않았습니다.',
-            );
+            return fail(409, 'PUBLICATION-002', '추첨 결과가 아직 발표 가능한 상태가 아닙니다.');
         }
 
         const now = mockNow().toISOString();
