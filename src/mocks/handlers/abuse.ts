@@ -104,16 +104,22 @@ const badQuery = () => fail(400, 'COMMON-002', '조회 조건이 올바르지 �
 const TZ_SUFFIX = /(Z|[+-]\d{2}:?\d{2})$/;
 
 // 날짜 필터는 blockedAt 기준 [from, to) — 시간대 없는 값은 받지 않는다 (spec 공통 계약)
-function parseRange(params: URLSearchParams): { from: string | null; to: string | null } | null {
+// 오프셋 표기(+09:00)도 같은 순간으로 비교해야 하므로 문자열이 아닌 밀리초로 내린다
+function parseRange(params: URLSearchParams): { from: number | null; to: number | null } | null {
     const from = params.get('from');
     const to = params.get('to');
-    for (const value of [from, to]) {
-        if (value !== null && (!TZ_SUFFIX.test(value) || Number.isNaN(Date.parse(value)))) {
+    const fromMs = from === null ? null : Date.parse(from);
+    const toMs = to === null ? null : Date.parse(to);
+    for (const [value, milliseconds] of [
+        [from, fromMs],
+        [to, toMs],
+    ] as const) {
+        if (value !== null && (!TZ_SUFFIX.test(value) || Number.isNaN(milliseconds))) {
             return null;
         }
     }
-    if (from && to && Date.parse(from) >= Date.parse(to)) return null;
-    return { from, to };
+    if (fromMs !== null && toMs !== null && fromMs >= toMs) return null;
+    return { from: fromMs, to: toMs };
 }
 
 // 페이지는 1부터, size는 1~100(기본 20) — 공통 계약의 Page 제안을 따른다
@@ -147,8 +153,9 @@ export const abuseHandlers = [
                 if (userId && item.userId !== userId) return false;
                 if (eventId && item.eventId !== eventId) return false;
                 if (sourceType && item.sourceType !== sourceType) return false;
-                if (range.from && item.blockedAt < range.from) return false;
-                if (range.to && item.blockedAt >= range.to) return false;
+                const blockedMs = Date.parse(item.blockedAt);
+                if (range.from !== null && blockedMs < range.from) return false;
+                if (range.to !== null && blockedMs >= range.to) return false;
                 return true;
             })
             .sort((a, b) => b.blockedAt.localeCompare(a.blockedAt) || b.id.localeCompare(a.id));

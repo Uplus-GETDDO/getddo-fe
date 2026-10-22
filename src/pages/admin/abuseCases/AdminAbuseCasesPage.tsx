@@ -35,8 +35,8 @@ export function AdminAbuseCasesPage() {
     const [fromInput, setFromInput] = useState(linkedDate);
     const [toInput, setToInput] = useState(linkedDate);
     // 기간도 Select와 달리 즉시 적용되지 않고 검색 버튼으로 함께 적용된다 ([from, to), blockedAt 기준)
-    const [from, setFrom] = useState(linkedDate);
-    const [to, setTo] = useState(linkedDate);
+    const [from, setFrom] = useState(linkedDate ? kstDateStartUtcIso(linkedDate) : '');
+    const [to, setTo] = useState(linkedDate ? kstNextDateStartUtcIso(linkedDate) : '');
     const [sourceType, setSourceType] = useState('all');
     const [inputError, setInputError] = useState<string | null>(null);
     const [selected, setSelected] = useState<AbuseCase | null>(null);

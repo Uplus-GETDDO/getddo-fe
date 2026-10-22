@@ -91,6 +91,20 @@ describe('AR01 차단 이력 목록', () => {
         expect(ids).not.toContain(second.id);
     });
 
+    it('오프셋 표기(+09:00)도 같은 순간으로 비교한다', async () => {
+        // 2026-10-20T14:00:00+09:00 = 05:00Z, 16:00+09:00 = 07:00Z — 사이는 05:32Z 한 건
+        const items = page(
+            abuseCaseSchema,
+            (
+                await get('/v1/admin/abuse-cases', {
+                    from: '2026-10-20T14:00:00+09:00',
+                    to: '2026-10-20T16:00:00+09:00',
+                })
+            ).data,
+        ).items;
+        expect(items.map((i) => i.id)).toEqual([CASE_ID]);
+    });
+
     it('시간대가 없거나 page·size가 범위를 벗어나면 400이다', async () => {
         expect((await get('/v1/admin/abuse-cases', { from: '2026-10-01T00:00:00' })).status).toBe(
             400,
