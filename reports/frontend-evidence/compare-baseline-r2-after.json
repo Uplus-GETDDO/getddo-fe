@@ -1,0 +1,717 @@
+{
+    "comparable": true,
+    "status": "ok",
+    "scenarios": {
+        "req-ticket-history-0": {
+            "initialRequestCount": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            },
+            "initialPageSizeParam": {
+                "before": 5,
+                "after": 5,
+                "reductionPercent": 0
+            },
+            "nextPageCumulativeRequests": {
+                "before": null,
+                "after": null,
+                "reductionPercent": null
+            },
+            "monthlyTotalRequests": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            }
+        },
+        "req-ticket-history-5": {
+            "initialRequestCount": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            },
+            "initialPageSizeParam": {
+                "before": 5,
+                "after": 5,
+                "reductionPercent": 0
+            },
+            "nextPageCumulativeRequests": {
+                "before": null,
+                "after": null,
+                "reductionPercent": null
+            },
+            "monthlyTotalRequests": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            }
+        },
+        "req-ticket-history-6": {
+            "initialRequestCount": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            },
+            "initialPageSizeParam": {
+                "before": 5,
+                "after": 5,
+                "reductionPercent": 0
+            },
+            "nextPageCumulativeRequests": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "monthlyTotalRequests": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            }
+        },
+        "req-ticket-history-1000": {
+            "initialRequestCount": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            },
+            "initialPageSizeParam": {
+                "before": 5,
+                "after": 5,
+                "reductionPercent": 0
+            },
+            "nextPageCumulativeRequests": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "monthlyTotalRequests": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            }
+        },
+        "req-my-entry-rows-90s": {
+            "cumulativeResultRequests90s": {
+                "before": 85,
+                "after": 85,
+                "reductionPercent": 0
+            },
+            "initialResultRequests": {
+                "before": 25,
+                "after": 25,
+                "reductionPercent": 0
+            },
+            "perCycleResultRequests": {
+                "before": 20,
+                "after": 20,
+                "reductionPercent": 0
+            },
+            "eventsListPageCalls90s": {
+                "before": 8,
+                "after": 8,
+                "reductionPercent": 0
+            },
+            "entriesListPageCalls": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "rejectedResultRequests": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            }
+        },
+        "dup-attendance": {
+            "attempts": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "postsSent": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            },
+            "businessApplied": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            }
+        },
+        "dup-enter-event": {
+            "attempts": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "postsSent": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "sameIdempotencyKey": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            }
+        },
+        "dup-game-session": {
+            "attempts": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "submissions": {
+                "before": 2,
+                "after": 2,
+                "reductionPercent": 0
+            },
+            "newRoundIssued": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            }
+        },
+        "bundle-entry": {
+            "rawBytes": {
+                "before": 1255979,
+                "after": 1255979,
+                "reductionPercent": 0
+            },
+            "gzipBytes": {
+                "before": 377242,
+                "after": 377242,
+                "reductionPercent": 0
+            },
+            "fileCount": {
+                "before": 27,
+                "after": 27,
+                "reductionPercent": 0
+            }
+        },
+        "bundle-all": {
+            "rawBytes": {
+                "before": 16860340,
+                "after": 16860340,
+                "reductionPercent": 0
+            },
+            "gzipBytes": {
+                "before": 14711106,
+                "after": 14711106,
+                "reductionPercent": 0
+            },
+            "fileCount": {
+                "before": 280,
+                "after": 280,
+                "reductionPercent": 0
+            }
+        },
+        "load-preview-/": {
+            "ttfbPlusBodyMs": {
+                "before": 5.4990999999999985,
+                "after": 3.1555999999999926,
+                "reductionPercent": 42.61606444690961
+            },
+            "htmlBytes": {
+                "before": 3241,
+                "after": 3241,
+                "reductionPercent": 0
+            },
+            "httpStatus": {
+                "before": 200,
+                "after": 200,
+                "reductionPercent": 0
+            }
+        },
+        "load-preview-/login": {
+            "ttfbPlusBodyMs": {
+                "before": 4.45320000000001,
+                "after": 2.3567000000000036,
+                "reductionPercent": 47.07850534447143
+            },
+            "htmlBytes": {
+                "before": 3241,
+                "after": 3241,
+                "reductionPercent": 0
+            },
+            "httpStatus": {
+                "before": 200,
+                "after": 200,
+                "reductionPercent": 0
+            }
+        },
+        "load-preview-/events/evt-001": {
+            "ttfbPlusBodyMs": {
+                "before": 3.8589999999999804,
+                "after": 2.043599999999998,
+                "reductionPercent": 47.04327545996351
+            },
+            "htmlBytes": {
+                "before": 3241,
+                "after": 3241,
+                "reductionPercent": 0
+            },
+            "httpStatus": {
+                "before": 200,
+                "after": 200,
+                "reductionPercent": 0
+            }
+        },
+        "load-preview-/missions": {
+            "ttfbPlusBodyMs": {
+                "before": 3.8670999999999935,
+                "after": 2.109199999999987,
+                "reductionPercent": 45.457836621758155
+            },
+            "htmlBytes": {
+                "before": 3241,
+                "after": 3241,
+                "reductionPercent": 0
+            },
+            "httpStatus": {
+                "before": 200,
+                "after": 200,
+                "reductionPercent": 0
+            }
+        },
+        "load-preview-/missions/games/takko-timing": {
+            "ttfbPlusBodyMs": {
+                "before": 3.1645000000000323,
+                "after": 1.8728000000000122,
+                "reductionPercent": 40.818454732185394
+            },
+            "htmlBytes": {
+                "before": 3241,
+                "after": 3241,
+                "reductionPercent": 0
+            },
+            "httpStatus": {
+                "before": 200,
+                "after": 200,
+                "reductionPercent": 0
+            }
+        },
+        "ux-load-/login": {
+            "ttfbMs": {
+                "before": 3.100000023841858,
+                "after": 3.5,
+                "reductionPercent": -12.903224938121728
+            },
+            "fcpMs": {
+                "before": 524,
+                "after": 536,
+                "reductionPercent": -2.2900763358778624
+            },
+            "lcpMs": {
+                "before": 524,
+                "after": 536,
+                "reductionPercent": -2.2900763358778624
+            },
+            "clsValue": {
+                "before": 0.035337727864583335,
+                "after": 0,
+                "reductionPercent": 100
+            },
+            "loadEventMs": {
+                "before": 68.30000007152557,
+                "after": 71.90000009536743,
+                "reductionPercent": -5.270863865405333
+            },
+            "readyMs": {
+                "before": 139.7485999999999,
+                "after": 144.45270000000073,
+                "reductionPercent": -3.3661160111806763
+            },
+            "jsTransferBytes": {
+                "before": 1500,
+                "after": 1500,
+                "reductionPercent": 0
+            },
+            "cssTransferBytes": {
+                "before": 300,
+                "after": 300,
+                "reductionPercent": 0
+            },
+            "imgTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "fontTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiRequestCount": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "requestCount": {
+                "before": 31,
+                "after": 31,
+                "reductionPercent": 0
+            }
+        },
+        "ux-load-/": {
+            "ttfbMs": {
+                "before": 4.399999976158142,
+                "after": 3.399999976158142,
+                "reductionPercent": 22.72727285042282
+            },
+            "fcpMs": {
+                "before": 264,
+                "after": 212,
+                "reductionPercent": 19.696969696969695
+            },
+            "lcpMs": {
+                "before": 728,
+                "after": 512,
+                "reductionPercent": 29.67032967032967
+            },
+            "clsValue": {
+                "before": 0.0012824492454528809,
+                "after": 0.0012824492454528809,
+                "reductionPercent": 0
+            },
+            "loadEventMs": {
+                "before": 141.5,
+                "after": 117.79999995231628,
+                "reductionPercent": 16.749116641472593
+            },
+            "readyMs": {
+                "before": 504.90799999999945,
+                "after": 364.63300000000163,
+                "reductionPercent": 27.782289050678138
+            },
+            "jsTransferBytes": {
+                "before": 1500,
+                "after": 1500,
+                "reductionPercent": 0
+            },
+            "cssTransferBytes": {
+                "before": 300,
+                "after": 300,
+                "reductionPercent": 0
+            },
+            "imgTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "fontTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiRequestCount": {
+                "before": 18,
+                "after": 18,
+                "reductionPercent": 0
+            },
+            "requestCount": {
+                "before": 74,
+                "after": 74,
+                "reductionPercent": 0
+            }
+        },
+        "ux-load-/time-raffle/evt-001": {
+            "ttfbMs": {
+                "before": 3.1999999284744263,
+                "after": 4.400000095367432,
+                "reductionPercent": -37.50000605359687
+            },
+            "fcpMs": {
+                "before": 208,
+                "after": 240,
+                "reductionPercent": -15.384615384615385
+            },
+            "lcpMs": {
+                "before": 516,
+                "after": 508,
+                "reductionPercent": 1.550387596899225
+            },
+            "clsValue": {
+                "before": 8.816189236111111e-7,
+                "after": 7.392035590277778e-7,
+                "reductionPercent": 16.153846153846153
+            },
+            "loadEventMs": {
+                "before": 137.70000004768372,
+                "after": 148.29999995231628,
+                "reductionPercent": -7.697893900480701
+            },
+            "readyMs": {
+                "before": 942.0585000000137,
+                "after": 759.920299999998,
+                "reductionPercent": 19.334064710420122
+            },
+            "jsTransferBytes": {
+                "before": 1500,
+                "after": 1500,
+                "reductionPercent": 0
+            },
+            "cssTransferBytes": {
+                "before": 300,
+                "after": 300,
+                "reductionPercent": 0
+            },
+            "imgTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "fontTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiRequestCount": {
+                "before": 6,
+                "after": 6,
+                "reductionPercent": 0
+            },
+            "requestCount": {
+                "before": 52,
+                "after": 52,
+                "reductionPercent": 0
+            }
+        },
+        "ux-load-/missions": {
+            "ttfbMs": {
+                "before": 3.9000000953674316,
+                "after": 4.899999976158142,
+                "reductionPercent": -25.641021957372473
+            },
+            "fcpMs": {
+                "before": 156,
+                "after": 272,
+                "reductionPercent": -74.35897435897436
+            },
+            "lcpMs": {
+                "before": 556,
+                "after": 804,
+                "reductionPercent": -44.60431654676259
+            },
+            "clsValue": {
+                "before": 0.0009102078013949924,
+                "after": 0.0015864146020677353,
+                "reductionPercent": -74.29147493972064
+            },
+            "loadEventMs": {
+                "before": 91.60000002384186,
+                "after": 153.89999997615814,
+                "reductionPercent": -68.01310036692216
+            },
+            "readyMs": {
+                "before": 1022.9459999999963,
+                "after": 1234.0901999999915,
+                "reductionPercent": -20.64079628836673
+            },
+            "jsTransferBytes": {
+                "before": 1500,
+                "after": 1500,
+                "reductionPercent": 0
+            },
+            "cssTransferBytes": {
+                "before": 300,
+                "after": 300,
+                "reductionPercent": 0
+            },
+            "imgTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "fontTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiRequestCount": {
+                "before": 21,
+                "after": 21,
+                "reductionPercent": 0
+            },
+            "requestCount": {
+                "before": 88,
+                "after": 88,
+                "reductionPercent": 0
+            }
+        },
+        "ux-load-/missions/games/0199f000-0000-7000-8000-000000000102": {
+            "ttfbMs": {
+                "before": 4.399999976158142,
+                "after": 4.799999952316284,
+                "reductionPercent": -9.090908598308719
+            },
+            "fcpMs": {
+                "before": 268,
+                "after": 160,
+                "reductionPercent": 40.298507462686565
+            },
+            "lcpMs": {
+                "before": 732,
+                "after": 628,
+                "reductionPercent": 14.207650273224044
+            },
+            "clsValue": {
+                "before": 0.000010009765624999999,
+                "after": 0.000008923000759548609,
+                "reductionPercent": 10.857046070460717
+            },
+            "loadEventMs": {
+                "before": 155.10000002384186,
+                "after": 96.10000002384186,
+                "reductionPercent": 38.0399742043395
+            },
+            "readyMs": {
+                "before": 689.819599999988,
+                "after": 629.1925999999949,
+                "reductionPercent": 8.788819569637365
+            },
+            "jsTransferBytes": {
+                "before": 1500,
+                "after": 1500,
+                "reductionPercent": 0
+            },
+            "cssTransferBytes": {
+                "before": 300,
+                "after": 300,
+                "reductionPercent": 0
+            },
+            "imgTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "fontTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiTransferBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "apiRequestCount": {
+                "before": 7,
+                "after": 7,
+                "reductionPercent": 0
+            },
+            "requestCount": {
+                "before": 83,
+                "after": 83,
+                "reductionPercent": 0
+            }
+        },
+        "ux-act-attendance": {
+            "clickToPendingMs": {
+                "before": 61.10499999998137,
+                "after": 61.63790000000154,
+                "reductionPercent": -0.872105392390681
+            },
+            "clickToToastMs": {
+                "before": 1934.8805000000866,
+                "after": 1950.0453000000125,
+                "reductionPercent": -0.783758996998792
+            },
+            "clickToDoneMs": {
+                "before": 2200.7454000000143,
+                "after": 2218.2537999999768,
+                "reductionPercent": -0.7955668111341869
+            },
+            "balanceBefore": {
+                "before": 10,
+                "after": 10,
+                "reductionPercent": 0
+            },
+            "balanceAfter": {
+                "before": 11,
+                "after": 11,
+                "reductionPercent": 0
+            },
+            "businessApplied": {
+                "before": 1,
+                "after": 1,
+                "reductionPercent": 0
+            }
+        },
+        "ux-act-enter": {
+            "clickToConfirmDialogMs": {
+                "before": 40.398999999975786,
+                "after": 41.57360000000335,
+                "reductionPercent": -2.907497710409345
+            },
+            "confirmToCompleteMs": {
+                "before": 229.80240000004414,
+                "after": 229.11350000003586,
+                "reductionPercent": 0.2997792886445731
+            },
+            "totalMs": {
+                "before": 272.5374999999767,
+                "after": 271.50949999998556,
+                "reductionPercent": 0.3771957987400781
+            },
+            "clickToBalanceMs": {
+                "before": 532.936400000006,
+                "after": 534.061699999962,
+                "reductionPercent": -0.21115089904837217
+            },
+            "balanceBefore": {
+                "before": 10,
+                "after": 10,
+                "reductionPercent": 0
+            },
+            "balanceAfter": {
+                "before": 9,
+                "after": 9,
+                "reductionPercent": 0
+            },
+            "businessApplied": {
+                "before": -1,
+                "after": -1,
+                "reductionPercent": null
+            }
+        },
+        "ux-act-transition": {
+            "clickToDetailMs": {
+                "before": 31.26679999998305,
+                "after": 31.45539999997709,
+                "reductionPercent": -0.6031957219611274
+            },
+            "newJsFetchCount": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            },
+            "newJsEncodedBytes": {
+                "before": 0,
+                "after": 0,
+                "reductionPercent": null
+            }
+        }
+    }
+}

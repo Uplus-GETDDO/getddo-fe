@@ -1,0 +1,1274 @@
+{
+    "collectedAt": "2026-10-22T06:03:55.406Z",
+    "collector": "scripts/measurePreviewLoad.mjs",
+    "commit": "40e9fdaaac2ee4ac6554a2a4a6c3a3e904cb83ca",
+    "node": "v24.14.1",
+    "preview": "http://localhost:6277",
+    "runs": [
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "cold",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 117.55499999999998,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, cold)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 11.007999999999981,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 1,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.4990999999999985,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 2,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 6.084900000000005,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 3,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 11.368200000000002,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 4,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.9217000000000155,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 5,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 6.023399999999981,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 6,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.4343000000000075,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 7,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.633999999999986,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 8,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.3711999999999875,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/",
+            "sampleIndex": 9,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.116199999999992,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "cold",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.06880000000001,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, cold)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.873199999999997,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 1,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.873799999999989,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 2,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.807700000000011,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 3,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.581799999999987,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 4,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.672800000000024,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 5,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.624799999999993,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 6,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.45320000000001,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 7,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.532299999999992,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 8,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 6.869399999999985,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/login",
+            "sampleIndex": 9,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.9968999999999824,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "cold",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.3471000000000117,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, cold)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.298099999999977,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 1,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 15.513599999999997,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 2,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 6.610900000000015,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 3,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.987899999999968,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 4,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.5394999999999754,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 5,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.5604000000000156,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 6,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.8589999999999804,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 7,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.6474999999999795,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 8,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.782699999999977,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/events/evt-001",
+            "sampleIndex": 9,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.8316999999999553,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "cold",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.362600000000043,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, cold)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.587600000000009,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 1,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.545000000000016,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 2,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.235000000000014,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 3,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.8670999999999935,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 4,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 8.426800000000014,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 5,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.644299999999987,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 6,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.626800000000003,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 7,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.905499999999961,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 8,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.1952,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions",
+            "sampleIndex": 9,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.3917000000000144,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "cold",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.1645000000000323,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, cold)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 0,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 5.583899999999971,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 1,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.977300000000014,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 2,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.185200000000009,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 3,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.037800000000004,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 4,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 4.190600000000018,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 5,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 3.124500000000012,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 6,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.495400000000018,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 7,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.139499999999998,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 8,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.2373999999999796,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        },
+        {
+            "scenario": "load-preview-/missions/games/takko-timing",
+            "sampleIndex": 9,
+            "status": "ok",
+            "cache": "warm",
+            "metrics": {
+                "ttfbPlusBodyMs": {
+                    "value": 2.1119999999999663,
+                    "unit": "ms",
+                    "method": "vite preview + Node fetch 왕복 (loopback, warm)"
+                },
+                "htmlBytes": {
+                    "value": 3241,
+                    "unit": "byte",
+                    "method": "res.arrayBuffer().byteLength"
+                },
+                "httpStatus": {
+                    "value": 200,
+                    "unit": "code",
+                    "method": "response.status"
+                }
+            }
+        }
+    ]
+}
