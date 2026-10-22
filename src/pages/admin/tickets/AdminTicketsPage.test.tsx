@@ -142,12 +142,18 @@ describe('AdminTicketsPage', () => {
         await waitFor(() => expect(calls).toBe(1));
 
         vi.useFakeTimers();
-        focusManager.setFocused(true);
         try {
+            // 포커스 복귀 refetch로 폴링 타이머를 fake timer 아래에서 다시 예약한다
+            await act(async () => {
+                focusManager.setFocused(false);
+                focusManager.setFocused(true);
+                await vi.waitFor(() => expect(calls).toBe(2));
+            });
+
             await act(async () => {
                 await vi.advanceTimersByTimeAsync(30_000);
+                await vi.waitFor(() => expect(calls).toBe(3));
             });
-            expect(calls).toBeGreaterThan(1);
             expect(input).toHaveValue('vu-doyoon');
         } finally {
             vi.useRealTimers();
