@@ -218,17 +218,17 @@ export function TicketTrendPanel({
         past: index < last ? row.granted : null,
         today: index >= last - 1 ? row.granted : null,
     }));
-    // 점(날짜)을 누르면 그날로 걸러진 지급 이력을 연다
+    // 점(날짜)을 누르면 그날 지급으로 걸러진 전체 이력을 연다
     const openDay = (index: unknown) => {
         const row = rows[Number(index)];
-        if (row) void navigate(`/admin/tickets?tab=grants&date=${row.ymd}`);
+        if (row) void navigate(`/admin/tickets?date=${row.ymd}&operationType=GRANT`);
     };
 
     return (
         <DashboardPanel
             title="응모권 지급·응모 추이"
             caption={`최근 ${rows.length}일 · 오늘은 지금까지 집계 (가상 시계 기준)`}
-            actions={<ViewAllLink to="/admin/tickets?tab=grants" />}
+            actions={<ViewAllLink to="/admin/tickets?operationType=GRANT" />}
             error={isError}
             onRetry={onRetry}
             className={className}

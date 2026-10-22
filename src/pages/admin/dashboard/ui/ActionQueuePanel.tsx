@@ -1,18 +1,10 @@
 import type { LucideIcon } from 'lucide-react';
 
-import {
-    BellOff,
-    ChevronRight,
-    CircleCheck,
-    Hourglass,
-    Megaphone,
-    TriangleAlert,
-} from 'lucide-react';
+import { BellOff, ChevronRight, CircleCheck, Hourglass, Megaphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useAdminNotificationJobs } from '@entities/adminNotification';
 import { useAdminEvents } from '@entities/event';
-import { useTicketInconsistencies } from '@entities/ticket';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
@@ -115,7 +107,7 @@ function QueueRow({
 }
 
 /**
- * 지금 처리할 일 — 발표 대기를 맨 위에, 그 아래 실패 알림·정합성 불일치·곧 마감을 건수와 함께 모은다.
+ * 지금 처리할 일 — 발표 대기를 맨 위에, 그 아래 실패 알림·곧 마감을 건수와 함께 모은다.
  * 0건인 일은 접어 숨기고, 모두 0건이면 "처리할 일이 없어요" 한 줄만 둔다 — 할 일이 있을 때만 눈에 띄게
  */
 export function ActionQueuePanel() {
@@ -126,7 +118,6 @@ export function ActionQueuePanel() {
         status: 'DRAW_CONFIRMED',
     });
     const failedJobs = useAdminNotificationJobs({ page: 1, size: 1, status: 'FAILED' });
-    const mismatches = useTicketInconsistencies({ page: 1, size: 1 });
     const openEvents = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
 
     const closingSoon = (openEvents.data?.items ?? [])
@@ -135,7 +126,7 @@ export function ActionQueuePanel() {
         .sort((a, b) => a.remainingMs - b.remainingMs);
     const nearest = closingSoon[0];
 
-    const queries = [failedJobs, mismatches, openEvents];
+    const queries = [failedJobs, openEvents];
     const isPending = queries.some((query) => query.isPending) || publishWaiting.isPending;
     const isError = queries.some((query) => query.isError);
     const publishCount = publishWaiting.data?.totalElements ?? 0;
@@ -148,14 +139,6 @@ export function ActionQueuePanel() {
             count: failedJobs.data?.totalElements ?? 0,
             unit: '건',
             to: '/admin/notifications?tab=jobs&status=FAILED',
-        },
-        {
-            icon: TriangleAlert,
-            label: '응모권 정합성 불일치',
-            detail: '응모권 상태와 마지막 이력이 달라요',
-            count: mismatches.data?.totalElements ?? 0,
-            unit: '장',
-            to: '/admin/tickets?tab=consistency',
         },
         {
             icon: Hourglass,

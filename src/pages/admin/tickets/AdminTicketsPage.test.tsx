@@ -1,8 +1,11 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { server } from '@mocks/server';
 
 import { AdminTicketsPage } from './AdminTicketsPage';
 
@@ -31,100 +34,57 @@ function renderRoutedPage(initialEntries: string[], initialIndex = 0) {
     return { client, router };
 }
 
+afterEach(() => {
+    vi.useRealTimers();
+    focusManager.setFocused(undefined);
+});
+
 describe('AdminTicketsPage', () => {
-    it('정합성 탭이 기본이고 시드된 불일치 응모권을 보여준다', async () => {
+    it('탭 없이 전체 이력 단일 화면을 보여준다', async () => {
         renderPage();
-        expect(screen.getByRole('tab', { name: '정합성', selected: true })).toBeInTheDocument();
-        expect(await screen.findByText('tk-007')).toBeInTheDocument();
-        expect(screen.getByText('tk-010')).toBeInTheDocument();
-        expect(screen.getByText('tk-013')).toBeInTheDocument();
+        expect(screen.getByText('응모권 지급·사용 내역을 확인합니다.')).toBeInTheDocument();
+        expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+        expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
-    it('불일치 행을 누르면 서랍에 불일치 응모권과 최근 이력이 나온다', async () => {
-        const user = userEvent.setup();
-        renderPage();
-        await user.click(await screen.findByText('tk-007'));
-        const dialog = await screen.findByRole('dialog');
-        expect(await within(dialog).findByText('불일치')).toBeInTheDocument();
-        expect(await within(dialog).findByText('최근 이력')).toBeInTheDocument();
-        await waitFor(() =>
-            expect(within(dialog).queryByText('이력이 없습니다.')).not.toBeInTheDocument(),
-        );
+    it('?tab=consistency 링크는 탭 파라미터를 무시하고 전체 이력이 열린다', async () => {
+        renderPage('/admin/tickets?tab=consistency');
+        expect(await screen.findByLabelText('사용자 ID 필터')).toBeInTheDocument();
+        expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
-    it('일치하는 사용자도 직접 조회하면 일치로 표시한다', async () => {
-        const user = userEvent.setup();
-        renderPage();
-        await user.type(screen.getByLabelText('사용자 직접 조회'), 'vu-doyoon');
-        await user.click(screen.getByRole('button', { name: '정합성 확인' }));
-        const dialog = await screen.findByRole('dialog');
-        expect(await within(dialog).findByText('일치')).toBeInTheDocument();
+    it('?tab=consistency&userId= 링크도 정합성 서랍 대신 사용자 필터의 전체 이력이 열린다', async () => {
+        renderPage('/admin/tickets?tab=consistency&userId=vu-doyoon');
+        expect(await screen.findByLabelText('사용자 ID 필터')).toHaveValue('vu-doyoon');
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
-    it('없는 사용자를 조회하면 찾을 수 없다고 안내한다', async () => {
-        const user = userEvent.setup();
-        renderPage();
-        await user.type(screen.getByLabelText('사용자 직접 조회'), 'nobody');
-        await user.click(screen.getByRole('button', { name: '정합성 확인' }));
-        const dialog = await screen.findByRole('dialog');
-        expect(
-            await within(dialog).findByText('해당 사용자를 찾을 수 없습니다.'),
-        ).toBeInTheDocument();
+    it('?tab=grants&date= 링크는 그날이 걸린 전체 이력이 열린다', async () => {
+        renderPage('/admin/tickets?tab=grants&date=2026-10-02');
+        expect(await screen.findByLabelText('처리일 시작일')).toHaveValue('2026-10-02');
+        expect(screen.getByLabelText('처리일 종료일')).toHaveValue('2026-10-02');
+        expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
-    it('탭을 바꾸면 해당 목록을 보여주고 선택 탭이 URL에 남는다', async () => {
-        const user = userEvent.setup();
-        renderPage('/admin/tickets?tab=grants');
-        expect(screen.getByRole('tab', { name: '지급 이력', selected: true })).toBeInTheDocument();
-        expect((await screen.findAllByText('김도윤')).length).toBeGreaterThan(0);
-        await user.click(screen.getByRole('tab', { name: '반환 이력' }));
-        expect(screen.getByRole('tab', { name: '반환 이력', selected: true })).toBeInTheDocument();
-        expect((await screen.findAllByText('이벤트 취소')).length).toBeGreaterThan(0);
-    });
-
-    it('방향키로 탭을 순환 이동한다', async () => {
-        const user = userEvent.setup();
-        renderPage();
-        screen.getByRole('tab', { name: '정합성' }).focus();
-        await user.keyboard('{ArrowRight}');
-        expect(screen.getByRole('tab', { name: '지급 이력', selected: true })).toHaveFocus();
-        await user.keyboard('{ArrowLeft}');
-        expect(screen.getByRole('tab', { name: '정합성', selected: true })).toHaveFocus();
-        await user.keyboard('{ArrowLeft}');
-        expect(screen.getByRole('tab', { name: '반환 이력', selected: true })).toHaveFocus();
+    it('대시보드 링크의 ?date=&operationType= 가 전체 이력 필터로 적용된다', async () => {
+        renderPage('/admin/tickets?date=2026-10-02&operationType=USE');
+        expect(await screen.findByLabelText('처리일 시작일')).toHaveValue('2026-10-02');
+        expect(screen.getByLabelText('처리 유형 필터')).toHaveTextContent('사용');
+        expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
     it('사용자 상세 링크의 ?userId= 가 전체 이력 필터로 적용된다', async () => {
-        renderPage('/admin/tickets?tab=histories&userId=vu-doyoon');
+        renderPage('/admin/tickets?userId=vu-doyoon');
         expect(await screen.findByLabelText('사용자 ID 필터')).toHaveValue('vu-doyoon');
         expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
-    it('정합성 링크의 ?userId= 가 해당 사용자 정합성 서랍을 바로 연다', async () => {
-        renderPage('/admin/tickets?tab=consistency&userId=vu-doyoon');
-        const dialog = await screen.findByRole('dialog');
-        expect(await within(dialog).findByText(/일치/)).toBeInTheDocument();
-    });
-
-    it('탭을 바꿔도 ?userId= 가 유지되어 다음 탭 필터에 이어진다', async () => {
-        const user = userEvent.setup();
-        const { client, router } = renderRoutedPage([
-            '/admin/tickets?tab=histories&userId=vu-doyoon',
-        ]);
-        try {
-            await screen.findByLabelText('사용자 ID 필터');
-            await user.click(screen.getByRole('tab', { name: '반환 이력' }));
-            expect(router.state.location.search).toContain('userId=vu-doyoon');
-            expect(await screen.findByLabelText('사용자 ID 필터')).toHaveValue('vu-doyoon');
-        } finally {
-            client.clear();
-            router.dispose();
-        }
-    });
-
     it('같은 경로에서 URL의 사용자가 바뀌면 이전 사용자 필터가 남지 않는다', async () => {
         const { client, router } = renderRoutedPage(
-            ['/admin/tickets?tab=histories&userId=vu-doyoon', '/admin/tickets?tab=histories'],
+            ['/admin/tickets?userId=vu-doyoon', '/admin/tickets'],
             0,
         );
         try {
@@ -139,10 +99,7 @@ describe('AdminTicketsPage', () => {
 
     it('같은 경로에서 링크 날짜·처리 유형이 바뀌면 이전 조건이 남지 않는다', async () => {
         const { client, router } = renderRoutedPage(
-            [
-                '/admin/tickets?tab=histories&date=2026-10-19&operationType=USE',
-                '/admin/tickets?tab=histories',
-            ],
+            ['/admin/tickets?date=2026-10-19&operationType=USE', '/admin/tickets'],
             0,
         );
         try {
@@ -157,26 +114,49 @@ describe('AdminTicketsPage', () => {
         }
     });
 
-    it('같은 경로에서 링크 날짜가 바뀌면 지급 탭의 이전 날짜가 남지 않는다', async () => {
-        const { client, router } = renderRoutedPage(
-            ['/admin/tickets?tab=grants&date=2026-10-19', '/admin/tickets?tab=grants'],
-            0,
-        );
-        try {
-            expect(await screen.findByLabelText('지급일 시작일')).toHaveValue('2026-10-19');
-            await act(() => router.navigate(1));
-            await waitFor(() => expect(screen.getByLabelText('지급일 시작일')).toHaveValue(''));
-        } finally {
-            client.clear();
-            router.dispose();
-        }
-    });
-
     it('검색 조건에 맞는 결과가 없으면 빈 목록을 안내한다', async () => {
         const user = userEvent.setup();
-        renderPage('/admin/tickets?tab=grants');
-        await user.type(screen.getByLabelText('사용자 이름 검색'), '없는이름');
+        renderPage();
+        await user.type(await screen.findByLabelText('사용자 ID 필터'), '없는사용자');
         await user.click(screen.getByRole('button', { name: '검색' }));
-        expect(await screen.findByText('해당하는 지급 이력이 없습니다.')).toBeInTheDocument();
+        expect(await screen.findByText('해당하는 이력이 없습니다.')).toBeInTheDocument();
+    });
+
+    it('30초 폴링으로 목록을 갱신해도 입력 중인 필터가 지워지지 않는다', async () => {
+        let calls = 0;
+        server.use(
+            http.get('*/v1/admin/ticket-histories', () => {
+                calls += 1;
+                return HttpResponse.json({
+                    success: true,
+                    code: 'SUCCESS',
+                    message: '성공했습니다.',
+                    data: { items: [], page: 1, size: 20, totalElements: 0 },
+                });
+            }),
+        );
+        renderPage();
+        const input = await screen.findByLabelText('사용자 ID 필터');
+        // 검색을 누르지 않은 draft 입력 — 폴링 refetch는 적용 조건(applied)만 다시 받는다
+        fireEvent.change(input, { target: { value: 'vu-doyoon' } });
+        await waitFor(() => expect(calls).toBe(1));
+
+        vi.useFakeTimers();
+        try {
+            // 포커스 복귀 refetch로 폴링 타이머를 fake timer 아래에서 다시 예약한다
+            await act(async () => {
+                focusManager.setFocused(false);
+                focusManager.setFocused(true);
+                await vi.waitFor(() => expect(calls).toBe(2));
+            });
+
+            await act(async () => {
+                await vi.advanceTimersByTimeAsync(30_000);
+                await vi.waitFor(() => expect(calls).toBe(3));
+            });
+            expect(input).toHaveValue('vu-doyoon');
+        } finally {
+            vi.useRealTimers();
+        }
     });
 });
