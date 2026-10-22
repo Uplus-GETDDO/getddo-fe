@@ -1,5 +1,5 @@
 import { useEntryStatistics } from '@entities/entry';
-import { getPollingRetryDelay } from '@shared/api/queryPresets';
+import { getPollingRetryDelay, queryPresets } from '@shared/api/queryPresets';
 import { Badge } from '@shared/ui/badge';
 import { RefreshStatus } from '@shared/ui/refresh-status';
 import { formatNumber } from '@shared/utils/format';
@@ -32,7 +32,12 @@ export function LiveEntryStatus({
     /** 당첨 인원 — 응모를 정하는 데 가장 먼저 보는 값이라 맨 앞에 둔다 */
     winnerCount?: number;
 }) {
-    const { data } = useEntryStatistics(eventId, { isOpen, enabled });
+    // 배너 회전으로 enabled가 켜질 때마다 다시 받지 않도록 폴링 주기 안의 데이터는 그대로 쓴다
+    const { data } = useEntryStatistics(eventId, {
+        isOpen,
+        enabled,
+        staleTime: queryPresets.realtime.refetchInterval,
+    });
 
     if (!enabled) {
         return null;
@@ -71,7 +76,11 @@ export function LiveEntryStatus({
  * 같은 쿼리 키라 칩(LiveEntryStatus)과 요청은 한 번만 나간다. 서버가 기다리라고 하면(429) 그동안 다시 받지 않는다
  */
 export function LiveEntryRefresh({ eventId, isOpen, enabled = true }: LiveEntryStatusProps) {
-    const query = useEntryStatistics(eventId, { isOpen, enabled });
+    const query = useEntryStatistics(eventId, {
+        isOpen,
+        enabled,
+        staleTime: queryPresets.realtime.refetchInterval,
+    });
     const rateLimited = getPollingRetryDelay(query.error ?? query.failureReason) > 0;
 
     if (!enabled) {
