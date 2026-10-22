@@ -31,6 +31,10 @@ function load(source) {
 }
 
 const eventAdmin = load('src/entities/event/model/adminTypes.ts');
+const envelopeShared = load('src/shared/api/envelopeSchema.ts');
+const adminEventListSchema = envelopeShared.envelopeSchema(
+    envelopeShared.pageSchema(eventAdmin.adminEventSchema),
+);
 
 const deployUrl = process.env.L6_DEPLOY_URL;
 if (!deployUrl)
@@ -101,7 +105,8 @@ async function get(url) {
         at,
         ms,
         json,
-        body: json?.data ?? json,
+        // 성공 봉투(success/data)가 아닌 응답은 통과시키지 않는다 — 200 원시 객체도 불합격 근거로 남긴다
+        body: json?.success === true && json?.data !== undefined ? json.data : null,
     };
 }
 
@@ -139,6 +144,7 @@ async function run() {
 
     // ── GD-268 drawScheduledAt — 이벤트별 endsAt 대비 델타(초) 측정 ──
     const events = await get('/admin/events?page=1&size=50&sort=endsAt,desc');
+    const listZod = zodCheck(adminEventListSchema, events.json);
     const eventItems = events.body?.items ?? [];
     // 마감 시각 최신순으로 정렬해 상위 15건만 상세 조회한다 — 호출 수를 제한한다.
     const recent = [...eventItems]
@@ -159,7 +165,7 @@ async function run() {
             endsAt: d?.endsAt ?? e.endsAt,
             drawScheduledAt: d?.drawScheduledAt ?? null,
             deltaSeconds: deltaSec,
-            zod: zodCheck(eventAdmin.adminEventSchema, detail.json?.data ?? detail.json),
+            zod: zodCheck(eventAdmin.adminEventSchema, detail.body),
             // 호출 단위 증거 — 어느 경로를 언제 쳤는지 집계와 함께 남긴다.
             method: detail.method,
             path: detail.path,
@@ -171,12 +177,14 @@ async function run() {
         page.status === 200 &&
         entryChunk !== null &&
         events.status === 200 &&
+        listZod === 'pass' &&
         deltas.length > 0 &&
         deltas.every((d) => d.deltaSeconds === 60 && d.zod === 'pass' && d.httpStatus === 200);
     push({
         name: 'GD-268 drawScheduledAt 델타 (마감+1분=60초 기대)',
         ...meta(events),
         listStatus: events.status,
+        listZod,
         measured: deltas.length,
         deltas,
         summary: {
