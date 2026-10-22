@@ -4,7 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 
 import type { MissionSubmissionResult } from '@entities/mission';
 
-import { MissionResultPanel, MissionRewardDialog, useMissionDetail } from '@entities/mission';
+import { MissionResultPanel, useMissionDetail } from '@entities/mission';
+import { TicketRewardDialog } from '@entities/ticket';
 import { QuizForm, SurveyForm } from '@features/submitMission';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
@@ -138,12 +139,15 @@ export function MissionDetailPage() {
                 </AnimatePresence>
             </MotionConfig>
 
-            <MissionRewardDialog
+            {/* 설문·퀴즈도 등급 응모권(브론즈~플래티넘)이 나와 게임과 같은 캡슐 뽑기 모달을 쓴다 */}
+            <TicketRewardDialog
                 open={rewardMissionId === (missionId ?? '')}
                 onOpenChange={(open) => {
                     if (!open) setRewardMissionId(null);
                 }}
                 tickets={rewardTickets}
+                grade={submitted?.reward?.grade}
+                source="미션"
             />
         </main>
     );

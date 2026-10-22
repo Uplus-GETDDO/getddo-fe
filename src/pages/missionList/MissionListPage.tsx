@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 import { useAttendanceToday } from '@entities/attendance';
-import { MissionRewardDialog } from '@entities/mission';
-import { TICKET_GRADE_LABEL, type TicketGrade, TicketGradeReveal } from '@entities/ticket';
+import { type TicketGrade, TicketRewardDialog } from '@entities/ticket';
 import { AttendanceCheckCard } from '@features/checkAttendance';
-import { Button } from '@shared/ui/button';
 import { RefreshStatus } from '@shared/ui/refresh-status';
 import { cn } from '@shared/utils/cn';
 import { GameRail } from '@widgets/gameRail';
@@ -152,19 +150,13 @@ export function MissionListPage() {
                     setReward({ open: true, tickets, grade });
                 }}
             />
-            <MissionRewardDialog
+            {/* 설문·퀴즈도 등급 응모권(브론즈~플래티넘)이 나와 게임과 같은 캡슐 뽑기 모달을 쓴다 — 겟또타임 바로가기도 모달 안에 있다 */}
+            <TicketRewardDialog
                 open={reward.open}
                 onOpenChange={(open) => setReward((prev) => ({ ...prev, open }))}
                 tickets={reward.tickets}
-                // 받은 등급을 응모권 카드가 뒤집히며 보여 준다 (게임 보상 모달과 같은 연출)
-                gradeLabel={reward.grade ? TICKET_GRADE_LABEL[reward.grade] : undefined}
-                reveal={reward.grade ? <TicketGradeReveal grade={reward.grade} /> : undefined}
-                // 받은 응모권을 바로 쓰러 가는 길 — 보상 모달의 끝을 겟또타임으로 이어 준다
-                action={
-                    <Button asChild className="w-full">
-                        <Link to="/time-raffle">응모하러 가기</Link>
-                    </Button>
-                }
+                grade={reward.grade}
+                source="미션"
             />
         </main>
     );

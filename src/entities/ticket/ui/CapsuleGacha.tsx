@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-import type { TicketGrade } from '@entities/ticket';
-
-import { TICKET_GRADE_IMAGE } from '@entities/ticket';
 import rewardMascot from '@shared/assets/ui/reward-mascot.png';
+
+import type { TicketGrade } from '../model/types';
 
 import ballGreen from '../assets/capsule/ball-green.png';
 import ballOrange from '../assets/capsule/ball-orange.png';
@@ -16,6 +15,7 @@ import capsuleTop from '../assets/capsule/capsule-top.png';
 import handle from '../assets/capsule/handle.png';
 import machine from '../assets/capsule/machine.png';
 import sparkle from '../assets/capsule/sparkle.png';
+import { TICKET_GRADE_IMAGE } from '../model/gradeImage';
 
 /** 뽑기 진행 — 대기(공이 통통) → 손잡이 회전 → 캡슐이 나옴 → 캡슐 흔들림 → 열려 보상 공개 */
 export type GachaPhase = 'idle' | 'spinning' | 'dropping' | 'opening' | 'revealed';

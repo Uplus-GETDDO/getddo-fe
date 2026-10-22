@@ -34,7 +34,6 @@ export { missionThumbnail } from './utils/missionThumbnail';
 export type { MissionAnswerDraft } from './utils/missionAnswers';
 export { MissionQuestionField } from './ui/MissionQuestionField';
 export { MissionResultPanel } from './ui/MissionResultPanel';
-export { MissionRewardDialog } from './ui/MissionRewardDialog';
 
 export {
     missionWriteSchema,

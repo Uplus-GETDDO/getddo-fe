@@ -24,7 +24,8 @@ export {
 export { useTicketHistories, useTicketHistoryCounts } from './api/history';
 export { ticketDayRange, ticketMonthRange } from './utils/historyPeriod';
 export { TicketHistoryItem } from './ui/TicketHistoryItem';
-export { TicketGradeReveal } from './ui/TicketGradeReveal';
+export { TicketRewardContent, TicketRewardDialog } from './ui/TicketReward';
+export type { TicketRewardSource } from './ui/TicketReward';
 export {
     adminTicketHistorySchema,
     TICKET_OPERATION_LABEL,
