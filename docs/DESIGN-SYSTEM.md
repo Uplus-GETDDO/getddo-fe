@@ -101,11 +101,14 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 | Token                 | Hex          | 용도                                          |
 | --------------------- | ------------ | --------------------------------------------- |
-| `border/default`      | `#E4E7EA`    | 카드·인풋 기본 테두리                         |
+| `border/default`      | `#E4E7EA`    | 카드 기본 테두리                              |
 | `border/strong`       | `#CDD2D8`    | 구분선, 테이블 경계                           |
+| `border/input`        | `#8A9199`    | 입력칸·라디오 테두리 (hover `#6B727C`)        |
 | `border/brand`        | `#E6007E`    | 선택된 카드 (세컨더리 버튼은 `border/strong`) |
 | `border/brand-subtle` | `#F5A3CB`    | 요약 카드 테두리                              |
 | `border/focus`        | `fg/primary` | 키보드 포커스 링 (2px, 요소와 2px 띄움)       |
+
+입력칸은 카드보다 진한 테두리를 쓴다. 카드는 회색 바탕(`surface/canvas`) 위 흰 칸이라 테두리가 연해도 경계가 읽히지만, 입력칸은 **흰 카드 위 흰 칸**이라 테두리만이 유일한 경계다. `border/default`는 흰 바탕과 1.24:1이라 칸이 있는지조차 보이지 않는다 — WCAG 1.4.11은 컨트롤 경계에 3:1을 요구한다. `border/input`은 3.19:1, hover는 4.86:1이다.
 
 ### 7) Foreground — 텍스트·아이콘
 
