@@ -54,9 +54,12 @@ export function useEventList() {
     });
 }
 
-export function useEvent(eventId: string) {
+export function useEvent(eventId: string, { staleTime }: { staleTime?: number } = {}) {
     return useQuery({
         ...queryPresets.realtime,
+        // 캐러셀처럼 자주 다시 마운트되는 소비자는 폴링 주기만큼 staleTime을 넘긴다 —
+        // 같은 주기 안의 재마운트 재조회를 없애고 최신성 상한은 주기 재조회와 같다
+        ...(staleTime !== undefined ? { staleTime } : {}),
         ...pollingReadPolicy,
         queryKey: [...EVENTS_KEY, 'detail', eventId],
         queryFn: (context) =>

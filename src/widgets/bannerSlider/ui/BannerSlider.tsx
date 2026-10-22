@@ -8,6 +8,7 @@ import type { Event } from '@entities/event';
 
 import { useBanners } from '@entities/banner';
 import { useEvent } from '@entities/event';
+import { queryPresets } from '@shared/api/queryPresets';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { Pager } from '@shared/ui/pager';
@@ -26,7 +27,10 @@ function ActiveRefresh({
     eventId: string;
     render: (event: Event, isActive: boolean) => ReactNode;
 }) {
-    const { data: event } = useEvent(eventId);
+    // 슬라이드가 바뀔 때마다 마운트되므로 폴링 주기 안의 재마운트는 받아 둔 값을 쓴다
+    const { data: event } = useEvent(eventId, {
+        staleTime: queryPresets.realtime.refetchInterval,
+    });
     return event && event.status === 'open' ? render(event, true) : null;
 }
 

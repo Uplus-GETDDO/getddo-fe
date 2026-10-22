@@ -5,7 +5,13 @@ import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwindcss()],
+    plugins: [
+        react({
+            // React Compiler — props·state 불변성은 eslint react-hooks 규칙이 이미 강제한다
+            compiler: { logDiagnostics: true },
+        }),
+        tailwindcss(),
+    ],
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),

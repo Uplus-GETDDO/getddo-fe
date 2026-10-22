@@ -93,6 +93,8 @@ interface EntryStatisticsOptions {
     isOpen?: boolean;
     /** 홈 배너처럼 여러 이벤트가 겹쳐 보이는 곳에서 현재 보이는 항목만 켠다 */
     enabled?: boolean;
+    /** 활성 토글이 잦은 소비자는 폴링 주기를 넘긴다 — 같은 주기 안의 재활성화는 받아 둔 값을 쓴다 */
+    staleTime?: number;
 }
 
 /**
@@ -101,10 +103,11 @@ interface EntryStatisticsOptions {
  */
 export function useEntryStatistics(
     eventId: string,
-    { isOpen = false, enabled = true }: EntryStatisticsOptions = {},
+    { isOpen = false, enabled = true, staleTime }: EntryStatisticsOptions = {},
 ) {
     return useQuery({
         ...queryPresets.realtime,
+        ...(staleTime !== undefined ? { staleTime } : {}),
         ...pollingReadPolicy,
         queryKey: entryStatisticsKey(eventId),
         queryFn: (context) =>
