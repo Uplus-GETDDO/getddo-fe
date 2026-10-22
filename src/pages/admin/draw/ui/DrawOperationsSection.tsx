@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
-import { useDrawExecutionAudits, useDrawFailures } from '@entities/drawResult';
+import {
+    DRAW_AUDIT_ACTION_LABEL,
+    useDrawExecutionAudits,
+    useDrawFailures,
+} from '@entities/drawResult';
 import { Button } from '@shared/ui/button';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -141,26 +145,16 @@ export function DrawOperationsSection({ drawId }: { drawId: string }) {
                                             {formatKst(a.createdAt)}
                                         </TableCell>
                                         <TableCell className="text-body-sm font-medium whitespace-nowrap">
-                                            {a.action}
+                                            {/* GD-314 — action 코드는 표시 문자열로 변환하고 계약 외 값은 원문을 유지한다 */}
+                                            {DRAW_AUDIT_ACTION_LABEL[
+                                                a.action as keyof typeof DRAW_AUDIT_ACTION_LABEL
+                                            ] ?? a.action}
                                         </TableCell>
                                         <TableCell className="text-body-sm whitespace-nowrap">
-                                            {a.actorName ?? a.actorId ?? '—'}
-                                            {a.actorName && a.actorId && (
-                                                <span className="text-caption text-fg-tertiary block">
-                                                    {a.actorId}
-                                                </span>
-                                            )}
+                                            {a.actorName ?? '—'}
                                         </TableCell>
                                         <TableCell className="text-body-sm max-w-60 whitespace-normal">
                                             {a.reason ?? '—'}
-                                            {/* beforeData/afterData는 JSON이 아닌 문자열 — 의미를 해석하지 않고 원문을 축약 표시한다 */}
-                                            {(a.beforeData || a.afterData) && (
-                                                <span className="text-caption text-fg-tertiary block">
-                                                    {a.beforeData && `전 ${a.beforeData}`}
-                                                    {a.beforeData && a.afterData && ' · '}
-                                                    {a.afterData && `후 ${a.afterData}`}
-                                                </span>
-                                            )}
                                         </TableCell>
                                         <TableCell className="text-body-sm text-fg-tertiary whitespace-nowrap">
                                             {a.requestId ?? '—'}

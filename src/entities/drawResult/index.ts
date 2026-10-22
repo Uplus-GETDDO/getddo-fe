@@ -47,6 +47,7 @@ export {
     useEventDraws,
 } from './api/queries';
 export type { PageParams } from './api/queries';
+export { DRAW_AUDIT_ACTION_LABEL } from './model/auditAction';
 export { DRAW_RUN_STATUS_META, DRAW_TYPE_LABEL, isDrawRunInProgress } from './model/runStatus';
 export {
     cancellationSummarySchema,
