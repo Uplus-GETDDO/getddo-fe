@@ -64,7 +64,9 @@ export function AttendancePolicySection<T extends DailyAttendancePolicy | Streak
                     <p className="text-semantic-error-strong text-body-sm">
                         {getErrorMessage(
                             error,
-                            '정책을 조회하지 못했습니다. 이전 성공값이 있으면 유지합니다.',
+                            hasData
+                                ? '정책을 조회하지 못했습니다. 이전 성공값을 유지합니다.'
+                                : '정책을 조회하지 못했습니다.',
                         )}
                     </p>
                     <Button size="sm" variant="secondary" disabled={isFetching} onClick={retry}>
