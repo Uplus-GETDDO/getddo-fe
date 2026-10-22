@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { AdminMissionsParams } from '@entities/mission';
@@ -23,6 +23,8 @@ interface Filters {
 export function AdminMissionsPage() {
     const [params, setParams] = useState<AdminMissionsParams>({ page: 1 });
     const [selected, setSelected] = useState<string | null>(null);
+    // DialogTrigger 없이 열어 Radix가 복귀 대상을 모른다 — 닫힘 후 이 버튼으로 포커스를 돌려준다
+    const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
     const [open, setOpen] = useState(false);
     const [error, setError] = useState('');
     const { register, handleSubmit } = useForm<Filters>({
@@ -136,7 +138,10 @@ export function AdminMissionsPage() {
                                 </div>
                                 <Button
                                     variant="secondary"
-                                    onClick={() => setSelected(m.id)}
+                                    onClick={(event) => {
+                                        detailTriggerRef.current = event.currentTarget;
+                                        setSelected(m.id);
+                                    }}
                                     aria-label={`${m.title} 상세`}
                                 >
                                     상세
@@ -150,7 +155,11 @@ export function AdminMissionsPage() {
                 <MissionDetailDialog
                     key={selected}
                     id={selected}
-                    onClose={() => setSelected(null)}
+                    onClose={() => {
+                        setSelected(null);
+                        const trigger = detailTriggerRef.current;
+                        requestAnimationFrame(() => trigger?.focus());
+                    }}
                 />
             )}
             {open && <MissionFormDialog open={open} onOpenChange={setOpen} />}
