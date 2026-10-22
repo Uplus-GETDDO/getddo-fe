@@ -414,6 +414,7 @@ function createRedrawRun(
     store: DrawStore,
     canceled: { result: DrawResult; runId: string },
     canceledAt: string,
+    actor: string,
 ): { run: MockRun; cancellationId: string } {
     const runNumber = store.runs.length + 1;
     const cancellationId = cancellationIdOf(store.eventId, store.cancellations.length + 1);
@@ -458,6 +459,15 @@ function createRedrawRun(
         appliedPublication: null,
     };
     store.runs.push(run);
+    // AD05는 등록과 함께 서버가 즉시 실행한다 — 감사의 action 값 집합은 DRAW_EXECUTE·DRAW_RESUME뿐이다
+    recordAudit(store, run.detail.id, {
+        actorId: actor,
+        action: 'DRAW_EXECUTE',
+        reason: null,
+        beforeData: 'status:PREPARING',
+        afterData: `attemptId:att-${run.detail.id}-1`,
+        requestId: null,
+    });
     return { run, cancellationId };
 }
 
@@ -471,6 +481,7 @@ function seedFailedRedraw(store: DrawStore) {
         store,
         { result: target, runId: first.detail.id },
         canceledAt,
+        'vu-admin',
     );
     store.cancellations.push({
         key: `seed-${store.eventId}`,
@@ -523,14 +534,7 @@ function seedFailedInitialRun(store: DrawStore) {
     detail.execution.failureCount = 1;
     detail.execution.latestFailure = failure;
     detail.execution.waitingForOperator = true;
-    recordAudit(store, detail.id, {
-        actorId: null,
-        action: 'DRAW_FAILED',
-        reason: failure.message,
-        beforeData: null,
-        afterData: `failureCode:${failure.failureCode}`,
-        requestId: null,
-    });
+    // 실패 자체는 감사 action이 아니다 — 실패 이력은 /failures가 소유하고 감사에는 실행·재개만 남는다
 }
 
 function getStore(eventId: string): DrawStore | null {
@@ -563,13 +567,13 @@ function getStore(eventId: string): DrawStore | null {
         initialConfirmation: null,
     };
     store.runs.push(drawFirstRun(store, info.endsAt));
-    // 실행 생성 자체가 업무 감사에 남는다 — 시스템 행위라 actorId는 null이다
+    // 자동 최초 추첨의 실행이 업무 감사에 남는다 — 시스템 행위라 actorId는 null이다
     recordAudit(store, store.runs[0]!.detail.id, {
         actorId: null,
-        action: 'DRAW_RUN_CREATED',
+        action: 'DRAW_EXECUTE',
         reason: null,
-        beforeData: null,
-        afterData: 'drawType:INITIAL,status:CONFIRMED',
+        beforeData: 'status:PREPARING',
+        afterData: `attemptId:att-${store.runs[0]!.detail.id}-1`,
         requestId: null,
     });
     if (info.publishedSeed) {
@@ -937,6 +941,7 @@ export const drawHandlers = [
             store,
             { result, runId: run.detail.id },
             canceledAt,
+            actor,
         );
         const stored: StoredCancellation = {
             key,
@@ -948,14 +953,6 @@ export const drawHandlers = [
             replacementRunId: replacement.detail.id,
         };
         store.cancellations.push(stored);
-        recordAudit(store, run.detail.id, {
-            actorId: actor,
-            action: 'AWARD_CANCELED',
-            reason,
-            beforeData: `resultId:${result.id}`,
-            afterData: `replacementRunId:${replacement.detail.id}`,
-            requestId: null,
-        });
         return ok(cancellationBody(stored, replacement), 202);
     }),
 
@@ -1032,14 +1029,6 @@ export const drawHandlers = [
                     })),
                 },
             ],
-        });
-        recordAudit(store, detail.id, {
-            actorId: actor,
-            action: 'PUBLICATION_APPLIED',
-            reason: null,
-            beforeData: null,
-            afterData: `revision:${store.revision}`,
-            requestId: null,
         });
         store.publicList = next;
         // 이 반영에 포함된 확정 실행은 모두 공개 이력이 생긴다
@@ -1126,14 +1115,6 @@ export const drawHandlers = [
             reason: store.cancellations[0]?.reason ?? null,
             executions,
         });
-        recordAudit(store, run.detail.id, {
-            actorId: actor,
-            action: 'RESULT_CONFIRMED',
-            reason: null,
-            beforeData: null,
-            afterData: 'isPublished:true,revision:1',
-            requestId: null,
-        });
         const confirmation: DrawResultConfirmation = {
             eventId: store.eventId,
             confirmationId: `conf-${run.detail.id}`,
@@ -1204,10 +1185,10 @@ export const drawHandlers = [
             run.progressFrom = Date.now();
             recordAudit(store, detail.id, {
                 actorId: actorOf(request),
-                action: 'RUN_RESUMED',
+                action: 'DRAW_RESUME',
                 reason: null,
                 beforeData: 'status:FAILED',
-                afterData: 'status:PREPARING',
+                afterData: `attemptId:att-${detail.id}-2`,
                 requestId: null,
             });
         }
@@ -1234,10 +1215,10 @@ export const drawHandlers = [
             run.progressFrom = Date.now();
             recordAudit(store, detail.id, {
                 actorId: actorOf(request),
-                action: 'REDRAW_RESUMED',
+                action: 'DRAW_RESUME',
                 reason: null,
                 beforeData: 'status:FAILED',
-                afterData: 'status:PREPARING',
+                afterData: `attemptId:att-${detail.id}-2`,
                 requestId: null,
             });
         }
