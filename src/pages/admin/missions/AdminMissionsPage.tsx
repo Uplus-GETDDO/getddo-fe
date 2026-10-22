@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 
 import type { AdminMissionsParams } from '@entities/mission';
 
-import { useAdminMissions } from '@entities/mission';
+import { MISSION_STATUS_LABEL, useAdminMissions } from '@entities/mission';
 import { MissionFormDialog } from '@features/manageMission';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
@@ -11,7 +11,7 @@ import { Input } from '@shared/ui/input';
 import { PagedResult } from '@shared/ui/paged-result';
 import { formatKst, kstInputToUtcIso } from '@shared/utils/date';
 
-import { MissionDetailPanel } from './ui/MissionDetailPanel';
+import { MissionDetailDialog } from './ui/MissionDetailDialog';
 
 interface Filters {
     keyword: string;
@@ -80,8 +80,11 @@ export function AdminMissionsPage() {
                         {...register('status')}
                     >
                         <option value="">전체</option>
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="ENDED">ENDED</option>
+                        {Object.entries(MISSION_STATUS_LABEL).map(([value, label]) => (
+                            <option key={value} value={value}>
+                                {label}
+                            </option>
+                        ))}
                     </select>
                 </label>
                 <label className="flex min-w-0 flex-col gap-2">
@@ -97,6 +100,9 @@ export function AdminMissionsPage() {
                 </Button>
             </form>
             {error && <p role="alert">{error}</p>}
+            <p className="text-caption text-fg-tertiary">
+                종료 시각이 지난 미션은 서버 주기 처리로 최대 약 1분 뒤 '종료'로 표시됩니다.
+            </p>
             <PagedResult
                 {...query}
                 page={params.page}
@@ -121,8 +127,8 @@ export function AdminMissionsPage() {
                                 <div className="min-w-0 break-words">
                                     <p>{m.title}</p>
                                     <p>
-                                        {m.missionType} · {m.status} · 보상 1장 · 작성{' '}
-                                        {m.createdByName ?? m.createdBy}
+                                        {m.missionType} · {MISSION_STATUS_LABEL[m.status]} · 보상
+                                        1장 · 작성 {m.createdByName ?? m.createdBy}
                                     </p>
                                     <p>
                                         {formatKst(m.startsAt)} ~ {formatKst(m.endsAt)} KST
@@ -140,7 +146,13 @@ export function AdminMissionsPage() {
                     </ul>
                 )}
             </PagedResult>
-            {selected && <MissionDetailPanel key={selected} id={selected} />}
+            {selected && (
+                <MissionDetailDialog
+                    key={selected}
+                    id={selected}
+                    onClose={() => setSelected(null)}
+                />
+            )}
             {open && <MissionFormDialog open={open} onOpenChange={setOpen} />}
         </div>
     );

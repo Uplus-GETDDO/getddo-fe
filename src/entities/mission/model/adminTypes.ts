@@ -73,6 +73,11 @@ export const adminMissionSchema = adminMissionSummarySchema.extend({
         }),
     ),
 });
+// 미션 상태 표시 — 서버는 ACTIVE/ENDED만 쓴다 (DRAFT 없음)
+export const MISSION_STATUS_LABEL: Record<AdminMission['status'], string> = {
+    ACTIVE: '진행 중',
+    ENDED: '종료',
+};
 export const surveySummarySchema = z.object({
     dailyResponses: z.array(
         z.object({ date: z.iso.date(), count: z.number().int().nonnegative() }),

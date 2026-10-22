@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -26,9 +26,7 @@ describe('관리자 미션', () => {
         expect(screen.getByText(/등록 즉시 ACTIVE/)).toBeInTheDocument();
         expect(screen.queryByText('DRAFT')).not.toBeInTheDocument();
     });
-    it('상세를 열면 패널로 스크롤하고 설문 집계 기본 기간을 미션 기간으로 채운다', async () => {
-        const scrollSpy = vi.fn();
-        Element.prototype.scrollIntoView = scrollSpy;
+    it('상세를 열면 모달이 열리고 기본 기간으로 자동 집계한다', async () => {
         const summary = {
             id: 'm-1',
             title: '설문 미션',
@@ -58,6 +56,17 @@ describe('관리자 미션', () => {
                     data: { success: true, data: { ...summary, questions: [] } },
                 });
             }
+            if (url === '/v1/admin/missions/m-1/survey-summary') {
+                return Promise.resolve({
+                    data: {
+                        success: true,
+                        data: {
+                            dailyResponses: [{ date: '2026-10-05', count: 2 }],
+                            questions: [],
+                        },
+                    },
+                });
+            }
             return Promise.reject(new Error(`unexpected ${url}`));
         });
         render(
@@ -67,17 +76,26 @@ describe('관리자 미션', () => {
         );
         // ADR-028 — 목록의 작성자는 ID 대신 현재 이름으로 보인다 (유형·상태와 같은 셀 안 텍스트)
         expect(await screen.findByText(/작성 박운영/)).toBeInTheDocument();
+        // 상태는 필터 옵션·목록 모두 한글 라벨로 표시한다
+        expect(screen.getByRole('option', { name: '진행 중' })).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: '종료' })).toBeInTheDocument();
+        expect(screen.getByText(/SURVEY · 진행 중 · 보상 1장/)).toBeInTheDocument();
         await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
-        expect(await screen.findByRole('heading', { name: '설문 미션' })).toBeInTheDocument();
-        expect(screen.getByText('작성 박운영')).toBeInTheDocument();
-        expect(scrollSpy).toHaveBeenCalled();
+        const dialog = await screen.findByRole('dialog');
+        // 다이얼로그는 마운트 즉시 뜨고 상세는 useAdminMission 응답 뒤에 온다 — 첫 의존 요소는 findBy로 기다린다
+        expect(
+            await within(dialog).findByRole('heading', { name: '설문 미션' }),
+        ).toBeInTheDocument();
+        expect(within(dialog).getByText(/진행 중 · 보상 1장/)).toBeInTheDocument();
+        expect(within(dialog).getByText('작성 박운영')).toBeInTheDocument();
         // 기본 기간은 미션 시작~종료 — 31일을 넘으면 시작일부터 31일로 자르고 안내한다
-        expect(screen.getByLabelText('집계 시작일')).toHaveValue('2026-10-01');
-        expect(screen.getByLabelText('집계 종료일')).toHaveValue('2026-10-31');
-        expect(screen.getByText(/31일만 잘랐습니다/)).toBeInTheDocument();
+        expect(within(dialog).getByLabelText('집계 시작일')).toHaveValue('2026-10-01');
+        expect(within(dialog).getByLabelText('집계 종료일')).toHaveValue('2026-10-31');
+        expect(within(dialog).getByText(/31일만 잘랐습니다/)).toBeInTheDocument();
+        // 모달 오픈과 함께 기본 기간으로 자동 집계한다 — '집계 조회'를 누르지 않아도 결과가 보인다
+        expect(await within(dialog).findByText('2026-10-05: 2건')).toBeInTheDocument();
     });
     it('집계 기간으로 자유 서술 답변을 조회해 텍스트로만 표시한다', async () => {
-        Element.prototype.scrollIntoView = vi.fn();
         const summary = {
             id: 'm-1',
             title: '설문 미션',
@@ -157,14 +175,18 @@ describe('관리자 미션', () => {
             </QueryClientProvider>,
         );
         await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
-        await userEvent.click(await screen.findByRole('button', { name: '집계 조회' }));
         // 답변 원문은 HTML로 해석하지 않고 텍스트로만 보인다 (AM05 계약)
         expect(await screen.findByText('<b>굵게</b> 좋아요')).toBeInTheDocument();
         const answersCall = get.mock.calls.find(([url]) => url.includes('survey-answers'));
-        expect(answersCall?.[1]?.params).toMatchObject({ questionId: 'q1', page: 1 });
+        // 모달 오픈 시 미션 기간으로 자동 조회한다
+        expect(answersCall?.[1]?.params).toMatchObject({
+            questionId: 'q1',
+            page: 1,
+            from: '2026-10-01',
+            to: '2026-10-20',
+        });
     });
     it('집계 기간을 바꾸면 서술 답변 페이지를 1로 되돌린다', async () => {
-        Element.prototype.scrollIntoView = vi.fn();
         const summary = {
             id: 'm-1',
             title: '설문 미션',
@@ -245,7 +267,6 @@ describe('관리자 미션', () => {
             </QueryClientProvider>,
         );
         await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
-        await userEvent.click(await screen.findByRole('button', { name: '집계 조회' }));
         await screen.findByText('답변 1페이지');
         // 미션 목록 페이저의 비활성 버튼과 구분해 서술 답변 페이저를 누른다
         const nextButtons = screen.getAllByRole('button', { name: '다음 페이지' });
@@ -262,5 +283,48 @@ describe('관리자 미션', () => {
         expect(
             get.mock.calls.filter(([url]) => url.includes('survey-answers')).at(-1)?.[1]?.params,
         ).toMatchObject({ questionId: 'q1', page: 1, to: '2026-10-15' });
+    });
+    it('ESC로 상세 모달을 닫는다', async () => {
+        const summary = {
+            id: 'm-1',
+            title: '퀴즈 미션',
+            description: '',
+            missionType: 'QUIZ',
+            startsAt: '2026-10-01T00:00:00+09:00',
+            endsAt: '2026-10-20T00:00:00+09:00',
+            rewardTicketCount: 1,
+            status: 'ENDED',
+            rewardPolicyId: 'rp-1',
+            createdBy: 'admin',
+            createdAt: '2026-09-01T00:00:00Z',
+            updatedAt: '2026-09-01T00:00:00Z',
+        };
+        vi.spyOn(apiClient, 'get').mockImplementation((url: string) => {
+            if (url === '/v1/admin/missions') {
+                return Promise.resolve({
+                    data: {
+                        success: true,
+                        data: { items: [summary], page: 1, size: 20, totalElements: 1 },
+                    },
+                });
+            }
+            if (url === '/v1/admin/missions/m-1') {
+                return Promise.resolve({
+                    data: { success: true, data: { ...summary, questions: [] } },
+                });
+            }
+            return Promise.reject(new Error(`unexpected ${url}`));
+        });
+        render(
+            <QueryClientProvider client={new QueryClient()}>
+                <AdminMissionsPage />
+            </QueryClientProvider>,
+        );
+        await userEvent.click(await screen.findByRole('button', { name: '퀴즈 미션 상세' }));
+        const dialog = await screen.findByRole('dialog');
+        // 종료된 미션은 '종료' 라벨로 표시된다 — 상세 응답 대기를 위해 findBy로 확인한다
+        expect(await within(dialog).findByText(/종료 · 보상 1장/)).toBeInTheDocument();
+        await userEvent.keyboard('{Escape}');
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 });

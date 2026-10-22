@@ -42,6 +42,7 @@ export {
     surveyFreeTextAnswerSchema,
     surveyRangeSchema,
     surveySummarySchema,
+    MISSION_STATUS_LABEL,
 } from './model/adminTypes';
 export type { MissionWrite, AdminMission, SurveyFreeTextAnswer } from './model/adminTypes';
 export {
