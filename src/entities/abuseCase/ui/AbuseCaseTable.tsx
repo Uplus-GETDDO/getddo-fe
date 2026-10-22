@@ -9,24 +9,19 @@ import { formatKst } from '@shared/utils/date';
 
 import type { AbuseCase } from '../model/types';
 
-import { ABUSE_TARGET_LABEL, REWARD_SOURCE_LABEL } from '../model/types';
+import { ABUSE_SOURCE_TYPE_LABEL } from '../model/types';
 
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
 const CHIP = badgeVariants({ variant: null });
 // 칩만 담는 열 — 칩 너비가 제각각이라 왼쪽 정렬이면 들쭉날쭉해 보여 머리글과 함께 가운데로 맞춘다
-const CENTER_COLUMNS = new Set<string>(['target']);
-
-const subjectOf = (abuseCase: AbuseCase) =>
-    abuseCase.target === 'entry'
-        ? (abuseCase.eventTitle ?? '-')
-        : `${REWARD_SOURCE_LABEL[abuseCase.rewardSource ?? 'attendance']} 지급`;
+const CENTER_COLUMNS = new Set<string>(['sourceType']);
 
 // 정렬·필터 기능 없이 행 모델만 쓰는 표시용 테이블 — 기능 슬롯을 등록하지 않아 번들도 가볍다
 const features = tableFeatures({});
 const helper = createColumnHelper<typeof features, AbuseCase>();
 
 /**
- * 어뷰징 차단 내역 테이블 — 지급 전 차단된 요청을 행 단위로 비교·조회하는 관리자 화면용 표시다.
+ * 어뷰징 차단 내역 테이블 — 응모 요청의 자동 일시 차단 이력을 행 단위로 비교·조회하는 관리자 화면용 표시다.
  * 행 클릭과 상세 버튼은 상세 드로어를 여는 onRowClick에 위임한다
  */
 export function AbuseCaseTable({
@@ -39,19 +34,27 @@ export function AbuseCaseTable({
     const columns = useMemo(
         () =>
             helper.columns([
-                helper.accessor('detectedAt', {
-                    header: '발생 시각',
+                helper.accessor('blockedAt', {
+                    header: '차단 시작',
                     cell: ({ getValue }) => (
                         <span className="text-fg-secondary text-body-sm whitespace-nowrap">
                             {formatKst(getValue())}
                         </span>
                     ),
                 }),
-                helper.accessor('target', {
+                helper.accessor('blockedUntil', {
+                    header: '차단 종료 예정',
+                    cell: ({ getValue }) => (
+                        <span className="text-fg-secondary text-body-sm whitespace-nowrap">
+                            {formatKst(getValue())}
+                        </span>
+                    ),
+                }),
+                helper.accessor('sourceType', {
                     header: '구분',
                     cell: ({ getValue }) => (
                         <span className={cn(CHIP, 'bg-surface-sunken text-fg-secondary')}>
-                            {ABUSE_TARGET_LABEL[getValue()]}
+                            {ABUSE_SOURCE_TYPE_LABEL[getValue()]}
                         </span>
                     ),
                 }),
@@ -70,32 +73,21 @@ export function AbuseCaseTable({
                     ),
                 }),
                 helper.display({
-                    id: 'subject',
-                    header: '대상',
+                    id: 'event',
+                    header: '관련 이벤트',
                     cell: ({ row }) => (
                         <span className="text-body-sm text-fg-primary">
-                            {subjectOf(row.original)}
+                            {row.original.eventTitle ?? '-'}
                         </span>
                     ),
                 }),
-                helper.accessor('reason', {
+                helper.accessor('detectionReason', {
                     header: '차단 사유',
                     cell: ({ getValue }) => (
                         // 긴 사유는 말줄임으로 잘라 표를 찢지 않고, 전체 문구는 title로 본다
                         <span
                             title={getValue()}
                             className="text-body-sm text-fg-primary block max-w-60 truncate"
-                        >
-                            {getValue()}
-                        </span>
-                    ),
-                }),
-                helper.accessor('requestSummary', {
-                    header: '관련 요청',
-                    cell: ({ getValue }) => (
-                        <span
-                            title={getValue()}
-                            className="text-body-sm text-fg-secondary block max-w-50 truncate"
                         >
                             {getValue()}
                         </span>
