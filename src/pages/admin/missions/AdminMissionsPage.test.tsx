@@ -326,5 +326,9 @@ describe('관리자 미션', () => {
         expect(await within(dialog).findByText(/종료 · 보상 1장/)).toBeInTheDocument();
         await userEvent.keyboard('{Escape}');
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        // 트리거 없이 열린 모달은 Radix 복귀 대상이 없으므로 상세 버튼으로 포커스를 돌려준다
+        await vi.waitFor(() =>
+            expect(screen.getByRole('button', { name: '퀴즈 미션 상세' })).toHaveFocus(),
+        );
     });
 });
