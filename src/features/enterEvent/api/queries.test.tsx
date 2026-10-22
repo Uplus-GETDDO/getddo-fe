@@ -137,4 +137,20 @@ describe('응모 멱등키 수명', () => {
         expect(post).toHaveBeenCalledTimes(2);
         expect(keyOf(post, 0)).not.toBe(keyOf(post, 1));
     });
+
+    it('화면 이탈 후 재진입하면 새 키가 된다 — 훅 attemptRef 수명은 마운트 단위다', async () => {
+        const post = spyOnPost().mockRejectedValueOnce(networkError()).mockImplementation(ok);
+        const hook = setup();
+        await act(async () => {
+            await hook.result.current.mutateAsync({ ...TICKETS }).catch(() => undefined);
+        });
+        hook.unmount();
+        const remounted = setup();
+        await act(async () => {
+            await remounted.result.current.mutateAsync({ ...TICKETS });
+        });
+        expect(post).toHaveBeenCalledTimes(2);
+        // 같은 의도라도 키는 새로 발급된다 — 중복 방지 최종 책임은 서버의 사용자·이벤트 기준 차감에 있다
+        expect(keyOf(post, 0)).not.toBe(keyOf(post, 1));
+    });
 });

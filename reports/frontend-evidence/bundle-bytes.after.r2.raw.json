@@ -1,0 +1,1732 @@
+{
+    "kind": "bundle-bytes",
+    "distDir": "dist",
+    "files": [
+        {
+            "path": "assets/AdminAbuseCasesPage-D8AvcLH2.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10261,
+            "gzipBytes": 3816
+        },
+        {
+            "path": "assets/AdminAttendancePoliciesPage-DUmgLmHq.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 9586,
+            "gzipBytes": 3159
+        },
+        {
+            "path": "assets/AdminBannersPage-S8KI8lM1.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 9169,
+            "gzipBytes": 3239
+        },
+        {
+            "path": "assets/AdminDashboardPage-D7uBx6qz.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 407796,
+            "gzipBytes": 116849
+        },
+        {
+            "path": "assets/AdminDrawPage-D4xIWUeT.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 54319,
+            "gzipBytes": 12621
+        },
+        {
+            "path": "assets/AdminEntriesPage-Dg18QqNm.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7117,
+            "gzipBytes": 2507
+        },
+        {
+            "path": "assets/AdminEventDetailPage-CNqqCrP_.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6712,
+            "gzipBytes": 2474
+        },
+        {
+            "path": "assets/AdminEventFormPage-DK8mjcZC.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13404,
+            "gzipBytes": 3884
+        },
+        {
+            "path": "assets/AdminEventsPage-Du11A-83.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7114,
+            "gzipBytes": 2787
+        },
+        {
+            "path": "assets/AdminLayout-3Ngn9oIl.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 4076,
+            "gzipBytes": 1500
+        },
+        {
+            "path": "assets/AdminMissionsPage-Uzqg3mhV.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 15061,
+            "gzipBytes": 4787
+        },
+        {
+            "path": "assets/adminNotification-DGk2OOGr.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13447,
+            "gzipBytes": 3843
+        },
+        {
+            "path": "assets/AdminNotificationsPage-cAqvG20R.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10330,
+            "gzipBytes": 3295
+        },
+        {
+            "path": "assets/AdminTicketsPage-DBOWE4mg.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10542,
+            "gzipBytes": 3031
+        },
+        {
+            "path": "assets/AdminUsersPage-aO6UWvf0.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6942,
+            "gzipBytes": 2707
+        },
+        {
+            "path": "assets/AdminVirtualClockPage-ungfze6y.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 241,
+            "gzipBytes": 213
+        },
+        {
+            "path": "assets/AdminVirtualUsersPage-TQJaT2nu.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1384,
+            "gzipBytes": 816
+        },
+        {
+            "path": "assets/attendance-thumbnail-BMM38b57.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 205423,
+            "gzipBytes": 204917
+        },
+        {
+            "path": "assets/background-AJ4kX8wA.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 163831,
+            "gzipBytes": 157494
+        },
+        {
+            "path": "assets/background-C3KWbnVG.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 161390,
+            "gzipBytes": 160677
+        },
+        {
+            "path": "assets/badge-CugN9cf6.js",
+            "kind": "entry",
+            "rawBytes": 1113,
+            "gzipBytes": 579
+        },
+        {
+            "path": "assets/badge-new-DLdtK46i.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 14166,
+            "gzipBytes": 14189
+        },
+        {
+            "path": "assets/baking-sprite-LNgWPIuB.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 183300,
+            "gzipBytes": 183201
+        },
+        {
+            "path": "assets/baking-steam-BPj3C6rn.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 11990,
+            "gzipBytes": 11852
+        },
+        {
+            "path": "assets/ball-green-CqrBaAst.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8336,
+            "gzipBytes": 8359
+        },
+        {
+            "path": "assets/ball-orange-Cc9rvdI6.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8142,
+            "gzipBytes": 8165
+        },
+        {
+            "path": "assets/ball-picked-DC5zuzZ7.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 37600,
+            "gzipBytes": 37633
+        },
+        {
+            "path": "assets/ball-pink-CFb0rN_R.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8022,
+            "gzipBytes": 8045
+        },
+        {
+            "path": "assets/ball-purple-uUVcg_A1.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8103,
+            "gzipBytes": 8126
+        },
+        {
+            "path": "assets/banner-bg-DhwfUrNY.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 107490,
+            "gzipBytes": 106599
+        },
+        {
+            "path": "assets/browser-mN6hBXKe.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 140986,
+            "gzipBytes": 38974
+        },
+        {
+            "path": "assets/bullet-list-BMkE8QZb.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 605,
+            "gzipBytes": 374
+        },
+        {
+            "path": "assets/button-B2VwIVVg.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 113037,
+            "gzipBytes": 113026
+        },
+        {
+            "path": "assets/button-exit-Cp5TsrgC.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 44211,
+            "gzipBytes": 44244
+        },
+        {
+            "path": "assets/button-guide-B8RmO4_t.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 54961,
+            "gzipBytes": 54999
+        },
+        {
+            "path": "assets/button-hover-78Cj_nhT.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 118369,
+            "gzipBytes": 118375
+        },
+        {
+            "path": "assets/button-pause-CPyQVfib.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10487,
+            "gzipBytes": 10510
+        },
+        {
+            "path": "assets/button-pressed-DMQLTl2J.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 111881,
+            "gzipBytes": 111854
+        },
+        {
+            "path": "assets/button-retry-B1nRN3CB.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 47174,
+            "gzipBytes": 47207
+        },
+        {
+            "path": "assets/button-start-DWoPiUB2.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 51844,
+            "gzipBytes": 51882
+        },
+        {
+            "path": "assets/capsule-bottom-7CGphhPs.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 33703,
+            "gzipBytes": 33736
+        },
+        {
+            "path": "assets/capsule-top-Cp4U_i_F.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 32289,
+            "gzipBytes": 32317
+        },
+        {
+            "path": "assets/card-C0YOStnu.js",
+            "kind": "entry",
+            "rawBytes": 1841,
+            "gzipBytes": 687
+        },
+        {
+            "path": "assets/certified-DFblv3YD.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7322,
+            "gzipBytes": 7183
+        },
+        {
+            "path": "assets/character-BWoUjxlZ.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 277811,
+            "gzipBytes": 277370
+        },
+        {
+            "path": "assets/character-C6vlPldN.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 54,
+            "gzipBytes": 74
+        },
+        {
+            "path": "assets/chip-tabs-BJ0-VfIp.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1281,
+            "gzipBytes": 706
+        },
+        {
+            "path": "assets/clouds-BBCFX94r.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 110922,
+            "gzipBytes": 110787
+        },
+        {
+            "path": "assets/color-word-guide-jTZCDamK.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 197964,
+            "gzipBytes": 193358
+        },
+        {
+            "path": "assets/colorWordAssets-BbHFa702.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 347,
+            "gzipBytes": 257
+        },
+        {
+            "path": "assets/ColorWordGame-CQ3lGzoL.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10158,
+            "gzipBytes": 4353
+        },
+        {
+            "path": "assets/complete-CzNyD7jh.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 53,
+            "gzipBytes": 73
+        },
+        {
+            "path": "assets/complete-DNqXWNWG.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 167084,
+            "gzipBytes": 100031
+        },
+        {
+            "path": "assets/counter-DFr2Zgry.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 29518,
+            "gzipBytes": 29400
+        },
+        {
+            "path": "assets/customer-0-jLpFuHjR.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 22418,
+            "gzipBytes": 22289
+        },
+        {
+            "path": "assets/customer-1-Dz1wuWYK.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 18922,
+            "gzipBytes": 18799
+        },
+        {
+            "path": "assets/customer-2-CUtJQarM.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 22136,
+            "gzipBytes": 22011
+        },
+        {
+            "path": "assets/customer-3-CePiAZQc.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 23730,
+            "gzipBytes": 23611
+        },
+        {
+            "path": "assets/customer-4-mmlMVgS0.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 23466,
+            "gzipBytes": 23342
+        },
+        {
+            "path": "assets/customer-5-DPd5481c.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 21116,
+            "gzipBytes": 20987
+        },
+        {
+            "path": "assets/customer-6-C_bghnkX.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19800,
+            "gzipBytes": 19682
+        },
+        {
+            "path": "assets/customer-7-jihNMsJw.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 20736,
+            "gzipBytes": 20616
+        },
+        {
+            "path": "assets/customer-8-DMQ4XTRD.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 24212,
+            "gzipBytes": 24088
+        },
+        {
+            "path": "assets/date-vuRSN-ME.js",
+            "kind": "entry",
+            "rawBytes": 5069,
+            "gzipBytes": 1947
+        },
+        {
+            "path": "assets/decor-BRoi43Vv.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 115462,
+            "gzipBytes": 115223
+        },
+        {
+            "path": "assets/decor-Dqg3HG7n.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 120144,
+            "gzipBytes": 120019
+        },
+        {
+            "path": "assets/decor-nZvonRy0.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 189488,
+            "gzipBytes": 189168
+        },
+        {
+            "path": "assets/dialog-SsV2PFpa.js",
+            "kind": "entry",
+            "rawBytes": 2555,
+            "gzipBytes": 981
+        },
+        {
+            "path": "assets/dizzy-IcDQ-Br2.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 17028,
+            "gzipBytes": 16905
+        },
+        {
+            "path": "assets/drawResult-D1pj9TdR.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7161,
+            "gzipBytes": 2448
+        },
+        {
+            "path": "assets/empty-character-mf38E7bp.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 58751,
+            "gzipBytes": 58466
+        },
+        {
+            "path": "assets/empty-takko-P2kHW2yB.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 50307,
+            "gzipBytes": 48919
+        },
+        {
+            "path": "assets/env-DR13RyYY.js",
+            "kind": "entry",
+            "rawBytes": 791,
+            "gzipBytes": 477
+        },
+        {
+            "path": "assets/errorMessage-CglVrSZw.js",
+            "kind": "entry",
+            "rawBytes": 5070,
+            "gzipBytes": 1590
+        },
+        {
+            "path": "assets/EventDetailPage-CFCUYXfE.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 36279,
+            "gzipBytes": 9227
+        },
+        {
+            "path": "assets/eventEntry-CFuuy5yB.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 16738,
+            "gzipBytes": 5170
+        },
+        {
+            "path": "assets/EventListPage-4D5_YL5I.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6130,
+            "gzipBytes": 2403
+        },
+        {
+            "path": "assets/filter-fields-BRuv1BwZ.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 3033,
+            "gzipBytes": 1296
+        },
+        {
+            "path": "assets/filterConstants-BQ1DojLn.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 75,
+            "gzipBytes": 91
+        },
+        {
+            "path": "assets/flowerbed_fields-BlEfhCgW.m4a",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1276780,
+            "gzipBytes": 1249079
+        },
+        {
+            "path": "assets/format-DVyL8Otv.js",
+            "kind": "entry",
+            "rawBytes": 203,
+            "gzipBytes": 170
+        },
+        {
+            "path": "assets/Galmuri11-Bold-QdFGsJ3v.woff2",
+            "kind": "lazy-or-asset",
+            "rawBytes": 166632,
+            "gzipBytes": 157851
+        },
+        {
+            "path": "assets/GameDetailPage-EdjTMPiP.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7150,
+            "gzipBytes": 3043
+        },
+        {
+            "path": "assets/GameOverlays-Dl_cPiea.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 3855,
+            "gzipBytes": 1424
+        },
+        {
+            "path": "assets/gameRail-foftskHc.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1977,
+            "gzipBytes": 1014
+        },
+        {
+            "path": "assets/gameSounds-D0nMWJda.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 157,
+            "gzipBytes": 128
+        },
+        {
+            "path": "assets/GameSpeechBubble-D19LTjDM.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1813,
+            "gzipBytes": 904
+        },
+        {
+            "path": "assets/gauge-pin-D4zpdwpR.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 11163,
+            "gzipBytes": 11186
+        },
+        {
+            "path": "assets/gauge-sparkle-C1hQOz7y.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 12102,
+            "gzipBytes": 12125
+        },
+        {
+            "path": "assets/gauge-track-CIhva5mn.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 105925,
+            "gzipBytes": 105949
+        },
+        {
+            "path": "assets/gauge-zone-fJjFw74j.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 30170,
+            "gzipBytes": 30198
+        },
+        {
+            "path": "assets/ground-1-CXue_g_3.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 63478,
+            "gzipBytes": 63363
+        },
+        {
+            "path": "assets/ground-2-BRoUdJgo.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 65204,
+            "gzipBytes": 65094
+        },
+        {
+            "path": "assets/ground-Cd3mMLzm.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 32252,
+            "gzipBytes": 32130
+        },
+        {
+            "path": "assets/ground-DFhM8epg.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 31766,
+            "gzipBytes": 31646
+        },
+        {
+            "path": "assets/guide-banner-B0xrHben.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 138137,
+            "gzipBytes": 137919
+        },
+        {
+            "path": "assets/handle-C18K8fN7.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 12163,
+            "gzipBytes": 12186
+        },
+        {
+            "path": "assets/headset-Ch6bzeIG.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 4912,
+            "gzipBytes": 4762
+        },
+        {
+            "path": "assets/heart-empty-BO65O2o7.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10542,
+            "gzipBytes": 10565
+        },
+        {
+            "path": "assets/heart-full-B0nU9tzJ.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10722,
+            "gzipBytes": 10745
+        },
+        {
+            "path": "assets/historyPeriod-BgAMsvoO.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 245,
+            "gzipBytes": 179
+        },
+        {
+            "path": "assets/idempotencyKey-jVwVd4dL.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 86,
+            "gzipBytes": 102
+        },
+        {
+            "path": "assets/image-hnQeA2yX.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 4326,
+            "gzipBytes": 2235
+        },
+        {
+            "path": "assets/index-BF7GUm5S.css",
+            "kind": "entry",
+            "rawBytes": 144206,
+            "gzipBytes": 24767
+        },
+        {
+            "path": "assets/index-CZdOZIwS.js",
+            "kind": "entry",
+            "rawBytes": 146109,
+            "gzipBytes": 44669
+        },
+        {
+            "path": "assets/input-Dq33ZDZV.js",
+            "kind": "entry",
+            "rawBytes": 839,
+            "gzipBytes": 447
+        },
+        {
+            "path": "assets/item-cup-C9kZo8_U.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 49718,
+            "gzipBytes": 49756
+        },
+        {
+            "path": "assets/item-flag-BIkSxJ7b.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 40268,
+            "gzipBytes": 40301
+        },
+        {
+            "path": "assets/item-gift-BzSkkxya.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 21424,
+            "gzipBytes": 21303
+        },
+        {
+            "path": "assets/item-gumball-BQcU2mah.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 17288,
+            "gzipBytes": 17164
+        },
+        {
+            "path": "assets/item-jar-ClA1xirl.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 54698,
+            "gzipBytes": 54736
+        },
+        {
+            "path": "assets/item-mayo-Dm2wVhwx.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 36477,
+            "gzipBytes": 36510
+        },
+        {
+            "path": "assets/item-sauce-2lEtSSlB.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 32616,
+            "gzipBytes": 32644
+        },
+        {
+            "path": "assets/item-skewer-GpZNz87-.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 28566,
+            "gzipBytes": 28594
+        },
+        {
+            "path": "assets/item-tickets-9V2sxCxy.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 24820,
+            "gzipBytes": 24695
+        },
+        {
+            "path": "assets/lanterns-Bd7Y-q_h.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 107444,
+            "gzipBytes": 107497
+        },
+        {
+            "path": "assets/lose-bg-2MGnaiNS.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 16662,
+            "gzipBytes": 16537
+        },
+        {
+            "path": "assets/lose-deco-right-D4BVPuYp.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 33092,
+            "gzipBytes": 32970
+        },
+        {
+            "path": "assets/lose-mascot-C1v1PCbp.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 21542,
+            "gzipBytes": 21411
+        },
+        {
+            "path": "assets/machine-CNXtFNOI.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 135145,
+            "gzipBytes": 135208
+        },
+        {
+            "path": "assets/manageEvent-Dn_AhdEq.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 3775,
+            "gzipBytes": 1765
+        },
+        {
+            "path": "assets/mascot-basic-CnQ0V42A.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 22887,
+            "gzipBytes": 22915
+        },
+        {
+            "path": "assets/mascot-batter-vycAs5lY.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19332,
+            "gzipBytes": 19360
+        },
+        {
+            "path": "assets/mascot-bonus-dumpling-dzRxR9El.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19353,
+            "gzipBytes": 19381
+        },
+        {
+            "path": "assets/mascot-bonus-riceball-B-sUSPoT.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 21625,
+            "gzipBytes": 21653
+        },
+        {
+            "path": "assets/mascot-bonus-vegetable-DP7Byc7A.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 24022,
+            "gzipBytes": 24050
+        },
+        {
+            "path": "assets/mascot-correct-D7Hps9-s.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 183258,
+            "gzipBytes": 183287
+        },
+        {
+            "path": "assets/mascot-dizzy-DFWdq5YM.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 24219,
+            "gzipBytes": 24247
+        },
+        {
+            "path": "assets/mascot-idle-DjdXKFmO.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 182689,
+            "gzipBytes": 182756
+        },
+        {
+            "path": "assets/mascot-wrong-DhOuCJLB.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 172779,
+            "gzipBytes": 172742
+        },
+        {
+            "path": "assets/menu-cheese-57TfF_Ys.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 18908,
+            "gzipBytes": 18782
+        },
+        {
+            "path": "assets/menu-nori-26nB30gq.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 22100,
+            "gzipBytes": 21977
+        },
+        {
+            "path": "assets/menu-scallion-DoqWU92_.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 21194,
+            "gzipBytes": 21066
+        },
+        {
+            "path": "assets/menu-shrimp-BgaRW3UX.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19084,
+            "gzipBytes": 18959
+        },
+        {
+            "path": "assets/mission-ox--fkZYnV7.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 31582,
+            "gzipBytes": 31399
+        },
+        {
+            "path": "assets/mission-quiz-B8nV4QUM.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 31660,
+            "gzipBytes": 31504
+        },
+        {
+            "path": "assets/mission-survey-D-Rga-5w.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 28378,
+            "gzipBytes": 28238
+        },
+        {
+            "path": "assets/MissionDetailPage-D34Qc02l.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 3589,
+            "gzipBytes": 1566
+        },
+        {
+            "path": "assets/MissionListPage-hlv4-LS4.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 41396,
+            "gzipBytes": 13121
+        },
+        {
+            "path": "assets/msw-R6C6iZef.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 420483,
+            "gzipBytes": 156327
+        },
+        {
+            "path": "assets/MyEntriesPage-E4JNjfmn.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 9199,
+            "gzipBytes": 3718
+        },
+        {
+            "path": "assets/myEntryRows-D66787KN.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 3669,
+            "gzipBytes": 1626
+        },
+        {
+            "path": "assets/MyNotificationsPage-6F2vIJmI.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1557,
+            "gzipBytes": 952
+        },
+        {
+            "path": "assets/MyPage-DkPi2NHe.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 16188,
+            "gzipBytes": 5189
+        },
+        {
+            "path": "assets/MyTicketsPage-D2D0luhc.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 14462,
+            "gzipBytes": 5053
+        },
+        {
+            "path": "assets/noren-CIYyXEKH.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 34804,
+            "gzipBytes": 34669
+        },
+        {
+            "path": "assets/obstacles-BgDvEcOD.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 73738,
+            "gzipBytes": 73595
+        },
+        {
+            "path": "assets/obstacles-CAgtS-Eq.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 92224,
+            "gzipBytes": 91977
+        },
+        {
+            "path": "assets/obstacles-KC5D1VKH.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 191936,
+            "gzipBytes": 191749
+        },
+        {
+            "path": "assets/octopus-_oX8oDAH.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 9814,
+            "gzipBytes": 9686
+        },
+        {
+            "path": "assets/page-header-PHBcrfJP.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 882,
+            "gzipBytes": 448
+        },
+        {
+            "path": "assets/paged-result-DbiVW2wn.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1393,
+            "gzipBytes": 734
+        },
+        {
+            "path": "assets/Peachtea - Somewhere in the Elevator-CEWKApyX.m4a",
+            "kind": "lazy-or-asset",
+            "rawBytes": 987528,
+            "gzipBytes": 966225
+        },
+        {
+            "path": "assets/plate-wqGyvSbf.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 9224,
+            "gzipBytes": 9096
+        },
+        {
+            "path": "assets/pleasing-bell-Cf1oXD3Y.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 102,
+            "gzipBytes": 114
+        },
+        {
+            "path": "assets/pleasing-bell-Zn0GTmAG.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 109392,
+            "gzipBytes": 80484
+        },
+        {
+            "path": "assets/privacy-DgUMLER-.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6059,
+            "gzipBytes": 5925
+        },
+        {
+            "path": "assets/profile-avatar-BGO7k-dZ.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19853,
+            "gzipBytes": 19604
+        },
+        {
+            "path": "assets/profile-avatar-head-qvom2Jzu.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19309,
+            "gzipBytes": 19337
+        },
+        {
+            "path": "assets/prop-boxes-BIEocsoy.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13336,
+            "gzipBytes": 13204
+        },
+        {
+            "path": "assets/prop-sauces-C9yCOKqf.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 17266,
+            "gzipBytes": 17142
+        },
+        {
+            "path": "assets/prop-sticks-BQNG5CdD.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10808,
+            "gzipBytes": 10679
+        },
+        {
+            "path": "assets/queryPresets-DYqXs2Mg.js",
+            "kind": "entry",
+            "rawBytes": 1331,
+            "gzipBytes": 715
+        },
+        {
+            "path": "assets/radio-group-CLpSfQ5Y.js",
+            "kind": "entry",
+            "rawBytes": 1108,
+            "gzipBytes": 555
+        },
+        {
+            "path": "assets/react-CtJgTtVm.js",
+            "kind": "entry",
+            "rawBytes": 218827,
+            "gzipBytes": 67517
+        },
+        {
+            "path": "assets/refresh-status-BQWgxmGy.js",
+            "kind": "entry",
+            "rawBytes": 1550,
+            "gzipBytes": 946
+        },
+        {
+            "path": "assets/reward-mascot-BBK5sZU9.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 55292,
+            "gzipBytes": 55330
+        },
+        {
+            "path": "assets/reward-mascot-DtKNO0uj.js",
+            "kind": "entry",
+            "rawBytes": 58,
+            "gzipBytes": 78
+        },
+        {
+            "path": "assets/router-CSHTxfz4.js",
+            "kind": "entry",
+            "rawBytes": 96439,
+            "gzipBytes": 31655
+        },
+        {
+            "path": "assets/sauces-BS1B8u5Y.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 180541,
+            "gzipBytes": 180139
+        },
+        {
+            "path": "assets/score-board-B7wjk7l3.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 76800,
+            "gzipBytes": 76817
+        },
+        {
+            "path": "assets/segmented-CSKE0qsS.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 759,
+            "gzipBytes": 475
+        },
+        {
+            "path": "assets/select-VkfN2SWI.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 4283,
+            "gzipBytes": 1457
+        },
+        {
+            "path": "assets/sfx_coin_cluster3-CurPSiAu.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 41530,
+            "gzipBytes": 38642
+        },
+        {
+            "path": "assets/sfx_sounds_damage1-pPst-C_-.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 15512,
+            "gzipBytes": 12776
+        },
+        {
+            "path": "assets/sfx_sounds_falling7-wOfVEpRX.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 256942,
+            "gzipBytes": 232947
+        },
+        {
+            "path": "assets/sfx_sounds_pause7_in-ijD1JSQr.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 46004,
+            "gzipBytes": 35468
+        },
+        {
+            "path": "assets/sfx_sounds_pause7_out-C5qgWGkc.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 45548,
+            "gzipBytes": 35334
+        },
+        {
+            "path": "assets/sheet-D-e1R0e2.js",
+            "kind": "entry",
+            "rawBytes": 2885,
+            "gzipBytes": 996
+        },
+        {
+            "path": "assets/shelf-dW-jq6SO.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 36284,
+            "gzipBytes": 36160
+        },
+        {
+            "path": "assets/shop-counter-BKBxGBLl.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 48330,
+            "gzipBytes": 47085
+        },
+        {
+            "path": "assets/shop-wall-MvqnynLN.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10156,
+            "gzipBytes": 9661
+        },
+        {
+            "path": "assets/skeleton-B15C4-pO.js",
+            "kind": "entry",
+            "rawBytes": 4516,
+            "gzipBytes": 1637
+        },
+        {
+            "path": "assets/skewers-CeYZTYs8.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 180072,
+            "gzipBytes": 180097
+        },
+        {
+            "path": "assets/sky-BP_u7p0g.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 21866,
+            "gzipBytes": 21139
+        },
+        {
+            "path": "assets/sky-CFKcwo6G.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 12519,
+            "gzipBytes": 11500
+        },
+        {
+            "path": "assets/sky-Dbw7A46W.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 16766,
+            "gzipBytes": 15810
+        },
+        {
+            "path": "assets/sky-vy7YH94-.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 27517,
+            "gzipBytes": 25470
+        },
+        {
+            "path": "assets/slime_jump-Ckdr-zEG.wav",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7982,
+            "gzipBytes": 8005
+        },
+        {
+            "path": "assets/sparkle-BXwp5YWV.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 166742,
+            "gzipBytes": 166815
+        },
+        {
+            "path": "assets/speaker-0-CiPxAVJq.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8970,
+            "gzipBytes": 8993
+        },
+        {
+            "path": "assets/speaker-1-Dtap23IC.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8012,
+            "gzipBytes": 8035
+        },
+        {
+            "path": "assets/speaker-3-BEZT6JmP.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10694,
+            "gzipBytes": 10717
+        },
+        {
+            "path": "assets/speaker-5-CtjVIgF1.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 12215,
+            "gzipBytes": 12238
+        },
+        {
+            "path": "assets/stage-1-CcPy1VqY.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 51231,
+            "gzipBytes": 51269
+        },
+        {
+            "path": "assets/stage-2-Bj_Med3p.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 54174,
+            "gzipBytes": 54212
+        },
+        {
+            "path": "assets/stage-3-Ftm0JFDr.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 55801,
+            "gzipBytes": 55839
+        },
+        {
+            "path": "assets/stage-4-DdNgFQDf.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 54457,
+            "gzipBytes": 54495
+        },
+        {
+            "path": "assets/stars-BOwm3P4D.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 33874,
+            "gzipBytes": 33907
+        },
+        {
+            "path": "assets/steam-a-Cqs4l33G.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8532,
+            "gzipBytes": 8400
+        },
+        {
+            "path": "assets/steam-b-DwiU0ghS.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7966,
+            "gzipBytes": 7834
+        },
+        {
+            "path": "assets/steam-C4BfyLq5.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6892,
+            "gzipBytes": 6760
+        },
+        {
+            "path": "assets/step-attendance-DnOh9rag.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 60605,
+            "gzipBytes": 60575
+        },
+        {
+            "path": "assets/step-game-QArYI9EG.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 29409,
+            "gzipBytes": 29079
+        },
+        {
+            "path": "assets/step-mission-nlwinkJj.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 35412,
+            "gzipBytes": 35201
+        },
+        {
+            "path": "assets/submitMission-DFB-u5dQ.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6902,
+            "gzipBytes": 2863
+        },
+        {
+            "path": "assets/table-CYGzq8XW.js",
+            "kind": "entry",
+            "rawBytes": 1392,
+            "gzipBytes": 533
+        },
+        {
+            "path": "assets/takko-order-guide-PsOjiEuE.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 240969,
+            "gzipBytes": 235875
+        },
+        {
+            "path": "assets/takko-run-guide-IDM3Phn-.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 166055,
+            "gzipBytes": 165225
+        },
+        {
+            "path": "assets/takko-timing-guide-91UXhzvL.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 159194,
+            "gzipBytes": 155991
+        },
+        {
+            "path": "assets/TakkoFace-B1EI_ybu.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 380,
+            "gzipBytes": 285
+        },
+        {
+            "path": "assets/TakkoOrderGame-DSRx6-gC.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13905,
+            "gzipBytes": 5215
+        },
+        {
+            "path": "assets/takkoRunAssets-Uptqewpl.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1630,
+            "gzipBytes": 839
+        },
+        {
+            "path": "assets/TakkoRunGame-BMh8mpDJ.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 16416,
+            "gzipBytes": 6425
+        },
+        {
+            "path": "assets/TakkoTimingGame-C9Rd-3Nk.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10287,
+            "gzipBytes": 4342
+        },
+        {
+            "path": "assets/takoyaki-dizzy-CDJC7EXz.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7990,
+            "gzipBytes": 7853
+        },
+        {
+            "path": "assets/takoyaki-hero-PeCzgnoY.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 350250,
+            "gzipBytes": 349849
+        },
+        {
+            "path": "assets/tanstack-8WUpbhv-.js",
+            "kind": "entry",
+            "rawBytes": 70290,
+            "gzipBytes": 20499
+        },
+        {
+            "path": "assets/team-CsUfIVNN.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 5974,
+            "gzipBytes": 5780
+        },
+        {
+            "path": "assets/ticket-bronze-tggvZzhk.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 79651,
+            "gzipBytes": 79694
+        },
+        {
+            "path": "assets/ticket-character-C-4zHowV.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 29975,
+            "gzipBytes": 29704
+        },
+        {
+            "path": "assets/ticket-gold-BkK9wZXJ.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 77713,
+            "gzipBytes": 77756
+        },
+        {
+            "path": "assets/ticket-platinum-nABsL8kt.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 83701,
+            "gzipBytes": 83749
+        },
+        {
+            "path": "assets/ticket-silver-BtP4LNj4.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 76649,
+            "gzipBytes": 76692
+        },
+        {
+            "path": "assets/ticket-zyHpoWHO.js",
+            "kind": "entry",
+            "rawBytes": 22754,
+            "gzipBytes": 6988
+        },
+        {
+            "path": "assets/ticketWallet-JppLxI98.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6534,
+            "gzipBytes": 2286
+        },
+        {
+            "path": "assets/TimeRaffleDetailPage-Ctgtiv01.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 28342,
+            "gzipBytes": 9215
+        },
+        {
+            "path": "assets/TimeRafflePage-CyLGdt3S.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 19276,
+            "gzipBytes": 6181
+        },
+        {
+            "path": "assets/toothpick-DSmGaLf2.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 20122,
+            "gzipBytes": 20150
+        },
+        {
+            "path": "assets/town-BxnHTF0x.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 65916,
+            "gzipBytes": 65788
+        },
+        {
+            "path": "assets/town-CNHtBLXU.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 81788,
+            "gzipBytes": 81685
+        },
+        {
+            "path": "assets/town-D9ojN51z.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 357805,
+            "gzipBytes": 356925
+        },
+        {
+            "path": "assets/town-DH_xKdWp.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 86766,
+            "gzipBytes": 86642
+        },
+        {
+            "path": "assets/trophy-C8rLHcQj.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8557,
+            "gzipBytes": 8409
+        },
+        {
+            "path": "assets/UiGalleryPage-Bs5rfMwS.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 7875,
+            "gzipBytes": 2916
+        },
+        {
+            "path": "assets/useCountUp-CKBHQCnK.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 623,
+            "gzipBytes": 407
+        },
+        {
+            "path": "assets/user-BWXuGfPC.js",
+            "kind": "entry",
+            "rawBytes": 4155,
+            "gzipBytes": 1927
+        },
+        {
+            "path": "assets/vendor-D6R-6vBj.js",
+            "kind": "entry",
+            "rawBytes": 417668,
+            "gzipBytes": 138054
+        },
+        {
+            "path": "assets/verified-Ch3ZX3Uj.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 8047,
+            "gzipBytes": 7912
+        },
+        {
+            "path": "assets/virtualClock-C1IOmviP.js",
+            "kind": "entry",
+            "rawBytes": 849,
+            "gzipBytes": 545
+        },
+        {
+            "path": "assets/volume-0-6P9tM9Wp.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 11355,
+            "gzipBytes": 11378
+        },
+        {
+            "path": "assets/volume-1-Dd3BSUsO.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 11909,
+            "gzipBytes": 11932
+        },
+        {
+            "path": "assets/volume-3-Bf5t1KYa.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13007,
+            "gzipBytes": 13030
+        },
+        {
+            "path": "assets/volume-5-apO7WyzQ.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13431,
+            "gzipBytes": 13454
+        },
+        {
+            "path": "assets/VolumeControl-B1RQLEZ2.css",
+            "kind": "lazy-or-asset",
+            "rawBytes": 148,
+            "gzipBytes": 139
+        },
+        {
+            "path": "assets/VolumeControl-C7rdPLC9.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 6353,
+            "gzipBytes": 2738
+        },
+        {
+            "path": "assets/wall-DEHubYTO.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 10450,
+            "gzipBytes": 10007
+        },
+        {
+            "path": "assets/win-bg-CTAPzcxB.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 11084,
+            "gzipBytes": 10955
+        },
+        {
+            "path": "assets/win-deco-right-BCnMTMrU.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 26824,
+            "gzipBytes": 26678
+        },
+        {
+            "path": "assets/win-mascot-72V6ExWq.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 42612,
+            "gzipBytes": 42492
+        },
+        {
+            "path": "assets/window-Dodtuih-.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 11236,
+            "gzipBytes": 11107
+        },
+        {
+            "path": "assets/winner-B-_FwrkX.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1467,
+            "gzipBytes": 691
+        },
+        {
+            "path": "assets/word-board-CvUAd7jQ.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 243060,
+            "gzipBytes": 242778
+        },
+        {
+            "path": "assets/zod-BHBKxcX8.js",
+            "kind": "entry",
+            "rawBytes": 91598,
+            "gzipBytes": 25647
+        },
+        {
+            "path": "favicon.svg",
+            "kind": "entry",
+            "rawBytes": 9522,
+            "gzipBytes": 1490
+        },
+        {
+            "path": "icons.svg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 5031,
+            "gzipBytes": 2104
+        },
+        {
+            "path": "images/events/americano.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 72700,
+            "gzipBytes": 65636
+        },
+        {
+            "path": "images/events/banners/americano.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 47446,
+            "gzipBytes": 46308
+        },
+        {
+            "path": "images/events/banners/data-coupon.svg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 731,
+            "gzipBytes": 482
+        },
+        {
+            "path": "images/events/banners/delivery-coupon.svg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 472,
+            "gzipBytes": 371
+        },
+        {
+            "path": "images/events/banners/galaxy-buds.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 70879,
+            "gzipBytes": 69677
+        },
+        {
+            "path": "images/events/banners/galaxy-watch5.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 61408,
+            "gzipBytes": 60644
+        },
+        {
+            "path": "images/events/banners/membership-point.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 40967,
+            "gzipBytes": 40976
+        },
+        {
+            "path": "images/events/banners/muno-calendar.svg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 1179,
+            "gzipBytes": 445
+        },
+        {
+            "path": "images/events/banners/reusable-cup.svg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 917,
+            "gzipBytes": 515
+        },
+        {
+            "path": "images/events/banners/vip-double.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 56633,
+            "gzipBytes": 56488
+        },
+        {
+            "path": "images/events/data-coupon.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 13892,
+            "gzipBytes": 13334
+        },
+        {
+            "path": "images/events/galaxy-buds3.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 30440,
+            "gzipBytes": 29794
+        },
+        {
+            "path": "images/events/galaxy-watch5-dial.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 57935,
+            "gzipBytes": 56573
+        },
+        {
+            "path": "images/events/galaxy-watch5.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 135633,
+            "gzipBytes": 130922
+        },
+        {
+            "path": "images/events/membership-point.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 4686,
+            "gzipBytes": 4709
+        },
+        {
+            "path": "images/events/nintendo-switch-2.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 37264,
+            "gzipBytes": 36219
+        },
+        {
+            "path": "images/events/starbucks-set.webp",
+            "kind": "lazy-or-asset",
+            "rawBytes": 32222,
+            "gzipBytes": 31803
+        },
+        {
+            "path": "images/events/vip-double.png",
+            "kind": "lazy-or-asset",
+            "rawBytes": 170614,
+            "gzipBytes": 170687
+        },
+        {
+            "path": "images/games/color-word.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 249947,
+            "gzipBytes": 248923
+        },
+        {
+            "path": "images/games/takko-order.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 380834,
+            "gzipBytes": 378359
+        },
+        {
+            "path": "images/games/takko-timing.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 331887,
+            "gzipBytes": 328980
+        },
+        {
+            "path": "images/games/takoyaki-run.jpg",
+            "kind": "lazy-or-asset",
+            "rawBytes": 228201,
+            "gzipBytes": 227884
+        },
+        {
+            "path": "index.html",
+            "kind": "entry",
+            "rawBytes": 3241,
+            "gzipBytes": 1146
+        },
+        {
+            "path": "mockServiceWorker.js",
+            "kind": "lazy-or-asset",
+            "rawBytes": 9666,
+            "gzipBytes": 3229
+        }
+    ],
+    "runs": [
+        {
+            "scenario": "bundle-entry",
+            "sampleIndex": 0,
+            "metrics": {
+                "rawBytes": {
+                    "value": 1255979,
+                    "unit": "byte",
+                    "method": "fs.statSync"
+                },
+                "gzipBytes": {
+                    "value": 377242,
+                    "unit": "byte",
+                    "method": "zlib.gzipSync"
+                },
+                "fileCount": {
+                    "value": 27,
+                    "unit": "count",
+                    "method": "dist walk + index.html 참조 분류"
+                }
+            },
+            "status": "ok"
+        },
+        {
+            "scenario": "bundle-all",
+            "sampleIndex": 0,
+            "metrics": {
+                "rawBytes": {
+                    "value": 16860340,
+                    "unit": "byte",
+                    "method": "fs.statSync"
+                },
+                "gzipBytes": {
+                    "value": 14711106,
+                    "unit": "byte",
+                    "method": "zlib.gzipSync"
+                },
+                "fileCount": {
+                    "value": 280,
+                    "unit": "count",
+                    "method": "dist walk + index.html 참조 분류"
+                }
+            },
+            "status": "ok"
+        }
+    ]
+}

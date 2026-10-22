@@ -1,2 +1,3 @@
 taskId,developerAlias,startAt,endAt,activeMinutes,waitingMinutes,verificationMinutes,reworkCount,complexity,evidence
 GD-289,agent-session,2026-10-22T00:00:00Z,2026-10-22T01:45:00Z,,,25,0,baseline-collect,"이 CSV는 이번 세션의 기준선이다 — 과거 작업시간 기록이 없어 소급 추정하지 않고, 대조군 없는 현재값만 남긴다. activeMinutes는 레이트 리밋 중단으로 분할돼 단정 불가, verificationMinutes는 vitest 140s+빌드+lint+format의 반올림 누적이다"
+GD-264,agent-session,2026-10-22T05:55:34Z,2026-10-22T06:52:00Z,29,20,8,1,evidence-collect-r2,"대조군 없는 현재 기준선 — startAt은 워크트리 생성(05:55:34Z)·endAt은 검증 완료 직전 추정, activeMinutes≈스크립트 작성·테스트 보강·문서 갱신, waitingMinutes≈npm ci·빌드 2회·브라우저 표본 수집(830 runs), verificationMinutes≈format+lint+test:ci(852건/207s)+build 누적 반올림, reworkCount 1은 웜 표본 수집 로직 재설계(110→context당 1개)"
