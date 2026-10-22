@@ -40,6 +40,7 @@ describe('관리자 미션', () => {
             status: 'ACTIVE',
             rewardPolicyId: 'rp-1',
             createdBy: 'admin',
+            createdByName: '박운영',
             createdAt: '2026-09-01T00:00:00Z',
             updatedAt: '2026-09-01T00:00:00Z',
         };
@@ -64,8 +65,11 @@ describe('관리자 미션', () => {
                 <AdminMissionsPage />
             </QueryClientProvider>,
         );
+        // ADR-028 — 목록의 작성자는 ID 대신 현재 이름으로 보인다 (유형·상태와 같은 셀 안 텍스트)
+        expect(await screen.findByText(/작성 박운영/)).toBeInTheDocument();
         await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
         expect(await screen.findByRole('heading', { name: '설문 미션' })).toBeInTheDocument();
+        expect(screen.getByText('작성 박운영')).toBeInTheDocument();
         expect(scrollSpy).toHaveBeenCalled();
         // 기본 기간은 미션 시작~종료 — 31일을 넘으면 시작일부터 31일로 자르고 안내한다
         expect(screen.getByLabelText('집계 시작일')).toHaveValue('2026-10-01');

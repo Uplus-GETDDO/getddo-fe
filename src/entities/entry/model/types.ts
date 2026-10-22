@@ -83,12 +83,15 @@ export type Entry = z.infer<typeof entrySchema>;
 
 export const adminEntrySchema = entrySchema.extend({
     userId: z.uuid(),
+    // ADR-028 표시용 현재 이름 — BE 미배포라 생략·null을 모두 허용하고, 동일인 판정은 userId로 한다
+    userName: z.string().nullish(),
     participantId: z.uuid().nullable(),
 });
 export const adminParticipantSchema = z.object({
     id: z.uuid(),
     eventId: z.uuid(),
     userId: z.uuid(),
+    userName: z.string().nullish(),
     usedTicketCount: z.number().int().nonnegative(),
     createdAt: z.iso.datetime(),
 });

@@ -79,6 +79,8 @@ describe('AO04 사용자별 정합성', () => {
     it('불일치 사용자는 isConsistent=false와 불일치 응모권을 돌려준다', async () => {
         const res = await get('/v1/admin/users/vu-haneul/tickets/consistency');
         const data = envelopeSchema(ticketConsistencySchema).parse(res.data).data;
+        // ADR-028 — 표시용 현재 이름이 사용자 ID와 함께 온다
+        expect(data.userName).toBe('이하늘');
         expect(data.isConsistent).toBe(false);
         expect(data.inconsistencies).toHaveLength(1);
         expect(data.inconsistencies[0]).toMatchObject({

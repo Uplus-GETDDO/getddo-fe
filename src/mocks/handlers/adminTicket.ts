@@ -468,6 +468,7 @@ export const adminTicketHandlers = [
         );
         return ok({
             userId,
+            userName: userName(userId),
             availableCount: userTickets.filter(
                 (t) =>
                     (t.status === 'AVAILABLE' || t.status === 'RETURNED') &&

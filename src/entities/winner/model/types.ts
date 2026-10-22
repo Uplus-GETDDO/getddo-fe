@@ -28,6 +28,8 @@ export const publicationUpdateResultSchema = z.object({
     publishedAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
     updatedBy: z.string(),
+    // ADR-028 표시용 갱신 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    updatedByName: z.string().nullish(),
 });
 
 // AD07 executions[]의 취소 근거 — 해당 공개 버전에 반영된 실행에 연결된 취소의 사유
@@ -42,6 +44,7 @@ export const publicationExecutionSchema = z.object({
     runId: z.string(),
     confirmationId: z.string(),
     confirmedBy: z.string(),
+    confirmedByName: z.string().nullish(),
     confirmedAt: z.iso.datetime(),
     cancellations: z.array(publicationCancellationSchema),
 });
@@ -58,6 +61,8 @@ export const publicListChangeSchema = z.object({
     drawRunId: z.string(),
     reason: z.string().nullable(),
     confirmedBy: z.string().nullable(),
+    // ADR-028 표시용 처리자 현재 이름 — 과거 확인자 정보가 없으면 confirmedBy와 함께 null이다
+    confirmedByName: z.string().nullish(),
     confirmedAt: z.iso.datetime().nullable(),
     updatedAt: z.iso.datetime(),
     changes: z.array(
@@ -65,7 +70,9 @@ export const publicListChangeSchema = z.object({
             prizeId: z.string(),
             slotNumber: z.number().int(),
             beforeUserId: z.string().nullable(),
+            beforeUserName: z.string().nullish(),
             afterUserId: z.string().nullable(),
+            afterUserName: z.string().nullish(),
         }),
     ),
     executions: z.array(publicationExecutionSchema),

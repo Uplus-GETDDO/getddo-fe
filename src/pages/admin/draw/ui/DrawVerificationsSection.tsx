@@ -113,7 +113,7 @@ export function DrawVerificationsSection({ drawId, canVerify }: DrawVerification
                                     </span>
                                     <span className="text-body-sm text-fg-secondary">
                                         {formatKst(verification.verifiedAt)} ·{' '}
-                                        {verification.verifiedBy}
+                                        {verification.verifiedByName ?? verification.verifiedBy}
                                     </span>
                                 </div>
                                 <ul className="text-body-sm flex flex-col gap-1">

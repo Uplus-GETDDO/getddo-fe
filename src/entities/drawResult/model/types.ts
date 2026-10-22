@@ -128,6 +128,8 @@ export const cancellationSummarySchema = z.object({
     resultId: z.string(),
     replacementRunId: z.string().nullable(),
     canceledBy: z.string(),
+    // ADR-028 표시용 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    canceledByName: z.string().nullish(),
     reason: z.string(),
     canceledAt: z.iso.datetime({ offset: true }),
 });
@@ -141,6 +143,8 @@ export const drawResultSchema = z.object({
     resultType: z.enum(['SELECTED', 'UNFILLED']),
     candidateId: z.string().nullable(),
     userId: z.string().nullable(),
+    // ADR-028 표시용 현재 이름 — 미충원 결과는 userId와 함께 null이다
+    userName: z.string().nullish(),
     // 실제 공개 명단에 반영된 이력 — 현재 명단 포함 여부가 아니다
     wasPublished: z.boolean(),
     isCanceled: z.boolean(),
@@ -160,6 +164,8 @@ export const drawFailureSchema = z.object({
 export const drawExecutionAuditSchema = z.object({
     id: z.string(),
     actorId: z.string().nullable(),
+    // ADR-028 표시용 행위자 현재 이름 — 시스템 처리(actorId=null)면 null이다
+    actorName: z.string().nullish(),
     action: z.string(),
     reason: z.string().nullable(),
     beforeData: z.string().nullable(),
@@ -193,6 +199,8 @@ export const drawCandidateSchema = z.object({
     id: z.string(),
     participantId: z.string(),
     userId: z.string(),
+    // ADR-028 표시용 현재 이름 — entrySnapshot·eligibilitySnapshot에는 이름을 넣지 않는다
+    userName: z.string().nullish(),
     ticketCount: z.number().int(),
     weight: z.number().int(),
     entrySnapshot: z.record(z.string(), z.unknown()),
@@ -206,6 +214,8 @@ export const drawVerificationSchema = z.object({
     checks: z.array(z.object({ code: z.string(), passed: z.boolean(), message: z.string() })),
     verifiedAt: z.iso.datetime({ offset: true }),
     verifiedBy: z.string(),
+    // ADR-028 표시용 검증 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    verifiedByName: z.string().nullish(),
 });
 
 // 확정 결과 항목 — getddo-spec 05-api/drawing.md GD-138 절(AD09)·GD-87 절(최초 재개). DrawResult와 필드명이 다르다(resultId·rank)
@@ -217,6 +227,8 @@ export const drawConfirmationResultSchema = z.object({
     selectionOrder: z.number().int().nullable(),
     candidateId: z.string().nullable(),
     userId: z.string().nullable(),
+    // ADR-028 표시용 현재 이름 — 미충원 결과는 userId와 함께 null이다
+    userName: z.string().nullish(),
     resultType: z.enum(['SELECTED', 'UNFILLED']),
 });
 
@@ -246,6 +258,8 @@ export const drawResultConfirmationSchema = z.object({
     confirmationId: z.string(),
     runId: z.string(),
     confirmedBy: z.string(),
+    // ADR-028 표시용 확인 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    confirmedByName: z.string().nullish(),
     confirmedAt: z.iso.datetime({ offset: true }),
     isPublished: z.boolean(),
     publicationId: z.string().nullable(),

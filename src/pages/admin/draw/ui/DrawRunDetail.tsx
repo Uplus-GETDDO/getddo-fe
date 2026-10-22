@@ -592,7 +592,8 @@ function RunDetailBody({
                                 >
                                     <p className="text-body-sm text-fg-primary">{c.reason}</p>
                                     <p className="text-caption text-fg-tertiary">
-                                        {c.canceledBy} · {formatKst(c.canceledAt)} · 취소 ID {c.id}
+                                        {c.canceledByName ?? c.canceledBy} ·{' '}
+                                        {formatKst(c.canceledAt)} · 취소 ID {c.id}
                                     </p>
                                     {/* 취소 근거에서 대체 재추첨 실행으로 바로 이동 — 같은 모달 안에서 상세가 바뀐다 */}
                                     {c.replacementRunId && c.replacementRunId !== run.id && (
@@ -797,7 +798,12 @@ function RunDetailBody({
                                     <TableCell>{result.prizeRank}등</TableCell>
                                     <TableCell>{result.slotNumber}</TableCell>
                                     <TableCell className="font-medium">
-                                        {result.userId ?? '—'}
+                                        {result.userName ?? result.userId ?? '—'}
+                                        {result.userName && result.userId && (
+                                            <span className="text-caption text-fg-secondary block font-normal">
+                                                {result.userId}
+                                            </span>
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         {result.resultType === 'UNFILLED' ? (
@@ -887,7 +893,12 @@ function RunDetailBody({
                                         <TableCell>{result.prizeRank}등</TableCell>
                                         <TableCell>{result.slotNumber}</TableCell>
                                         <TableCell className="font-medium">
-                                            {result.userId ?? '—'}
+                                            {result.userName ?? result.userId ?? '—'}
+                                            {result.userName && result.userId && (
+                                                <span className="text-caption text-fg-secondary block font-normal">
+                                                    {result.userId}
+                                                </span>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <ResultChips result={result} />
