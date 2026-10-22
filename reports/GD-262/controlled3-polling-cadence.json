@@ -1,0 +1,741 @@
+{
+    "note": "동일 경로의 시작 간격이며 원인 추정과 구분합니다. 체류 중 추가 요청에는 배너 회전의 최초 E03 조회도 포함됩니다.",
+    "versions": {
+        "before": [
+            {
+                "batch": 1,
+                "initial": 20,
+                "additional": 36,
+                "paths": [
+                    {
+                        "path": "/api/v1/notifications/me?size=1&isRead=false",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/attendances/today",
+                        "requests": 4,
+                        "gapsMs": [1740, 31315, 30320]
+                    },
+                    {
+                        "path": "/api/v1/missions?page=1&size=50",
+                        "requests": 3,
+                        "gapsMs": [31863, 31474]
+                    },
+                    {
+                        "path": "/api/v1/games",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/banners",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events?page=1&size=20",
+                        "requests": 3,
+                        "gapsMs": [32510, 30494]
+                    },
+                    {
+                        "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [31047, 31459]
+                    },
+                    {
+                        "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30776, 31461]
+                    },
+                    {
+                        "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30691, 31462]
+                    },
+                    {
+                        "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30549, 31455]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f",
+                        "requests": 3,
+                        "gapsMs": [24694, 30520]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c",
+                        "requests": 3,
+                        "gapsMs": [4783, 31392]
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371",
+                        "requests": 3,
+                        "gapsMs": [9392, 31376]
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9",
+                        "requests": 3,
+                        "gapsMs": [16243, 30656]
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682",
+                        "requests": 3,
+                        "gapsMs": [19830, 30699]
+                    },
+                    {
+                        "path": "/api/v1/events?page=2&size=20",
+                        "requests": 3,
+                        "gapsMs": [31518, 30503]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f/statistics",
+                        "requests": 3,
+                        "gapsMs": [22548, 30518]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522/statistics",
+                        "requests": 3,
+                        "gapsMs": [31046, 30210]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522",
+                        "requests": 3,
+                        "gapsMs": [31030, 30211]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    }
+                ]
+            },
+            {
+                "batch": 2,
+                "initial": 20,
+                "additional": 37,
+                "paths": [
+                    {
+                        "path": "/api/v1/notifications/me?size=1&isRead=false",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/attendances/today",
+                        "requests": 4,
+                        "gapsMs": [1698, 30556, 30522]
+                    },
+                    {
+                        "path": "/api/v1/missions?page=1&size=50",
+                        "requests": 3,
+                        "gapsMs": [32202, 30555]
+                    },
+                    {
+                        "path": "/api/v1/games",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/banners",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events?page=1&size=20",
+                        "requests": 3,
+                        "gapsMs": [32232, 30846]
+                    },
+                    {
+                        "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [31379, 30509]
+                    },
+                    {
+                        "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [31103, 30522]
+                    },
+                    {
+                        "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [31019, 30523]
+                    },
+                    {
+                        "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30938, 30522]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f",
+                        "requests": 3,
+                        "gapsMs": [24680, 30807]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c",
+                        "requests": 4,
+                        "gapsMs": [4725, 30611, 31604]
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371",
+                        "requests": 3,
+                        "gapsMs": [9500, 32215]
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9",
+                        "requests": 3,
+                        "gapsMs": [15738, 30927]
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682",
+                        "requests": 3,
+                        "gapsMs": [20273, 31227]
+                    },
+                    {
+                        "path": "/api/v1/events?page=2&size=20",
+                        "requests": 3,
+                        "gapsMs": [30935, 30848]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f/statistics",
+                        "requests": 3,
+                        "gapsMs": [22615, 30733]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522/statistics",
+                        "requests": 3,
+                        "gapsMs": [32075, 30426]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522",
+                        "requests": 3,
+                        "gapsMs": [32087, 30418]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    }
+                ]
+            },
+            {
+                "batch": 3,
+                "initial": 20,
+                "additional": 37,
+                "paths": [
+                    {
+                        "path": "/api/v1/notifications/me?size=1&isRead=false",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/attendances/today",
+                        "requests": 4,
+                        "gapsMs": [1698, 30633, 30211]
+                    },
+                    {
+                        "path": "/api/v1/missions?page=1&size=50",
+                        "requests": 3,
+                        "gapsMs": [31739, 30327]
+                    },
+                    {
+                        "path": "/api/v1/games",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/banners",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events?page=1&size=20",
+                        "requests": 3,
+                        "gapsMs": [31785, 30412]
+                    },
+                    {
+                        "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30822, 30344]
+                    },
+                    {
+                        "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30911, 30200]
+                    },
+                    {
+                        "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30891, 30208]
+                    },
+                    {
+                        "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30789, 30196]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f",
+                        "requests": 3,
+                        "gapsMs": [24672, 32532]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c",
+                        "requests": 4,
+                        "gapsMs": [4699, 30360, 30240]
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371",
+                        "requests": 3,
+                        "gapsMs": [9467, 30296]
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9",
+                        "requests": 3,
+                        "gapsMs": [15387, 31705]
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682",
+                        "requests": 3,
+                        "gapsMs": [20209, 32166]
+                    },
+                    {
+                        "path": "/api/v1/events?page=2&size=20",
+                        "requests": 3,
+                        "gapsMs": [30781, 30423]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f/statistics",
+                        "requests": 3,
+                        "gapsMs": [22464, 32496]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522/statistics",
+                        "requests": 3,
+                        "gapsMs": [30420, 30680]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522",
+                        "requests": 3,
+                        "gapsMs": [30431, 30698]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    }
+                ]
+            }
+        ],
+        "after": [
+            {
+                "batch": 1,
+                "initial": 20,
+                "additional": 37,
+                "paths": [
+                    {
+                        "path": "/api/v1/notifications/me?size=1&isRead=false",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/attendances/today",
+                        "requests": 4,
+                        "gapsMs": [1721, 30779, 30224]
+                    },
+                    {
+                        "path": "/api/v1/missions?page=1&size=50",
+                        "requests": 3,
+                        "gapsMs": [31107, 31406]
+                    },
+                    {
+                        "path": "/api/v1/games",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/banners",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events?page=1&size=20",
+                        "requests": 3,
+                        "gapsMs": [31983, 30415]
+                    },
+                    {
+                        "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30332, 31383]
+                    },
+                    {
+                        "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30526, 30938]
+                    },
+                    {
+                        "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30446, 30927]
+                    },
+                    {
+                        "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30519, 30740]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f",
+                        "requests": 3,
+                        "gapsMs": [24892, 30261]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c",
+                        "requests": 4,
+                        "gapsMs": [4738, 30856, 30583]
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371",
+                        "requests": 3,
+                        "gapsMs": [9418, 30567]
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9",
+                        "requests": 3,
+                        "gapsMs": [15956, 31027]
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682",
+                        "requests": 3,
+                        "gapsMs": [19380, 31423]
+                    },
+                    {
+                        "path": "/api/v1/events?page=2&size=20",
+                        "requests": 3,
+                        "gapsMs": [30941, 30422]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f/statistics",
+                        "requests": 3,
+                        "gapsMs": [22986, 30254]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522/statistics",
+                        "requests": 3,
+                        "gapsMs": [30272, 30273]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522",
+                        "requests": 3,
+                        "gapsMs": [30264, 30247]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    }
+                ]
+            },
+            {
+                "batch": 2,
+                "initial": 20,
+                "additional": 37,
+                "paths": [
+                    {
+                        "path": "/api/v1/notifications/me?size=1&isRead=false",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/attendances/today",
+                        "requests": 4,
+                        "gapsMs": [1734, 30819, 30379]
+                    },
+                    {
+                        "path": "/api/v1/missions?page=1&size=50",
+                        "requests": 3,
+                        "gapsMs": [30775, 31224]
+                    },
+                    {
+                        "path": "/api/v1/games",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/banners",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events?page=1&size=20",
+                        "requests": 3,
+                        "gapsMs": [32018, 30578]
+                    },
+                    {
+                        "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30468, 30717]
+                    },
+                    {
+                        "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [31007, 30399]
+                    },
+                    {
+                        "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30959, 30390]
+                    },
+                    {
+                        "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30874, 30377]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f",
+                        "requests": 3,
+                        "gapsMs": [25492, 31074]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c",
+                        "requests": 4,
+                        "gapsMs": [4853, 30460, 30200]
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371",
+                        "requests": 3,
+                        "gapsMs": [9519, 32468]
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9",
+                        "requests": 3,
+                        "gapsMs": [15278, 30493]
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682",
+                        "requests": 3,
+                        "gapsMs": [20897, 30739]
+                    },
+                    {
+                        "path": "/api/v1/events?page=2&size=20",
+                        "requests": 3,
+                        "gapsMs": [31054, 30546]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f/statistics",
+                        "requests": 3,
+                        "gapsMs": [23012, 31076]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522/statistics",
+                        "requests": 3,
+                        "gapsMs": [31733, 31228]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522",
+                        "requests": 3,
+                        "gapsMs": [31736, 31240]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    }
+                ]
+            },
+            {
+                "batch": 3,
+                "initial": 20,
+                "additional": 37,
+                "paths": [
+                    {
+                        "path": "/api/v1/notifications/me?size=1&isRead=false",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/attendances/today",
+                        "requests": 4,
+                        "gapsMs": [1672, 30540, 31041]
+                    },
+                    {
+                        "path": "/api/v1/missions?page=1&size=50",
+                        "requests": 3,
+                        "gapsMs": [30627, 30547]
+                    },
+                    {
+                        "path": "/api/v1/games",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/banners",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events?page=1&size=20",
+                        "requests": 3,
+                        "gapsMs": [32094, 30596]
+                    },
+                    {
+                        "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30773, 31538]
+                    },
+                    {
+                        "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [31021, 31052]
+                    },
+                    {
+                        "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30941, 31057]
+                    },
+                    {
+                        "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                        "requests": 3,
+                        "gapsMs": [30878, 31042]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f",
+                        "requests": 3,
+                        "gapsMs": [25232, 31932]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c",
+                        "requests": 4,
+                        "gapsMs": [4835, 30472, 31118]
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371",
+                        "requests": 3,
+                        "gapsMs": [9548, 30555]
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9",
+                        "requests": 3,
+                        "gapsMs": [15368, 31454]
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682",
+                        "requests": 3,
+                        "gapsMs": [20682, 30711]
+                    },
+                    {
+                        "path": "/api/v1/events?page=2&size=20",
+                        "requests": 3,
+                        "gapsMs": [31000, 30670]
+                    },
+                    {
+                        "path": "/api/v1/events/id-b0219288788f/statistics",
+                        "requests": 3,
+                        "gapsMs": [23283, 31894]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522/statistics",
+                        "requests": 3,
+                        "gapsMs": [31499, 30651]
+                    },
+                    {
+                        "path": "/api/v1/events/id-614c7a754522",
+                        "requests": 3,
+                        "gapsMs": [31496, 30648]
+                    },
+                    {
+                        "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    },
+                    {
+                        "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                        "requests": 1,
+                        "gapsMs": []
+                    }
+                ]
+            }
+        ]
+    }
+}

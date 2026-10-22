@@ -42,6 +42,9 @@ export function MissionDetailPanel({ id }: { id: string }) {
                         {mission.status} · 보상 1장 · {formatKst(mission.startsAt)} ~{' '}
                         {formatKst(mission.endsAt)} KST
                     </p>
+                    <p className="text-body-sm text-fg-secondary">
+                        작성 {mission.createdByName ?? mission.createdBy}
+                    </p>
                     {mission.questions.map((q) => (
                         <div key={q.id} className="min-w-0 break-words">
                             <h3>

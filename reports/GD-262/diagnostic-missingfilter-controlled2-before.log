@@ -1,0 +1,23 @@
+controlled2-before 1/3 1/1 home cold: 10661
+controlled2-before 1/3 1/1 home transition: 1682
+controlled2-before 1/3 1/1 home revisit5: 1354
+controlled2-before 1/3 1/1 home revisit35: 1699
+controlled2-before 1/3 1/1 events cold: 6870
+controlled2-before 1/3 1/1 events transition: 705
+controlled2-before 1/3 1/1 events revisit5: 626
+controlled2-before 1/3 1/1 events revisit35: 534
+controlled2-before 1/3 1/1 raffles cold: 8911
+controlled2-before 1/3 1/1 raffles transition: 1340
+controlled2-before 1/3 1/1 raffles revisit5: 888
+controlled2-before 1/3 1/1 raffles revisit35: 965
+controlled2-before 1/3 1/1 eventDetail cold: 5748
+controlled2-before 1/3 1/1 eventDetail transition: 853
+controlled2-before 1/3 1/1 eventDetail revisit5: 322
+controlled2-before 1/3 1/1 eventDetail revisit35: 377
+controlled2-before 1/3 1/1 raffleDetail cold: API 오류
+controlled2-before 1/3 1/1 raffleDetail transition: API 오류
+controlled2-before 1/3 1/1 raffleDetail revisit5: API 오류
+controlled2-before 1/3 1/1 raffleDetail revisit35: API 오류
+controlled2-before 1/3 1/1 missions cold: 10282
+controlled2-before 1/3 1/1 missions transition: 2070
+controlled2-before 1/3 1/1 missions revisit5: 494

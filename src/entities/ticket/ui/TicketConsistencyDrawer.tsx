@@ -41,7 +41,11 @@ export function TicketConsistencyDrawer({
             <SheetContent className="overflow-y-auto sm:max-w-lg">
                 <SheetHeader>
                     <SheetTitle>응모권 정합성</SheetTitle>
-                    <SheetDescription>{userId ?? ''}</SheetDescription>
+                    <SheetDescription>
+                        {consistency.data?.userName
+                            ? `${consistency.data.userName} · ${userId ?? ''}`
+                            : (userId ?? '')}
+                    </SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col gap-5 px-4 pb-6">
                     {consistency.isPending && consistency.fetchStatus !== 'idle' && (

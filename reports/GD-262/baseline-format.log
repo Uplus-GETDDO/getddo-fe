@@ -1,0 +1,10 @@
+
+> getddo-fe@0.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+[warn] docs/superpowers/plans/2026-10-21-GD-262-performance.md
+[warn] reports/GD-262/before-bundle.json
+[warn] scripts/measureGd262Bundle.mjs
+[warn] scripts/measureGd262Performance.mjs
+[warn] Code style issues found in 4 files. Run Prettier with --write to fix.

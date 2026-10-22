@@ -246,6 +246,9 @@ describe('AN04 발송 이력 목록', () => {
         expect(data.totalElements).toBe(16);
         const times = data.items.map((n) => n.createdAt);
         expect(times).toEqual([...times].sort().reverse());
+        // ADR-028 — 수신자 현재 이름을 싣고, 이름이 없는 건은 null이다
+        expect(data.items.find((n) => n.userId === 'vu-doyoon')?.userName).toBe('김도윤');
+        expect(data.items.find((n) => n.userId === 'vu-yuna')?.userName).toBeNull();
     });
 
     it('userId·jobId·mockDeliveryStatus로 거른다', async () => {

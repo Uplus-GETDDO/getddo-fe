@@ -1,0 +1,2393 @@
+{
+    "label": "controlled3-dwell65-after",
+    "checkedAt": "2026-10-22T04:47:04.291Z",
+    "environment": {
+        "platform": "win32",
+        "release": "10.0.26200",
+        "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+        "cores": 8,
+        "totalMemory": 25443966976,
+        "freeMemory": 9204867072,
+        "node": "v24.14.1",
+        "commit": "47d2b5460483a9f56b1890d4c14990c7249c5b7e",
+        "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "api": "https://dzc8oneey9mmx.cloudfront.net/api",
+        "responseMode": "고정 응답 재생",
+        "replayDelayMs": 50,
+        "fixtureHash": "f2d211551094a590870c5a3352ee0f47a3b5847133547f314894c68a004d5610",
+        "profile": "mobile",
+        "viewport": {
+            "width": 390,
+            "height": 844
+        },
+        "cpuSlowdown": 4,
+        "downloadBps": 200000,
+        "uploadBps": 93750,
+        "latencyMs": 150,
+        "headless": true,
+        "concurrency": 1,
+        "user": "USER_A",
+        "serverInternalTime": "미측정",
+        "browser": "155.0.8059.85"
+    },
+    "requested": {
+        "count": 1,
+        "batches": 3,
+        "warmups": 0,
+        "modes": ["dwell65"]
+    },
+    "discovery": {
+        "eventCount": 28,
+        "gameCount": 4,
+        "missionCount": 11,
+        "eventState": "OPEN",
+        "raffleState": "OPEN",
+        "idsHash": "998e43b0124a24317b363e75cc31b81c3d5dd9cf788fe3ec1e3d99212e3c9fba"
+    },
+    "samples": [
+        {
+            "screen": "home",
+            "mode": "dwell65",
+            "batch": 1,
+            "trial": 0,
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/api/v1/notifications/me?size=1&isRead=false",
+                    "started": 6128.6972,
+                    "ended": 6184.6478,
+                    "durationMs": 55.95060000000012,
+                    "ttfbMs": 55.95060000000012,
+                    "status": 200,
+                    "bytes": 121,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 6376.0427,
+                    "ended": 6427.3628,
+                    "durationMs": 51.32009999999991,
+                    "ttfbMs": 51.32009999999991,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 6397.1894,
+                    "ended": 6447.8154,
+                    "durationMs": 50.626000000000204,
+                    "ttfbMs": 50.626000000000204,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games",
+                    "started": 6642.0592,
+                    "ended": 6693.1064,
+                    "durationMs": 51.047199999999975,
+                    "ttfbMs": 51.047199999999975,
+                    "status": 200,
+                    "bytes": 593,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/banners",
+                    "started": 6910.2445,
+                    "ended": 6959.5121,
+                    "durationMs": 49.26760000000013,
+                    "ttfbMs": 49.26760000000013,
+                    "status": 200,
+                    "bytes": 535,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 6925.909,
+                    "ended": 6979.1824,
+                    "durationMs": 53.27340000000004,
+                    "ttfbMs": 53.27340000000004,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 7227.0366,
+                    "ended": 7281.4225,
+                    "durationMs": 54.38589999999931,
+                    "ttfbMs": 54.38589999999931,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 7485.3714,
+                    "ended": 7539.1825,
+                    "durationMs": 53.8110999999999,
+                    "ttfbMs": 53.8110999999999,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 7579.9631,
+                    "ended": 7630.2784,
+                    "durationMs": 50.31530000000021,
+                    "ttfbMs": 50.31530000000021,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 7711.6158,
+                    "ended": 7773.3228,
+                    "durationMs": 61.707000000000335,
+                    "ttfbMs": 61.707000000000335,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 7774.2178,
+                    "ended": 7828.0136,
+                    "durationMs": 53.79579999999987,
+                    "ttfbMs": 53.79579999999987,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 7844.381,
+                    "ended": 7906.6516,
+                    "durationMs": 62.27059999999983,
+                    "ttfbMs": 62.27059999999983,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 7961.7491,
+                    "ended": 8023.4463,
+                    "durationMs": 61.69719999999961,
+                    "ttfbMs": 61.69719999999961,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 7977.5785,
+                    "ended": 8038.7118,
+                    "durationMs": 61.13330000000042,
+                    "ttfbMs": 61.13330000000042,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 8024.8497,
+                    "ended": 8081.5774,
+                    "durationMs": 56.72770000000037,
+                    "ttfbMs": 56.72770000000037,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 8097.4224,
+                    "ended": 8147.5026,
+                    "durationMs": 50.08019999999942,
+                    "ttfbMs": 50.08019999999942,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 8162.4864,
+                    "ended": 8213.7097,
+                    "durationMs": 51.223299999999654,
+                    "ttfbMs": 51.223299999999654,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 9674.5067,
+                    "ended": 9729.3001,
+                    "durationMs": 54.793400000000474,
+                    "ttfbMs": 54.793400000000474,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 9779.8436,
+                    "ended": 9830.8998,
+                    "durationMs": 51.05619999999908,
+                    "ttfbMs": 51.05619999999908,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 9794.1712,
+                    "ended": 9847.5572,
+                    "durationMs": 53.3859999999986,
+                    "ttfbMs": 53.3859999999986,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                    "started": 12378.9441,
+                    "ended": 12443.6425,
+                    "durationMs": 64.69839999999931,
+                    "ttfbMs": 64.69839999999931,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 12582.056,
+                    "ended": 12643.9451,
+                    "durationMs": 61.889100000000326,
+                    "ttfbMs": 61.889100000000326,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                    "started": 17377.2837,
+                    "ended": 17430.293,
+                    "durationMs": 53.00930000000153,
+                    "ttfbMs": 53.00930000000153,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 17379.3385,
+                    "ended": 17430.936,
+                    "durationMs": 51.597499999999854,
+                    "ttfbMs": 51.597499999999854,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                    "started": 23924.3582,
+                    "ended": 23979.4753,
+                    "durationMs": 55.11709999999948,
+                    "ttfbMs": 55.11709999999948,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 23933.2109,
+                    "ended": 23996.118,
+                    "durationMs": 62.907100000000355,
+                    "ttfbMs": 62.907100000000355,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                    "started": 27396.3137,
+                    "ended": 27446.8911,
+                    "durationMs": 50.577400000001944,
+                    "ttfbMs": 50.577400000001944,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 27404.477,
+                    "ended": 27462.5423,
+                    "durationMs": 58.065300000002026,
+                    "ttfbMs": 58.065300000002026,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 32660.5014,
+                    "ended": 32711.3258,
+                    "durationMs": 50.824399999997695,
+                    "ttfbMs": 50.824399999997695,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 32665.9727,
+                    "ended": 32727.169,
+                    "durationMs": 61.19630000000325,
+                    "ttfbMs": 61.19630000000325,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 37504.5643,
+                    "ended": 37559.0728,
+                    "durationMs": 54.50850000000355,
+                    "ttfbMs": 54.50850000000355,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 37559.4781,
+                    "ended": 37612.1156,
+                    "durationMs": 52.63749999999709,
+                    "ttfbMs": 52.63749999999709,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 38011.1978,
+                    "ended": 38062.8092,
+                    "durationMs": 51.611400000001595,
+                    "ttfbMs": 51.611400000001595,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 38025.8484,
+                    "ended": 38078.8484,
+                    "durationMs": 53,
+                    "ttfbMs": 53,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 38230.7151,
+                    "ended": 38294.949,
+                    "durationMs": 64.23389999999927,
+                    "ttfbMs": 64.23389999999927,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 38876.5283,
+                    "ended": 38928.7795,
+                    "durationMs": 52.25119999999879,
+                    "ttfbMs": 52.25119999999879,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 38908.6824,
+                    "ended": 38961.7108,
+                    "durationMs": 53.028400000002875,
+                    "ttfbMs": 53.028400000002875,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 39103.7407,
+                    "ended": 39159.1736,
+                    "durationMs": 55.43289999999979,
+                    "ttfbMs": 55.43289999999979,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 40051.467,
+                    "ended": 40111.9187,
+                    "durationMs": 60.451700000005076,
+                    "ttfbMs": 60.451700000005076,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 40058.4479,
+                    "ended": 40112.294,
+                    "durationMs": 53.84610000000248,
+                    "ttfbMs": 53.84610000000248,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 43438.3176,
+                    "ended": 43489.0707,
+                    "durationMs": 50.75309999999445,
+                    "ttfbMs": 50.75309999999445,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 47946.7083,
+                    "ended": 48010.7476,
+                    "durationMs": 64.039300000004,
+                    "ttfbMs": 64.039300000004,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 54959.8169,
+                    "ended": 55011.2082,
+                    "durationMs": 51.39130000000296,
+                    "ttfbMs": 51.39130000000296,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 58827.0995,
+                    "ended": 58879.3032,
+                    "durationMs": 52.20370000000548,
+                    "ttfbMs": 52.20370000000548,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 62914.1024,
+                    "ended": 62975.1379,
+                    "durationMs": 61.03549999999814,
+                    "ttfbMs": 61.03549999999814,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 62926.7773,
+                    "ended": 62994.714,
+                    "durationMs": 67.93669999999838,
+                    "ttfbMs": 67.93669999999838,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 68910.4264,
+                    "ended": 68961.083,
+                    "durationMs": 50.65660000000207,
+                    "ttfbMs": 50.65660000000207,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 68942.2699,
+                    "ended": 68992.0395,
+                    "durationMs": 49.76959999999963,
+                    "ttfbMs": 49.76959999999963,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 68949.3176,
+                    "ended": 69012.0453,
+                    "durationMs": 62.7277000000031,
+                    "ttfbMs": 62.7277000000031,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 68952.3798,
+                    "ended": 69012.7176,
+                    "durationMs": 60.33780000000843,
+                    "ttfbMs": 60.33780000000843,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 68970.4007,
+                    "ended": 69027.805,
+                    "durationMs": 57.40429999999469,
+                    "ttfbMs": 57.40429999999469,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 69100.0598,
+                    "ended": 69153.096,
+                    "durationMs": 53.03620000000228,
+                    "ttfbMs": 53.03620000000228,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 69323.5465,
+                    "ended": 69376.5703,
+                    "durationMs": 53.02380000000994,
+                    "ttfbMs": 53.02380000000994,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 69525.3414,
+                    "ended": 69576.5681,
+                    "durationMs": 51.226699999999255,
+                    "ttfbMs": 51.226699999999255,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 70305.6896,
+                    "ended": 70360.3883,
+                    "durationMs": 54.6987000000081,
+                    "ttfbMs": 54.6987000000081,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 70324.2054,
+                    "ended": 70377.1065,
+                    "durationMs": 52.90109999998822,
+                    "ttfbMs": 52.90109999998822,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 74021.1621,
+                    "ended": 74079.3752,
+                    "durationMs": 58.213099999993574,
+                    "ttfbMs": 58.213099999993574,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                }
+            ],
+            "ok": true,
+            "displayMs": 8969.600000023842,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 666760,
+            "browserApi": [
+                {
+                    "path": "/api/v1/notifications/me",
+                    "start": 4653.600000023842,
+                    "duration": 632.1000000238419,
+                    "ttfb": 420.3000000715256
+                },
+                {
+                    "path": "/api/v1/attendances/today",
+                    "start": 4669.800000071526,
+                    "duration": 860.6999999284744,
+                    "ttfb": 646.8999999761581
+                },
+                {
+                    "path": "/api/v1/missions",
+                    "start": 4680.100000023842,
+                    "duration": 1118.3999999761581,
+                    "ttfb": 657.2000000476837
+                },
+                {
+                    "path": "/api/v1/games",
+                    "start": 4685.300000071526,
+                    "duration": 1129,
+                    "ttfb": 897
+                },
+                {
+                    "path": "/api/v1/banners",
+                    "start": 4691.100000023842,
+                    "duration": 1376.3999999761581,
+                    "ttfb": 1157.6000000238419
+                },
+                {
+                    "path": "/api/v1/events",
+                    "start": 4698.900000095367,
+                    "duration": 1901.0999999046326,
+                    "ttfb": 1169.5
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5887.600000023842,
+                    "duration": 486.10000002384186,
+                    "ttfb": 283.3000000715256
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5896.900000095367,
+                    "duration": 765.6999999284744,
+                    "ttfb": 531.5
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5906.700000047684,
+                    "duration": 826.1000000238419,
+                    "ttfb": 613.2000000476837
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5917.700000047684,
+                    "duration": 948.2999999523163,
+                    "ttfb": 745
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6170.800000071526,
+                    "duration": 742.1999999284744,
+                    "ttfb": 546.5
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6182.600000023842,
+                    "duration": 803,
+                    "ttfb": 613.3999999761581
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6187.100000023842,
+                    "duration": 863.8999999761581,
+                    "ttfb": 725.6000000238419
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6200.100000023842,
+                    "duration": 869,
+                    "ttfb": 727.8000000715256
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6201.800000071526,
+                    "duration": 898.1000000238419,
+                    "ttfb": 769.1000000238419
+                },
+                {
+                    "path": "/api/v1/attendances/today",
+                    "start": 6213,
+                    "duration": 953.6000000238419,
+                    "ttfb": 823.7000000476837
+                },
+                {
+                    "path": "/api/v1/events",
+                    "start": 6813,
+                    "duration": 405.2000000476837,
+                    "ttfb": 289.60000002384186
+                },
+                {
+                    "path": "/api/v1/events/:id/statistics",
+                    "start": 7701.200000047684,
+                    "duration": 1035.7000000476837,
+                    "ttfb": 917.3999999761581
+                },
+                {
+                    "path": "/api/v1/events/:id/statistics",
+                    "start": 8150.700000047684,
+                    "duration": 701.6000000238419,
+                    "ttfb": 570.2999999523163
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 8154.200000047684,
+                    "duration": 715.7000000476837,
+                    "ttfb": 582.8999999761581
+                }
+            ],
+            "initialRequestCount": 20,
+            "pollingRequestCount": 37
+        },
+        {
+            "screen": "home",
+            "mode": "dwell65",
+            "batch": 2,
+            "trial": 0,
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/api/v1/notifications/me?size=1&isRead=false",
+                    "started": 80189.8887,
+                    "ended": 80246.5272,
+                    "durationMs": 56.63850000000093,
+                    "ttfbMs": 56.63850000000093,
+                    "status": 200,
+                    "bytes": 121,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 80423.8798,
+                    "ended": 80483.9974,
+                    "durationMs": 60.117599999997765,
+                    "ttfbMs": 60.117599999997765,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 80462.2912,
+                    "ended": 80514.5314,
+                    "durationMs": 52.240200000000186,
+                    "ttfbMs": 52.240200000000186,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games",
+                    "started": 80687.1542,
+                    "ended": 80745.6105,
+                    "durationMs": 58.45629999999073,
+                    "ttfbMs": 58.45629999999073,
+                    "status": 200,
+                    "bytes": 593,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/banners",
+                    "started": 80955.7052,
+                    "ended": 81012.4777,
+                    "durationMs": 56.7725000000064,
+                    "ttfbMs": 56.7725000000064,
+                    "status": 200,
+                    "bytes": 535,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 80970.888,
+                    "ended": 81028.3919,
+                    "durationMs": 57.503899999996065,
+                    "ttfbMs": 57.503899999996065,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 81278.9295,
+                    "ended": 81340.2841,
+                    "durationMs": 61.35460000000603,
+                    "ttfbMs": 61.35460000000603,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 81552.3251,
+                    "ended": 81612.4387,
+                    "durationMs": 60.11359999999695,
+                    "ttfbMs": 60.11359999999695,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 81613.033,
+                    "ended": 81671.6249,
+                    "durationMs": 58.59189999999944,
+                    "ttfbMs": 58.59189999999944,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 81715.1004,
+                    "ended": 81765.5803,
+                    "durationMs": 50.47990000000573,
+                    "ttfbMs": 50.47990000000573,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 81845.9773,
+                    "ended": 81907.8083,
+                    "durationMs": 61.83100000000559,
+                    "ttfbMs": 61.83100000000559,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 81924.1126,
+                    "ended": 81986.9487,
+                    "durationMs": 62.83610000000044,
+                    "ttfbMs": 62.83610000000044,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 81971.7635,
+                    "ended": 82021.9189,
+                    "durationMs": 50.15540000000328,
+                    "ttfbMs": 50.15540000000328,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 82019.0672,
+                    "ended": 82068.5029,
+                    "durationMs": 49.435700000001816,
+                    "ttfbMs": 49.435700000001816,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 82095.9298,
+                    "ended": 82156.8482,
+                    "durationMs": 60.91839999999502,
+                    "ttfbMs": 60.91839999999502,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 82158.0479,
+                    "ended": 82218.7708,
+                    "durationMs": 60.72289999999339,
+                    "ttfbMs": 60.72289999999339,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 82203.9193,
+                    "ended": 82265.2293,
+                    "durationMs": 61.310000000012224,
+                    "ttfbMs": 61.310000000012224,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 84318.6047,
+                    "ended": 84375.8272,
+                    "durationMs": 57.22250000000349,
+                    "ttfbMs": 57.22250000000349,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 84424.8806,
+                    "ended": 84489.0964,
+                    "durationMs": 64.21579999999085,
+                    "ttfbMs": 64.21579999999085,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 84429.0866,
+                    "ended": 84489.5173,
+                    "durationMs": 60.43070000001171,
+                    "ttfbMs": 60.43070000001171,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                    "started": 86586.6191,
+                    "ended": 86639.8143,
+                    "durationMs": 53.19520000000193,
+                    "ttfbMs": 53.19520000000193,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 86777.2726,
+                    "ended": 86827.1183,
+                    "durationMs": 49.84570000000531,
+                    "ttfbMs": 49.84570000000531,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                    "started": 91481.383,
+                    "ended": 91542.5573,
+                    "durationMs": 61.174299999998766,
+                    "ttfbMs": 61.174299999998766,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 91491.2427,
+                    "ended": 91543.1116,
+                    "durationMs": 51.868900000001304,
+                    "ttfbMs": 51.868900000001304,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                    "started": 97294.0757,
+                    "ended": 97358.7425,
+                    "durationMs": 64.66679999999178,
+                    "ttfbMs": 64.66679999999178,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 97297.2453,
+                    "ended": 97359.1547,
+                    "durationMs": 61.9094000000041,
+                    "ttfbMs": 61.9094000000041,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                    "started": 102984.2756,
+                    "ended": 103040.093,
+                    "durationMs": 55.81739999999991,
+                    "ttfbMs": 55.81739999999991,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 102993.2551,
+                    "ended": 103042.5143,
+                    "durationMs": 49.25920000000042,
+                    "ttfbMs": 49.25920000000042,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 107330.7909,
+                    "ended": 107391.572,
+                    "durationMs": 60.781099999992875,
+                    "ttfbMs": 60.781099999992875,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 107338.1848,
+                    "ended": 107392.0723,
+                    "durationMs": 53.88749999999709,
+                    "ttfbMs": 53.88749999999709,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 111237.0203,
+                    "ended": 111291.3132,
+                    "durationMs": 54.29290000000037,
+                    "ttfbMs": 54.29290000000037,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 111747.2536,
+                    "ended": 111807.7658,
+                    "durationMs": 60.51219999999739,
+                    "ttfbMs": 60.51219999999739,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 112559.5625,
+                    "ended": 112624.4432,
+                    "durationMs": 64.88069999999425,
+                    "ttfbMs": 64.88069999999425,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 112572.2703,
+                    "ended": 112624.8517,
+                    "durationMs": 52.58139999999548,
+                    "ttfbMs": 52.58139999999548,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 112589.2279,
+                    "ended": 112640.9618,
+                    "durationMs": 51.73390000000654,
+                    "ttfbMs": 51.73390000000654,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 112977.4943,
+                    "ended": 113040.8426,
+                    "durationMs": 63.348299999997835,
+                    "ttfbMs": 63.348299999997835,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 112988.4901,
+                    "ended": 113041.2253,
+                    "durationMs": 52.73520000001008,
+                    "ttfbMs": 52.73520000001008,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 113257.5054,
+                    "ended": 113307.9821,
+                    "durationMs": 50.476699999999255,
+                    "ttfbMs": 50.476699999999255,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 116157.7656,
+                    "ended": 116208.7959,
+                    "durationMs": 51.03029999999853,
+                    "ttfbMs": 51.03029999999853,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 116164.8547,
+                    "ended": 116224.4903,
+                    "durationMs": 59.63560000000871,
+                    "ttfbMs": 59.63560000000871,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 117236.9539,
+                    "ended": 117290.8296,
+                    "durationMs": 53.875700000004144,
+                    "ttfbMs": 53.875700000004144,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 123959.672,
+                    "ended": 124024.3741,
+                    "durationMs": 64.70209999999497,
+                    "ttfbMs": 64.70209999999497,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 127790.4797,
+                    "ended": 127840.6141,
+                    "durationMs": 50.13440000000992,
+                    "ttfbMs": 50.13440000000992,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 133732.5501,
+                    "ended": 133790.1741,
+                    "durationMs": 57.62400000001071,
+                    "ttfbMs": 57.62400000001071,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 138406.8775,
+                    "ended": 138458.2645,
+                    "durationMs": 51.38699999998789,
+                    "ttfbMs": 51.38699999998789,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 138412.4847,
+                    "ended": 138473.7098,
+                    "durationMs": 61.22510000001057,
+                    "ttfbMs": 61.22510000001057,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 142460.6644,
+                    "ended": 142522.2135,
+                    "durationMs": 61.54910000000382,
+                    "ttfbMs": 61.54910000000382,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 142464.6395,
+                    "ended": 142522.5623,
+                    "durationMs": 57.92280000000028,
+                    "ttfbMs": 57.92280000000028,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 142958.7071,
+                    "ended": 143022.3074,
+                    "durationMs": 63.600299999990966,
+                    "ttfbMs": 63.600299999990966,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 142962.1949,
+                    "ended": 143022.6143,
+                    "durationMs": 60.41939999998431,
+                    "ttfbMs": 60.41939999998431,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 142966.4156,
+                    "ended": 143022.7122,
+                    "durationMs": 56.29660000000149,
+                    "ttfbMs": 56.29660000000149,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 143356.5483,
+                    "ended": 143407.0384,
+                    "durationMs": 50.49009999999544,
+                    "ttfbMs": 50.49009999999544,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 143566.2016,
+                    "ended": 143623.3611,
+                    "durationMs": 57.15950000000885,
+                    "ttfbMs": 57.15950000000885,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 143803.1758,
+                    "ended": 143856.7466,
+                    "durationMs": 53.57080000001588,
+                    "ttfbMs": 53.57080000001588,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 147386.1219,
+                    "ended": 147437.1979,
+                    "durationMs": 51.07600000000093,
+                    "ttfbMs": 51.07600000000093,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 147404.3843,
+                    "ended": 147455.2378,
+                    "durationMs": 50.85349999999744,
+                    "ttfbMs": 50.85349999999744,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 147437.0882,
+                    "ended": 147488.833,
+                    "durationMs": 51.74480000001495,
+                    "ttfbMs": 51.74480000001495,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                }
+            ],
+            "ok": true,
+            "displayMs": 9561.599999904633,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 666760,
+            "browserApi": [
+                {
+                    "path": "/api/v1/notifications/me",
+                    "start": 4539.399999976158,
+                    "duration": 617.3999999761581,
+                    "ttfb": 402.2999999523163
+                },
+                {
+                    "path": "/api/v1/attendances/today",
+                    "start": 4542.599999904633,
+                    "duration": 839.1000000238419,
+                    "ttfb": 636.7000000476837
+                },
+                {
+                    "path": "/api/v1/missions",
+                    "start": 4544.599999904633,
+                    "duration": 1120.8000000715256,
+                    "ttfb": 665.3000000715256
+                },
+                {
+                    "path": "/api/v1/games",
+                    "start": 4547,
+                    "duration": 1103.1999999284744,
+                    "ttfb": 893.8999999761581
+                },
+                {
+                    "path": "/api/v1/banners",
+                    "start": 4549.199999928474,
+                    "duration": 1359.3000000715256,
+                    "ttfb": 1158.5
+                },
+                {
+                    "path": "/api/v1/events",
+                    "start": 4551.199999928474,
+                    "duration": 1858.3999999761581,
+                    "ttfb": 1172.5
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5805.399999976158,
+                    "duration": 441.39999997615814,
+                    "ttfb": 230.19999992847443
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5821.599999904633,
+                    "duration": 718.9000000953674,
+                    "ttfb": 486.3000000715256
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5833.299999952316,
+                    "duration": 785.2000000476837,
+                    "ttfb": 533.6000000238419
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5845.5,
+                    "duration": 820.7999999523163,
+                    "ttfb": 615.2999999523163
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6117.099999904633,
+                    "duration": 673.3000000715256,
+                    "ttfb": 486.10000002384186
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6118.5,
+                    "duration": 733.6999999284744,
+                    "ttfb": 563.6999999284744
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6119.5,
+                    "duration": 778.8999999761581,
+                    "ttfb": 597.5999999046326
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6120.699999928474,
+                    "duration": 793.8000000715256,
+                    "ttfb": 643
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6128.099999904633,
+                    "duration": 832.5,
+                    "ttfb": 724.6000000238419
+                },
+                {
+                    "path": "/api/v1/attendances/today",
+                    "start": 6138.199999928474,
+                    "duration": 885.1000000238419,
+                    "ttfb": 776.2000000476837
+                },
+                {
+                    "path": "/api/v1/events",
+                    "start": 6452.099999904633,
+                    "duration": 618.2000000476837,
+                    "ttfb": 508.40000009536743
+                },
+                {
+                    "path": "/api/v1/events/:id/statistics",
+                    "start": 8155.899999976158,
+                    "duration": 1043.6999999284744,
+                    "ttfb": 915.1999999284744
+                },
+                {
+                    "path": "/api/v1/events/:id/statistics",
+                    "start": 8596.199999928474,
+                    "duration": 720.2000000476837,
+                    "ttfb": 588.2000000476837
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 8603.399999976158,
+                    "duration": 713.1000000238419,
+                    "ttfb": 581.1999999284744
+                }
+            ],
+            "initialRequestCount": 20,
+            "pollingRequestCount": 37
+        },
+        {
+            "screen": "home",
+            "mode": "dwell65",
+            "batch": 3,
+            "trial": 0,
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/api/v1/notifications/me?size=1&isRead=false",
+                    "started": 154908.3396,
+                    "ended": 154959.3557,
+                    "durationMs": 51.016099999978906,
+                    "ttfbMs": 51.016099999978906,
+                    "status": 200,
+                    "bytes": 121,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 155135.2928,
+                    "ended": 155185.81,
+                    "durationMs": 50.51720000000205,
+                    "ttfbMs": 50.51720000000205,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 155186.665,
+                    "ended": 155240.305,
+                    "durationMs": 53.639999999984866,
+                    "ttfbMs": 53.639999999984866,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games",
+                    "started": 155405.0731,
+                    "ended": 155469.6836,
+                    "durationMs": 64.61049999998068,
+                    "ttfbMs": 64.61049999998068,
+                    "status": 200,
+                    "bytes": 593,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/banners",
+                    "started": 155689.9004,
+                    "ended": 155741.452,
+                    "durationMs": 51.55159999997704,
+                    "ttfbMs": 51.55159999997704,
+                    "status": 200,
+                    "bytes": 535,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 155706.0409,
+                    "ended": 155765.2234,
+                    "durationMs": 59.18249999999534,
+                    "ttfbMs": 59.18249999999534,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 155989.3948,
+                    "ended": 156053.7342,
+                    "durationMs": 64.33939999999711,
+                    "ttfbMs": 64.33939999999711,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 156267.5229,
+                    "ended": 156327.0479,
+                    "durationMs": 59.52499999999418,
+                    "ttfbMs": 59.52499999999418,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 156364.0688,
+                    "ended": 156414.8984,
+                    "durationMs": 50.8295999999973,
+                    "ttfbMs": 50.8295999999973,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 156460.6554,
+                    "ended": 156520.6246,
+                    "durationMs": 59.969200000021374,
+                    "ttfbMs": 59.969200000021374,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 156572.1235,
+                    "ended": 156622.8914,
+                    "durationMs": 50.76790000000619,
+                    "ttfbMs": 50.76790000000619,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 156620.9254,
+                    "ended": 156686.1558,
+                    "durationMs": 65.23040000000037,
+                    "ttfbMs": 65.23040000000037,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 156702.1438,
+                    "ended": 156756.5398,
+                    "durationMs": 54.396000000007916,
+                    "ttfbMs": 54.396000000007916,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 156717.5633,
+                    "ended": 156773.0164,
+                    "durationMs": 55.45309999998426,
+                    "ttfbMs": 55.45309999998426,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 156789.795,
+                    "ended": 156853.7209,
+                    "durationMs": 63.9258999999729,
+                    "ttfbMs": 63.9258999999729,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 156807.016,
+                    "ended": 156869.0179,
+                    "durationMs": 62.001900000002934,
+                    "ttfbMs": 62.001900000002934,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 157017.4832,
+                    "ended": 157078.0745,
+                    "durationMs": 60.59130000000005,
+                    "ttfbMs": 60.59130000000005,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 158518.4342,
+                    "ended": 158569.3033,
+                    "durationMs": 50.8691000000108,
+                    "ttfbMs": 50.8691000000108,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 158616.4787,
+                    "ended": 158671.2788,
+                    "durationMs": 54.80009999999311,
+                    "ttfbMs": 54.80009999999311,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 158631.7194,
+                    "ended": 158681.5699,
+                    "durationMs": 49.850500000000466,
+                    "ttfbMs": 49.850500000000466,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c/statistics",
+                    "started": 161241.596,
+                    "ended": 161292.0543,
+                    "durationMs": 50.45829999999842,
+                    "ttfbMs": 50.45829999999842,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 161456.3531,
+                    "ended": 161517.36,
+                    "durationMs": 61.00689999997849,
+                    "ttfbMs": 61.00689999997849,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371/statistics",
+                    "started": 166241.3239,
+                    "ended": 166304.73,
+                    "durationMs": 63.40610000002198,
+                    "ttfbMs": 63.40610000002198,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 166249.6602,
+                    "ended": 166305.0388,
+                    "durationMs": 55.37859999999637,
+                    "ttfbMs": 55.37859999999637,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9/statistics",
+                    "started": 172082.059,
+                    "ended": 172133.7708,
+                    "durationMs": 51.711799999990035,
+                    "ttfbMs": 51.711799999990035,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 172085.693,
+                    "ended": 172141.3056,
+                    "durationMs": 55.61259999999311,
+                    "ttfbMs": 55.61259999999311,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682/statistics",
+                    "started": 177456.8773,
+                    "ended": 177511.1723,
+                    "durationMs": 54.295000000012806,
+                    "ttfbMs": 54.295000000012806,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 177471.5713,
+                    "ended": 177522.457,
+                    "durationMs": 50.885699999984354,
+                    "ttfbMs": 50.885699999984354,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 181801.2198,
+                    "ended": 181853.548,
+                    "durationMs": 52.328200000018114,
+                    "ttfbMs": 52.328200000018114,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 181803.8574,
+                    "ended": 181853.8973,
+                    "durationMs": 50.0399000000034,
+                    "ttfbMs": 50.0399000000034,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 185813.6502,
+                    "ended": 185870.6069,
+                    "durationMs": 56.95670000000973,
+                    "ttfbMs": 56.95670000000973,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 186762.671,
+                    "ended": 186820.6852,
+                    "durationMs": 58.014200000005076,
+                    "ttfbMs": 58.014200000005076,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 187288.9483,
+                    "ended": 187338.5136,
+                    "durationMs": 49.56530000001658,
+                    "ttfbMs": 49.56530000001658,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 187304.9699,
+                    "ended": 187355.0665,
+                    "durationMs": 50.09659999998985,
+                    "ttfbMs": 50.09659999998985,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 187338.8438,
+                    "ended": 187401.868,
+                    "durationMs": 63.024199999985285,
+                    "ttfbMs": 63.024199999985285,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 187347.1014,
+                    "ended": 187402.2309,
+                    "durationMs": 55.12949999998091,
+                    "ttfbMs": 55.12949999998091,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 187800.3897,
+                    "ended": 187853.3317,
+                    "durationMs": 52.94200000001001,
+                    "ttfbMs": 52.94200000001001,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 188017.4534,
+                    "ended": 188070.123,
+                    "durationMs": 52.66959999999381,
+                    "ttfbMs": 52.66959999999381,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 190115.1794,
+                    "ended": 190169.9328,
+                    "durationMs": 54.75340000001597,
+                    "ttfbMs": 54.75340000001597,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 190127.3049,
+                    "ended": 190187.2544,
+                    "durationMs": 59.949500000017,
+                    "ttfbMs": 59.949500000017,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 191928.4885,
+                    "ended": 191987.1566,
+                    "durationMs": 58.66809999998077,
+                    "ttfbMs": 58.66809999998077,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-e21ddbdcf371",
+                    "started": 196804.5446,
+                    "ended": 196870.1926,
+                    "durationMs": 65.6480000000156,
+                    "ttfbMs": 65.6480000000156,
+                    "status": 200,
+                    "bytes": 840,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-94f9298f53f9",
+                    "started": 203539.6463,
+                    "ended": 203592.1093,
+                    "durationMs": 52.46300000001793,
+                    "ttfbMs": 52.46300000001793,
+                    "status": 200,
+                    "bytes": 677,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-7fe5d40a4682",
+                    "started": 208182.2673,
+                    "ended": 208235.8029,
+                    "durationMs": 53.53560000000289,
+                    "ttfbMs": 53.53560000000289,
+                    "status": 200,
+                    "bytes": 686,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f/statistics",
+                    "started": 213695.5031,
+                    "ended": 213745.784,
+                    "durationMs": 50.28090000001248,
+                    "ttfbMs": 50.28090000001248,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-b0219288788f",
+                    "started": 213736.218,
+                    "ended": 213786.1962,
+                    "durationMs": 49.97820000001229,
+                    "ttfbMs": 49.97820000001229,
+                    "status": 200,
+                    "bytes": 865,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/missions?page=1&size=50",
+                    "started": 216360.8266,
+                    "ended": 216418.9909,
+                    "durationMs": 58.164300000004005,
+                    "ttfbMs": 58.164300000004005,
+                    "status": 200,
+                    "bytes": 3375,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-b09c94da4bfb/statistics/me",
+                    "started": 218300.7092,
+                    "ended": 218352.0248,
+                    "durationMs": 51.31560000000172,
+                    "ttfbMs": 51.31560000000172,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-6c5c04144d9c/statistics/me",
+                    "started": 218340.4597,
+                    "ended": 218395.6917,
+                    "durationMs": 55.23199999998906,
+                    "ttfbMs": 55.23199999998906,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-427d37bc9eb5/statistics/me",
+                    "started": 218362.0757,
+                    "ended": 218418.6887,
+                    "durationMs": 56.61300000001211,
+                    "ttfbMs": 56.61300000001211,
+                    "status": 200,
+                    "bytes": 309,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/games/id-62958123dfb5/statistics/me",
+                    "started": 218381.1169,
+                    "ended": 218433.9501,
+                    "durationMs": 52.83319999999367,
+                    "ttfbMs": 52.83319999999367,
+                    "status": 200,
+                    "bytes": 307,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/attendances/today",
+                    "started": 218388.0587,
+                    "ended": 218449.7458,
+                    "durationMs": 61.687100000010105,
+                    "ttfbMs": 61.687100000010105,
+                    "status": 200,
+                    "bytes": 492,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=1&size=20",
+                    "started": 218396.4323,
+                    "ended": 218450.0829,
+                    "durationMs": 53.65060000002268,
+                    "ttfbMs": 53.65060000002268,
+                    "status": 200,
+                    "bytes": 7266,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events?page=2&size=20",
+                    "started": 218687.7173,
+                    "ended": 218748.9826,
+                    "durationMs": 61.265299999999115,
+                    "ttfbMs": 61.265299999999115,
+                    "status": 200,
+                    "bytes": 810,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522/statistics",
+                    "started": 220765.7189,
+                    "ended": 220818.6227,
+                    "durationMs": 52.90380000000005,
+                    "ttfbMs": 52.90380000000005,
+                    "status": 200,
+                    "bytes": 239,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-614c7a754522",
+                    "started": 220775.6245,
+                    "ended": 220835.1948,
+                    "durationMs": 59.57029999999213,
+                    "ttfbMs": 59.57029999999213,
+                    "status": 200,
+                    "bytes": 670,
+                    "user": "USER_A"
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/events/id-88cc681ad26c",
+                    "started": 223046.7405,
+                    "ended": 223101.8431,
+                    "durationMs": 55.102599999983795,
+                    "ttfbMs": 55.102599999983795,
+                    "status": 200,
+                    "bytes": 681,
+                    "user": "USER_A"
+                }
+            ],
+            "ok": true,
+            "displayMs": 8895.699999928474,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 666760,
+            "browserApi": [
+                {
+                    "path": "/api/v1/notifications/me",
+                    "start": 4363.199999928474,
+                    "duration": 755.5,
+                    "ttfb": 528.8999999761581
+                },
+                {
+                    "path": "/api/v1/attendances/today",
+                    "start": 4365.799999952316,
+                    "duration": 971.2999999523163,
+                    "ttfb": 752.7999999523163
+                },
+                {
+                    "path": "/api/v1/missions",
+                    "start": 4367.399999976158,
+                    "duration": 1270.3999999761581,
+                    "ttfb": 805.7999999523163
+                },
+                {
+                    "path": "/api/v1/games",
+                    "start": 4368.599999904633,
+                    "duration": 1253.3000000715256,
+                    "ttfb": 1033.9000000953674
+                },
+                {
+                    "path": "/api/v1/banners",
+                    "start": 4372.899999976158,
+                    "duration": 1531.3999999761581,
+                    "ttfb": 1301.2999999523163
+                },
+                {
+                    "path": "/api/v1/events",
+                    "start": 4389.199999928474,
+                    "duration": 2003.3000000715256,
+                    "ttfb": 1308.8000000715256
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5731.299999952316,
+                    "duration": 468.2999999523163,
+                    "ttfb": 255.29999995231628
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5733.099999904633,
+                    "duration": 770.9000000953674,
+                    "ttfb": 526.7000000476837
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5734.599999904633,
+                    "duration": 818.4000000953674,
+                    "ttfb": 613.2000000476837
+                },
+                {
+                    "path": "/api/v1/games/:id/statistics/me",
+                    "start": 5736.399999976158,
+                    "duration": 913.1999999284744,
+                    "ttfb": 717.1999999284744
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6088.699999928474,
+                    "duration": 633.1000000238419,
+                    "ttfb": 466.89999997615814
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6093.099999904633,
+                    "duration": 645.9000000953674,
+                    "ttfb": 525.8000000715256
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6100.099999904633,
+                    "duration": 701.9000000953674,
+                    "ttfb": 589.3000000715256
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6102.599999904633,
+                    "duration": 719.3000000715256,
+                    "ttfb": 603.3000000715256
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 6104.199999928474,
+                    "duration": 797.7000000476837,
+                    "ttfb": 682.6000000238419
+                },
+                {
+                    "path": "/api/v1/attendances/today",
+                    "start": 6107.099999904633,
+                    "duration": 813.8000000715256,
+                    "ttfb": 694.8000000715256
+                },
+                {
+                    "path": "/api/v1/events",
+                    "start": 6948.399999976158,
+                    "duration": 173.19999992847443,
+                    "ttfb": 62.299999952316284
+                },
+                {
+                    "path": "/api/v1/events/:id/statistics",
+                    "start": 7615.5,
+                    "duration": 1005.6999999284744,
+                    "ttfb": 886.5
+                },
+                {
+                    "path": "/api/v1/events/:id/statistics",
+                    "start": 8021.699999928474,
+                    "duration": 715.5,
+                    "ttfb": 582.3999999761581
+                },
+                {
+                    "path": "/api/v1/events/:id",
+                    "start": 8029.199999928474,
+                    "duration": 723.1000000238419,
+                    "ttfb": 585.2000000476837
+                }
+            ],
+            "initialRequestCount": 20,
+            "pollingRequestCount": 37
+        }
+    ],
+    "errors": [],
+    "groups": {
+        "home:dwell65": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 8969.600000023842,
+                    "p95": 8969.600000023842,
+                    "min": 8969.600000023842,
+                    "max": 8969.600000023842
+                },
+                "2": {
+                    "n": 1,
+                    "p50": 9561.599999904633,
+                    "p95": 9561.599999904633,
+                    "min": 9561.599999904633,
+                    "max": 9561.599999904633
+                },
+                "3": {
+                    "n": 1,
+                    "p50": 8895.699999928474,
+                    "p95": 8895.699999928474,
+                    "min": 8895.699999928474,
+                    "max": 8895.699999928474
+                }
+            },
+            "display": {
+                "n": 3,
+                "p50": 8969.600000023842,
+                "p95": 9561.599999904633,
+                "min": 8895.699999928474,
+                "max": 9561.599999904633
+            },
+            "proxyApi": {
+                "n": 171,
+                "p50": 54.793400000000474,
+                "p95": 64.33939999999711,
+                "min": 49.25920000000042,
+                "max": 67.93669999999838
+            },
+            "browserApi": {
+                "n": 60,
+                "p50": 803,
+                "p95": 1531.3999999761581,
+                "min": 173.19999992847443,
+                "max": 2003.3000000715256
+            },
+            "requestCount": 171,
+            "concurrentDuplicates": 0
+        }
+    }
+}

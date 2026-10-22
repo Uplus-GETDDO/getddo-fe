@@ -91,7 +91,7 @@ export function ParticipantsPanel() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>사용자 ID</TableHead>
+                                    <TableHead>사용자</TableHead>
                                     <TableHead>참여자 ID</TableHead>
                                     <TableHead>사용 응모권</TableHead>
                                     <TableHead>최초 응모</TableHead>
@@ -102,11 +102,16 @@ export function ParticipantsPanel() {
                                     <TableRow key={row.id}>
                                         <TableCell>
                                             <Link
-                                                className="text-fg-brand text-caption hover:underline"
+                                                className="text-fg-brand text-body-sm hover:underline"
                                                 to={`/admin/users?detail=${row.userId}`}
                                             >
-                                                {row.userId}
+                                                {row.userName ?? row.userId}
                                             </Link>
+                                            {row.userName && (
+                                                <span className="text-caption text-fg-secondary block">
+                                                    {row.userId}
+                                                </span>
+                                            )}
                                         </TableCell>
                                         <TableCell className="text-fg-secondary text-caption">
                                             {row.id}

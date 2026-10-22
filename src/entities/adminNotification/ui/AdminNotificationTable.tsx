@@ -72,14 +72,21 @@ export function AdminNotificationTable({
                 }),
                 helper.accessor('userId', {
                     header: '사용자',
-                    cell: ({ getValue }) => (
-                        <span
-                            title={getValue()}
-                            className="text-body-sm text-fg-primary block max-w-32 truncate"
-                        >
-                            {getValue()}
-                        </span>
-                    ),
+                    cell: ({ getValue, row }) => {
+                        const userName = row.original.userName;
+                        return (
+                            <span title={getValue()} className="block max-w-32 truncate">
+                                <span className="text-body-sm text-fg-primary">
+                                    {userName ?? getValue()}
+                                </span>
+                                {userName && (
+                                    <span className="text-caption text-fg-secondary block truncate">
+                                        {getValue()}
+                                    </span>
+                                )}
+                            </span>
+                        );
+                    },
                 }),
                 helper.accessor('jobId', {
                     header: '작업',

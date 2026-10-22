@@ -1,0 +1,28 @@
+{
+    "sourceHash": "258ec61b8bce024c1b0e06554f646b01c9dc694376217aa4f6d9f4c273b1f528",
+    "fixtureHash": "f2d211551094a590870c5a3352ee0f47a3b5847133547f314894c68a004d5610",
+    "capturedAt": "2026-10-22T04:40:11.724Z",
+    "addedGets": [
+        {
+            "path": "USER_A:/api/v1/events/id-88cc681ad26c/statistics",
+            "status": 200,
+            "encodedBytes": 239
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-e21ddbdcf371/statistics",
+            "status": 200,
+            "encodedBytes": 239
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-94f9298f53f9/statistics",
+            "status": 200,
+            "encodedBytes": 239
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-7fe5d40a4682/statistics",
+            "status": 200,
+            "encodedBytes": 239
+        }
+    ],
+    "note": "누락 E03 4건만 명시적 capture로 GET 수집한 뒤 파일을 고정했습니다. 기존 응답과 수집 시각이 다른 합성 통제 자료이며 실서버 전후 비교가 아닙니다."
+}

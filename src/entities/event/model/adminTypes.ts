@@ -40,7 +40,7 @@ export const adminEventSchema = z.object({
     startsAt: z.iso.datetime(),
     endsAt: z.iso.datetime(),
     status: adminEventStatusSchema,
-    // 마감+5분 최초 자동 추첨 기준 — 공개 예정이 아니다 (ADR-022, GD-203)
+    // 마감+1분 최초 자동 추첨 기준 — 공개 예정이 아니다 (ADR-026, GD-268)
     drawScheduledAt: z.iso.datetime(),
     serverTime: z.iso.datetime(),
     prizes: z.array(adminPrizeSchema),

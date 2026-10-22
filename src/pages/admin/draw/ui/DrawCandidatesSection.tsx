@@ -107,7 +107,12 @@ export function DrawCandidatesSection({
                                 return (
                                     <TableRow key={candidate.id} className="hover:bg-transparent">
                                         <TableCell className="font-medium">
-                                            {candidate.userId}
+                                            {candidate.userName ?? candidate.userId}
+                                            {candidate.userName && (
+                                                <span className="text-caption text-fg-secondary block font-normal">
+                                                    {candidate.userId}
+                                                </span>
+                                            )}
                                         </TableCell>
                                         <TableCell>{candidate.ticketCount}장</TableCell>
                                         <TableCell>{candidate.weight}</TableCell>

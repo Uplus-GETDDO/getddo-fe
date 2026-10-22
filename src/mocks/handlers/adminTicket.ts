@@ -71,6 +71,10 @@ interface TicketSeed {
     flow: Flow;
     // 응모권의 현재 값을 마지막 이력과 다르게 만들어 불일치를 시드한다
     drift?: { version?: number; status?: TicketStatus };
+    // 이력을 한 건도 만들지 않는다 — 마지막 이력이 없는 불일치(latestHistoryStatus null)를 시드한다
+    noHistory?: boolean;
+    // 반환 대상 이력에 만료 시각이 없는 경우를 시드한다 — AO08의 targetExpiresAt null
+    nullTargetExpiry?: boolean;
 }
 
 const SEEDS: TicketSeed[] = [
@@ -92,9 +96,12 @@ const SEEDS: TicketSeed[] = [
         source: 'ATTENDANCE',
         flow: 'GUR',
         drift: { version: 2, status: 'SPENT' },
+        nullTargetExpiry: true,
     },
     { user: 5, grade: 'SILVER', source: 'MISSION', missionId: 'ms-survey', flow: 'GU' },
     { user: 5, grade: 'BRONZE', source: 'GAME', flow: 'G' },
+    // 이력이 없는 응모권 — AO04/AO09의 latestHistoryStatus null 불일치 표본이다
+    { user: 5, grade: 'BRONZE', source: 'ATTENDANCE', flow: 'G', noHistory: true },
 ];
 
 const FLOW_STEPS: Record<Flow, { op: TicketOperationType; status: TicketStatus }[]> = {
@@ -146,51 +153,56 @@ function seedStore() {
         if (!user || !event || !last) return;
         let useHistoryId: string | undefined;
 
-        steps.forEach((step, stepIndex) => {
-            const version = stepIndex + 1;
-            const historyId = `${ticketId}-h${version}`;
-            const createdAt = new Date(BASE_TIME + (index * 6 + stepIndex) * STEP_MS).toISOString();
-            const isGrant = step.op === 'GRANT';
-            const touchesEvent = step.op === 'USE' || step.op === 'REFUND';
-            if (step.op === 'USE') useHistoryId = historyId;
+        if (!seed.noHistory) {
+            steps.forEach((step, stepIndex) => {
+                const version = stepIndex + 1;
+                const historyId = `${ticketId}-h${version}`;
+                const createdAt = new Date(
+                    BASE_TIME + (index * 6 + stepIndex) * STEP_MS,
+                ).toISOString();
+                const isGrant = step.op === 'GRANT';
+                const touchesEvent = step.op === 'USE' || step.op === 'REFUND';
+                if (step.op === 'USE') useHistoryId = historyId;
 
-            histories.push({
-                id: historyId,
-                ticketId,
-                userId: user.id,
-                userName: user.name,
-                operationType: step.op,
-                grade: seed.grade,
-                status: step.status,
-                expiresAt: step.op === 'REFUND' ? REFUND_EXPIRES_AT : GRANT_EXPIRES_AT,
-                reason: isGrant ? `${seed.source} 지급` : step.op,
-                createdAt,
-                version,
-                eventId: touchesEvent ? event.id : null,
-                eventTitle: touchesEvent ? event.title : null,
-                missionId: isGrant ? (seed.missionId ?? null) : null,
-                missionTitle: isGrant && seed.missionId ? MISSIONS[seed.missionId] : null,
-                originalUseHistoryId: step.op === 'REFUND' ? useHistoryId : null,
-                ...(isGrant && { sourceType: seed.source, sourceId: `src-${ticketId}` }),
-            });
-
-            // 반환 이력은 이벤트 취소 반환으로 간주해 AO08 샘플로 노출한다
-            if (step.op === 'REFUND') {
-                refunds.push({
+                histories.push({
                     id: historyId,
-                    spendHistoryId: useHistoryId ?? historyId,
                     ticketId,
-                    grade: seed.grade,
-                    eventId: event.id,
-                    eventTitle: event.title,
                     userId: user.id,
                     userName: user.name,
-                    reasonType: 'EVENT_CANCELED',
-                    refundedAt: createdAt,
-                    targetExpiresAt: REFUND_EXPIRES_AT,
+                    operationType: step.op,
+                    grade: seed.grade,
+                    status: step.status,
+                    expiresAt: step.op === 'REFUND' ? REFUND_EXPIRES_AT : GRANT_EXPIRES_AT,
+                    reason: isGrant ? `${seed.source} 지급` : step.op,
+                    createdAt,
+                    version,
+                    eventId: touchesEvent ? event.id : null,
+                    eventTitle: touchesEvent ? event.title : null,
+                    missionId: isGrant ? (seed.missionId ?? null) : null,
+                    missionTitle: isGrant && seed.missionId ? MISSIONS[seed.missionId] : null,
+                    originalUseHistoryId: step.op === 'REFUND' ? useHistoryId : null,
+                    ...(isGrant && { sourceType: seed.source, sourceId: `src-${ticketId}` }),
                 });
-            }
-        });
+
+                // 반환 이력은 이벤트 취소 반환으로 간주해 AO08 샘플로 노출한다
+                if (step.op === 'REFUND') {
+                    refunds.push({
+                        id: historyId,
+                        spendHistoryId: useHistoryId ?? historyId,
+                        ticketId,
+                        grade: seed.grade,
+                        eventId: event.id,
+                        eventTitle: event.title,
+                        userId: user.id,
+                        userName: user.name,
+                        reasonType: 'EVENT_CANCELED',
+                        refundedAt: createdAt,
+                        // 반환 대상 이력에 만료 시각이 없으면 null이다 (spec AO08)
+                        targetExpiresAt: seed.nullTargetExpiry ? null : REFUND_EXPIRES_AT,
+                    });
+                }
+            });
+        }
 
         tickets.push({
             id: ticketId,
@@ -337,8 +349,19 @@ export function findTicketMismatches(
     const mismatches: Mismatch[] = [];
     for (const ticket of tickets) {
         const latest = latestByTicket.get(ticket.id);
-        // 목업 시드에는 이력이 없는 응모권이 없다 — 비교할 마지막 이력이 없으면 건너뛴다
-        if (!latest) continue;
+        // 이력이 한 건도 없는 응모권도 불일치다 — 마지막 이력은 버전 0·상태 null이다 (spec AO04)
+        if (!latest) {
+            mismatches.push({
+                ticketId: ticket.id,
+                userId: ticket.userId,
+                grade: ticket.grade,
+                ticketVersion: ticket.version,
+                latestHistoryVersion: 0,
+                ticketStatus: ticket.status,
+                latestHistoryStatus: null,
+            });
+            continue;
+        }
         if (ticket.version === latest.version && ticket.status === latest.status) continue;
         mismatches.push({
             ticketId: ticket.id,
@@ -468,6 +491,7 @@ export const adminTicketHandlers = [
         );
         return ok({
             userId,
+            userName: userName(userId),
             availableCount: userTickets.filter(
                 (t) =>
                     (t.status === 'AVAILABLE' || t.status === 'RETURNED') &&

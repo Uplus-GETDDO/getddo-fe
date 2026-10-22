@@ -1,0 +1,8 @@
+{
+    "checkedAt": "2026-10-22T05:12:11.349Z",
+    "files": 82,
+    "actualAccountIdsAndNames": 0,
+    "fixtureBodiesCommitted": false,
+    "headersCommitted": false,
+    "scope": "실제 시연 계정 ID·이름을 원문 값으로 대조, 새 증거 JSON의 UUID·헤더 원문도 별도 검사"
+}

@@ -1,0 +1,7 @@
+
+> getddo-fe@0.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+[warn] docs/superpowers/plans/2026-10-21-entry-ticket-display.md
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
