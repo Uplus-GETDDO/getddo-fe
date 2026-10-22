@@ -498,9 +498,17 @@ describe('추첨 목업', () => {
                 revision: number;
                 reason: string | null;
                 confirmedBy: string | null;
-                changes: { beforeUserId: string | null; afterUserId: string | null }[];
+                confirmedByName: string | null;
+                changes: {
+                    beforeUserId: string | null;
+                    beforeUserName: string | null;
+                    afterUserId: string | null;
+                    afterUserName: string | null;
+                }[];
                 executions: {
                     runId: string;
+                    confirmedBy: string;
+                    confirmedByName: string;
                     cancellations: { id: string; resultId: string; reason: string }[];
                 }[];
             }>
@@ -516,14 +524,20 @@ describe('추첨 목업', () => {
             (await firstRun(EVENT)).results.find((r) => r.id === win.id)?.userId,
         );
         expect(change.changes[0]?.afterUserId).toBeTruthy();
+        // ADR-028 — ID 옆에 표시용 현재 이름이 온다. 처리자·당첨자 모두 이름을 싣는다
+        expect(change.confirmedByName).toBeTruthy();
+        expect(change.changes[0]?.beforeUserName).toBeTruthy();
+        expect(change.changes[0]?.afterUserName).toBeTruthy();
+        expect(change.executions[0]?.confirmedByName).toBeTruthy();
         // 이 재추첨을 발생시킨 취소가 실행별 근거로 남는다
         expect(change.executions[0]?.runId).toBe(redrawId);
         expect(change.executions[0]?.cancellations[0]?.reason).toBe('본인 확인 실패');
-        // 공개 시드는 확인자·사유·실행 근거가 없는 과거 공개다
+        // 공개 시드는 확인자·사유·실행 근거가 없는 과거 공개다 — 확인자가 null이면 이름도 null이다
         expect(changes.data.data.items[1]).toMatchObject({
             revision: 1,
             reason: null,
             confirmedBy: null,
+            confirmedByName: null,
             executions: [],
         });
     });

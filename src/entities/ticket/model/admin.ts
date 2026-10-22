@@ -43,6 +43,8 @@ export const ticketMismatchSchema = z.object({
 
 export const ticketConsistencySchema = z.object({
     userId: z.string(),
+    // ADR-028 표시용 현재 이름 — BE 미배포라 생략·null을 허용한다
+    userName: z.string().nullish(),
     availableCount: z.number().int().nonnegative(),
     isConsistent: z.boolean(),
     inconsistencies: z.array(ticketMismatchSchema),

@@ -144,7 +144,12 @@ export function DrawOperationsSection({ drawId }: { drawId: string }) {
                                             {a.action}
                                         </TableCell>
                                         <TableCell className="text-body-sm whitespace-nowrap">
-                                            {a.actorId ?? '—'}
+                                            {a.actorName ?? a.actorId ?? '—'}
+                                            {a.actorName && a.actorId && (
+                                                <span className="text-caption text-fg-tertiary block">
+                                                    {a.actorId}
+                                                </span>
+                                            )}
                                         </TableCell>
                                         <TableCell className="text-body-sm max-w-60 whitespace-normal">
                                             {a.reason ?? '—'}

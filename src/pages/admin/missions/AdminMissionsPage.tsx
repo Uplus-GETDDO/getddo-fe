@@ -121,7 +121,8 @@ export function AdminMissionsPage() {
                                 <div className="min-w-0 break-words">
                                     <p>{m.title}</p>
                                     <p>
-                                        {m.missionType} · {m.status} · 보상 1장
+                                        {m.missionType} · {m.status} · 보상 1장 · 작성{' '}
+                                        {m.createdByName ?? m.createdBy}
                                     </p>
                                     <p>
                                         {formatKst(m.startsAt)} ~ {formatKst(m.endsAt)} KST

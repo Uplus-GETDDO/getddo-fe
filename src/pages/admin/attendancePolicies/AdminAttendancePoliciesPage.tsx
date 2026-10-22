@@ -70,6 +70,7 @@ export function AdminAttendancePoliciesPage() {
                                 >
                                     <div className="min-w-0 break-words">
                                         <p>브론즈 {p.rewardTicketCount}장</p>
+                                        <p>작성 {p.createdByName ?? p.createdBy}</p>
                                         <p>적용 시작 {formatKst(p.effectiveFrom)} KST</p>
                                         <p>
                                             적용 종료{' '}
@@ -132,6 +133,7 @@ export function AdminAttendancePoliciesPage() {
                                 >
                                     <div className="min-w-0 break-words">
                                         <p>적용 기준월 {p.effectiveMonth} (KST)</p>
+                                        <p>작성 {p.createdByName ?? p.createdBy}</p>
                                         <ul>
                                             {p.milestones.map((m) => (
                                                 <li key={m.id}>

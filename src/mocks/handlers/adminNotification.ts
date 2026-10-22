@@ -559,9 +559,22 @@ const store = {
     notifications: [] as AdminNotification[],
 };
 
+// ADR-028 — 수신자의 현재 이름. vu-yuna는 BE 미배포 구간의 이름 생략 경로를 검증하기 위해 비워 둔다
+const RECIPIENT_NAMES: Record<string, string | null> = {
+    'vu-doyoon': '김도윤',
+    'vu-seoyeon': '박서연',
+    'vu-haneul': '이하늘',
+    'vu-minjun': '최민준',
+    'vu-jiwoo': '정지우',
+    'vu-yuna': null,
+};
+
 function seedStore() {
     store.jobs = jobSeeds.map((job) => ({ ...job }));
-    store.notifications = notificationSeeds.map((notification) => ({ ...notification }));
+    store.notifications = notificationSeeds.map((notification) => ({
+        ...notification,
+        userName: notification.userName ?? RECIPIENT_NAMES[notification.userId] ?? null,
+    }));
 }
 
 seedStore();

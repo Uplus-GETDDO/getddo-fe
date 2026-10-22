@@ -60,6 +60,8 @@ export const adminMissionSummarySchema = writeBase.extend({
     status: z.enum(['ACTIVE', 'ENDED']),
     rewardPolicyId: z.string(),
     createdBy: z.string(),
+    // ADR-028 표시용 작성자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    createdByName: z.string().nullish(),
     createdAt: z.string(),
     updatedAt: z.string(),
 });

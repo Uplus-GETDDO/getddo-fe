@@ -194,6 +194,8 @@ function buildCandidates(eventId: string): DrawCandidate[] {
             id: `cand-${eventId}-${seq}`,
             participantId: `part-${eventId}-${seq}`,
             userId: `user-${seq}`,
+            // ADR-028 표시용 현재 이름 — 스냅샷 객체에는 넣지 않고 응답 필드로만 싣는다
+            userName: `사용자${seq}`,
             ticketCount,
             weight: Math.max(1, weight),
             entrySnapshot: { bronze, silver, gold },
@@ -253,6 +255,7 @@ function drawInitialResults(store: DrawStore): DrawResult[] {
                 resultType: winner ? 'SELECTED' : 'UNFILLED',
                 candidateId: winner?.id ?? null,
                 userId: winner?.userId ?? null,
+                userName: winner?.userName ?? null,
                 wasPublished: false,
                 isCanceled: false,
             });
@@ -347,13 +350,24 @@ function markFirstPublication(
         // 공개 시드는 확인 근거가 없는 과거 공개를 재현한다 — 수동 발표는 호출부가 채운다
         reason: confirmation.reason ?? null,
         confirmedBy: confirmation.confirmedBy,
+        confirmedByName: actorNameOf(confirmation.confirmedBy),
         confirmedAt: confirmation.confirmedAt,
         updatedAt: at,
         changes: [...effectiveList(store)].map(([key, afterUserId]) => {
             const [prizeId, slot] = key.split(':') as [string, string];
-            return { prizeId, slotNumber: Number(slot), beforeUserId: null, afterUserId };
+            return {
+                prizeId,
+                slotNumber: Number(slot),
+                beforeUserId: null,
+                beforeUserName: null,
+                afterUserId,
+                afterUserName: candidateNameOf(store, afterUserId),
+            };
         }),
-        executions: confirmation.executions ?? [],
+        executions: (confirmation.executions ?? []).map((exec) => ({
+            ...exec,
+            confirmedByName: actorNameOf(exec.confirmedBy),
+        })),
     });
     store.publicList = effectiveList(store);
 }
@@ -371,6 +385,7 @@ const runCancellations = (store: DrawStore, run: MockRun): CancellationSummary[]
             resultId: c.resultId,
             replacementRunId: c.replacementRunId,
             canceledBy: c.canceledBy,
+            canceledByName: actorNameOf(c.canceledBy),
             reason: c.reason,
             canceledAt: c.canceledAt,
         }))
@@ -626,6 +641,7 @@ function confirmRun(store: DrawStore, run: MockRun) {
             resultType: winner ? 'SELECTED' : 'UNFILLED',
             candidateId: winner?.id ?? null,
             userId: winner?.userId ?? null,
+            userName: winner?.userName ?? null,
             wasPublished: false,
             isCanceled: false,
         },
@@ -668,6 +684,7 @@ function toExecution(detail: DrawRunDetail): DrawExecutionResponse {
                           selectionOrder: r.selectionOrder,
                           candidateId: r.candidateId,
                           userId: r.userId,
+                          userName: r.userName,
                           resultType: r.resultType,
                       })),
                   }
@@ -691,6 +708,15 @@ const conflict = (message: string, code = 'STATE_CONFLICT') => fail(409, code, m
 const forbidden = () => fail(403, 'ACCESS_DENIED', '이 작업을 수행할 권한이 없습니다.');
 
 const actorOf = (request: Request) => request.headers.get('X-User-ID') || DEFAULT_ACTOR;
+
+// ADR-028 — ID 옆에 싣는 표시용 현재 이름. ID가 null(시스템 처리·빈 자리)이면 이름도 null이다.
+// 가상 사용자 목록에 없는 ID는 이름 조회가 불가하므로 ID를 그대로 대신 보여 준다
+const actorNameOf = (actorId: string | null) =>
+    actorId === null ? null : (findMockVirtualUser(actorId)?.name ?? actorId);
+const candidateNameOf = (store: DrawStore, userId: string | null) =>
+    userId === null
+        ? null
+        : (store.candidates.find((c) => c.userId === userId)?.userName ?? userId);
 
 /** X-User-ID가 없으면 시연 기본 관리자로 본다. 있으면 가상 사용자의 역할이 ADMIN이어야 한다 */
 const isAdminContext = (request: Request) => {
@@ -848,6 +874,7 @@ export const drawHandlers = [
             checks,
             verifiedAt: mockNow().toISOString(),
             verifiedBy: actorOf(request),
+            verifiedByName: actorNameOf(actorOf(request)),
         };
         store.verifications.push(verification);
         return ok(verification, 201);
@@ -955,7 +982,14 @@ export const drawHandlers = [
             const beforeUserId = store.publicList.get(key) ?? null;
             if (beforeUserId === afterUserId) continue;
             const [prizeId, slot] = key.split(':') as [string, string];
-            changes.push({ prizeId, slotNumber: Number(slot), beforeUserId, afterUserId });
+            changes.push({
+                prizeId,
+                slotNumber: Number(slot),
+                beforeUserId,
+                beforeUserName: candidateNameOf(store, beforeUserId),
+                afterUserId,
+                afterUserName: candidateNameOf(store, afterUserId),
+            });
         }
 
         const now = mockNow().toISOString();
@@ -969,6 +1003,7 @@ export const drawHandlers = [
             publishedAt: now,
             updatedAt: now,
             updatedBy: actor,
+            updatedByName: actorNameOf(actor),
         };
         // 계약은 본문 없음 — 이력의 사유·실행별 취소 근거는 이 재추첨을 만든 취소에서 가져온다
         const causing = store.cancellations.filter((c) => c.replacementRunId === detail.id);
@@ -979,6 +1014,7 @@ export const drawHandlers = [
             drawRunId: detail.id,
             reason: causing[0]?.reason ?? null,
             confirmedBy: actor,
+            confirmedByName: actorNameOf(actor),
             confirmedAt: now,
             updatedAt: now,
             changes,
@@ -987,6 +1023,7 @@ export const drawHandlers = [
                     runId: detail.id,
                     confirmationId: `conf-${detail.id}`,
                     confirmedBy: actor,
+                    confirmedByName: actorNameOf(actor),
                     confirmedAt: now,
                     cancellations: causing.map((c) => ({
                         id: c.cancellationId,
@@ -1081,6 +1118,7 @@ export const drawHandlers = [
             runId: r.detail.id,
             confirmationId: `conf-${r.detail.id}`,
             confirmedBy: actor,
+            confirmedByName: actorNameOf(actor),
             confirmedAt: now,
             cancellations: runCancellations(store, r)
                 .filter((c) => c.replacementRunId === r.detail.id)
@@ -1105,6 +1143,7 @@ export const drawHandlers = [
             confirmationId: `conf-${run.detail.id}`,
             runId: run.detail.id,
             confirmedBy: actor,
+            confirmedByName: actorNameOf(actor),
             confirmedAt: now,
             isPublished: true,
             publicationId: `pub-${store.eventId}-1`,
@@ -1136,6 +1175,7 @@ export const drawHandlers = [
             .map((a) => ({
                 id: a.id,
                 actorId: a.actorId,
+                actorName: actorNameOf(a.actorId),
                 action: a.action,
                 reason: a.reason,
                 beforeData: a.beforeData,

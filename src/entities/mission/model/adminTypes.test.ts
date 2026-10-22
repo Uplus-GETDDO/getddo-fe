@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { missionWriteSchema, surveyRangeSchema } from './adminTypes';
+import { adminMissionSummarySchema, missionWriteSchema, surveyRangeSchema } from './adminTypes';
 
 const base = {
     title: '미션',
@@ -60,6 +60,24 @@ describe('관리자 미션 계약', () => {
             missionWriteSchema.safeParse({ ...base, endsAt: base.startsAt, questions: [question] })
                 .success,
         ).toBe(false);
+    });
+    it('관리자 미션은 작성자 이름이 없거나 null이어도 파싱한다 (ADR-028)', () => {
+        const summary = {
+            ...base,
+            id: 'm-1',
+            status: 'ACTIVE',
+            rewardPolicyId: 'rp-1',
+            createdBy: 'admin',
+            createdAt: '2026-10-01T00:00:00Z',
+            updatedAt: '2026-10-01T00:00:00Z',
+        };
+        expect(adminMissionSummarySchema.safeParse(summary).success).toBe(true);
+        expect(
+            adminMissionSummarySchema.safeParse({ ...summary, createdByName: null }).success,
+        ).toBe(true);
+        expect(
+            adminMissionSummarySchema.safeParse({ ...summary, createdByName: '관리자' }).success,
+        ).toBe(true);
     });
     it('설문 집계는 양끝 포함 최대 31일이다', () => {
         expect(surveyRangeSchema.safeParse({ from: '2026-10-01', to: '2026-10-31' }).success).toBe(

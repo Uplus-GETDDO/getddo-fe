@@ -31,6 +31,7 @@ const dailyPolicy = (id: string, effectiveFrom: string, rewardTicketCount = 2) =
     effectiveFrom,
     effectiveUntil: null,
     createdBy: 'admin',
+    createdByName: '관리자',
     createdAt: '2026-01-01T00:00:00Z',
 });
 const streakSet = (id: string, effectiveMonth: string) => ({
@@ -38,6 +39,7 @@ const streakSet = (id: string, effectiveMonth: string) => ({
     effectiveMonth,
     milestones: [{ id: `${id}-m1`, milestoneDays: 7, rewardTicketCount: 1 }],
     createdBy: 'admin',
+    createdByName: '관리자',
     createdAt: '2026-01-01T00:00:00Z',
 });
 const pageOf = (items: unknown[]) => ({
@@ -92,6 +94,8 @@ describe('관리자 출석 정책', () => {
             data: { success: true, data: dailyPolicy('p-future', future, 5) },
         });
         mount();
+        // ADR-028 — 작성자는 ID 대신 현재 이름으로 보인다
+        expect((await screen.findAllByText('작성 관리자')).length).toBe(4);
         // 시작 전인 일일 1건·다음 달 연속 1건에만 수정 버튼
         const editButtons = await screen.findAllByRole('button', { name: '수정' });
         expect(editButtons).toHaveLength(2);
