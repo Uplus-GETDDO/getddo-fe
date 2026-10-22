@@ -1188,7 +1188,8 @@ export const drawHandlers = [
                 action: 'DRAW_RESUME',
                 reason: null,
                 beforeData: 'status:FAILED',
-                afterData: `attemptId:att-${detail.id}-2`,
+                // 재개는 실패 횟수 다음의 새 실행 시도다
+                afterData: `attemptId:att-${detail.id}-${detail.execution.failureCount + 1}`,
                 requestId: null,
             });
         }
@@ -1218,7 +1219,8 @@ export const drawHandlers = [
                 action: 'DRAW_RESUME',
                 reason: null,
                 beforeData: 'status:FAILED',
-                afterData: `attemptId:att-${detail.id}-2`,
+                // 재개는 실패 횟수 다음의 새 실행 시도다
+                afterData: `attemptId:att-${detail.id}-${detail.execution.failureCount + 1}`,
                 requestId: null,
             });
         }

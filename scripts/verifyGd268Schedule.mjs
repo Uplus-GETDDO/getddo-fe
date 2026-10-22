@@ -43,14 +43,13 @@ const ADMIN = '01a14280-f677-7a0a-a066-5553d7344fd2';
 
 const [outputArg] = process.argv.slice(2);
 const output = outputArg ?? 'reports/20261023-gd268-drawscheduledat.json';
-const evidence = fs.existsSync(output)
-    ? JSON.parse(fs.readFileSync(output, 'utf8'))
-    : {
-          at: new Date().toISOString(),
-          kind: 'GD-268 drawScheduledAt 재측정 — fix/GD-268 머지·배포 후',
-          target: ROOT,
-          checks: [],
-      };
+// 매 실행 새 레코드로 시작한다 — 이전 실행의 at·target이 섞이지 않게 한다
+const evidence = {
+    at: new Date().toISOString(),
+    kind: 'GD-268 drawScheduledAt 재측정 — fix/GD-268 머지·배포 후',
+    target: ROOT,
+    checks: [],
+};
 const save = () => fs.writeFileSync(output, JSON.stringify(evidence, null, 2) + '\n');
 const push = (check) => {
     evidence.checks.push(check);
@@ -61,14 +60,31 @@ const push = (check) => {
 // 읽기 전용 — method는 GET으로 고정해 쓰기 오실행을 구조적으로 막는다.
 async function get(url) {
     const started = performance.now();
-    const response = await fetch(BASE + url, {
-        method: 'GET',
-        headers: {
-            'X-User-ID': ADMIN,
-            'X-User-Role': 'ADMIN',
-        },
-        signal: AbortSignal.timeout(30000),
-    });
+    const at = new Date().toISOString();
+    let response;
+    try {
+        response = await fetch(BASE + url, {
+            method: 'GET',
+            headers: {
+                'X-User-ID': ADMIN,
+                'X-User-Role': 'ADMIN',
+            },
+            signal: AbortSignal.timeout(30000),
+        });
+    } catch (error) {
+        // 네트워크 실패·타임아웃도 증거에 남긴다 — reject된 호출이 무기록으로 사라지지 않게 한다
+        return {
+            method: 'GET',
+            path: url,
+            status: 0,
+            envelopeCode: null,
+            at,
+            ms: Math.round(performance.now() - started),
+            json: null,
+            body: null,
+            error: String(error).slice(0, 200),
+        };
+    }
     const ms = Math.round(performance.now() - started);
     const text = await response.text();
     let json = null;
@@ -82,7 +98,7 @@ async function get(url) {
         path: url,
         status: response.status,
         envelopeCode: json?.code ?? null,
-        at: new Date().toISOString(),
+        at,
         ms,
         json,
         body: json?.data ?? json,
@@ -104,12 +120,12 @@ const meta = ({ json, body, ...rest }) => rest;
 
 async function run() {
     // ── 배포 식별 — index.html의 entry chunk 이름을 배포 버전 근거로 남긴다 ──
-    const page = await fetch(ROOT || '/', { signal: AbortSignal.timeout(30000) }).then(
-        async (r) => ({
+    const page = await fetch(ROOT || '/', { signal: AbortSignal.timeout(30000) })
+        .then(async (r) => ({
             status: r.status,
             text: await r.text(),
-        }),
-    );
+        }))
+        .catch((error) => ({ status: 0, text: '', error: String(error).slice(0, 200) }));
     push({
         name: '배포 식별(엔트리 청크)',
         method: 'GET',
@@ -117,6 +133,7 @@ async function run() {
         status: page.status,
         at: new Date().toISOString(),
         entryChunk: page.text.match(/assets\/index-([A-Za-z0-9_-]+)\.js/)?.[0] ?? null,
+        ...(page.error ? { error: page.error } : {}),
     });
 
     // ── GD-268 drawScheduledAt — 이벤트별 endsAt 대비 델타(초) 측정 ──
@@ -149,6 +166,10 @@ async function run() {
             at: detail.at,
         });
     }
+    const passed =
+        events.status === 200 &&
+        deltas.length > 0 &&
+        deltas.every((d) => d.deltaSeconds === 60 && d.zod === 'pass' && d.httpStatus === 200);
     push({
         name: 'GD-268 drawScheduledAt 델타 (마감+1분=60초 기대)',
         ...meta(events),
@@ -160,7 +181,12 @@ async function run() {
             plus300: deltas.filter((d) => d.deltaSeconds === 300).length,
             other: deltas.filter((d) => d.deltaSeconds !== 60 && d.deltaSeconds !== 300).length,
         },
+        verdict: passed ? 'pass' : 'fail',
     });
+    if (!passed) {
+        console.error('GD-268 재측정 실패 — 증거 JSON의 deltas를 확인한다');
+        process.exitCode = 1;
+    }
 }
 
 await run();

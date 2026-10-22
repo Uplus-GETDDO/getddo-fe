@@ -1,5 +1,5 @@
 {
-    "at": "2026-10-22T20:11:57.840Z",
+    "at": "2026-10-22T20:25:05.786Z",
     "kind": "GD-268 drawScheduledAt 재측정 — fix/GD-268 머지·배포 후",
     "target": "https://getddo-fe.vercel.app",
     "checks": [
@@ -8,7 +8,7 @@
             "method": "GET",
             "path": "/",
             "status": 200,
-            "at": "2026-10-22T20:11:58.485Z",
+            "at": "2026-10-22T20:25:05.882Z",
             "entryChunk": "assets/index-Cv47TR7p.js"
         },
         {
@@ -17,8 +17,8 @@
             "path": "/admin/events?page=1&size=50",
             "status": 200,
             "envelopeCode": "SUCCESS",
-            "at": "2026-10-22T20:11:58.679Z",
-            "ms": 189,
+            "at": "2026-10-22T20:25:05.884Z",
+            "ms": 72,
             "listStatus": 200,
             "measured": 15,
             "deltas": [
@@ -33,7 +33,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-c081-7e7b-bd33-5b5474a95574",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:11:58.957Z"
+                    "at": "2026-10-22T20:25:05.959Z"
                 },
                 {
                     "eventId": "01a143aa-bf08-719b-8b13-26e0ad822685",
@@ -46,7 +46,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-bf08-719b-8b13-26e0ad822685",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:11:59.290Z"
+                    "at": "2026-10-22T20:25:06.002Z"
                 },
                 {
                     "eventId": "01a143aa-be98-7292-a29f-6fa6bfde767e",
@@ -59,7 +59,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-be98-7292-a29f-6fa6bfde767e",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:11:59.337Z"
+                    "at": "2026-10-22T20:25:06.087Z"
                 },
                 {
                     "eventId": "01a143aa-be17-7b42-9666-ddb40cd4bd51",
@@ -72,7 +72,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-be17-7b42-9666-ddb40cd4bd51",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:11:59.379Z"
+                    "at": "2026-10-22T20:25:06.131Z"
                 },
                 {
                     "eventId": "01a143aa-bd9c-736d-999e-cce99348605a",
@@ -85,7 +85,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-bd9c-736d-999e-cce99348605a",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:11:59.406Z"
+                    "at": "2026-10-22T20:25:06.172Z"
                 },
                 {
                     "eventId": "01a143aa-bd28-7603-b76e-d34d6c2ed18e",
@@ -98,7 +98,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-bd28-7603-b76e-d34d6c2ed18e",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.162Z"
+                    "at": "2026-10-22T20:25:06.204Z"
                 },
                 {
                     "eventId": "01a143aa-bc77-7d6c-8b7a-193ee64569d2",
@@ -111,7 +111,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.217Z"
+                    "at": "2026-10-22T20:25:06.243Z"
                 },
                 {
                     "eventId": "01a14319-24d9-7c42-97f5-052db010e6bf",
@@ -124,7 +124,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a14319-24d9-7c42-97f5-052db010e6bf",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.256Z"
+                    "at": "2026-10-22T20:25:06.283Z"
                 },
                 {
                     "eventId": "01a14319-1ee1-7bc0-97b8-fb5dd97795c0",
@@ -137,7 +137,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a14319-1ee1-7bc0-97b8-fb5dd97795c0",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.317Z"
+                    "at": "2026-10-22T20:25:06.312Z"
                 },
                 {
                     "eventId": "01a14318-e037-767e-84f8-8cfe32643709",
@@ -150,7 +150,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a14318-e037-767e-84f8-8cfe32643709",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.362Z"
+                    "at": "2026-10-22T20:25:06.340Z"
                 },
                 {
                     "eventId": "01a15c7a-8734-78b5-a315-603b9b057bec",
@@ -163,7 +163,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a15c7a-8734-78b5-a315-603b9b057bec",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.396Z"
+                    "at": "2026-10-22T20:25:06.379Z"
                 },
                 {
                     "eventId": "01a15c79-56e3-74bc-8207-e3d4c5a286c6",
@@ -176,7 +176,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a15c79-56e3-74bc-8207-e3d4c5a286c6",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.421Z"
+                    "at": "2026-10-22T20:25:06.405Z"
                 },
                 {
                     "eventId": "01a162b3-833f-7ccc-b354-e2a232558f81",
@@ -189,7 +189,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a162b3-833f-7ccc-b354-e2a232558f81",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.459Z"
+                    "at": "2026-10-22T20:25:06.440Z"
                 },
                 {
                     "eventId": "01a162ba-6976-7715-9a8e-d1bf76f7c293",
@@ -202,7 +202,7 @@
                     "method": "GET",
                     "path": "/admin/events/01a162ba-6976-7715-9a8e-d1bf76f7c293",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.492Z"
+                    "at": "2026-10-22T20:25:06.465Z"
                 },
                 {
                     "eventId": "d7221023-0002-4000-8000-000000000003",
@@ -215,14 +215,15 @@
                     "method": "GET",
                     "path": "/admin/events/d7221023-0002-4000-8000-000000000003",
                     "httpStatus": 200,
-                    "at": "2026-10-22T20:12:00.531Z"
+                    "at": "2026-10-22T20:25:06.490Z"
                 }
             ],
             "summary": {
                 "plus60": 15,
                 "plus300": 0,
                 "other": 0
-            }
+            },
+            "verdict": "pass"
         }
     ]
 }
