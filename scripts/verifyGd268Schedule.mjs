@@ -144,8 +144,12 @@ async function run() {
 
     // ── GD-268 drawScheduledAt — 이벤트별 endsAt 대비 델타(초) 측정 ──
     const events = await get('/admin/events?page=1&size=50&sort=endsAt,desc');
-    const listZod = zodCheck(adminEventListSchema, events.json);
-    const eventItems = events.body?.items ?? [];
+    // 검증된 페이지 데이터에서만 항목을 고른다 — items가 배열이 아니면 스프레드가 판정 기록 전에 throw한다
+    const listParse = adminEventListSchema.safeParse(events.json);
+    const listZod = listParse.success
+        ? 'pass'
+        : `fail: ${String(listParse.error.issues?.[0]?.message ?? listParse.error).slice(0, 200)}`;
+    const eventItems = listParse.success ? listParse.data.data.items : [];
     // 마감 시각 최신순으로 정렬해 상위 15건만 상세 조회한다 — 호출 수를 제한한다.
     const recent = [...eventItems]
         .sort((a, b) => Date.parse(b.endsAt) - Date.parse(a.endsAt))
