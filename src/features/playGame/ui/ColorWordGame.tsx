@@ -334,7 +334,7 @@ export function ColorWordGame({
     return (
         <div
             // 판 배경 — 피그마 image 175 (노을 하늘과 구름 위 타코야끼)
-            className="border-fg-primary relative aspect-[840/546] w-full overflow-hidden rounded-2xl border-2 bg-cover bg-center shadow-md select-none"
+            className="border-fg-primary @container relative aspect-[840/546] w-full overflow-hidden rounded-2xl border-2 bg-cover bg-center shadow-md select-none"
             style={{ backgroundImage: `url(${background})` }}
         >
             <div className="absolute inset-0 flex flex-col">
@@ -381,7 +381,7 @@ export function ColorWordGame({
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: wordOpacity, scale: 1 }}
                             transition={{ duration: 0.15 }}
-                            className={`relative top-[6%] text-[clamp(1.75rem,5.5vw,3.75rem)] leading-none font-black tracking-tight ${ink.textClass}`}
+                            className={`relative top-[6%] text-[clamp(1.25rem,6.25cqw,3.75rem)] leading-none font-black tracking-tight ${ink.textClass}`}
                         >
                             {word.name}
                         </motion.p>
@@ -394,6 +394,7 @@ export function ColorWordGame({
                                 key={color.id}
                                 number={index + 1}
                                 name={color.name}
+                                textClass={color.textClass}
                                 disabled={phase !== 'playing'}
                                 onPick={() => judge(color.id)}
                             />
@@ -430,11 +431,14 @@ export function ColorWordGame({
                 />
             )}
 
-            {/* 맞힘·틀림 — 게임 판 테두리를 초록·빨강으로 잠깐 바꾼다 */}
+            {/* 맞힘·틀림 — 게임 판 테두리만 두껍게 초록·빨강으로 바꾼다 (판 안쪽 색 덮기·버튼 테두리는 두지 않는다) */}
             {reveal && (
-                <div
+                <motion.div
                     aria-hidden
-                    className={`pointer-events-none absolute inset-0 rounded-2xl border-4 ${reveal.ok ? 'border-semantic-success' : 'border-semantic-error'}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.12 }}
+                    className={`pointer-events-none absolute inset-0 rounded-[inherit] border-[6px] ${reveal.ok ? 'border-semantic-success' : 'border-semantic-error'}`}
                 />
             )}
 

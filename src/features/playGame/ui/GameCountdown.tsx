@@ -10,7 +10,7 @@ export function GameCountdown({ value }: { value: number }) {
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 420, damping: 18 }}
-            className={`text-ticket-accent text-[clamp(2.5rem,7vw,4rem)] leading-none drop-shadow-md ${PIXEL_FONT}`}
+            className={`text-ticket-accent text-[clamp(2rem,6.7cqw,4rem)] leading-none drop-shadow-md ${PIXEL_FONT}`}
         >
             {value}
         </motion.p>

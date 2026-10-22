@@ -74,7 +74,14 @@ export function FeaturedEventCard({
     ];
 
     return (
-        <Card size="lg" className="gap-5 p-(--card-spacing)">
+        <Card size="lg" className="group relative gap-5 p-(--card-spacing)">
+            {/* 카드 어디를 눌러도 상세로 — 버튼과 같은 곳이라 낭독기·키보드에서는 감추고 버튼 하나로만 읽힌다 (게임 카드와 같은 방식) */}
+            <Link
+                to={eventDetailPath(event)}
+                aria-hidden
+                tabIndex={-1}
+                className="absolute inset-0 z-1 rounded-2xl"
+            />
             <div className="flex gap-5">
                 <div className="flex min-w-0 flex-1 flex-col gap-3">
                     {/*
@@ -113,7 +120,7 @@ export function FeaturedEventCard({
                 {/* 상품 그림은 1:1(DESIGN-SYSTEM '이미지 비율')이되 작게 — 크게 두면 설명이 짧을 때 왼쪽이 텅 빈다 */}
                 <EventThumbnail
                     src={event.bannerImageUrl}
-                    className="size-24 rounded-xl sm:size-32"
+                    className="size-24 rounded-xl sm:size-32 [&_img]:transition-transform [&_img]:duration-300 motion-safe:group-hover:[&_img]:scale-105"
                 />
             </div>
             {/* 맨 아래 한 줄 — 숫자는 판단 근거라 왼쪽에 넓게, 응모 버튼은 오른쪽 끝에 보통 크기로. 글 길이가 달라도 카드 바닥에 붙는다 */}
@@ -127,7 +134,7 @@ export function FeaturedEventCard({
                         </div>
                     ))}
                 </dl>
-                <Button asChild variant="accent" className="px-5">
+                <Button asChild variant="accent" className="relative z-2 px-5">
                     <Link to={eventDetailPath(event)}>응모하러 가기</Link>
                 </Button>
             </div>

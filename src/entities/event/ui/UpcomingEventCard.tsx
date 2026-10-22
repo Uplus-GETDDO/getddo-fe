@@ -50,8 +50,8 @@ export function UpcomingEventCard({ event }: { event: Event }) {
         <Link
             to={eventDetailPath(event)}
             // 넘김 영역이 overflow-hidden이라 바깥에 띄운 포커스 링은 잘린다 — 이 행은 링을 안쪽(ring-inset)에 그린다
-            // 발표 결과 행과 같은 호버 — 행에서 8px 들인 옅은 배경, 안쪽 여백도 8px로 사방 같게
-            className="focus-visible:ring-border-focus after:bg-surface-canvas/60 relative isolate flex min-h-0 items-center gap-4 rounded-2xl p-4 after:absolute after:inset-2 after:-z-10 after:rounded-xl after:opacity-0 hover:after:opacity-100 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset motion-safe:after:transition-opacity motion-safe:after:duration-200"
+            // 발표 결과 행과 같은 호버 — 행에서 8px 들인 옅은 배경. 글이 세 줄이라 위아래는 12px로 조금 더 띄워 호버 배경에 글이 붙어 보이지 않게 한다
+            className="focus-visible:ring-border-focus after:bg-surface-canvas/60 relative isolate flex min-h-0 items-center gap-4 rounded-2xl px-4 py-5 after:absolute after:inset-2 after:-z-10 after:rounded-xl after:opacity-0 hover:after:opacity-100 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset motion-safe:after:transition-opacity motion-safe:after:duration-200"
         >
             {/* 겟또타임 래플이라 상품 그림 — 1:1로 잘리지 않게 맞춘다 */}
             <EventThumbnail src={event.bannerImageUrl} className="size-16" />

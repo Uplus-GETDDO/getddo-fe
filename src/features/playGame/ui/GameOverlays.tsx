@@ -50,10 +50,13 @@ export function GameStartHint({ onStart, children }: { onStart: () => void; chil
             aria-label="게임 시작"
             className="focus-visible:ring-border-focus absolute inset-0 cursor-pointer focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
         >
-            {/* 세 게임(타꼬런·글자색깔 맞추기·타꼬 타이밍)이 같은 자리에 안내를 띄운다 — 휴대폰은 위쪽 버튼 줄 아래(42%), 넓은 화면은 22% */}
-            <span className="absolute inset-x-0 top-[42%] flex justify-center px-4 sm:top-[22%] sm:px-6">
-                <span className="bg-surface-inverse/55 text-fg-on-brand flex flex-col items-center gap-2 rounded-2xl px-4 py-3 text-center backdrop-blur-sm sm:gap-3 sm:px-6 sm:py-4">
-                    <span className="text-body-bold sm:text-subhead flex flex-wrap items-center justify-center gap-2">
+            {/*
+              게임들이 같은 자리에 안내를 띄운다. 크기는 화면이 아니라 판 너비(@container)로 정한다 — 넓은 창이어도 낮으면 판이 작아진다.
+              작은 판(512px 미만)은 가운데에 작게 두어 판 밖으로 넘치지 않게, 큰 판은 위쪽(22%)에 두어 장면 가운데를 가리지 않는다
+            */}
+            <span className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-center px-3 @lg:top-[22%] @lg:translate-y-0 @lg:px-6">
+                <span className="bg-surface-inverse/55 text-fg-on-brand flex flex-col items-center gap-1.5 rounded-xl px-3 py-2 text-center backdrop-blur-sm @lg:gap-3 @lg:rounded-2xl @lg:px-6 @lg:py-4">
+                    <span className="text-body-sm-bold @lg:text-subhead flex flex-wrap items-center justify-center gap-2">
                         {/* 컴퓨터는 스페이스바·Enter와 화면 클릭, 터치 기기(마우스 올리기 없음)는 화면 누르기로 안내한다 */}
                         <span className="flex items-center gap-1 [@media(hover:none)]:hidden">
                             <GameKey className="motion-safe:animate-pulse">Space</GameKey>
@@ -72,7 +75,7 @@ export function GameStartHint({ onStart, children }: { onStart: () => void; chil
 /** 시작 안내의 한 줄 — 글자 크기·간격을 맞춘다 */
 export function GameStartHintLine({ children }: { children: ReactNode }) {
     return (
-        <span className="text-caption sm:text-body-sm flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
+        <span className="text-caption @lg:text-body-sm flex flex-wrap items-center justify-center gap-x-3 gap-y-1 @lg:gap-x-4 @lg:gap-y-1.5">
             {children}
         </span>
     );
@@ -87,7 +90,7 @@ export function GamePauseKeysHint() {
     );
 }
 
-/** 일시정지 — 판을 누르거나 스페이스바·Enter·Esc·P로 이어 한다 */
+/** 일시정지 — 판을 누르거나 스페이스바·Enter·Esc·P로 이어 한다. 글자는 판 너비(@container)에 맞춰 큰 판에서 한 단계 키운다 */
 export function GamePauseOverlay({ onResume }: { onResume: () => void }) {
     return (
         <button
@@ -96,8 +99,8 @@ export function GamePauseOverlay({ onResume }: { onResume: () => void }) {
             aria-label="이어 하기"
             className="bg-surface-inverse/60 absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 px-6 text-center backdrop-blur-sm"
         >
-            <span className="text-title-3 text-ticket-accent">일시정지</span>
-            <span className="text-body-sm text-ticket-accent flex flex-wrap items-center justify-center gap-1">
+            <span className="text-title-3 @lg:text-title-1 text-ticket-accent">일시정지</span>
+            <span className="text-body @lg:text-subhead text-ticket-accent flex flex-wrap items-center justify-center gap-1">
                 <span className="flex items-center gap-1 [@media(hover:none)]:hidden">
                     <GameKey>Space</GameKey>
                     <span className="ml-0.5">또는</span>
@@ -130,10 +133,10 @@ export function GameOverOverlay({
     return (
         <div className="bg-surface-inverse/60 absolute inset-0 flex items-center justify-center px-6">
             <div className="flex flex-col items-center gap-5 text-center">
-                <p className="text-title-3 text-ticket-accent">{title}</p>
+                <p className="text-title-3 @lg:text-title-1 text-ticket-accent">{title}</p>
                 <div className="flex flex-col items-center gap-2">
                     <ScoreBoard value={score} size="large" />
-                    <p className="text-body-sm text-ticket-accent">
+                    <p className="text-body-sm @lg:text-body text-ticket-accent">
                         {newBest
                             ? `최고 점수 ${formatNumber(best)}점을 기록했어요.`
                             : `최고 점수 ${formatNumber(best)}점`}

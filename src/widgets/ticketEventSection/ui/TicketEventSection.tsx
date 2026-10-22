@@ -8,10 +8,10 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { FeaturedEventCard, UpcomingEventCard, useEvent } from '@entities/event';
-import emptyTakko from '@shared/assets/mascot/empty-takko.png';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
 import { EmptyState } from '@shared/ui/empty-state';
+import { ImagePlaceholder } from '@shared/ui/image-placeholder';
 import { Pager } from '@shared/ui/pager';
 import { SkeletonCard } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
@@ -180,12 +180,15 @@ function UpcomingEventCarousel({
             {/* 비었으면 빈 상태만 — 아래 넘김 칸(flex-1)까지 그리면 남은 높이를 반씩 나눠 안내가 위로 떠 보였다 */}
             {events.length === 0 ? (
                 <EmptyState
+                    // 제목 줄(약 20px)과 간격(8px)만큼 아래 여백을 더 줘서, 남은 칸이 아니라 카드 전체의 세로 가운데에 오게 한다
+                    className="pb-13"
                     title="오픈 예정인 겟또타임이 없어요"
                     description="새 겟또타임이 잡히면 여기에 보여드릴게요."
                 />
             ) : (
                 // 행 안쪽 여백(16)만큼 목록을 좌우로 넓혀, 썸네일이 '오픈 예정' 제목과 같은 선에서 시작하게 한다
-                <div className={cn('relative -mx-4', fillHeight && 'min-h-0 flex-1')}>
+                // 아래로도 행 여백만큼 넓혀, 마지막 줄 아래 빈 공간이 왼쪽 진행 중 카드의 아래 여백과 같아지게 한다
+                <div className={cn('relative -mx-4', fillHeight && '-mb-5 min-h-0 flex-1')}>
                     <div className={cn('overflow-hidden', fillHeight && 'h-full')}>
                         <div
                             className={cn(
@@ -230,22 +233,17 @@ function UpcomingEventCarousel({
 
 /**
  * 오픈 예정 빈 칸 채움 줄 — 오픈 예정 줄과 같은 크기(썸네일 64 + 두 줄)로, 겟또타임 화면의 전체 일정으로 안내한다.
- * 썸네일 자리는 빈 상태와 같은 회색 타코야끼 그림을 점선 칸에 두어 실제 래플 줄과 헷갈리지 않게 한다
+ * 썸네일 자리는 이미지가 없을 때와 같은 회색 칸 + 빈 상태 캐릭터(ImagePlaceholder)로 둔다
  */
 function UpcomingMoreRow() {
     return (
         <Link
             to="/time-raffle"
-            className="focus-visible:ring-border-focus after:bg-surface-canvas/60 group relative isolate flex min-h-0 items-center gap-4 rounded-2xl p-4 after:absolute after:inset-2 after:-z-10 after:rounded-xl after:opacity-0 hover:after:opacity-100 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset motion-safe:after:transition-opacity motion-safe:after:duration-200"
+            className="focus-visible:ring-border-focus after:bg-surface-canvas/60 group relative isolate flex min-h-0 items-center gap-4 rounded-2xl px-4 py-5 after:absolute after:inset-2 after:-z-10 after:rounded-xl after:opacity-0 hover:after:opacity-100 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset motion-safe:after:transition-opacity motion-safe:after:duration-200"
         >
-            <span
-                aria-hidden
-                className="border-border-strong flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed"
-            >
-                <img src={emptyTakko} alt="" className="size-12 object-contain" />
-            </span>
+            <ImagePlaceholder className="size-16 shrink-0 rounded-lg" />
             <span className="flex min-w-0 flex-col gap-1">
-                <span className="text-body-sm text-fg-tertiary">다음 래플도 곧 잡혀요</span>
+                <span className="text-body-sm text-fg-tertiary">다음 겟또타임도 곧 잡혀요</span>
                 <span className="text-body-sm-bold text-fg-secondary group-hover:text-fg-primary inline-flex items-center gap-0.5">
                     겟또타임 전체 일정 보기
                     <ChevronRight aria-hidden className="size-4" />

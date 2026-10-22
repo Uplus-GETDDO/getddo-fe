@@ -2,6 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useImageFallback } from '@shared/hooks/useImageFallback';
+import { ImagePlaceholder } from '@shared/ui/image-placeholder';
 import { StatusDot } from '@shared/ui/status-dot';
 import { toKst } from '@shared/utils/date';
 
@@ -37,7 +38,7 @@ export function EventResultRow({ event }: { event: Event }) {
                     className="aspect-video h-20 shrink-0 rounded-lg object-cover"
                 />
             ) : (
-                <div className="bg-surface-canvas aspect-video h-20 shrink-0 rounded-lg" />
+                <ImagePlaceholder className="aspect-video h-20 shrink-0 rounded-lg" />
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <StatusDot tone="muted">

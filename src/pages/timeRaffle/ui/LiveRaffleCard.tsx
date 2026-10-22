@@ -54,10 +54,17 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
          * 그림 · 소개 · 응모 칸 세 덩어리. 소개 칸은 위에 래플 소개, 아래에 현황 숫자를 둬 빈 곳 없이 채우고,
          * 응모 칸은 남은 시간·응모 조건·버튼만 둔다 — 버튼은 맨 아래에 붙인다
          */
-        <article className="bg-surface-elevated border-border-default grid gap-6 rounded-2xl border p-6 shadow-md lg:grid-cols-[16rem_minmax(0,1fr)_17rem] lg:gap-8">
+        <article className="bg-surface-elevated border-border-default group relative grid gap-6 rounded-2xl border p-6 shadow-md lg:grid-cols-[16rem_minmax(0,1fr)_17rem] lg:gap-8">
+            {/* 카드 어디를 눌러도 상세로 — 버튼과 같은 곳이라 낭독기·키보드에서는 감추고 버튼 하나로만 읽힌다 (게임 카드와 같은 방식) */}
+            <Link
+                to={`/time-raffle/${event.id}`}
+                aria-hidden
+                tabIndex={-1}
+                className="absolute inset-0 z-1 rounded-2xl"
+            />
             <RaffleThumbnail
                 src={event.bannerImageUrl}
-                className="w-full max-w-64 self-center justify-self-center rounded-xl lg:self-start"
+                className="w-full max-w-64 self-center justify-self-center rounded-xl lg:self-start [&_img]:transition-transform [&_img]:duration-300 motion-safe:group-hover:[&_img]:scale-105"
             />
 
             <div className="flex min-w-0 flex-col gap-3 lg:py-1">
@@ -108,7 +115,7 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
                     event={event}
                     mySpentTicketCount={statistics?.mySpentTicketCount}
                 />
-                <Button asChild variant="accent" size="lg" className="mt-auto w-full">
+                <Button asChild variant="accent" size="lg" className="relative z-2 mt-auto w-full">
                     <Link to={`/time-raffle/${event.id}`}>응모하러 가기</Link>
                 </Button>
             </div>

@@ -36,8 +36,9 @@ export function TicketHistoryCard({
     const query = useTicketHistories({ size: PREVIEW_SIZE });
     const { items: history, isPending, isError } = query;
     const failed = isError || query.cursorError;
-    // 새 내역이 위에서 들어오며 잠깐 강조된다
-    const freshIds = useFreshIds(history?.map((item) => item.id));
+    // 새 내역이 위에서 들어오며 잠깐 강조된다 — 받기 전에는 목록이 빈 배열이라 그걸 첫 목록으로 기억하면
+    // 처음 받은 내역이 전부 새 항목으로 강조된다. 첫 응답이 온 뒤의 목록부터 비교한다
+    const freshIds = useFreshIds(isPending ? undefined : history.map((item) => item.id));
     // 상세는 한 번에 하나만 펼친다
     const [openId, setOpenId] = useState<string | null>(null);
     const retry = () => void query.refetch();

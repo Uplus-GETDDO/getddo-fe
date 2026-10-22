@@ -3,7 +3,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import type { TicketGrade } from '@entities/ticket';
 
-import type { TakkoTimingResult, TakkoTimingRound } from '../model/takkoTiming';
+import type { TakkoTimingMiss, TakkoTimingResult, TakkoTimingRound } from '../model/takkoTiming';
 import type { GameOverHandler, GameSessionProps } from '../model/types';
 
 import mascotCorrect from '../assets/colorWord/mascot-correct.png';
@@ -18,10 +18,13 @@ import toothpick from '../assets/takkoTiming/toothpick.png';
 import { useLoopingBgm } from '../hooks/useLoopingBgm';
 import { createXorshift32, ActiveClock } from '../model/gameSession';
 import { PAUSE_SOUNDS } from '../model/gameSounds';
+import { PIXEL_FONT } from '../model/pixelFont';
 import {
     createTakkoTimingRound,
     judgeTakkoTiming,
+    takkoTimingMissDirection,
     takkoTimingPosition,
+    takkoTimingSpeedNotice,
 } from '../model/takkoTiming';
 import { TAKKO_TIMING_BGM, TAKKO_TIMING_SOUNDS } from '../model/takkoTimingAssets';
 import { isInteractive } from '../utils/isInteractive';
@@ -36,6 +39,7 @@ import {
     GameStartHint,
     GameStartHintLine,
 } from './GameOverlays';
+import { GameRewardProgress } from './GameRewardProgress';
 import { GameSpeechBubble } from './GameSpeechBubble';
 import { RewardDialog } from './RewardDialog';
 import { ScoreBoard } from './ScoreBoard';
@@ -46,9 +50,11 @@ type Phase = 'ready' | 'countdown' | 'playing' | 'paused' | 'over';
 /** 시작·이어 하기 전에 3, 2, 1을 센다 */
 const COUNTDOWN_FROM = 3;
 const COUNTDOWN_STEP_MS = 700;
-/** 결과를 보여 주는 시간 — 성공해도 다음 판 전에 숨 돌릴 틈을 두고, 실패는 조금 더 길게 */
+/** 결과를 보여 주는 시간 — 성공해도 다음 판 전에 숨 돌릴 틈을 두고, 실패는 꽂힌 자리를 0.5초 더 멈춰 보여 준다 */
 const REVEAL_SUCCESS_MS = 1100;
-const REVEAL_FAIL_MS = 1300;
+const REVEAL_FAIL_MS = 1800;
+/** 다음 판 시작에 띄우는 '속도 UP!' 알림을 보여 주는 시간 */
+const SPEED_NOTICE_MS = 900;
 const PAUSE_KEYS = new Set(['Escape', 'KeyP']);
 const STOP_KEYS = new Set([' ', 'Enter']);
 
@@ -56,16 +62,28 @@ const STOP_KEYS = new Set([' ', 'Enter']);
 interface Reveal {
     result: TakkoTimingResult;
     points: number;
+    /** 꽂힌 자리 (0~1) — 빗나가면 빨간 표시를 둔다 */
+    stopped: number;
+    /** 연속 퍼펙트 수 — 두 번째부터 '퍼펙트 ×N'으로 알린다 */
+    streak: number;
+    /** 빗나간 방향 */
+    miss?: TakkoTimingMiss;
 }
 
 const padScore = (score: number) => String(score).padStart(5, '0');
 const percent = (value: number) => `${value * 100}%`;
 
-const RESULT_CHIP: Record<TakkoTimingResult, string> = {
-    perfect: '퍼펙트! +20',
-    hit: '콕! +10',
-    miss: '빗나갔어요!',
-};
+/** 결과 말풍선 — 퍼펙트는 연속이면 횟수를, 빗나가면 이른지 늦은지를 알려 '아깝다'를 느끼게 한다 */
+const resultChip = (reveal: Reveal) =>
+    reveal.result === 'perfect'
+        ? reveal.streak >= 2
+            ? `퍼펙트 ×${reveal.streak}! +20`
+            : '퍼펙트! +20'
+        : reveal.result === 'hit'
+          ? '콕! +10'
+          : reveal.miss === 'early'
+            ? '조금 빨랐어요!'
+            : '조금 늦었어요!';
 
 /**
  * 타꼬 타이밍 맞추기 — 금색 구간에 서 있는 타꼬 위를 이쑤시개가 좌우로 오가고, 타꼬 위에 왔을 때 콕 꽂는다 (화면 클릭·터치, 스페이스바·Enter).
@@ -98,6 +116,9 @@ export function TakkoTimingGame({
     const [successes, setSuccesses] = useState(0);
     const [score, setScore] = useState(0);
     const [reveal, setReveal] = useState<Reveal | null>(null);
+    const [perfectStreak, setPerfectStreak] = useState(0);
+    // 다음 판 시작에 잠깐 띄우는 '속도 UP!' — 판 번호와 함께 둬 다른 판에서 다시 뜨지 않게 한다
+    const [speedNotice, setSpeedNotice] = useState<{ roundKey: number; text: string } | null>(null);
     const [best, setBest] = useState(bestScore);
     const [newBest, setNewBest] = useState(false);
     const [rewardOpen, setRewardOpen] = useState(false);
@@ -144,6 +165,8 @@ export function TakkoTimingGame({
         setSuccesses(0);
         setScore(0);
         setReveal(null);
+        setPerfectStreak(0);
+        setSpeedNotice(null);
         setNewBest(false);
         setRound(createTakkoTimingRound(random, 0));
         setRoundKey((key) => key + 1);
@@ -207,13 +230,21 @@ export function TakkoTimingGame({
         const stopped = takkoTimingPosition(elapsedMs, round.sweepMs);
         position.set(stopped);
         const result = judgeTakkoTiming(stopped, round);
+        const streak = result === 'perfect' ? perfectStreak + 1 : 0;
+        setPerfectStreak(streak);
         const points =
             result === 'perfect'
                 ? session.rules.perfectPoints!
                 : result === 'hit'
                   ? session.rules.points!
                   : 0;
-        setReveal({ result, points });
+        setReveal({
+            result,
+            points,
+            stopped,
+            streak,
+            miss: result === 'miss' ? takkoTimingMissDirection(elapsedMs, round) : undefined,
+        });
         if (points > 0) {
             setScore((n) => n + points);
             setSuccesses((n) => n + 1);
@@ -276,6 +307,8 @@ export function TakkoTimingGame({
         }
         resetRound();
         setRound(createTakkoTimingRound(random, successes, round));
+        const notice = takkoTimingSpeedNotice(successes);
+        if (notice) setSpeedNotice({ roundKey: roundKey + 1, text: notice });
         setRoundKey((key) => key + 1);
         if (pauseRequestedRef.current) {
             pauseRequestedRef.current = false;
@@ -291,6 +324,13 @@ export function TakkoTimingGame({
         );
         return () => clearTimeout(timer);
     }, [reveal]);
+
+    // '속도 UP!'은 잠깐만 — 화면에 보이는 동안만 시간을 잰다 (알림 직후 멈추면 이어 할 때 다시 보인다)
+    useEffect(() => {
+        if (!speedNotice || phase !== 'playing' || speedNotice.roundKey !== roundKey) return;
+        const timer = setTimeout(() => setSpeedNotice(null), SPEED_NOTICE_MS);
+        return () => clearTimeout(timer);
+    }, [speedNotice, phase, roundKey]);
 
     // 다른 탭이나 창으로 가면 저절로 멈춘다
     const autoPause = useEffectEvent(() => pause());
@@ -341,19 +381,24 @@ export function TakkoTimingGame({
         : reveal.points > 0
           ? { key: 'correct', src: mascotCorrect }
           : { key: 'wrong', src: mascotWrong };
-    const chip = reveal ? RESULT_CHIP[reveal.result] : null;
+    const chip = reveal ? resultChip(reveal) : null;
 
     return (
         <div
             // 판 배경 — 피그마 image 188 (타코야끼 가게 카운터). 그림과 같은 16:9로 둬서 양쪽 소품이 잘리지 않게 한다
-            className="border-fg-primary relative aspect-video w-full overflow-hidden rounded-2xl border-2 bg-cover bg-center shadow-md select-none"
+            className="border-fg-primary @container relative aspect-video w-full overflow-hidden rounded-2xl border-2 bg-cover bg-center shadow-md select-none"
             style={{ backgroundImage: `url(${background})` }}
         >
+            {/* 보상 기준까지 남은 점수 — 장면보다 먼저 그려 결과 말풍선이 위로 지나가게 한다 */}
+            {phase !== 'ready' && (
+                <GameRewardProgress score={score} goal={session.rules.minimumRewardScore!} />
+            )}
             {/* 장면 — 카운터 위 게이지 길(image 195)에 타꼬가 서 있고, 이쑤시개가 위를 오간다. 판을 누르면 꽂는다(위 버튼 제외).
-                실패하면 이 장면이 흔들린다. --bar는 게이지 굵기, --taco는 타꼬 너비 */}
+                실패하면 이 장면이 흔들린다. --bar는 게이지 굵기, --taco는 타꼬 너비.
+                판 너비(cqw) 기준이라 판이 화면 높이에 맞춰 작아져도 같은 비율로 줄어든다 — 화면 너비(vw) 기준이면 넓고 낮은 화면에서 이쑤시개가 판 위로 잘렸다 */}
             <div
                 ref={boardScope}
-                className="absolute inset-0 cursor-pointer [--bar:clamp(1.25rem,3.4vw,2.1rem)] [--taco:clamp(3.25rem,10vw,6rem)]"
+                className="absolute inset-0 cursor-pointer [--bar:min(3.5cqw,2.1rem)] [--taco:min(10cqw,6rem)]"
                 onPointerDown={(event) => {
                     if (isInteractive(event.target)) return;
                     if (phase === 'playing') {
@@ -392,6 +437,17 @@ export function TakkoTimingGame({
                         className="pointer-events-none absolute top-full mt-0.5 h-[calc(var(--bar)*1.2)] w-auto -translate-x-1/2 [image-rendering:pixelated]"
                         style={{ left: percent(round.center) }}
                     />
+                    {/* 빗나간 자리 — 꽂힌 곳에 빨간 세로 표시를 깜빡여 구간과 얼마나 떨어졌는지 보이게 한다 */}
+                    {reveal?.result === 'miss' && (
+                        <motion.span
+                            aria-hidden
+                            initial={{ opacity: 0, scaleY: 0.4 }}
+                            animate={{ opacity: [0, 1, 0.5, 1], scaleY: 1 }}
+                            transition={{ duration: 0.6 }}
+                            className="bg-semantic-error pointer-events-none absolute -top-[60%] z-20 h-[220%] w-1 -translate-x-1/2 rounded-full"
+                            style={{ left: percent(reveal.stopped) }}
+                        />
+                    )}
                     {/* 결과 말풍선 — 타꼬 머리 위(꽂힌 이쑤시개 끝보다 위) */}
                     {chip && (
                         <GameSpeechBubble
@@ -496,11 +552,25 @@ export function TakkoTimingGame({
                 </div>
             </div>
 
+            {/* 빨라진 판 시작 알림 — 위쪽 가운데에 잠깐 톡 뜬다 */}
+            {speedNotice?.roundKey === roundKey && phase === 'playing' && (
+                <motion.span
+                    key={`speed-${roundKey}`}
+                    aria-hidden
+                    initial={{ opacity: 0, y: 8, scale: 0.8 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 460, damping: 18 }}
+                    className={`border-fg-primary bg-ticket-primary text-fg-primary pointer-events-none absolute top-[24%] left-1/2 z-20 -translate-x-1/2 rounded-md border-[3px] px-3 py-1 text-sm whitespace-nowrap shadow-[3px_3px_0_0_var(--color-fg-primary)] @lg:text-lg ${PIXEL_FONT}`}
+                >
+                    {speedNotice.text}
+                </motion.span>
+            )}
+
             {/* 성공·실패 — 게임 판 테두리를 초록·빨강으로 잠깐 바꾼다 */}
             {reveal && (
                 <div
                     aria-hidden
-                    className={`pointer-events-none absolute inset-0 rounded-2xl border-4 ${reveal.points > 0 ? 'border-semantic-success' : 'border-semantic-error'}`}
+                    className={`pointer-events-none absolute inset-0 rounded-[inherit] border-4 ${reveal.points > 0 ? 'border-semantic-success' : 'border-semantic-error'}`}
                 />
             )}
 

@@ -66,3 +66,32 @@ export function judgeTakkoTiming(position: number, round: TakkoTimingRound): Tak
 
 export const takkoTimingPoints = (result: TakkoTimingResult) =>
     result === 'perfect' ? TAKKO_TIMING_PERFECT_POINTS : result === 'hit' ? TAKKO_TIMING_POINTS : 0;
+
+/** 빗나간 방향 — 이쑤시개가 구간에 닿기 전에 꽂았으면 early, 지나친 뒤에 꽂았으면 late */
+export type TakkoTimingMiss = 'early' | 'late';
+
+/**
+ * 빗나간 꽂기가 이른지 늦은지 — 꽂은 순간 이쑤시개가 움직이던 방향 기준으로 구간 앞이면 이르고, 지나쳤으면 늦다.
+ * 화면 안내('조금 빨랐어요/늦었어요')용이며 채점에는 쓰지 않는다
+ */
+export function takkoTimingMissDirection(
+    elapsedMs: number,
+    round: TakkoTimingRound,
+): TakkoTimingMiss {
+    const movingRight = (Math.max(0, elapsedMs) / round.sweepMs) % 2 < 1;
+    const position = takkoTimingPosition(elapsedMs, round.sweepMs);
+    const beforeZone = movingRight ? position < round.center : position > round.center;
+    return beforeZone ? 'early' : 'late';
+}
+
+/** 속도가 오른다고 알리는 간격 — 매 판 빨라지지만 매번 띄우면 시끄러워 세 번 성공마다 알린다 */
+export const TAKKO_TIMING_SPEED_NOTICE_EVERY = 3;
+
+/** 방금 성공으로 빨라진 다음 판의 알림 — 최고 속도에 처음 닿으면 '최고 속도!', 세 번째 성공마다 '속도 UP!' */
+export function takkoTimingSpeedNotice(successCount: number): string | null {
+    const sweep = takkoTimingSweepMs(successCount);
+    if (sweep !== takkoTimingSweepMs(successCount - 1) && sweep === takkoTimingSweepMs(Infinity))
+        return '최고 속도!';
+    if (sweep === takkoTimingSweepMs(Infinity)) return null;
+    return successCount % TAKKO_TIMING_SPEED_NOTICE_EVERY === 0 ? '속도 UP!' : null;
+}

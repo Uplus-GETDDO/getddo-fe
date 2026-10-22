@@ -7,6 +7,7 @@ import type { Event } from '@entities/event';
 import { useEntryStatistics } from '@entities/entry';
 import { useImageFallback } from '@shared/hooks/useImageFallback';
 import { useVirtualClock } from '@shared/model/virtualClock';
+import { ImagePlaceholder } from '@shared/ui/image-placeholder';
 import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
 
@@ -50,7 +51,7 @@ export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHe
              * 상품 이미지는 래플마다 같은 크기의 정사각형(440)으로 위에 맞춘다. 오른쪽 높이를 따라 늘이면
              * 응모권 선택이 긴 래플만 이미지가 세로로 길어져 상품이 작아 보였다
              */}
-            <div className="bg-surface-canvas relative aspect-square w-full max-w-110 shrink-0 self-center overflow-hidden rounded-2xl lg:size-110 lg:self-start">
+            <div className="bg-surface-sunken relative aspect-square w-full max-w-110 shrink-0 self-center overflow-hidden rounded-2xl lg:size-110 lg:self-start">
                 {banner.shown ? (
                     <img
                         src={event.bannerImageUrl!}
@@ -59,7 +60,7 @@ export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHe
                         className="absolute inset-0 size-full object-cover"
                     />
                 ) : (
-                    <div className="size-full" />
+                    <ImagePlaceholder className="size-full" />
                 )}
             </div>
 

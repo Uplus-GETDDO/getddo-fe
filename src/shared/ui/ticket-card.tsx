@@ -105,11 +105,14 @@ function TicketCardMedia({
     src,
     fallback,
     fit = 'cover',
+    position,
 }: {
     src?: string | null;
     fallback: React.ReactNode;
     /** cover: 칸을 꽉 채운다(게임 썸네일), contain: 그림 전체를 보인다(바탕 투명한 미션 그림) */
     fit?: 'cover' | 'contain';
+    /** cover로 잘릴 때 남길 기준점(object-position) — 예: '50% 20%' */
+    position?: string;
 }) {
     return (
         <div
@@ -122,6 +125,7 @@ function TicketCardMedia({
                 <img
                     src={src}
                     alt=""
+                    style={position ? { objectPosition: position } : undefined}
                     className={cn(
                         'size-full transition-transform duration-300 ease-out group-focus-within/ticket:scale-105 group-hover/ticket:scale-105 motion-reduce:transition-none motion-reduce:group-focus-within/ticket:scale-100 motion-reduce:group-hover/ticket:scale-100',
                         fit === 'cover' ? 'object-cover' : 'object-contain',

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
-import { useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Pause, Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import type { Event } from '@entities/event';
@@ -31,8 +32,10 @@ function ActiveRefresh({
 
 /**
  * 홈 관리 배너 —관리자가 등록한 배너(B01)를 순서대로 넘긴다.
- * 자동 재생은 한 바퀴만 돌고 멈추며, 마우스·포커스가 안에 있거나 '자동 재생 정지'를 누르면 멈춘다. 동작 줄이기 설정이면 켜지 않는다.
- * 배너 아래 줄 왼쪽에는 페이지가 넣는 내용(바로가기), 오른쪽에는 갱신 표시와 넘김 화살표를 둔다
+ * 자동 재생은 계속 돌고, 마우스·포커스가 안에 있거나 정지 버튼을 누르면 멈춘다. 동작 줄이기 설정이면 켜지 않는다.
+ * 자동 재생 중에는 배너 아래 끝의 얇은 막대가 다음 배너까지 남은 시간을 채워 보여 준다.
+ * 배너 아래 한 줄 — 왼쪽은 페이지가 넣는 내용(바로가기), 오른쪽은 갱신 표시·정지·넘김 화살표.
+ * 바로가기를 따로 한 줄로 떼면 배너와 아래 섹션 사이에 홀로 떠 보여, 배너에서 16px 띄운 한 줄로 묶는다
  */
 export function BannerSlider({
     renderStatus,
@@ -54,11 +57,11 @@ export function BannerSlider({
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const [paused, setPaused] = useState(false);
-    const [autoSteps, setAutoSteps] = useState(0);
     const reduceMotion = useReducedMotion();
     const total = banners?.length ?? 0;
     const safeIndex = Math.min(index, Math.max(total - 1, 0));
-    const stopped = paused || autoSteps >= total;
+    const stopped = paused;
+    const playing = total > 1 && !hovered && !focused && !stopped && !reduceMotion;
 
     // 남은 시간 표시 전용 — 마감 판정이 아니라 가상 시계의 시각으로 1초마다 다시 센다
     const clock = useVirtualClock();
@@ -74,13 +77,12 @@ export function BannerSlider({
     }, [clock]);
 
     useEffect(() => {
-        if (total <= 1 || hovered || focused || stopped || reduceMotion) return;
+        if (!playing) return;
         const timer = setInterval(() => {
             setIndex((value) => (value + 1) % total);
-            setAutoSteps((value) => value + 1);
         }, AUTO_SLIDE_MS);
         return () => clearInterval(timer);
-    }, [total, hovered, focused, stopped, reduceMotion]);
+    }, [playing, total]);
 
     if (isPending) {
         // 배너 자리를 통으로 잡는다 — 아래 줄(바로가기)은 먼저 보인다
@@ -107,7 +109,7 @@ export function BannerSlider({
         <section
             aria-label="관리 배너"
             aria-roledescription="캐러셀"
-            className="flex min-w-0 flex-col gap-2"
+            className="flex min-w-0 flex-col gap-4"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onFocusCapture={() => setFocused(true)}
@@ -128,7 +130,7 @@ export function BannerSlider({
             )}
             {total > 0 && (
                 // 그림 배너라 다크 모드에서도 라이트 색을 쓴다 (tokens.css force-light) — 아래 줄은 페이지 색을 따른다
-                <div className="force-light overflow-hidden rounded-2xl">
+                <div className="force-light relative overflow-hidden rounded-2xl">
                     <div
                         className="flex ease-out motion-safe:transition-transform motion-safe:duration-500"
                         style={{ transform: `translateX(-${safeIndex * 100}%)` }}
@@ -154,10 +156,22 @@ export function BannerSlider({
                             </div>
                         ))}
                     </div>
+                    {playing && (
+                        // 다음 배너까지 남은 시간 — 멈췄다 다시 돌면 타이머처럼 처음부터 다시 채운다
+                        <motion.div
+                            key={safeIndex}
+                            aria-hidden
+                            className="bg-fg-primary/60 absolute inset-x-0 bottom-0 h-1 origin-left"
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            transition={{ duration: AUTO_SLIDE_MS / 1000, ease: 'linear' }}
+                        />
+                    )}
                 </div>
             )}
             {(footer || total > 1 || renderRefresh || isError) && (
-                <div className="relative z-10 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                // 좁은 화면은 컨트롤을 위, 바로가기를 아래로 쌓는다
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0 flex-1">{footer}</div>
                     <div className="flex flex-wrap items-center justify-end gap-2 self-end sm:self-auto">
                         {/* 배너 목록 실패 — 받아 둔 배너(또는 기본 배너)를 둔 채 작은 '갱신 실패 · 다시 시도'만 */}
@@ -171,29 +185,32 @@ export function BannerSlider({
                         {active && renderRefresh && (
                             <ActiveRefresh eventId={active.eventId} render={renderRefresh} />
                         )}
-                        {total > 1 && !reduceMotion && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    if (stopped) setFocused(false);
-                                    setPaused(!stopped);
-                                    setAutoSteps(0);
-                                }}
-                            >
-                                {stopped ? '자동 재생 시작' : '자동 재생 정지'}
-                            </Button>
-                        )}
-                        {/* 피그마 홈 — 원형 화살표 사이에 '01 / 04' (공용 Pager) */}
                         {total > 1 && (
-                            <Pager
-                                current={safeIndex}
-                                total={total}
-                                prevLabel="이전 배너"
-                                nextLabel="다음 배너"
-                                onPrev={() => move(-1)}
-                                onNext={() => move(1)}
-                            />
+                            <div className="flex items-center gap-1">
+                                {!reduceMotion && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon-sm"
+                                        className="rounded-full"
+                                        aria-label={stopped ? '자동 재생 시작' : '자동 재생 정지'}
+                                        onClick={() => {
+                                            if (stopped) setFocused(false);
+                                            setPaused(!stopped);
+                                        }}
+                                    >
+                                        {stopped ? <Play aria-hidden /> : <Pause aria-hidden />}
+                                    </Button>
+                                )}
+                                {/* 피그마 홈 — 원형 화살표 사이에 '01 / 04' (공용 Pager) */}
+                                <Pager
+                                    current={safeIndex}
+                                    total={total}
+                                    prevLabel="이전 배너"
+                                    nextLabel="다음 배너"
+                                    onPrev={() => move(-1)}
+                                    onNext={() => move(1)}
+                                />
+                            </div>
                         )}
                     </div>
                 </div>

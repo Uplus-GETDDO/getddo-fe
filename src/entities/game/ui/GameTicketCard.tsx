@@ -34,6 +34,7 @@ export function GameTicketCard({
     className?: string;
 }) {
     const rewarded = rewardedToday;
+    const content = getGameContent(game);
 
     return (
         <TicketCard
@@ -86,7 +87,8 @@ export function GameTicketCard({
                 />
             )}
             <TicketCardMedia
-                src={getGameContent(game).heroImage}
+                src={content.heroImage}
+                position={content.cardImagePosition}
                 fallback={<Gamepad2 aria-hidden className="text-fg-disabled size-8" />}
             />
 
@@ -95,8 +97,9 @@ export function GameTicketCard({
                     <span className="text-caption text-fg-tertiary">GAME</span>
                     <h3 className="text-body-bold text-fg-primary truncate">{game.name}</h3>
                 </div>
-                {game.description && (
-                    <p className="text-body-sm text-fg-tertiary line-clamp-2">{game.description}</p>
+                {/* 한 줄 소개는 게임별 고정 문구(tagline)를 쓴다 — 서버 description은 비어 있을 때가 많아 제목만 남았다 */}
+                {content.tagline && (
+                    <p className="text-body-sm text-fg-tertiary line-clamp-2">{content.tagline}</p>
                 )}
             </div>
         </TicketCard>
