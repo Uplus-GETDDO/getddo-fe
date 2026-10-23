@@ -102,10 +102,15 @@ def measure(page, path, region_name):
     if metrics['navExists']:
         assert metrics['navContained'], f'{path} 페이지네이션이 화면 밖으로 밀렸다'
 
-    # region 키보드 진입 + 화살표 스크롤 — 표가 좁은 화면보다 넓을 때만 스크롤 단정
+    # region 키보드 진입 + 화살표 스크롤 — Tab 순서로 도달해야 한다
+    # (focus()는 tabIndex가 없어도 성공하므로 진입 가능 여부를 검증하지 못한다)
     region = page.get_by_role('region', name=region_name)
-    region.focus()
-    focused = region.evaluate('(el) => el === document.activeElement')
+    focused = False
+    for _ in range(60):
+        page.keyboard.press('Tab')
+        if region.evaluate('(el) => el === document.activeElement'):
+            focused = True
+            break
     scroll_before = region.evaluate('(el) => el.scrollLeft')
     for _ in range(10):
         page.keyboard.press('ArrowRight')
@@ -122,6 +127,8 @@ def measure(page, path, region_name):
         assert scroll_after > scroll_before, f'{path} ArrowRight로 표가 스크롤되지 않았다'
     return metrics
 
+
+failures = []
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
@@ -156,9 +163,16 @@ with sync_playwright() as p:
         measure(page, f'/admin/entries?view=participants&eventId={event_id}', '참여자 표 가로 스크롤')
         page.screenshot(path=str(IMAGES / 'participants.png'), full_page=True)
     else:
-        check('참여자 탭', skipped='응모 이력에서 eventId를 얻지 못해 생략')
+        check(
+            '참여자 탭',
+            ok=False,
+            reason='응모 이력 API 실패 또는 첫 행에 eventId 없음 — 검증 데이터 부족',
+        )
+        failures.append('참여자 탭 검증 불가: eventId를 얻지 못했다')
 
     browser.close()
 
 check('콘솔 오류', count=len(evidence['errors']), errors=evidence['errors'])
+assert not evidence['errors'], f"브라우저 오류 {len(evidence['errors'])}건: {evidence['errors'][:3]}"
+assert not failures, '; '.join(failures)
 print(f"\n증거 기록: {OUTPUT} ({len(evidence['checks'])} checks)")

@@ -1,7 +1,7 @@
 {
     "kind": "GD-328 관리자 응모 조회·응모권 이력 320px 넘침 수정 검증 — 로컬 빌드 + 실서버 프록시",
-    "checkedAt": "2026-10-23T12:49:23.479207+00:00",
-    "verifierCommit": "c2cac6d6019fabea0e346462796c59428ee99b40",
+    "checkedAt": "2026-10-23T13:36:47.701098+00:00",
+    "verifierCommit": "4e4b0726d5b8d686097beb197f4bf7b5b0397d0e",
     "url": "http://localhost:5196",
     "checks": [
         {

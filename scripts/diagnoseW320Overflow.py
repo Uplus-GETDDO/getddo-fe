@@ -1,11 +1,15 @@
-"""320px 넘침 진단 — MSW dev 서버(5199)에서 넘치는 요소를 열거한다. 진단용 일회성 스크립트."""
+"""320px 넘침 진단 — MSW dev 서버(5199)에서 넘치는 요소를 열거한다. 진단용 일회성 스크립트.
+
+환경변수 GD328_BASE로 대상을 바꿀 수 있다 (기본 http://localhost:5199).
+"""
 import json
+import os
 import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-BASE = 'http://localhost:5200'
+BASE = os.environ.get('GD328_BASE', 'http://localhost:5199').rstrip('/')
 OUT = Path('reports/gd328-w320-diagnose.json')
 
 # 화면 밖으로 삐져나온 요소(overDoc)와, overflow가 visible인 채 내용이 넓은 요소(innerLeak)를 잡는다.
@@ -26,7 +30,13 @@ SCAN = """() => {
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;
         const cs = getComputedStyle(el);
-        const overDoc = r.right > vw + 1 || r.left < -1;
+        // 스크롤 컨테이너 안쪽에 클립된 콘텐츠는 문서 넘침이 아니므로 걸러 낸다
+        let clipped = false;
+        for (let p = el.parentElement; p; p = p.parentElement) {
+            const pc = getComputedStyle(p);
+            if (/(auto|scroll|hidden|clip)/.test(pc.overflowX)) { clipped = true; break; }
+        }
+        const overDoc = (r.right > vw + 1 || r.left < -1) && !clipped;
         const innerLeak = el.scrollWidth > el.clientWidth + 1 && cs.overflowX === 'visible';
         if (overDoc || innerLeak) {
             bad.push({
