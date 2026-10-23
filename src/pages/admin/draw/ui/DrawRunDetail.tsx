@@ -108,6 +108,7 @@ export function DrawRunDetail({
     eventReady,
     onRunCreated,
 }: DrawRunDetailProps) {
+    const openerRef = useRef<HTMLElement | null>(null);
     const {
         data: run,
         isPending,
@@ -120,7 +121,22 @@ export function DrawRunDetail({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="flex max-h-[85vh] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
+            <DialogContent
+                className="flex max-h-[85vh] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl"
+                onOpenAutoFocus={() => {
+                    // 목록의 여러 버튼이 같은 모달을 열어 DialogTrigger 대신 실제 진입점을 보존한다.
+                    openerRef.current =
+                        document.activeElement instanceof HTMLElement
+                            ? document.activeElement
+                            : null;
+                }}
+                onCloseAutoFocus={(event) => {
+                    if (openerRef.current?.isConnected) {
+                        event.preventDefault();
+                        openerRef.current.focus();
+                    }
+                }}
+            >
                 <DialogHeader className="px-6 pt-6 pb-4">
                     <DialogTitle className="text-title-3 text-fg-primary">
                         {run
@@ -132,7 +148,15 @@ export function DrawRunDetail({
                         진행합니다.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 pb-6">
+                <div
+                    className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 pb-6"
+                    onFocusCapture={(event) => {
+                        // Radix의 포커스 순환은 preventScroll을 사용해 스크롤 밖 버튼을 가릴 수 있다.
+                        if (event.currentTarget.contains(event.target)) {
+                            event.target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                        }
+                    }}
+                >
                     {isPending && (
                         <LoadingBlock>
                             <CardSkeleton rows={8} />
@@ -860,7 +884,7 @@ function RunDetailBody({
                 onValueChange={setSection}
                 options={RUN_SECTIONS}
                 label="실행 상세 보기"
-                className="self-start"
+                className="max-w-full flex-wrap self-start"
             />
             {section === 'results' && (
                 <section

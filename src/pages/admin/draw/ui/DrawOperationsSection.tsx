@@ -128,41 +128,51 @@ export function DrawOperationsSection({ drawId }: { drawId: string }) {
                 )}
                 {audits.data && audits.data.items.length > 0 && (
                     <>
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="hover:bg-transparent">
-                                    <TableHead>시각</TableHead>
-                                    <TableHead>행위</TableHead>
-                                    <TableHead>처리자</TableHead>
-                                    <TableHead>사유</TableHead>
-                                    <TableHead>요청 ID</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {audits.data.items.map((a) => (
-                                    <TableRow key={a.id} className="align-top hover:bg-transparent">
-                                        <TableCell className="text-body-sm text-fg-secondary whitespace-nowrap">
-                                            {formatKst(a.createdAt)}
-                                        </TableCell>
-                                        <TableCell className="text-body-sm font-medium whitespace-nowrap">
-                                            {/* GD-314 — action 코드는 표시 문자열로 변환하고 계약 외 값은 원문을 유지한다 */}
-                                            {DRAW_AUDIT_ACTION_LABEL[
-                                                a.action as keyof typeof DRAW_AUDIT_ACTION_LABEL
-                                            ] ?? a.action}
-                                        </TableCell>
-                                        <TableCell className="text-body-sm whitespace-nowrap">
-                                            {a.actorName ?? '—'}
-                                        </TableCell>
-                                        <TableCell className="text-body-sm max-w-60 whitespace-normal">
-                                            {a.reason ?? '—'}
-                                        </TableCell>
-                                        <TableCell className="text-body-sm text-fg-tertiary whitespace-nowrap">
-                                            {a.requestId ?? '—'}
-                                        </TableCell>
+                        <div
+                            role="region"
+                            aria-label="실행 감사 표 가로 스크롤"
+                            tabIndex={0}
+                            className="focus-visible:ring-border-focus overflow-x-auto rounded-md focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+                        >
+                            <Table className="[&_td]:align-top">
+                                <TableHeader>
+                                    <TableRow className="hover:bg-transparent">
+                                        <TableHead>시각</TableHead>
+                                        <TableHead>행위</TableHead>
+                                        <TableHead>처리자</TableHead>
+                                        <TableHead>사유</TableHead>
+                                        <TableHead>요청 ID</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {audits.data.items.map((a) => (
+                                        <TableRow
+                                            key={a.id}
+                                            className="align-top hover:bg-transparent"
+                                        >
+                                            <TableCell className="text-body-sm text-fg-secondary whitespace-nowrap">
+                                                {formatKst(a.createdAt)}
+                                            </TableCell>
+                                            <TableCell className="text-body-sm font-medium whitespace-nowrap">
+                                                {/* GD-314 — action 코드는 표시 문자열로 변환하고 계약 외 값은 원문을 유지한다 */}
+                                                {DRAW_AUDIT_ACTION_LABEL[
+                                                    a.action as keyof typeof DRAW_AUDIT_ACTION_LABEL
+                                                ] ?? a.action}
+                                            </TableCell>
+                                            <TableCell className="text-body-sm whitespace-nowrap">
+                                                {a.actorName ?? '—'}
+                                            </TableCell>
+                                            <TableCell className="text-body-sm max-w-60 min-w-60 wrap-break-word whitespace-normal">
+                                                {a.reason ?? '—'}
+                                            </TableCell>
+                                            <TableCell className="text-body-sm text-fg-tertiary whitespace-nowrap">
+                                                {a.requestId ?? '—'}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                         <PagedFooter
                             page={auditPage}
                             size={PAGE_SIZE}

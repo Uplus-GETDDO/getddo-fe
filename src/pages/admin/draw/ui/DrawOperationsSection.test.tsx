@@ -51,6 +51,14 @@ vi.mock('@entities/drawResult', () => ({
 
 // GD-314 실행 감사 표시 계약 — action은 표시 문자열, 처리자 UUID와 beforeData/afterData는 숨긴다
 describe('실행 감사 표시', () => {
+    it('실행 감사 표의 가로 스크롤 영역을 키보드로 탐색할 수 있다', () => {
+        render(<DrawOperationsSection drawId="drw-1" />);
+        expect(screen.getByRole('region', { name: '실행 감사 표 가로 스크롤' })).toHaveAttribute(
+            'tabindex',
+            '0',
+        );
+    });
+
     it('action 코드 대신 확정 표시 문자열을 보여준다', () => {
         render(<DrawOperationsSection drawId="drw-1" />);
         expect(screen.getByText('추첨 실행')).toBeInTheDocument();
