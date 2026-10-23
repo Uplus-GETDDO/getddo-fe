@@ -1,0 +1,797 @@
+{
+    "kind": "GD-330 관리자 목록 화면 320px 넘침·axe 재측정 — 배포본 (GD-328 머지 후)",
+    "checkedAt": "2026-10-23T14:46:59.045802+00:00",
+    "url": "https://getddo-fe.vercel.app",
+    "axeSource": "https://cdn.jsdelivr.net/npm/axe-core@4.10.3/axe.min.js",
+    "deployAssets": [
+        "badge-ByALNOza.js",
+        "card-CnsfZgoy.js",
+        "date-DUlpJ7OL.js",
+        "dialog-BLSgehXA.js",
+        "empty-takko-DUxUlIiO.js",
+        "env-Cls9N8m4.js",
+        "envelopeSchema-02bngDyr.js",
+        "errorMessage-BNyyWKY7.js",
+        "format-DVyL8Otv.js",
+        "index-BBHU9dYf.css",
+        "index-nRETAAio.js",
+        "input-D6cQ8OqD.js",
+        "queryPresets-DcKopzta.js",
+        "radio-group-CYeLKcze.js",
+        "react-BXQkwMDF.js",
+        "refresh-status-B-ZNDR8e.js",
+        "router-jPQ7lcss.js",
+        "skeleton-BA41yKGl.js",
+        "table-B7WxbGO9.js",
+        "tanstack-5YjhQEgq.js",
+        "ticket-B-S8sWUL.js",
+        "user-C5xUgt8G.js",
+        "vendor-Y8fqTZwr.js",
+        "virtualClock-BJDsnkNz.js",
+        "zod-BHBKxcX8.js"
+    ],
+    "changedSinceBaseline": true,
+    "checks": [
+        {
+            "name": "320px 레이아웃 /admin",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": false,
+            "navContained": null
+        },
+        {
+            "name": "320px 레이아웃 /admin/users",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/entries",
+            "overflowPx": 0,
+            "regions": [
+                {
+                    "label": "응모 이력 표 가로 스크롤",
+                    "tabbable": true,
+                    "scrollable": true
+                }
+            ],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/entries?view=participants",
+            "overflowPx": 0,
+            "regions": [
+                {
+                    "label": "참여자 표 가로 스크롤",
+                    "tabbable": true,
+                    "scrollable": true
+                }
+            ],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/events",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/draw",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": false,
+            "navContained": null
+        },
+        {
+            "name": "320px 레이아웃 /admin/tickets",
+            "overflowPx": 0,
+            "regions": [
+                {
+                    "label": "응모권 이력 표 가로 스크롤",
+                    "tabbable": true,
+                    "scrollable": true
+                }
+            ],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/abuse-cases",
+            "overflowPx": 0,
+            "regions": [
+                {
+                    "label": "차단 내역 표 가로 스크롤",
+                    "tabbable": true,
+                    "scrollable": true
+                }
+            ],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/notifications",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/banners",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": false,
+            "navContained": null
+        },
+        {
+            "name": "320px 레이아웃 /admin/attendance-policies",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": false,
+            "navContained": null
+        },
+        {
+            "name": "320px 레이아웃 /admin/missions",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": true,
+            "navContained": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/virtual-users",
+            "overflowPx": 0,
+            "regions": [],
+            "navExists": false,
+            "navContained": null
+        },
+        {
+            "name": "콘솔 오류",
+            "count": 0,
+            "errors": []
+        }
+    ],
+    "axe": {
+        "/admin:w320": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 6,
+                    "targets": [
+                        [".gap-1\\.5:nth-child(1) > dt"],
+                        [".gap-1\\.5:nth-child(2) > dt"],
+                        [".gap-1\\.5:nth-child(3) > dt"],
+                        [".gap-1\\.5:nth-child(4) > dt"],
+                        [".gap-1\\.5:nth-child(5) > dt"],
+                        [".bg-brand-soft"]
+                    ]
+                }
+            ],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 42,
+                    "targets": [
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(1) > .text-body-sm.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(1) > .text-title-1.text-fg-primary.tabular-nums"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(1) > .text-caption.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .text-body-sm.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .text-title-1.text-fg-primary.tabular-nums"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .gap-1.text-caption.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .gap-1.text-caption.text-fg-tertiary > .font-semibold.gap-0\\.5.text-fg-primary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(3) > .text-body-sm.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(3) > .text-title-1.text-fg-primary.tabular-nums"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(3) > .gap-1.text-caption.text-fg-tertiary"
+                        ]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 1,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 6,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/users:w320": {
+            "violations": [],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 105,
+                    "targets": [
+                        ["th:nth-child(3)"],
+                        ["th:nth-child(4)"],
+                        ["th:nth-child(5)"],
+                        ["th:nth-child(6)"],
+                        ["tr[role=\"button\"]:nth-child(1) > .text-caption"],
+                        ["tr[role=\"button\"]:nth-child(1) > td:nth-child(3)"],
+                        ["tr[role=\"button\"]:nth-child(1) > td:nth-child(4)"],
+                        ["tr[role=\"button\"]:nth-child(1) > td:nth-child(5)"],
+                        ["tr[role=\"button\"]:nth-child(1) > .text-body-sm"],
+                        ["tr[role=\"button\"]:nth-child(2) > .text-caption"]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 0,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/entries:w320": {
+            "violations": [],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 122,
+                    "targets": [
+                        ["th:nth-child(3)"],
+                        ["th:nth-child(4)"],
+                        ["th:nth-child(5)"],
+                        ["th:nth-child(6)"],
+                        ["th:nth-child(7)"],
+                        ["tr:nth-child(1) > td:nth-child(2)"],
+                        ["tr:nth-child(1) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(1) > td:nth-child(3) > .block.text-caption"],
+                        ["tr:nth-child(1) > td:nth-child(4)"],
+                        ["tr:nth-child(1) > td:nth-child(5)"]
+                    ]
+                },
+                {
+                    "id": "link-in-text-block",
+                    "impact": "serious",
+                    "nodes": 20,
+                    "targets": [
+                        ["tr:nth-child(1) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(2) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(3) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(4) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(5) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(6) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(7) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(8) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(9) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(10) > td:nth-child(3) > .hover\\:underline.text-fg-brand"]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 0,
+                "incomplete": 2
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/entries?view=participants:w320": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 2,
+                    "targets": [
+                        [
+                            "tr:nth-child(1) > td:nth-child(1) > .hover\\:underline.text-fg-brand.text-body-sm"
+                        ],
+                        [
+                            "tr:nth-child(2) > td:nth-child(1) > .hover\\:underline.text-fg-brand.text-body-sm"
+                        ]
+                    ]
+                }
+            ],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 9,
+                    "targets": [
+                        ["th:nth-child(2)"],
+                        ["th:nth-child(3)"],
+                        ["th:nth-child(4)"],
+                        ["tr:nth-child(1) > .text-caption"],
+                        ["tr:nth-child(1) > td:nth-child(3)"],
+                        ["tr:nth-child(1) > .text-body-sm"],
+                        ["tr:nth-child(2) > .text-caption"],
+                        ["tr:nth-child(2) > td:nth-child(3)"],
+                        ["tr:nth-child(2) > .text-body-sm"]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 1,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 2,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/events:w320": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [[".tabular-nums.text-fg-tertiary.text-body-sm"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 1,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/draw:w320": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [[".gap-0\\.5 > p"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 1,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/tickets:w320": {
+            "violations": [],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [["button[aria-label=\"863페이지\"]"]]
+                }
+            ],
+            "counts": {
+                "violations": 0,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/abuse-cases:w320": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/notifications:w320": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/banners:w320": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/attendance-policies:w320": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/missions:w320": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [[".text-caption"]]
+                }
+            ],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [["button[aria-label=\"202페이지\"]"]]
+                }
+            ],
+            "counts": {
+                "violations": 1,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 1,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/virtual-users:w320": {
+            "violations": [
+                {
+                    "id": "scrollable-region-focusable",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [[".relative"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 1,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 6,
+                    "targets": [
+                        [".gap-1\\.5:nth-child(1) > dt"],
+                        [".gap-1\\.5:nth-child(2) > dt"],
+                        [".gap-1\\.5:nth-child(3) > dt"],
+                        [".gap-1\\.5:nth-child(4) > dt"],
+                        [".gap-1\\.5:nth-child(5) > dt"],
+                        [".bg-brand-soft"]
+                    ]
+                }
+            ],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 26,
+                    "targets": [
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(1) > .text-body-sm.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(1) > .text-title-1.text-fg-primary.tabular-nums"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(1) > .text-caption.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .text-body-sm.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .text-title-1.text-fg-primary.tabular-nums"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .gap-1.text-caption.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(2) > .gap-1.text-caption.text-fg-tertiary > .font-semibold.gap-0\\.5.text-fg-primary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(3) > .text-body-sm.text-fg-tertiary"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(3) > .text-title-1.text-fg-primary.tabular-nums"
+                        ],
+                        [
+                            ".hover\\:border-fg-brand.hover\\:ring-fg-brand.hover\\:ring-1:nth-child(3) > .gap-1.text-caption.text-fg-tertiary"
+                        ]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 1,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 6,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/users:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/entries:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 20,
+                    "targets": [
+                        ["tr:nth-child(1) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(2) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(3) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(4) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(5) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(6) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(7) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(8) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(9) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(10) > td:nth-child(3) > .hover\\:underline.text-fg-brand"]
+                    ]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 20,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/entries?view=participants:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 2,
+                    "targets": [
+                        [
+                            "tr:nth-child(1) > td:nth-child(1) > .hover\\:underline.text-fg-brand.text-body-sm"
+                        ],
+                        [
+                            "tr:nth-child(2) > td:nth-child(1) > .hover\\:underline.text-fg-brand.text-body-sm"
+                        ]
+                    ]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 2,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/events:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 18,
+                    "targets": [
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(10) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(11) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(12) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(14) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(15) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(16) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(17) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(18) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(19) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(20) > .text-center:nth-child(2) > .gap-1.flex-col > .bg-brand-soft.text-fg-brand.text-xs"
+                        ]
+                    ]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 18,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/draw:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [[".gap-0\\.5 > p"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 1,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/tickets:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/abuse-cases:desktop": {
+            "violations": [],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 10,
+                    "targets": [
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(1) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(2) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(3) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(4) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(5) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(6) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(7) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(8) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(9) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ],
+                        [
+                            ".focus-within\\:bg-surface-sunken:nth-child(10) > td:nth-child(6) > .block.max-w-60.truncate"
+                        ]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 0,
+                "incomplete": 1
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/notifications:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/banners:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/attendance-policies:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/missions:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [[".text-caption"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 1,
+            "link-in-text-block-nodes": 0
+        },
+        "/admin/virtual-users:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            },
+            "scrollable-region-focusable-nodes": 0,
+            "color-contrast-nodes": 0,
+            "link-in-text-block-nodes": 0
+        }
+    },
+    "errors": []
+}

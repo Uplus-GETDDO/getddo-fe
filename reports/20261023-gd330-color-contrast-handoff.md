@@ -69,3 +69,15 @@ axe-core 4.10.3 기준선(`reports/20261023-gd328-baseline-axe.json`, 배포본)
 
 - 사용자 홈 `/`의 `color-contrast` violations 17건 + incomplete 16건 — `fg/brand` 링크 외 다른 요소 포함. 이번 인계는 `/admin/entries` 20건만 다룬다.
 - `/admin/entries:w320`의 `link-in-text-block` incomplete 20건 — 위 선택지 B/C(밑줄)를 택하면 함께 해소된다.
+
+## 8. 부기 — 2026-10-23 전체 관리자 화면 재측정에서 확인된 동일 계열
+
+`reports/20261023-gd330-admin-lists.json`의 axe 재측정에서 `fg/brand`·soft 배경 계열 위반이 entries 외에도 퍼져 있음이 확인됐다. 인계 범위는 entries 20건이지만 값 결정 시 아래도 함께 고려하면 좋다:
+
+- `/admin/events:desktop` `color-contrast` ×18 — `bg-brand-soft text-fg-brand` 뱃지(`adminStatusMeta.ts` TICKET), 제약 3의 실사례
+- `/admin/entries?view=participants` 데스크톱·w320 `color-contrast` ×2 — entries와 같은 사용자 링크
+- `/admin` 대시보드 데스크톱 `color-contrast` ×6(`dt` 스탯 라벨) + incomplete ×26(통계 카드), w320 incomplete ×42
+- `/admin/tickets`·`/admin/missions` w320 `color-contrast` ×1 — `button[aria-label="N페이지"]`: 페이지네이션 가장자리 번호가 스크롤 클립 안에 잡힌 측정값. `fg/secondary`는 흰 배경 ~7.9:1로 실제는 통과라 클립 노이즈일 가능성이 크다
+- `/admin/draw`·`/admin/missions` 데스크톱 `color-contrast` ×1 — 보조 텍스트(`.text-caption` 등)
+- `/admin/users`·`/admin/entries` w320 `color-contrast` incomplete ×105/×122 — 대부분 표 th/td로 스크롤 클립 내 요소라 axe가 배경을 확정 못한 것
+- `/admin/virtual-users` w320 `scrollable-region-focusable` ×1 — 표 스크롤 컨테이너 미래핍. 이 건은 GD-317 패턴으로 이번 PR에서 수정한다(키보드 접근성이라 대비 인계와 별개)
