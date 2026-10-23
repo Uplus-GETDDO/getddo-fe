@@ -5,7 +5,6 @@ import { lazy, Suspense } from 'react';
 
 import { UserLayout } from '@app/layouts/UserLayout';
 import { UserGuard } from '@app/routes/UserGuard';
-import { HomePage } from '@pages/home/HomePage';
 import { LoginPage } from '@pages/login/LoginPage';
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
 import { env } from '@shared/config/env';
@@ -39,7 +38,12 @@ export const userRoutes: RouteObject[] = [
         // 여기서는 레이아웃 자체의 렌더 오류·lazy import 실패를 최후 방어선으로 받는다 (레이아웃 없이 표시)
         errorElement: <RouteErrorFallback />,
         children: [
-            { path: '/', element: <HomePage /> },
+            {
+                path: '/',
+                element: lazyPage(() =>
+                    import('@pages/home/HomePage').then((m) => ({ default: m.HomePage })),
+                ),
+            },
             {
                 path: '/time-raffle',
                 element: lazyPage(() =>
