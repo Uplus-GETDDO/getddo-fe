@@ -178,7 +178,7 @@ npm run build         # tsc -b && vite build
 
 ## 금지 사항
 
-- 새 상태관리·UI 라이브러리를 임의로 추가하지 않는다 (추가가 필요하면 팀 합의 후). 설치만 된 미사용 의존성(`gsap`, `canvas-confetti`, `react-day-picker` 등)을 새로 도입할 때도 마찬가지다 — 허용된 것: `framer-motion`(모션), `sonner`(토스트), `@tanstack/react-table`(테이블)
+- 새 상태관리·UI 라이브러리를 임의로 추가하지 않는다 (추가가 필요하면 팀 합의 후). 허용된 것: `framer-motion`(모션), `sonner`(토스트), `@tanstack/react-table`(테이블)
 - `main`과 `dev`에 직접 커밋·push하지 않는다 — `dev`는 PR(Squash and Merge)로만 머지한다. 한 브랜치는 한 Jira 이슈에 대응한다
 - 기존 컴포넌트/유틸과 유사한 것을 새로 만들지 않는다
 - API 스키마·연동 계약을 임의로 변경하지 않는다
