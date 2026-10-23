@@ -96,7 +96,8 @@ function DateField({
 
 /**
  * 기간 필터 — 시작·종료 날짜를 테두리 하나로 묶은 높이 40 상자. 기준(예: 응모 시작일·KST)은 상자 안 앞머리에 둬서
- * 아래 줄이 생기지 않게 한다 — 옆의 검색창·버튼과 윗선이 맞는다. 순서 오류 문구도 상자 아래에 띄워 줄을 밀지 않는다
+ * 아래 줄이 생기지 않게 한다 — 옆의 검색창·버튼과 윗선이 맞는다. 순서 오류 문구도 상자 아래에 띄워 줄을 밀지 않는다.
+ * 좁은 화면에서는 상자 안쪽으로 줄바꿈해 페이지가 가로로 넘치지 않게 한다
  */
 function DateRangeFilter({
     from,
@@ -121,7 +122,7 @@ function DateRangeFilter({
         <div className="relative">
             <div
                 className={cn(
-                    'border-border-input bg-surface-page hover:border-border-input-hover focus-within:border-border-focus focus-within:ring-border-focus/10 flex h-10 items-center gap-2 rounded-lg border pr-1.5 pl-3 transition-colors focus-within:ring-3',
+                    'border-border-input bg-surface-page hover:border-border-input-hover focus-within:border-border-focus focus-within:ring-border-focus/10 flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border py-1 pr-1.5 pl-3 transition-colors focus-within:ring-3',
                     error &&
                         'border-semantic-error-strong hover:border-semantic-error-strong focus-within:border-semantic-error-strong',
                 )}
