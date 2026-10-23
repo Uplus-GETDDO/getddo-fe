@@ -1,0 +1,289 @@
+{
+    "at": "2026-10-23T01:26:56.178Z",
+    "kind": "GD-317 AR01/AR02 배포 후 실측 — 읽기 전용",
+    "target": "https://getddo-fe.vercel.app",
+    "checks": [
+        {
+            "name": "배포 식별(엔트리 청크)",
+            "method": "GET",
+            "path": "/",
+            "status": 200,
+            "at": "2026-10-23T01:26:56.258Z",
+            "entryChunk": "assets/index-B14a6R09.js"
+        },
+        {
+            "method": "GET",
+            "path": "/admin/abuse-cases?page=1&size=20",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:26:56.322Z",
+            "ms": 62,
+            "name": "AR01 차단 이력 목록",
+            "zod": "pass",
+            "totalElements": 10,
+            "page": 1,
+            "size": 20,
+            "sortCheck": {
+                "pass": true,
+                "compared": 9
+            },
+            "items": [
+                {
+                    "id": "30100000-0000-4000-8000-000000000001",
+                    "userId": "01a143a8-b6de-7432-8644-5a4d52c94241",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T12:10:38.084714Z",
+                    "blockedUntil": "2026-10-21T12:20:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000002",
+                    "userId": "01a143a8-b6de-75dc-88b5-2319333a8512",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T11:55:38.084714Z",
+                    "blockedUntil": "2026-10-21T12:05:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000003",
+                    "userId": "01a143a8-b6de-713f-a147-42f3c9aa161f",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T11:40:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:50:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000004",
+                    "userId": "01a14280-f678-7f8e-b785-3bcfdd11279b",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T11:25:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:35:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000005",
+                    "userId": "01a143a8-b6de-729e-a907-f37804572d22",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T11:10:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:20:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000006",
+                    "userId": "01a14280-f678-7617-9364-6b79d2dcbef2",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T10:55:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:05:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000007",
+                    "userId": "01a14280-f678-725e-9a73-f62eeb5b7976",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T10:40:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:50:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000008",
+                    "userId": "01a14280-f678-7100-9c3d-ffb9873fadcf",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T10:25:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:35:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000009",
+                    "userId": "01a143a8-b6de-778b-818b-b4c57be3a836",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T10:10:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:20:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000010",
+                    "userId": "01a14280-f678-71f8-b154-11b44c1926f2",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                    "blockedAt": "2026-10-21T09:55:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:05:38.084714Z",
+                    "hasUserNickname": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/admin/abuse-cases?page=1&size=20&userId=01a143a8-b6de-7432-8644-5a4d52c94241",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:26:56.408Z",
+            "ms": 81,
+            "name": "AR01 userId 필터",
+            "zod": "pass",
+            "filteredUserId": "01a143a8-b6de-7432-8644-5a4d52c94241",
+            "totalElements": 1,
+            "allMatchUser": true
+        },
+        {
+            "method": "GET",
+            "path": "/admin/abuse-cases?page=1&size=20&sourceType=ENTRY",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:26:56.476Z",
+            "ms": 65,
+            "name": "AR01 sourceType=ENTRY 필터",
+            "zod": "pass",
+            "totalElements": 10,
+            "allEntry": true
+        },
+        {
+            "method": "GET",
+            "path": "/admin/abuse-cases?page=1&size=20&from=2026-10-21T12%3A09%3A38.084Z&to=2026-10-21T12%3A11%3A38.084Z",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:26:56.538Z",
+            "ms": 61,
+            "name": "AR01 from/to 기간 필터 (blockedAt [from,to))",
+            "zod": "pass",
+            "windowContains": true,
+            "excludedStatus": 200,
+            "excludedContains": false,
+            "excludedEmpty": true
+        },
+        {
+            "method": "GET",
+            "path": "/admin/abuse-cases?page=1&size=20&userId=00000000-0000-4000-8000-000000000000",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:26:56.625Z",
+            "ms": 36,
+            "name": "AR01 결과 없음 → 200 빈 items",
+            "zod": "pass",
+            "totalElements": 0,
+            "itemCount": 0
+        },
+        {
+            "name": "AR01 입력 오류 대조",
+            "size0": {
+                "status": 400,
+                "code": "COMMON-002"
+            },
+            "sourceTypeGame": {
+                "status": 400,
+                "code": "COMMON-002"
+            },
+            "userIdMalformed": {
+                "status": 400,
+                "code": "COMMON-005"
+            },
+            "expected": "400 COMMON-002 (size·sourceType) / 400 COMMON-005 (UUID 형식)"
+        },
+        {
+            "method": "GET",
+            "path": "/admin/abuse-cases/30100000-0000-4000-8000-000000000001",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:26:56.828Z",
+            "ms": 37,
+            "name": "AR02 차단 이력 상세 + evidence",
+            "zod": "pass",
+            "caseId": "30100000-0000-4000-8000-000000000001",
+            "summary": {
+                "id": "30100000-0000-4000-8000-000000000001",
+                "userId": "01a143a8-b6de-7432-8644-5a4d52c94241",
+                "eventId": null,
+                "eventTitle": null,
+                "sourceType": "ENTRY",
+                "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                "detectionReason": "응모 요청 한도 초과가 반복되어 일시 차단되었습니다.",
+                "blockedAt": "2026-10-21T12:10:38.084714Z",
+                "blockedUntil": "2026-10-21T12:20:38.084714Z",
+                "hasUserNickname": true
+            },
+            "evidence": {
+                "ruleVersion": "v1",
+                "triggerScope": "USER",
+                "windowStartedAt": "2026-10-21T12:10:08.084714Z",
+                "windowEndsAt": "2026-10-21T12:11:08.084714Z",
+                "requestLimit": 20,
+                "rejectedCount": 20,
+                "rejectionThreshold": 20,
+                "thresholdReached": true
+            }
+        },
+        {
+            "name": "AR02 오류 대조",
+            "missing": {
+                "status": 404,
+                "code": "ABUSE-002",
+                "message": "차단 이력을 찾을 수 없습니다."
+            },
+            "malformed": {
+                "status": 400,
+                "code": "COMMON-005"
+            },
+            "expected": "404 ABUSE-002 / 400 COMMON-005"
+        },
+        {
+            "name": "권한 대조 — ABUSE-001·USER-003",
+            "userList": {
+                "status": 403,
+                "code": "ABUSE-001"
+            },
+            "userDetail": {
+                "status": 403,
+                "code": "ABUSE-001"
+            },
+            "noHeader": {
+                "status": 401,
+                "code": "USER-003"
+            },
+            "expected": "USER → 403 ABUSE-001 / 헤더 없음 → 401 USER-003"
+        }
+    ]
+}
