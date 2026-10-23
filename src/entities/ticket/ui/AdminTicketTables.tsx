@@ -20,14 +20,24 @@ const TIME = 'text-fg-secondary text-body-sm whitespace-nowrap';
 function Frame({
     headers,
     centered = [],
+    label,
     children,
 }: {
     headers: string[];
     centered?: string[];
+    /** 가로 스크롤 영역의 이름 — 좁은 화면에서 표가 카드 안으로 스크롤할 때 읽힌다 */
+    label: string;
     children: ReactNode;
 }) {
     return (
-        <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+        // 좁은 화면에서 표가 카드 밖으로 넘치면 카드 안쪽 가로 스크롤로 접근한다 — 스크롤 영역은
+        // 키보드 진입이 가능해야 하므로 region+tabIndex를 둔다 (GD-317 어뷰징 표와 같은 패턴)
+        <div
+            role="region"
+            aria-label={label}
+            tabIndex={0}
+            className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto rounded-2xl border focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+        >
             <Table>
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
@@ -75,6 +85,7 @@ export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }
         <Frame
             centered={['처리', '등급']}
             headers={['처리 시각', '사용자', '처리', '등급', '처리 후 상태', '이벤트·미션']}
+            label="응모권 이력 표 가로 스크롤"
         >
             {rows.map((row) => (
                 <TableRow key={row.id} className="hover:bg-surface-sunken">

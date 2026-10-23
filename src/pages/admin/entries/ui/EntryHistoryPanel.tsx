@@ -153,49 +153,58 @@ export function EntryHistoryPanel() {
                 }
             >
                 {(rows) => (
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>응모일</TableHead>
-                                <TableHead>이벤트</TableHead>
-                                <TableHead>사용자</TableHead>
-                                <TableHead>상태</TableHead>
-                                <TableHead>요청</TableHead>
-                                <TableHead>차감</TableHead>
-                                <TableHead>거절 사유</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {rows.map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell className="text-fg-secondary text-body-sm">
-                                        {formatKstDot(row.requestedAt, true)}
-                                    </TableCell>
-                                    <TableCell>{row.eventTitle}</TableCell>
-                                    <TableCell>
-                                        {/* 이름은 표시용 부가 정보 — 동일인 식별·링크는 userId를 쓴다 (ADR-028) */}
-                                        <Link
-                                            className="text-fg-brand text-body-sm hover:underline"
-                                            to={`/admin/users?detail=${row.userId}`}
-                                        >
-                                            {row.userName ?? row.userId}
-                                        </Link>
-                                        {row.userName && (
-                                            <span className="text-caption text-fg-secondary block">
-                                                {row.userId}
-                                            </span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell>{STATUS_LABEL[row.status]}</TableCell>
-                                    <TableCell>{row.requestedTicketCount}장</TableCell>
-                                    <TableCell>{row.deductedTicketCount}장</TableCell>
-                                    <TableCell className="text-fg-secondary text-body-sm">
-                                        {row.rejectionReason ?? '—'}
-                                    </TableCell>
+                    // 좁은 화면에서 표가 넘치면 이 안쪽 가로 스크롤로 접근한다 — 스크롤 영역은
+                    // 키보드 진입이 가능해야 하므로 region+tabIndex를 둔다 (GD-316 감사 표와 같은 패턴)
+                    <div
+                        role="region"
+                        aria-label="응모 이력 표 가로 스크롤"
+                        tabIndex={0}
+                        className="focus-visible:ring-border-focus overflow-x-auto rounded-md focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+                    >
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>응모일</TableHead>
+                                    <TableHead>이벤트</TableHead>
+                                    <TableHead>사용자</TableHead>
+                                    <TableHead>상태</TableHead>
+                                    <TableHead>요청</TableHead>
+                                    <TableHead>차감</TableHead>
+                                    <TableHead>거절 사유</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {rows.map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableCell className="text-fg-secondary text-body-sm">
+                                            {formatKstDot(row.requestedAt, true)}
+                                        </TableCell>
+                                        <TableCell>{row.eventTitle}</TableCell>
+                                        <TableCell>
+                                            {/* 이름은 표시용 부가 정보 — 동일인 식별·링크는 userId를 쓴다 (ADR-028) */}
+                                            <Link
+                                                className="text-fg-brand text-body-sm hover:underline"
+                                                to={`/admin/users?detail=${row.userId}`}
+                                            >
+                                                {row.userName ?? row.userId}
+                                            </Link>
+                                            {row.userName && (
+                                                <span className="text-caption text-fg-secondary block">
+                                                    {row.userId}
+                                                </span>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>{STATUS_LABEL[row.status]}</TableCell>
+                                        <TableCell>{row.requestedTicketCount}장</TableCell>
+                                        <TableCell>{row.deductedTicketCount}장</TableCell>
+                                        <TableCell className="text-fg-secondary text-body-sm">
+                                            {row.rejectionReason ?? '—'}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 )}
             </PagedResult>
         </div>

@@ -1,0 +1,181 @@
+{
+    "kind": "GD-328 axe 접근성 기준선 — 배포본 (수정 전 상태)",
+    "checkedAt": "2026-10-23T12:50:20.596408+00:00",
+    "url": "https://getddo-fe.vercel.app",
+    "axeSource": "https://cdn.jsdelivr.net/npm/axe-core@4.10.3/axe.min.js",
+    "pages": {
+        "/login:desktop": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            }
+        },
+        "/login:w320": {
+            "violations": [],
+            "incomplete": [],
+            "counts": {
+                "violations": 0,
+                "incomplete": 0
+            }
+        },
+        "/:desktop:user": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 17,
+                    "targets": [
+                        [
+                            "a[href$=\"missions#today-attendance\"] > .text-body-sm-bold.gap-1.items-center"
+                        ],
+                        [".gap-7\\.5 > .gap-2.flex-col > p:nth-child(1)"],
+                        [".gap-7\\.5 > .gap-2.flex-col > p:nth-child(2)"],
+                        [".gap-2.flex-col > p:nth-child(3)"],
+                        ["p:nth-child(4)"],
+                        ["li:nth-child(1) > p > span:nth-child(1)"],
+                        ["li:nth-child(1) > p > span:nth-child(2)"],
+                        ["li:nth-child(2) > p > span:nth-child(1)"],
+                        ["li:nth-child(2) > p > span:nth-child(2)"],
+                        ["li:nth-child(3) > p > span:nth-child(1)"]
+                    ]
+                },
+                {
+                    "id": "page-has-heading-one",
+                    "impact": "moderate",
+                    "nodes": 1,
+                    "targets": [["html"]]
+                }
+            ],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 16,
+                    "targets": [
+                        [
+                            "div[aria-label=\"1 / 5\"] > .bg-play-yellow.min-h-91\\.25.focus-visible\\:ring-inset > .top-7\\.5.left-0.rounded-l-none"
+                        ],
+                        [
+                            "div[aria-label=\"1 / 5\"] > .bg-play-yellow.min-h-91\\.25.focus-visible\\:ring-inset > .pt-21.pb-8.sm\\:max-w-\\[55\\%\\] > .gap-1.items-center > .text-body-sm-bold.text-fg-primary"
+                        ],
+                        [
+                            "div[aria-label=\"1 / 5\"] > .bg-play-yellow.min-h-91\\.25.focus-visible\\:ring-inset > .pt-21.pb-8.sm\\:max-w-\\[55\\%\\] > .gap-3.flex-col > .text-display.group-hover\\:underline.group-hover\\:underline-offset-4"
+                        ],
+                        [".text-body"],
+                        [".gap-1\\.5.text-body-sm-bold.text-fg-primary"],
+                        [".text-body-bold.tabular-nums.gap-1"],
+                        [".h-5\\.5"],
+                        [".line-clamp-2.text-title-3"],
+                        [".gap-1.flex-col > .text-body-sm.tabular-nums"],
+                        [".line-clamp-2.break-keep.text-body-sm"]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 2,
+                "incomplete": 1
+            }
+        },
+        "/admin/entries:desktop": {
+            "violations": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 20,
+                    "targets": [
+                        ["tr:nth-child(1) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(2) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(3) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(4) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(5) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(6) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(7) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(8) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(9) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(10) > td:nth-child(3) > .hover\\:underline.text-fg-brand"]
+                    ]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            }
+        },
+        "/admin/tickets:desktop": {
+            "violations": [
+                {
+                    "id": "scrollable-region-focusable",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [["div[data-slot=\"table-container\"]"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            }
+        },
+        "/admin/entries:w320": {
+            "violations": [],
+            "incomplete": [
+                {
+                    "id": "color-contrast",
+                    "impact": "serious",
+                    "nodes": 121,
+                    "targets": [
+                        ["th:nth-child(3)"],
+                        ["th:nth-child(4)"],
+                        ["th:nth-child(5)"],
+                        ["th:nth-child(6)"],
+                        ["th:nth-child(7)"],
+                        ["tr:nth-child(1) > td:nth-child(2)"],
+                        ["tr:nth-child(1) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(1) > td:nth-child(3) > .block.text-caption"],
+                        ["tr:nth-child(1) > td:nth-child(4)"],
+                        ["tr:nth-child(1) > td:nth-child(5)"]
+                    ]
+                },
+                {
+                    "id": "link-in-text-block",
+                    "impact": "serious",
+                    "nodes": 20,
+                    "targets": [
+                        ["tr:nth-child(1) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(2) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(3) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(4) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(5) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(6) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(7) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(8) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(9) > td:nth-child(3) > .hover\\:underline.text-fg-brand"],
+                        ["tr:nth-child(10) > td:nth-child(3) > .hover\\:underline.text-fg-brand"]
+                    ]
+                }
+            ],
+            "counts": {
+                "violations": 0,
+                "incomplete": 2
+            }
+        },
+        "/admin/tickets:w320": {
+            "violations": [
+                {
+                    "id": "scrollable-region-focusable",
+                    "impact": "serious",
+                    "nodes": 1,
+                    "targets": [["div[data-slot=\"table-container\"]"]]
+                }
+            ],
+            "incomplete": [],
+            "counts": {
+                "violations": 1,
+                "incomplete": 0
+            }
+        }
+    }
+}
