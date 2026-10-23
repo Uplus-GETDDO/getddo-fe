@@ -1,0 +1,59 @@
+{
+    "kind": "GD-328 관리자 응모 조회·응모권 이력 320px 넘침 수정 검증 — 로컬 빌드 + 실서버 프록시",
+    "checkedAt": "2026-10-23T13:36:47.701098+00:00",
+    "verifierCommit": "4e4b0726d5b8d686097beb197f4bf7b5b0397d0e",
+    "url": "http://localhost:5196",
+    "checks": [
+        {
+            "name": "320px 레이아웃 /admin/entries",
+            "overflowPx": 0,
+            "regionExists": true,
+            "regionScrollable": true,
+            "navExists": true,
+            "navContained": true,
+            "navScrollable": true
+        },
+        {
+            "name": "키보드 스크롤 /admin/entries",
+            "focused": true,
+            "scrollable": true,
+            "scrolled": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/tickets",
+            "overflowPx": 0,
+            "regionExists": true,
+            "regionScrollable": true,
+            "navExists": true,
+            "navContained": true,
+            "navScrollable": true
+        },
+        {
+            "name": "키보드 스크롤 /admin/tickets",
+            "focused": true,
+            "scrollable": true,
+            "scrolled": true
+        },
+        {
+            "name": "320px 레이아웃 /admin/entries?view=participants",
+            "overflowPx": 0,
+            "regionExists": true,
+            "regionScrollable": true,
+            "navExists": true,
+            "navContained": true,
+            "navScrollable": false
+        },
+        {
+            "name": "키보드 스크롤 /admin/entries?view=participants",
+            "focused": true,
+            "scrollable": true,
+            "scrolled": true
+        },
+        {
+            "name": "콘솔 오류",
+            "count": 0,
+            "errors": []
+        }
+    ],
+    "errors": []
+}

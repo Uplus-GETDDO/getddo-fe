@@ -36,7 +36,11 @@ function Pagination({
         'text-fg-secondary hover:bg-surface-sunken disabled:text-fg-disabled disabled:cursor-not-allowed disabled:hover:bg-transparent',
     );
     return (
-        <nav aria-label={label} className={cn('flex items-center gap-1', className)}>
+        // 쪽 수가 많으면 번호 줄이 320px 화면을 밀어낸다 — 좁은 부모 안에서는 줄이 안쪽으로 스크롤한다
+        <nav
+            aria-label={label}
+            className={cn('flex max-w-full items-center gap-1 overflow-x-auto', className)}
+        >
             <button
                 type="button"
                 aria-label="이전 페이지"

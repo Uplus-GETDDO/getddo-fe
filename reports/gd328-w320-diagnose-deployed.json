@@ -1,0 +1,500 @@
+{
+    "/admin/entries": {
+        "vw": 320,
+        "scrollW": 397,
+        "overflowPx": 77,
+        "bad": [
+            {
+                "tag": "div",
+                "cls": "",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 397,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모 조회\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관리\n응모권 관리\n어뷰징 차단",
+                "parents": ["body.", "html."]
+            },
+            {
+                "tag": "div",
+                "cls": "bg-surface-canvas flex min-h-screen",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 397,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모 조회\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관리\n응모권 관리\n어뷰징 차단",
+                "parents": ["div#root.", "body.", "html."]
+            },
+            {
+                "tag": "div",
+                "cls": "flex min-w-0 flex-1 flex-col",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 397,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모 조회\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관리\n응모권 관리\n어뷰징 차단",
+                "parents": [
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root.",
+                    "body.",
+                    "html."
+                ]
+            },
+            {
+                "tag": "main",
+                "cls": "flex-1 p-4 md:pt-5 md:pr-0 md:pl-10",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 397,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "접수·거절된 응모 이력과 이벤트별 참여자를 조회합니다.\n\n응모 이력\n이벤트 참여자\n전체 상",
+                "parents": [
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root.",
+                    "body.",
+                    "html."
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex flex-col gap-6 pr-10 pb-10",
+                "aria": null,
+                "rect": [16, 304],
+                "sw": 381,
+                "cw": 288,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "접수·거절된 응모 이력과 이벤트별 참여자를 조회합니다.\n\n응모 이력\n이벤트 참여자\n전체 상",
+                "parents": [
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root.",
+                    "body."
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 381,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "전체 상태\n전체 상태\n접수\n거절\n응모일 · KST\n~\n검색\n초기화\n응모일\t이벤트\t사용자\t상",
+                "parents": [
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root."
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex flex-col gap-6",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 381,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "전체 상태\n전체 상태\n접수\n거절\n응모일 · KST\n~\n검색\n초기화\n응모일\t이벤트\t사용자\t상",
+                "parents": [
+                    "div#admin-entries-panel-entries.",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen"
+                ]
+            },
+            {
+                "tag": "select",
+                "cls": "",
+                "aria": null,
+                "rect": [15, 16],
+                "sw": 63,
+                "cw": 1,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "전체 상태\n접수\n거절",
+                "parents": [
+                    "form.flex.flex-wrap.items-center",
+                    "div.flex.flex-col.gap-6",
+                    "div#admin-entries-panel-entries.",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5"
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex flex-col gap-4",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 381,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모일\t이벤트\t사용자\t상태\t요청\t차감\t거절 사유\n10.23 15:51\t[알림실패시연-202",
+                "parents": [
+                    "div.flex.flex-col.gap-6",
+                    "div#admin-entries-panel-entries.",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1"
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex items-center justify-between",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 381,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "총 320건\n1\n2\n3\n4\n5\n…\n16",
+                "parents": [
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div#admin-entries-panel-entries.",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5"
+                ]
+            },
+            {
+                "tag": "nav",
+                "cls": "flex items-center gap-1",
+                "aria": "페이지",
+                "rect": [41, 397],
+                "sw": 356,
+                "cw": 356,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "1\n2\n3\n4\n5\n…\n16",
+                "parents": [
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div#admin-entries-panel-entries.",
+                    "div.flex.flex-col.gap-6"
+                ]
+            },
+            {
+                "tag": "button",
+                "cls": "focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:rin",
+                "aria": "16페이지",
+                "rect": [321, 357],
+                "sw": 36,
+                "cw": 36,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "16",
+                "parents": [
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div#admin-entries-panel-entries."
+                ]
+            },
+            {
+                "tag": "button",
+                "cls": "focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:rin",
+                "aria": "다음 페이지",
+                "rect": [361, 397],
+                "sw": 36,
+                "cw": 36,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "",
+                "parents": [
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div#admin-entries-panel-entries."
+                ]
+            },
+            {
+                "tag": "svg",
+                "cls": "",
+                "aria": null,
+                "rect": [371, 387],
+                "sw": 16,
+                "cw": 16,
+                "ox": "hidden",
+                "kind": "overDoc",
+                "text": "",
+                "parents": [
+                    "button.focus-visible:ring-border-focus.flex.size-9",
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6"
+                ]
+            }
+        ]
+    },
+    "/admin/tickets": {
+        "vw": 320,
+        "scrollW": 411,
+        "overflowPx": 91,
+        "bad": [
+            {
+                "tag": "div",
+                "cls": "",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 411,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모권 관리\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관리\n응모권 관리\n어뷰징 차",
+                "parents": ["body.", "html."]
+            },
+            {
+                "tag": "div",
+                "cls": "bg-surface-canvas flex min-h-screen",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 411,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모권 관리\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관리\n응모권 관리\n어뷰징 차",
+                "parents": ["div#root.", "body.", "html."]
+            },
+            {
+                "tag": "div",
+                "cls": "flex min-w-0 flex-1 flex-col",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 411,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모권 관리\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관리\n응모권 관리\n어뷰징 차",
+                "parents": [
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root.",
+                    "body.",
+                    "html."
+                ]
+            },
+            {
+                "tag": "main",
+                "cls": "flex-1 p-4 md:pt-5 md:pr-0 md:pl-10",
+                "aria": null,
+                "rect": [0, 320],
+                "sw": 411,
+                "cw": 320,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모권 지급·사용 내역을 확인합니다.\n\n전체 처리\n전체 처리\n지급\n사용\n반환\n만료\n정정\n처",
+                "parents": [
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root.",
+                    "body.",
+                    "html."
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex flex-col gap-6 pr-10 pb-10",
+                "aria": null,
+                "rect": [16, 304],
+                "sw": 395,
+                "cw": 288,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "응모권 지급·사용 내역을 확인합니다.\n\n전체 처리\n전체 처리\n지급\n사용\n반환\n만료\n정정\n처",
+                "parents": [
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root.",
+                    "body."
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex flex-col gap-6",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 395,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "전체 처리\n전체 처리\n지급\n사용\n반환\n만료\n정정\n처리일 · KST\n~\n검색\n초기화\n처리 시",
+                "parents": [
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen",
+                    "div#root."
+                ]
+            },
+            {
+                "tag": "select",
+                "cls": "",
+                "aria": null,
+                "rect": [15, 16],
+                "sw": 63,
+                "cw": 1,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "전체 처리\n지급\n사용\n반환\n만료\n정정",
+                "parents": [
+                    "form.flex.flex-wrap.items-center",
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1"
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex flex-col gap-4",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 395,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "처리 시각\t사용자\t처리\t등급\t처리 후 상태\t이벤트·미션\n2026. 10. 23. 오후 1:",
+                "parents": [
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1",
+                    "div.bg-surface-canvas.flex.min-h-screen"
+                ]
+            },
+            {
+                "tag": "div",
+                "cls": "flex items-center justify-between",
+                "aria": null,
+                "rect": [16, 264],
+                "sw": 395,
+                "cw": 248,
+                "ox": "visible",
+                "kind": "innerLeak",
+                "text": "총 17252건\n1\n2\n3\n4\n5\n…\n863",
+                "parents": [
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5",
+                    "div.flex.min-w-0.flex-1"
+                ]
+            },
+            {
+                "tag": "nav",
+                "cls": "flex items-center gap-1",
+                "aria": "페이지",
+                "rect": [55, 411],
+                "sw": 356,
+                "cw": 356,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "1\n2\n3\n4\n5\n…\n863",
+                "parents": [
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6",
+                    "main.flex-1.p-4.md:pt-5"
+                ]
+            },
+            {
+                "tag": "span",
+                "cls": "focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:rin",
+                "aria": null,
+                "rect": [295, 331],
+                "sw": 36,
+                "cw": 36,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "…",
+                "parents": [
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6"
+                ]
+            },
+            {
+                "tag": "button",
+                "cls": "focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:rin",
+                "aria": "863페이지",
+                "rect": [335, 371],
+                "sw": 36,
+                "cw": 36,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "863",
+                "parents": [
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6"
+                ]
+            },
+            {
+                "tag": "button",
+                "cls": "focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:rin",
+                "aria": "다음 페이지",
+                "rect": [375, 411],
+                "sw": 36,
+                "cw": 36,
+                "ox": "visible",
+                "kind": "overDoc",
+                "text": "",
+                "parents": [
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6",
+                    "div.flex.flex-col.gap-6"
+                ]
+            },
+            {
+                "tag": "svg",
+                "cls": "",
+                "aria": null,
+                "rect": [385, 401],
+                "sw": 16,
+                "cw": 16,
+                "ox": "hidden",
+                "kind": "overDoc",
+                "text": "",
+                "parents": [
+                    "button.focus-visible:ring-border-focus.flex.size-9",
+                    "nav.flex.items-center.gap-1",
+                    "div.flex.items-center.justify-between",
+                    "div.flex.flex-col.gap-4",
+                    "div.flex.flex-col.gap-6"
+                ]
+            }
+        ]
+    },
+    "/admin/entries?view=participants": {
+        "vw": 320,
+        "scrollW": 320,
+        "overflowPx": 0,
+        "bad": []
+    }
+}

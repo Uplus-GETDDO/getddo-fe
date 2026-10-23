@@ -88,42 +88,51 @@ export function ParticipantsPanel() {
                     onRetry={() => void query.refetch()}
                 >
                     {(rows) => (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>사용자</TableHead>
-                                    <TableHead>참여자 ID</TableHead>
-                                    <TableHead>사용 응모권</TableHead>
-                                    <TableHead>최초 응모</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {rows.map((row) => (
-                                    <TableRow key={row.id}>
-                                        <TableCell>
-                                            <Link
-                                                className="text-fg-brand text-body-sm hover:underline"
-                                                to={`/admin/users?detail=${row.userId}`}
-                                            >
-                                                {row.userName ?? row.userId}
-                                            </Link>
-                                            {row.userName && (
-                                                <span className="text-caption text-fg-secondary block">
-                                                    {row.userId}
-                                                </span>
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="text-fg-secondary text-caption">
-                                            {row.id}
-                                        </TableCell>
-                                        <TableCell>{row.usedTicketCount}장</TableCell>
-                                        <TableCell className="text-fg-secondary text-body-sm">
-                                            {formatKstDot(row.createdAt, true)}
-                                        </TableCell>
+                        // 좁은 화면에서 표가 넘치면 이 안쪽 가로 스크롤로 접근한다 — 스크롤 영역은
+                        // 키보드 진입이 가능해야 하므로 region+tabIndex를 둔다 (GD-316 감사 표와 같은 패턴)
+                        <div
+                            role="region"
+                            aria-label="참여자 표 가로 스크롤"
+                            tabIndex={0}
+                            className="focus-visible:ring-border-focus overflow-x-auto rounded-md focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+                        >
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>사용자</TableHead>
+                                        <TableHead>참여자 ID</TableHead>
+                                        <TableHead>사용 응모권</TableHead>
+                                        <TableHead>최초 응모</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {rows.map((row) => (
+                                        <TableRow key={row.id}>
+                                            <TableCell>
+                                                <Link
+                                                    className="text-fg-brand text-body-sm hover:underline"
+                                                    to={`/admin/users?detail=${row.userId}`}
+                                                >
+                                                    {row.userName ?? row.userId}
+                                                </Link>
+                                                {row.userName && (
+                                                    <span className="text-caption text-fg-secondary block">
+                                                        {row.userId}
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="text-fg-secondary text-caption">
+                                                {row.id}
+                                            </TableCell>
+                                            <TableCell>{row.usedTicketCount}장</TableCell>
+                                            <TableCell className="text-fg-secondary text-body-sm">
+                                                {formatKstDot(row.createdAt, true)}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     )}
                 </PagedResult>
             )}

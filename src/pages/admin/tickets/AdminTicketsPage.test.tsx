@@ -47,6 +47,15 @@ describe('AdminTicketsPage', () => {
         expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
+    it('좁은 화면의 표 가로 스크롤 영역은 키보드로 진입할 수 있다', async () => {
+        renderPage();
+        await screen.findByText(/총 \d+건/);
+        expect(screen.getByRole('region', { name: '응모권 이력 표 가로 스크롤' })).toHaveAttribute(
+            'tabindex',
+            '0',
+        );
+    });
+
     it('?tab=consistency 링크는 탭 파라미터를 무시하고 전체 이력이 열린다', async () => {
         renderPage('/admin/tickets?tab=consistency');
         expect(await screen.findByLabelText('사용자 ID 필터')).toBeInTheDocument();

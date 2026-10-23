@@ -29,4 +29,11 @@ describe('Pagination 쪽 번호 입력', () => {
         rerender(<Pagination page={2} totalPages={5} onPageChange={() => {}} />);
         expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     });
+
+    it('쪽 번호 줄이 부모보다 넓으면 안쪽 가로 스크롤로 담는다', () => {
+        render(<Pagination page={1} totalPages={863} onPageChange={() => {}} />);
+        // jsdom은 실제 레이아웃을 재지 않으므로 스크롤 컨테이너 클래스로 단정한다
+        const nav = screen.getByRole('navigation', { name: '페이지' });
+        expect(nav.className).toContain('overflow-x-auto');
+    });
 });
