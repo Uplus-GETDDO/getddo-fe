@@ -1,6 +1,13 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { afterEach } from 'vitest';
+
+/*
+ * findBy·waitFor의 기본 대기는 1초다. 관리자 라우트는 lazy로 쪼개져 있어 전체 병렬 실행에서
+ * 작업자들이 CPU를 나눠 쓰면 청크 로딩만으로 1초를 넘긴다 — 멀쩡한 테스트가 무작위로 빨갛게
+ * 떴다 재실행하면 통과했다. 기다리는 시간을 늘려도 통과하는 테스트의 속도는 그대로다.
+ */
+configure({ asyncUtilTimeout: 5_000 });
 
 // jsdom에는 ResizeObserver가 없다 — Radix(radio-group 등)가 크기를 재는 훅에서 쓰므로 스텁으로 둔다
 if (typeof globalThis.ResizeObserver === 'undefined') {

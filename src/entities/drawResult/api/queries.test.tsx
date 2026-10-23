@@ -206,6 +206,45 @@ describe('결과 폴링 요청 범위', () => {
         expect(count).toBe(3);
         client.clear();
     });
+    /*
+     * 발표가 끝나면 주기 조회를 멈춘다. 그 상태에서 429가 연달아 와 정책 재시도까지 소진되면
+     * 다시 깨어날 계기가 없어, 서버가 말한 대기가 끝나도 화면이 다시 그려지지 않았다.
+     * 재시도 안내와 꺼진 '다시 불러오기' 버튼이 그대로 남는다 (pollingReadInterval).
+     */
+    it('발표 뒤 429로 재시도까지 소진돼도 대기가 끝나면 스스로 복구한다', async () => {
+        const published = { ...resultData('a', 'PUBLISHED'), isPublished: true };
+        let count = 0;
+        let rateLimited = false;
+        vi.spyOn(apiClient, 'get').mockImplementation(async () => {
+            await Promise.resolve();
+            count++;
+            if (rateLimited) throw new ApiError('LIMIT', '대기', 429, 30);
+            return { data: { success: true, data: published } };
+        });
+        const { client, wrapper } = setup();
+        const { result } = renderHook(() => useEventResults('a'), { wrapper });
+        await tick();
+        expect(count).toBe(1);
+        // 발표가 끝났으므로 주기 조회는 여기서 멈춘다
+        await tick(120_000);
+        expect(count).toBe(1);
+
+        rateLimited = true;
+        act(() => {
+            void result.current.refetch();
+        });
+        await tick();
+        // 첫 실패는 정책이 한 번 받아 주지만 그것도 429라 더 재시도하지 않는다
+        await tick(31_000);
+        expect(count).toBe(3);
+
+        // 남은 대기가 끝나면 멈춰 있던 화면도 깨어나 다시 불러온다
+        rateLimited = false;
+        await tick(31_000);
+        expect(count).toBe(4);
+        expect(client.getQueryData(['draw-results', 'a'])).toEqual(published);
+        client.clear();
+    });
     it('429 90초 대기 중 수동 재시도와 재마운트가 요청을 만들지 않고 정상 복구한다', async () => {
         let count = 0;
         vi.spyOn(apiClient, 'get').mockImplementation(async () => {
