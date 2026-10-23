@@ -39,6 +39,21 @@ describe('EventListCard', () => {
         expect(screen.queryByText('응모 완료')).not.toBeInTheDocument();
     });
 
+    /*
+     * 목록 응답(E01)에만 있는 경품별 당첨 인원 합계 — 이 카드에 띄우려고 추가된 필드다
+     * (getddo-spec 05-api/event.md 「사용자 목록의 당첨 예정 인원 합계 — GD-251」).
+     */
+    it('당첨 예정 인원을 적는다', () => {
+        renderCard({ winnerCount: 1000 });
+        expect(screen.getByText('당첨 1,000명')).toBeInTheDocument();
+    });
+
+    // 서버가 아직 합계를 주지 않는 이벤트까지 '당첨 0명'으로 단정하지 않는다
+    it('인원을 받지 못했으면 줄을 두지 않는다', () => {
+        renderCard({ winnerCount: undefined });
+        expect(screen.queryByText(/당첨/)).not.toBeInTheDocument();
+    });
+
     // 응모 완료는 '내 상태', 상태 칩은 '이벤트 상태'라 서로를 가리지 않고 함께 선다
     it('마감한 이벤트에도 내 응모 여부를 함께 적는다', () => {
         renderCard({ status: 'closed', myEntered: true });

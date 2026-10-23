@@ -6,6 +6,7 @@ import type { Event } from '@entities/event';
 import { EnteredChip } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { formatYmd, kstDayDiff } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 /*
  * 진행 중이 아닌 이벤트의 상태 칩.
@@ -36,7 +37,8 @@ export function EventListCard({ event }: { event: Event }) {
     return (
         <Link
             to={`/events/${event.id}`}
-            className="bg-surface-page border-border-default flex h-70 flex-col overflow-hidden rounded-2xl border shadow-md"
+            // 당첨 인원 줄이 한 줄 늘어 h-70(280)으로는 15px 넘쳤다 — 칸을 맞추려 전부 같이 올린다
+            className="bg-surface-page border-border-default flex h-76 flex-col overflow-hidden rounded-2xl border shadow-md"
         >
             {event.bannerImageUrl ? (
                 <img src={event.bannerImageUrl} alt="" className="h-37.5 w-full object-cover" />
@@ -65,6 +67,16 @@ export function EventListCard({ event }: { event: Event }) {
                     <p className="text-body text-fg-tertiary">
                         {formatYmd(event.startsAt)} ~ {formatYmd(event.endsAt)}
                     </p>
+                    {/*
+                     * 경품별 당첨 인원의 합계 — 목록 응답(E01)에만 있는 값이다 (GD-251).
+                     * 서버가 아직 내려주지 않는 이벤트는 줄을 비워 둔다. 실제 당첨자 수나
+                     * 당첨 확률이 아니라 '몇 명을 뽑는지'라서 '당첨 N명'으로 적는다.
+                     */}
+                    {event.winnerCount != null && (
+                        <p className="text-caption text-fg-tertiary">
+                            당첨 {formatNumber(event.winnerCount)}명
+                        </p>
+                    )}
                 </div>
             </div>
         </Link>
