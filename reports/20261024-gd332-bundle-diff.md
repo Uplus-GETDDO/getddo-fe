@@ -53,3 +53,4 @@
 - `reports/20261024-gd332-bundle-before.json` / `-after.json` — measureGd262Bundle 산출물(파일별 initial 플래그·raw/gzip/brotli)
 - `reports/20261024-gd332-local-lighthouse-login.json` — 로컬 프록시 LH 13.5(render-blocking 목록용)
 - 프로덕션 비교 대상: `reports/20261024-gd330-prod-lighthouse-login-mobile(-r2).json` (unused-js 171~179 KiB, blocking css 38.8 KiB)
+- 머지·배포 후 프로덕션 재측정: `reports/20261024-gd332-prod-verification.md` — perf 중앙값 0.84 → 0.92, FCP·LCP 23~25% 단축, 미사용 JS 170.5 → 103.0 KiB
