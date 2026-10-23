@@ -1,6 +1,6 @@
 {
-    "kind": "GD-330 관리자 목록 화면 320px 넘침·axe 재측정 — 배포본 (GD-328 머지 후)",
-    "checkedAt": "2026-10-23T14:58:13.249076+00:00",
+    "kind": "GD-330 관리자 목록 화면 320px 넘침·axe 재측정 — 로컬 빌드+실서버 API 프록시",
+    "checkedAt": "2026-10-23T15:51:51.618103+00:00",
     "url": "http://localhost:5196",
     "axeSource": "https://cdn.jsdelivr.net/npm/axe-core@4.10.3/axe.min.js",
     "deployAssets": [
@@ -9,7 +9,6 @@
         "date-DRKhs6Yx.js",
         "dialog-OQ9idASd.js",
         "empty-takko-DUxUlIiO.js",
-        "env-Da1NDCnO.js",
         "envelopeSchema-oPwEBMgq.js",
         "errorMessage-D91Qaf00.js",
         "format-DVyL8Otv.js",

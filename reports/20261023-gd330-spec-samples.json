@@ -1,6 +1,6 @@
 {
     "kind": "GD-330 spec 미실측 표본 존재 여부 — 배포본 읽기 전용",
-    "checkedAt": "2026-10-23T14:52:37.637579+00:00",
+    "checkedAt": "2026-10-23T15:51:16.421825+00:00",
     "url": "https://getddo-fe.vercel.app",
     "checks": [
         {
@@ -23,6 +23,8 @@
             "name": "draws 실행 상태 분포",
             "events": 58,
             "eventsScanned": 58,
+            "requestFailures": 0,
+            "scanIncomplete": false,
             "executions": 60,
             "byStatus": {
                 "CONFIRMED": 44,
@@ -51,8 +53,11 @@
         },
         {
             "name": "notifications 목록",
-            "ok": false,
-            "reason": "HTTPError 404"
+            "sample": 20,
+            "total": 23,
+            "hasNextCursor": true,
+            "unreadInSample": 7,
+            "eventLinked": 20
         }
     ]
 }

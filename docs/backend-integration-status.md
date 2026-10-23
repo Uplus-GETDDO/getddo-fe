@@ -134,5 +134,5 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 - **표본 확보**: 응모권 이력에 실물 GOLD 2건·PLATINUM 87건이 존재한다(기존 "플래티넘 0장" 기록 갱신). 연속 출석 정책에 미래 `effectiveMonth` 예약 1건이 있어 AP05/AP06 200의 관측 대상이 생겼다 — 다만 200 측정 자체는 예약 수정 PUT이라 읽기 범위를 넘어 미측정으로 남긴다.
 - **표본 부재 유지**: abuse-case 10건 전부 `triggerScope=USER`(EVENT 기준 사례 없음), 관리자 사용자 전원 `ACTIVE`(INACTIVE 0건), 이벤트 58건의 추첨 실행 60건이 `CONFIRMED 44`·`NO_ENTRIES 16`으로 실패 실행 없음(실패 재개 미검증 유지).
-- **엔드포인트 미배포**: 사용자 알림 목록 `GET /v1/notifications`이 배포 API에서 404 `HTTP-404`를 반환한다 — 알림 통합 관측은 BE 배포 이후로 미룬다.
+- **알림 목록 배포 확인**: 사용자 알림 목록은 FE 계약 경로 `GET /v1/notifications/me`로 200 — 총 23건·표본 20건 전부 이벤트 연결(eventId)·미읽음 7건. 최초 측정의 404는 미사용 경로(`/v1/notifications`)를 호출한 측정 오류였으며, 알림 통합의 목록 관측은 가능해졌다(도착 트리거 연동은 별도 시나리오).
 - 자정/월 경계 적용 관측은 여전히 시점 의존이며, 배너 CRUD는 쓰기 인수(GD-261)에서 이미 실측됐으므로 재측정하지 않았다.

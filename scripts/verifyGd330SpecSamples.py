@@ -129,6 +129,7 @@ try:
     event_ids = [e.get('id') for e in events if e.get('id')]
     statuses = Counter()
     scanned = 0
+    request_failures = 0
     for eid in event_ids:
         try:
             payload = api_get(f'/v1/admin/events/{eid}/draws', ADMIN)
@@ -138,11 +139,13 @@ try:
                 ex = r.get('execution') or {}
                 statuses[ex.get('status') or r.get('status') or 'UNKNOWN'] += 1
         except Exception:
-            statuses['(event draw 조회 실패)'] += 1
+            request_failures += 1
     check(
         'draws 실행 상태 분포',
         events=len(event_ids),
         eventsScanned=scanned,
+        requestFailures=request_failures,
+        scanIncomplete=request_failures > 0,
         executions=sum(statuses.values()),
         byStatus={str(k): v for k, v in statuses.items()},
         failedSpecimen=statuses.get('FAILED', 0) > 0,
@@ -151,10 +154,21 @@ except Exception as e:
     check('draws 실행 상태 분포', ok=False, reason=reason(e))
 
 # 4) 출석 정책 예약 표본 — daily는 effectiveFrom>now, streak은 effectiveMonth>현재월
+def parse_instant(value):
+    # +09:00 같은 오프셋을 문자열 비교하면 순서가 뒤집히므로 instant로 비교한다
+    if not value:
+        return None
+    return datetime.fromisoformat(value.replace('Z', '+00:00'))
+
+
 try:
     now = datetime.now(timezone.utc)
     daily_rows = walk_pages('/v1/admin/policies/attendance/daily', ADMIN)
-    future_daily = sum(1 for r in daily_rows if (r.get('effectiveFrom') or '') > now.isoformat())
+    future_daily = sum(
+        1
+        for r in daily_rows
+        if (instant := parse_instant(r.get('effectiveFrom'))) and instant > now
+    )
     streak_rows = walk_pages('/v1/admin/policies/attendance/streak', ADMIN)
     cur_month = now.strftime('%Y-%m')
     future_streak = sum(1 for r in streak_rows if (r.get('effectiveMonth') or '') > cur_month)
@@ -182,16 +196,17 @@ try:
 except Exception as e:
     check('ticket-histories 등급 분포', ok=False, reason=reason(e))
 
-# 6) 알림 목록 표본 수 — USER 역할로 조회 (관리자 헤더는 권한 밖)
+# 6) 알림 목록 표본 수 — FE가 쓰는 경로는 /v1/notifications/me (cursor 페이징)
 try:
-    payload = api_get('/v1/notifications?page=1&size=20', USER)
+    payload = api_get('/v1/notifications/me?size=20', USER)
     rows, data = items(payload)
-    types = Counter(r.get('type') for r in rows)
     check(
         'notifications 목록',
         sample=len(rows),
         total=data.get('totalElements'),
-        byType={str(k): v for k, v in types.items()},
+        hasNextCursor=bool(data.get('nextCursor')),
+        unreadInSample=sum(1 for r in rows if r.get('isRead') is False),
+        eventLinked=sum(1 for r in rows if r.get('eventId')),
     )
 except Exception as e:
     check('notifications 목록', ok=False, reason=reason(e))

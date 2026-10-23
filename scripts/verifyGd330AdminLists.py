@@ -1,7 +1,9 @@
-"""GD-330: 관리자 목록 화면 320px 넘침·axe 재측정 — 배포본.
+"""GD-330: 관리자 목록 화면 320px 넘침·axe 재측정 — 로컬 빌드+실서버 API 프록시.
 
 GD-328의 공용 Pagination 수정(max-w-full overflow-x-auto)이 entries·tickets 외의
-관리자 목록 화면도 보호하는지 배포본에서 확인한다. 각 관리자 경로에서
+관리자 목록 화면도 보호하는지 확인한다. 대상은 `serveLocalRealApi.mjs`로 서빙한
+로컬 dist(VITE_ENABLE_MSW=false, 배포 env JSON 베이크)이며 API만 실서버로 전달된다 —
+결과는 로컬 프론트엔드 측정이지 배포본 검증이 아니다. 각 관리자 경로에서
   - w320: documentElement 가로 넘침 px, 표 스크롤 region, 페이지네이션 nav 포함 여부
   - w320+desktop: axe violations/incomplete (scrollable-region-focusable·color-contrast 요약)
   - 콘솔 오류 수집
@@ -61,7 +63,12 @@ def fetch(url):
 
 
 html = fetch(BASE + '/')
-assets = set(re.findall(r'/assets/([A-Za-z0-9_.-]+\.(?:js|css))', html))
+# env 청크는 요청마다 이름이 달라질 수 있어 최신성 비교에서 제외한다
+assets = {
+    a
+    for a in re.findall(r'/assets/([A-Za-z0-9_.-]+\.(?:js|css))', html)
+    if not a.startswith('env-')
+}
 env_match = re.search(r'/assets/(env-[^"]+\.js)', html)
 assert env_match, 'env 청크를 찾지 못했다'
 env_src = fetch(f'{BASE}/assets/{env_match.group(1)}')
@@ -76,7 +83,7 @@ print('deploy assets:', sorted(assets))
 print('changedSinceBaseline:', changed)
 
 evidence = {
-    'kind': 'GD-330 관리자 목록 화면 320px 넘침·axe 재측정 — 배포본 (GD-328 머지 후)',
+    'kind': 'GD-330 관리자 목록 화면 320px 넘침·axe 재측정 — 로컬 빌드+실서버 API 프록시',
     'checkedAt': datetime.now(timezone.utc).isoformat(),
     'url': BASE,
     'axeSource': AXE_URL,
