@@ -86,10 +86,20 @@ export function pollingReadInterval(
     query: { state: { error: unknown } },
     active = true,
 ): number | false {
-    if (!active || stopsPolling(query.state.error)) return false;
+    if (stopsPolling(query.state.error)) return false;
     const retryDelay = getPollingRetryDelay(query.state.error);
-    // 잘린 단계가 만료되면 가드가 같은 대기 오류를 다시 던져 남은 기한을 재계산한다
-    return retryDelay ? boundedPollingDelay(retryDelay) : queryPresets.realtime.refetchInterval;
+    /*
+     * 대기 중이면 active가 꺼져 있어도 남은 기한만큼 한 번 더 깨운다.
+     *
+     * 재시도 안내와 버튼은 그릴 때마다 남은 대기 시간을 다시 재서 정해진다. 주기 조회를 멈춘
+     * 화면(발표가 끝난 겟또타임 상세 등)은 이 깨우기가 없으면 다시 그릴 계기가 없어, 대기가
+     * 끝나도 '다시 불러오기'가 꺼진 채로 남는다.
+     *
+     * 잘린 단계가 만료되면 가드가 같은 대기 오류를 다시 던져 남은 기한을 재계산한다 —
+     * 기한 전에는 요청이 나가지 않는다.
+     */
+    if (retryDelay) return boundedPollingDelay(retryDelay);
+    return active ? queryPresets.realtime.refetchInterval : false;
 }
 
 /** refetch·재마운트·무효화 경로도 같은 캐시 오류를 검사해 서버 대기 시간을 우회하지 않는다. */
