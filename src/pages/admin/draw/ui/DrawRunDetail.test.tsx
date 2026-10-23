@@ -1,8 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
+import { useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { server } from '@mocks/server';
 import { env } from '@shared/config/env';
@@ -13,6 +15,57 @@ const api = (path: string) => `${env.apiBaseUrl}${path}`;
 
 // 미공개·확정된 최초 실행 — mocks/handlers/draw.ts의 사전 공개 시나리오 이벤트
 const PRE_PUBLICATION_RUN_ID = 'drw-20000000-0000-4000-8000-000000000905-r1';
+
+const scrollIntoView = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollIntoView');
+beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+        configurable: true,
+        value: vi.fn(),
+    });
+});
+afterAll(() => {
+    if (scrollIntoView) {
+        Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', scrollIntoView);
+    } else {
+        Reflect.deleteProperty(HTMLElement.prototype, 'scrollIntoView');
+    }
+});
+
+function FocusReturnHarness() {
+    const [open, setOpen] = useState(false);
+    return (
+        <>
+            <button onClick={() => setOpen(true)}>실행 상세 열기</button>
+            <DrawRunDetail
+                drawId={PRE_PUBLICATION_RUN_ID}
+                open={open}
+                onOpenChange={setOpen}
+                eventCanceled={false}
+                eventReady={true}
+                onRunCreated={() => {}}
+            />
+        </>
+    );
+}
+
+describe('실행 상세 모달 포커스', () => {
+    it('Escape로 닫으면 상세를 연 버튼으로 포커스를 돌려준다', async () => {
+        const user = userEvent.setup();
+        const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+        render(
+            <QueryClientProvider client={client}>
+                <MemoryRouter>
+                    <FocusReturnHarness />
+                </MemoryRouter>
+            </QueryClientProvider>,
+        );
+        const trigger = screen.getByRole('button', { name: '실행 상세 열기' });
+        await user.click(trigger);
+        await screen.findByRole('dialog');
+        await user.keyboard('{Escape}');
+        await waitFor(() => expect(trigger).toHaveFocus());
+    });
+});
 
 function renderDetail(drawId: string) {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });

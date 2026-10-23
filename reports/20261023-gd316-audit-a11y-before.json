@@ -1,0 +1,285 @@
+{
+    "base": "http://localhost:5199",
+    "eventId": "20000000-0000-4000-8000-000000000904",
+    "target": "src/pages/admin/draw/ui/DrawOperationsSection.tsx 실행 감사 표",
+    "checks": {
+        "keyboard": {
+            "tabSequence": [
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "Close",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "재추첨 시작·재개",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": false,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "추첨 결과",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "정합성 검증",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "후보 명단",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "운영 이력",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "Close",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "재추첨 시작·재개",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": false,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "추첨 결과",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "정합성 검증",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "후보 명단",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "운영 이력",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "Close",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "재추첨 시작·재개",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": false,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "추첨 결과",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "정합성 검증",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "후보 명단",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "운영 이력",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "1",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "Close",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "재추첨 시작·재개",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": false,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "추첨 결과",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                },
+                {
+                    "tag": "button",
+                    "text": "정합성 검증",
+                    "outline": "none 1px",
+                    "boxShadow": true,
+                    "visible": true,
+                    "insideDialog": true
+                }
+            ],
+            "focusTrapOk": true,
+            "escapeReturn": {
+                "tag": "body",
+                "text": "U + GETDDO\n대시보드\n사용자 조회\n응모 조회\n이벤트 관리\n추첨 관",
+                "outline": "none 3px",
+                "boxShadow": false,
+                "visible": true,
+                "insideDialog": false
+            },
+            "allFocusVisible": false,
+            "allFocusRinged": true,
+            "escapeReturnOk": false
+        },
+        "viewport320": {
+            "viewportW": 320,
+            "docScrollW": 320,
+            "pageOverflowX": false,
+            "dialogOverflowX": false,
+            "containerScrollable": true,
+            "clippedCells": [],
+            "overlappingRows": [],
+            "auditRows": 1,
+            "screenshot": "reports/20261023-gd316-audit-a11y-w320.png"
+        },
+        "zoom200": {
+            "viewportW": 640,
+            "docScrollW": 640,
+            "pageOverflowX": false,
+            "dialogOverflowX": false,
+            "containerScrollable": false,
+            "clippedCells": [],
+            "overlappingRows": [],
+            "auditRows": 1,
+            "screenshot": "reports/20261023-gd316-audit-a11y-zoom200.png"
+        }
+    }
+}
