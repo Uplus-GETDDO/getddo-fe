@@ -1,6 +1,6 @@
 # CONTEXT.md — 도메인 맥락과 연동 경계
 
-기준일은 2026-10-22이다. FE 원격 dev `5b2bdb2`(GD-286 PR #126까지 머지)와 공용 명세 main `bb3de26`을 대조했다. 이 문서는 FE 코드의 위치와 주의사항을 설명하며, 공용 정책·API 계약을 새로 정의하지 않는다.
+기준일은 2026-10-23이다. FE 원격 dev `52eca83`(GD-325 PR #146까지 머지)와 공용 명세 main `6aa18ed`를 대조했다. 이 문서는 FE 코드의 위치와 주의사항을 설명하며, 공용 정책·API 계약을 새로 정의하지 않는다.
 
 - 공용 정책: [기능 요구사항](../../getddo-spec/00-requirements/functional-requirements.md), [구현 범위](../../getddo-spec/00-requirements/scope.md), [미결정 사항](../../getddo-spec/00-requirements/pending-decisions.md).
 - 코드 규칙: [AGENTS.md](../AGENTS.md). 기획 원문과 페르소나: [product-context.md](product-context.md).
@@ -21,11 +21,11 @@
 - 추첨·공개·본인 결과: `entities/drawResult`, `entities/winner`, `features/runDraw`, `features/runRedraw`, `pages/admin/draw`. 공개 조회와 관리자 추첨 연동 상태는 다르다.
 - 출석: `entities/attendance`, `features/checkAttendance`, `pages/missionList`. 일일 출석과 월간 연속 출석은 이벤트와 독립적이다.
 - 미션: `entities/mission`, `features/submitMission`, `pages/missionList`, `pages/missionDetail`. 서비스 공통 설문·퀴즈이며 사용자당 미션별 보상은 한 번이다.
-- 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. GD-257에서 네 게임의 G01~G05·서버 seed·입력 기록·누적 통계·보상을 연결하고 배포 게임 목업을 해제했다. playId/토큰/원본 재시도는 메모리에 보존하며 새로고침 복구는 지원하지 않는다. 관리자 AG·변경/예약은 미확정이다. [L4 인계](superpowers/plans/L4-handoff.md)에서 실제 API·브라우저·목업 증거와 인수 잔여를 구분한다.
+- 게임: `entities/game`, `features/playGame`, `pages/gameDetail`, `widgets/gameRail`. GD-257에서 네 게임의 G01~G05·서버 seed·입력 기록·누적 통계·보상을 연결하고 배포 게임 목업을 해제했다. playId/토큰/원본 재시도는 메모리에 보존하며 새로고침 복구는 지원하지 않는다. 관리자 AG·변경/예약은 2026-10-22 BE 확인으로 제공 범위 제외가 확정됐다. [L4 인계](superpowers/plans/L4-handoff.md)에서 실제 API·브라우저·목업 증거와 인수 잔여를 구분한다.
 - 알림: `entities/notification`, `features/markNotificationRead`, `widgets/notificationBell`. 관리자 운영은 `entities/adminNotification`, `features/retryAdminNotification`, `pages/admin/notifications`다.
 - 배너: `entities/banner`, `features/manageBanner`, `pages/admin/banners`. GD-255에서 홈 최상단 `widgets/bannerSlider`를 B01 관리 이미지 배너로 연결했다. 겟또타임 안내·현황은 아래 기존 `TicketEventSection`이 맡는다. 같은 세션의 관리 변경은 B01·AB01 무효화, 다른 세션은 홈 재진입·창 재포커스·재조회로 반영한다.
 - 사용자: `entities/user`, `features/switchVirtualUser`, `pages/login`, `pages/admin/virtualUsers`. 시연 계정 목록은 서버 API가 아니라 `VITE_VIRTUAL_USERS_JSON` 설정이 공급한다(`model/virtualUsers.ts`). AO01/AO02 DB 사용자 조회와는 별개다.
-- 지급 전 차단: `entities/abuseCase`, `pages/admin/abuseCases`. AR01/AR02 조회 계약은 2026-10-21 채택됐고(GD-141) BE 구현·배포는 미확인이라 실서버 404를 그대로 받는다 — 목업 성공으로 가리지 않는다. FE는 GD-286(PR #126)에서 스키마·화면·목업을 채택 계약으로 정렬했다.
+- 지급 전 차단: `entities/abuseCase`, `pages/admin/abuseCases`. AR01/AR02는 계약 채택(GD-141)·FE 정렬(GD-286)·배포 후 실측(GD-317)까지 완료했다 — 목록·상세+evidence·필터·정렬·오류 코드가 배포본에서 계약대로 동작한다. `triggerScope=EVENT`·`eventId` 연결 표본은 실데이터에 없어 미관측이다.
 - 공통 감사: 전용 조회 API·화면은 범위 밖이며 GD-244에서 FE 조회 코드와 목업을 제거했다. 추첨 실패·실행 감사·공개 변경 이력은 추첨 업무에 속하므로 유지한다.
 
 ## 이벤트 상태와 결과 공개
@@ -69,16 +69,17 @@
 이 절은 코드 기준 현황이다. API 호출 코드가 있다는 사실은 배포·쓰기·권한·통합 검증 완료를 의미하지 않는다.
 
 - `env.enableMsw`가 true일 때만 `app/main.tsx`가 브라우저 목업을 시작한다. 로컬 개발은 전체 `handlers`를 등록한다. 배포 빌드는 `vercel.json`의 `VITE_ENABLE_MSW=false`로 목업이 시작되지 않고, 부팅 시 과거에 설치된 우리 앱의 `mockServiceWorker.js`만 해제한다(`app/config/serviceWorkerCleanup.ts`). GD-260에서 `hybridHandlers` 구분을 제거했다.
-- 배포에서 업무 가로채기는 없다. `/admin/abuse-cases`는 실서버 404를 그대로 표시하며 AR01/AR02 배포까지 목업 성공으로 가리지 않는다.
+- 배포에서 업무 가로채기는 없다. `/admin/abuse-cases`는 GD-317에서 실서버 200·계약 일치를 확인했다.
 - 알림 N01~N03·AN01~AN05, 사용자 결과 E08/E09, 관리자 배너 AB01~AB05, 관리자 응모권 AO05에는 실서버로 전달하는 호출 코드가 있다. 관리자 응모권 AO03·AO04·AO08·AO09(지급·정합성·반환 조회)는 GD-293에서 화면과 호출 코드를 걷었다 — 계약은 채택 상태로 남는다. 특히 관리자 알림은 이미 계약을 반영했으므로 신규 구현으로 중복 등록하지 않는다.
 - 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 GD-257에서 연결했다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. E01 목록의 `winnerCount`는 GD-251 계약으로 경품 인원 합계다 — 실제 당첨자 수·응모자 수·당첨 확률이 아니다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
 - 게임은 **색깔·타꼬런·타이밍·주문 네 종류의 계약이 채택**됐다. 타이밍 50점·주문 18점 기준은 2026-10-18 결정이다. 과거 문서의 “규칙 미확정”을 유지하지 않는다. 다만 등록·배포·FE 연동 여부는 별도다.
 - FE 게임은 G01/G02/G05 모델을 분리하고 G03 시작→G04 원본 제출을 사용한다. `title/dailyLimit/remainingPlays`·단일 `/play`를 제거했다. G05의 `validPlayCount`는 누적 횟수이며 “오늘 플레이”가 아니다. 네 게임의 현재 BE 배포와 로컬 변경본의 실연동은 확인했고, FE 변경본의 실제 배포 인수는 남아 있다.
-- GD-259는 관리자 출석 AP01~AP04를 `/admin/attendance-policies`, 미션 AM01~AM04를 `/admin/missions`에 연결했다. AP01/AP03·AM01/AM02/AM04의 실제 200·Zod·일반 사용자 403을 확인했다. AP02/AP04·AM03의 격리 실서버 쓰기는 미검증이며 목업/브라우저 주입과 구분한다. AO06/AO07은 기존 GD-250 구현을 유지한다. GD-282(PR #121)에서 예약 정책 수정 AP05·AP06, 설문 자유 서술 답변 AM05, 미션 `ENDED` 상태 표시(GD-269)를 연결했고, 배포 후 실측(AM05 200·AP05/AP06 200/409·ENDED 반영)은 잔여다. [L5 인계](superpowers/plans/L5-handoff.md)에 경계·증거·L6 잔여를 기록한다.
-- 관리자 게임·보상 조건 관리는 기능 요구사항에 포함되지만 AG01~AG03과 규칙 변경·비활성 전환·보상 조건 예약의 상세 계약은 제안/후속 상태다. 네 게임의 사용자 계약 채택을 관리자 운영 계약 채택으로 확대하지 않는다. 로드맵 L4에서 계약·범위를 확정하고 완료 조건에 반영한다.
-- AR01/AR02는 채택 계약의 `userNickname`·`eventTitle`·`detectionReason`·`blockedAt`/`blockedUntil`과 `evidence` 객체 구조를 따른다. evidence 세부 필드명과 업무 오류 번호는 검토 대기이며 기존 목업의 구 시연 필드를 계약으로 유지하지 않는다. 응모 요청 반복 초과 시 사용자별 10분 일시 차단(GD-141)이 적용되고, 차단 중 응모 거절은 기존 429 `COMMON-006`과 `Retry-After`(남은 차단 초)를 쓴다.
+- GD-259는 관리자 출석 AP01~AP04를 `/admin/attendance-policies`, 미션 AM01~AM04를 `/admin/missions`에 연결했다. AP01/AP03·AM01/AM02/AM04의 실제 200·Zod·일반 사용자 403을 확인했다. AP02/AP04·AM03의 격리 실서버 쓰기는 GD-261에서 실측했으나 성공 생성분이 운영에 잔존한다(정리 방법 확인 중). AO06/AO07은 기존 GD-250 구현을 유지한다. GD-282(PR #121)에서 예약 정책 수정 AP05·AP06, 설문 자유 서술 답변 AM05, 미션 `ENDED` 상태 표시(GD-269)를 연결했고, 배포 후 실측은 GD-296에서 AM05 200·`ENDED` 반영·AP05/AP06 409 `ATTENDANCE-007` 거절까지 확인했다 — AP05·AP06 200 성공 표본만 격리 데이터 부재로 잔여다. [L5 인계](superpowers/plans/L5-handoff.md)에 경계·증거·L6 잔여를 기록한다.
+- 관리자 게임·보상 조건 관리는 2026-10-22 BE 확인으로 제공 범위에서 제외가 확정됐다 — AG01~AG03과 규칙 변경·비활성 전환·보상 조건 예약은 구현하지 않는다.
+- AR01/AR02는 채택 계약의 `userNickname`·`eventTitle`·`detectionReason`·`blockedAt`/`blockedUntil`과 `evidence` 객체 구조를 따른다. evidence 세부 필드(`ruleVersion`·`triggerScope`·`requestLimit`·`rejectedCount`·`rejectionThreshold` 등)와 업무 오류(`ABUSE-001` 403·`ABUSE-002` 404)는 2026-10-22 확정·배포됐고 GD-317 실측으로 대조했다. 응모 요청 반복 초과 시 사용자별 10분 일시 차단(GD-141)이 적용되고, 차단 중 응모 거절은 기존 429 `COMMON-006`과 `Retry-After`(남은 차단 초)를 쓴다.
+- 플래티넘(`PLATINUM`) 지급 활성화는 BE `main`에 병합됐다(GD-229, 확률 기본값 0.02%; GD-228 등급·응모 경로, GD-230 추첨 가중치·스냅샷 호환). 실서버 플래티넘 표본이 없어 지급·응모·추첨·화면 연동 검증은 미실시다.
 - `/virtual-users` HTTP 경로는 GD-260에서 제거했다. 시연 계정은 `VITE_VIRTUAL_USERS_JSON`을 `entities/user/model/virtualUsers.ts`가 빌드 설정에서 직접 읽는다 — 미설정·형식 오류는 로그인 화면의 명시 안내로 표시하고 샘플로 대체하지 않는다. `id`는 실서버 DB 등록 UUID여야 한다. AO01을 일반 사용자 로그인용으로 호출하지 않는다.
-- 배너 이미지 업로드·형식·용량, 차단 상세의 evidence 세부 필드·오류 번호, 서버 시계 변경 API를 임의로 확정하지 않는다. 관리자 응답의 이름 필드(ADR-028)는 확정 계약이지만 BE 구현·배포 전이다 — 스키마에는 선택 필드로 받고 ID가 null이면 이름도 null로 표시한다. 미확정 사항과 실행 선행 조건은 [연동 현황](backend-integration-status.md)에 모은다.
+- 배너 이미지 업로드·형식·용량, 서버 시계 변경 API를 임의로 확정하지 않는다. 관리자 응답의 이름 필드(ADR-028)는 확정 계약이며 FE는 GD-287(PR #124)에서 스키마 선택 필드·null 표시로 반영했다 — ID가 null이면 이름도 null로 표시한다. BE는 GD-284로 `main`에 병합됐고 배포 서버 응답 확인은 별도다(명세 `common.md`·`drawing.md`·`notification.md`에는 구현 예정 표기가 남아 있다). 미확정 사항과 실행 선행 조건은 [연동 현황](backend-integration-status.md)에 모은다.
 
 ## 비공개·역할·시연
 
