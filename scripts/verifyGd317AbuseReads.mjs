@@ -55,7 +55,7 @@ const save = () => fs.writeFileSync(output, JSON.stringify(evidence, null, 2) + 
 const push = (check) => {
     evidence.checks.push(check);
     save();
-    console.log(JSON.stringify(check, null, 2));
+    process.stdout.write(`${JSON.stringify(check, null, 2)}\n`);
 };
 
 // 읽기 전용 — method는 GET으로 고정해 쓰기 오실행을 구조적으로 막는다.
@@ -109,18 +109,27 @@ function zodCheck(schema, json) {
     }
 }
 
-// 증거에는 호출 메타와 정제된 필드만 남긴다 — 원시 응답(json/body/text)은 저장하지 않는다.
-const meta = ({ json, body, text, ...rest }) => rest;
+// 실서버 데이터라도 커밋되는 증거에는 계정 식별 정보를 남기지 않는다.
+const REDACTED = '[REDACTED]';
+const redactUserIdPath = (requestPath) =>
+    requestPath.replace(/([?&]userId=)[^&]+/g, `$1${encodeURIComponent(REDACTED)}`);
 
-// 목록 항목은 계약 대조에 필요한 필드와 존재 여부만 남긴다 — 닉네임 원문은 기록하지 않는다.
+// 증거에는 호출 메타와 정제된 필드만 남긴다 — 원시 응답(json/body/text)은 저장하지 않고,
+// 경로의 userId 쿼리 값도 마스킹한다.
+const meta = ({ json, body, text, path: requestPath, ...rest }) => ({
+    ...rest,
+    path: redactUserIdPath(requestPath),
+});
+
+// 목록 항목은 계약 대조에 필요한 필드와 존재 여부만 남긴다 — userId·사유 원문과 닉네임은 기록하지 않는다.
 const summarizeItem = (item) => ({
     id: item.id,
-    userId: item.userId,
+    userId: REDACTED,
     eventId: item.eventId,
     eventTitle: item.eventTitle,
     sourceType: item.sourceType,
     detectionType: item.detectionType,
-    detectionReason: item.detectionReason,
+    detectionReason: REDACTED,
     blockedAt: item.blockedAt,
     blockedUntil: item.blockedUntil,
     hasUserNickname: typeof item.userNickname === 'string' && item.userNickname.length > 0,
@@ -178,7 +187,7 @@ async function run() {
             ...meta(byUser),
             name: 'AR01 userId 필터',
             zod: zodCheck(envelopeSchema(pageSchema(abuseCase.abuseCaseSchema)), byUser.json),
-            filteredUserId: first.userId,
+            filteredUserId: REDACTED,
             totalElements: byUser.body?.totalElements ?? null,
             allMatchUser: userItems.every((i) => i.userId === first.userId),
         });
@@ -234,6 +243,13 @@ async function run() {
     const badUuid = await get('/admin/abuse-cases?page=1&size=20&userId=not-a-uuid');
     push({
         name: 'AR01 입력 오류 대조',
+        pass:
+            badSize.status === 400 &&
+            badSize.envelopeCode === 'COMMON-002' &&
+            badSource.status === 400 &&
+            badSource.envelopeCode === 'COMMON-002' &&
+            badUuid.status === 400 &&
+            badUuid.envelopeCode === 'COMMON-005',
         size0: { status: badSize.status, code: badSize.envelopeCode },
         sourceTypeGame: { status: badSource.status, code: badSource.envelopeCode },
         userIdMalformed: { status: badUuid.status, code: badUuid.envelopeCode },
@@ -259,7 +275,10 @@ async function run() {
                       requestLimit: d.evidence.requestLimit,
                       rejectedCount: d.evidence.rejectedCount,
                       rejectionThreshold: d.evidence.rejectionThreshold,
-                      thresholdReached: d.evidence.rejectedCount >= d.evidence.rejectionThreshold,
+                      // 응답 필드와 파생 계산을 구분해 기록한다 — 계약 외 필드라 없으면 null.
+                      thresholdReached: d.evidence.thresholdReached ?? null,
+                      derivedThresholdReached:
+                          d.evidence.rejectedCount >= d.evidence.rejectionThreshold,
                   }
                 : null,
         });
@@ -270,6 +289,11 @@ async function run() {
     const malformed = await get('/admin/abuse-cases/not-a-uuid');
     push({
         name: 'AR02 오류 대조',
+        pass:
+            missing.status === 404 &&
+            missing.envelopeCode === 'ABUSE-002' &&
+            malformed.status === 400 &&
+            malformed.envelopeCode === 'COMMON-005',
         missing: {
             status: missing.status,
             code: missing.envelopeCode,
@@ -287,6 +311,13 @@ async function run() {
     const noHeader = await get('/admin/abuse-cases?page=1&size=5', { role: 'NONE' });
     push({
         name: '권한 대조 — ABUSE-001·USER-003',
+        pass:
+            userList.status === 403 &&
+            userList.envelopeCode === 'ABUSE-001' &&
+            userDetail.status === 403 &&
+            userDetail.envelopeCode === 'ABUSE-001' &&
+            noHeader.status === 401 &&
+            noHeader.envelopeCode === 'USER-003',
         userList: { status: userList.status, code: userList.envelopeCode },
         userDetail: { status: userDetail.status, code: userDetail.envelopeCode },
         noHeader: { status: noHeader.status, code: noHeader.envelopeCode },
@@ -295,4 +326,10 @@ async function run() {
 }
 
 await run();
-console.log(`\n증거 기록: ${output} (${evidence.checks.length} checks)`);
+// 점검 실패(pass=false)나 Zod 실패(fail:…)가 하나라도 있으면 비정상 종료로 드러낸다.
+process.exitCode = evidence.checks.some(
+    (check) => check.pass === false || String(check.zod ?? '').startsWith('fail'),
+)
+    ? 1
+    : 0;
+process.stdout.write(`\n증거 기록: ${output} (${evidence.checks.length} checks)\n`);

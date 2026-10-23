@@ -1,30 +1,12 @@
 {
     "kind": "GD-317 AR01/AR02 배포 화면 검증 — 실제 배포 관측",
-    "checkedAt": "2026-10-23T01:27:36.883229+00:00",
-    "verifierCommit": "b4d6fa477519ec974a6bf3ea468248b943076435",
+    "checkedAt": "2026-10-23T01:58:28.115063+00:00",
+    "verifierCommit": "7d1fd08c57a88142694d6b78078e731531a011c1",
     "url": "https://getddo-fe.vercel.app",
     "requests": [
         {
             "method": "GET",
-            "path": "/v1/events",
-            "status": 200,
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
             "path": "/v1/notifications/me",
-            "status": 200,
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/attendances/today",
-            "status": 200,
-            "x-user-role": "ADMIN"
-        },
-        {
-            "method": "GET",
-            "path": "/v1/games",
             "status": 200,
             "x-user-role": "ADMIN"
         },
@@ -36,7 +18,19 @@
         },
         {
             "method": "GET",
-            "path": "/v1/missions",
+            "path": "/v1/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
             "status": 200,
             "x-user-role": "ADMIN"
         },
@@ -54,13 +48,25 @@
         },
         {
             "method": "GET",
-            "path": "/v1/events",
+            "path": "/v1/missions",
             "status": 200,
             "x-user-role": "ADMIN"
         },
         {
             "method": "GET",
             "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
             "status": 200,
             "x-user-role": "ADMIN"
         },
@@ -73,6 +79,36 @@
         {
             "method": "GET",
             "path": "/v1/events/01a15c79-56e3-74bc-8207-e3d4c5a286c6",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
             "status": 200,
             "x-user-role": "ADMIN"
         },
@@ -264,6 +300,12 @@
         },
         {
             "method": "GET",
+            "path": "/v1/admin/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
             "path": "/v1/admin/abuse-cases",
             "status": 200,
             "x-user-role": "ADMIN"
@@ -289,7 +331,7 @@
         },
         {
             "name": "첫 행 표시 필드",
-            "text": "2026. 10. 21. 오후 9:10\t2026. 10. 21. 오후 9:20\t이벤트 응모\t | 테스트사용자10 | 01a143a8-b6de-7432-8644-5a4d52c94241 | \t-\t | 응모 요청 한도 초과가 반복되어 일시 차단되었습니다. | \t상세",
+            "text": "첫 행 표시됨",
             "hasReason": true
         },
         {
@@ -318,14 +360,21 @@
             "name": "userId 필터 적용",
             "before": 10,
             "after": 1,
-            "narrowed": true
+            "narrowed": true,
+            "user_ids_match": true,
+            "row_count_match": true
         },
         {
             "name": "필터 초기화 복귀",
             "rows": 10
         },
         {
-            "name": "320px 가로 넘침",
+            "name": "320px 가로 넘침 /admin/events",
+            "overflowPx": 109,
+            "ok": false
+        },
+        {
+            "name": "320px 가로 넘침 /admin/abuse-cases",
             "overflowPx": 109,
             "ok": false
         },

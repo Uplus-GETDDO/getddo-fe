@@ -74,6 +74,12 @@ ADMIN = next((u for u in USERS if u['role'] == 'ADMIN'), None)
 assert ADMIN, '배포 JSON에 ADMIN 계정이 없다'
 
 
+def record_console(msg):
+    # pageerror는 미처리 예외만 잡는다 — throw 없이 찍히는 console.error도 함께 기록한다
+    if msg.type == 'error':
+        evidence['errors'].append(f'console.error: {msg.text}')
+
+
 def record_response(response):
     request = response.request
     if '/api/' not in request.url:
@@ -96,6 +102,7 @@ with sync_playwright() as p:
     page = context.new_page()
     page.set_default_timeout(20000)
     page.on('pageerror', lambda e: evidence['errors'].append(str(e)))
+    page.on('console', record_console)
     page.on('response', record_response)
 
     # 로그인 — 번들 계정 목록에서 ADMIN을 선택한다
@@ -125,7 +132,8 @@ with sync_playwright() as p:
     first_text = rows.first.inner_text()
     check(
         '첫 행 표시 필드',
-        text=first_text.replace('\n', ' | ')[:300],
+        # 행 텍스트에 닉네임·UUID·사유가 섞여 있어 원문은 커밋되는 증거에 남기지 않는다
+        text='첫 행 표시됨',
         hasReason='응모 요청 한도 초과' in first_text,
     )
 
@@ -169,25 +177,47 @@ with sync_playwright() as p:
     page.get_by_role('button', name='검색', exact=True).click()
     page.wait_for_timeout(1500)
     filtered_rows = page.locator('table tbody tr').count()
+    # 행 수만 보면 다른 사용자 행도 성공으로 기록될 수 있다 — 필터된 API 결과의
+    # userId를 메모리에서 대조하고, 화면 행 수가 API 결과 수와 같은지도 함께 본다.
+    # UUID 자체는 증거에 남기지 않고 일치 여부만 기록한다.
+    filtered_res = json.loads(
+        urllib.request.urlopen(
+            urllib.request.Request(
+                f'{BASE}/api/v1/admin/abuse-cases?page=1&size=50&userId={first_user}',
+                headers={'X-User-ID': ADMIN['id'], 'X-User-Role': 'ADMIN'},
+            ),
+            timeout=20,
+        ).read()
+    )
+    filtered_items = filtered_res['data']['items']
+    user_ids_match = bool(filtered_items) and all(
+        i['userId'] == first_user for i in filtered_items
+    )
     check(
         'userId 필터 적용',
         before=before_rows,
         after=filtered_rows,
         narrowed=0 < filtered_rows <= before_rows,
+        user_ids_match=user_ids_match,
+        row_count_match=filtered_rows == len(filtered_items),
     )
+    assert user_ids_match and filtered_rows == len(
+        filtered_items
+    ), 'userId 필터 결과가 다른 사용자를 포함하거나 화면 행 수와 다르다'
     page.screenshot(path=str(IMAGES / 'filtered.png'), full_page=True)
     page.get_by_role('button', name='초기화').click()
     page.wait_for_timeout(1200)
     check('필터 초기화 복귀', rows=page.locator('table tbody tr').count())
 
-    # 320px 가로 넘침 검사
+    # 320px 가로 넘침 검사 — DateRangeFilter를 쓰는 다른 관리자 화면도 함께 본다
     page.set_viewport_size({'width': 320, 'height': 800})
-    page.goto(BASE + '/admin/abuse-cases', wait_until='networkidle')
-    page.wait_for_timeout(1200)
-    overflow = page.evaluate(
-        'document.documentElement.scrollWidth - document.documentElement.clientWidth'
-    )
-    check('320px 가로 넘침', overflowPx=overflow, ok=overflow <= 0)
+    for path in ('/admin/events', '/admin/abuse-cases'):
+        page.goto(BASE + path, wait_until='networkidle')
+        page.wait_for_timeout(1200)
+        overflow = page.evaluate(
+            'document.documentElement.scrollWidth - document.documentElement.clientWidth'
+        )
+        check(f'320px 가로 넘침 {path}', overflowPx=overflow, ok=overflow <= 0)
     page.screenshot(path=str(IMAGES / 'w320.png'), full_page=True)
 
     browser.close()
