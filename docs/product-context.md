@@ -78,7 +78,7 @@
 
 ## 기술 스택
 
-- **Front end**: TypeScript, React, Vite, React Router, TanStack Query, Zustand, Redux Toolkit, TailwindCSS, shadcn/ui, TanStack Table, react-day-picker, React Hook Form, Zod, GSAP, Framer Motion, canvas-confetti, MSW, Vitest, React Testing Library
+- **Front end**: TypeScript, React, Vite, React Router, TanStack Query, Zustand, Redux Toolkit, TailwindCSS, shadcn/ui, TanStack Table, React Hook Form, Zod, Framer Motion, MSW, Vitest, React Testing Library
 - **Back end**: Java 21, Spring Boot, Spring MVC, Spring Data JPA, Hibernate, MySQL, Flyway, Gradle
 - BE는 Spring 기반 자체 API 서버 + MySQL 구조. 인증·권한 제어·추첨 로직은 애플리케이션 레이어에서 구현하며 스키마 이력은 Flyway로 관리한다.
 
