@@ -1,33 +1,33 @@
 {
     "kind": "GD-330 관리자 목록 화면 320px 넘침·axe 재측정 — 배포본 (GD-328 머지 후)",
-    "checkedAt": "2026-10-23T14:46:59.045802+00:00",
-    "url": "https://getddo-fe.vercel.app",
+    "checkedAt": "2026-10-23T14:58:13.249076+00:00",
+    "url": "http://localhost:5196",
     "axeSource": "https://cdn.jsdelivr.net/npm/axe-core@4.10.3/axe.min.js",
     "deployAssets": [
-        "badge-ByALNOza.js",
-        "card-CnsfZgoy.js",
-        "date-DUlpJ7OL.js",
-        "dialog-BLSgehXA.js",
+        "badge-DxiCmpOC.js",
+        "card-UOcMMuwh.js",
+        "date-DRKhs6Yx.js",
+        "dialog-OQ9idASd.js",
         "empty-takko-DUxUlIiO.js",
-        "env-Cls9N8m4.js",
-        "envelopeSchema-02bngDyr.js",
-        "errorMessage-BNyyWKY7.js",
+        "env-Da1NDCnO.js",
+        "envelopeSchema-oPwEBMgq.js",
+        "errorMessage-D91Qaf00.js",
         "format-DVyL8Otv.js",
-        "index-BBHU9dYf.css",
-        "index-nRETAAio.js",
-        "input-D6cQ8OqD.js",
-        "queryPresets-DcKopzta.js",
-        "radio-group-CYeLKcze.js",
-        "react-BXQkwMDF.js",
-        "refresh-status-B-ZNDR8e.js",
-        "router-jPQ7lcss.js",
-        "skeleton-BA41yKGl.js",
-        "table-B7WxbGO9.js",
-        "tanstack-5YjhQEgq.js",
-        "ticket-B-S8sWUL.js",
-        "user-C5xUgt8G.js",
-        "vendor-Y8fqTZwr.js",
-        "virtualClock-BJDsnkNz.js",
+        "index-XNuG4p2H.js",
+        "index-czD1CTNr.css",
+        "input-D2N8dadZ.js",
+        "queryPresets-DoWEHBJZ.js",
+        "radio-group-CzmRAuPF.js",
+        "react-Dq5YtD7b.js",
+        "refresh-status-3xCYzMT0.js",
+        "router-D72KlAAR.js",
+        "skeleton-D-VPwIaT.js",
+        "table-BRmbvq8-.js",
+        "tanstack-DU3B8Jq1.js",
+        "ticket-DmzrPrsU.js",
+        "user-D3Dmj8iO.js",
+        "vendor-Dbrkwwb7.js",
+        "virtualClock-CAFsNpIA.js",
         "zod-BHBKxcX8.js"
     ],
     "changedSinceBaseline": true,
@@ -143,7 +143,13 @@
         {
             "name": "320px 레이아웃 /admin/virtual-users",
             "overflowPx": 0,
-            "regions": [],
+            "regions": [
+                {
+                    "label": "가상 사용자 표 가로 스크롤",
+                    "tabbable": true,
+                    "scrollable": true
+                }
+            ],
             "navExists": false,
             "navContained": null
         },
@@ -458,20 +464,13 @@
             "link-in-text-block-nodes": 0
         },
         "/admin/virtual-users:w320": {
-            "violations": [
-                {
-                    "id": "scrollable-region-focusable",
-                    "impact": "serious",
-                    "nodes": 1,
-                    "targets": [[".relative"]]
-                }
-            ],
+            "violations": [],
             "incomplete": [],
             "counts": {
-                "violations": 1,
+                "violations": 0,
                 "incomplete": 0
             },
-            "scrollable-region-focusable-nodes": 1,
+            "scrollable-region-focusable-nodes": 0,
             "color-contrast-nodes": 0,
             "link-in-text-block-nodes": 0
         },
