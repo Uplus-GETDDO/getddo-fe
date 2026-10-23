@@ -16,7 +16,7 @@
 
 - 대상: `effectiveMonth=2026-11` 연속 정책 묶음, 마일스톤 `(7일→1장, 14일→3장, 28일→7장)`.
 - 경로: 관리자 출석 정책 화면 '예약된 변경' 카드 → 수정 다이얼로그 → '3단계 보상 장수' 입력.
-- 결과: 두 PUT 모두 200, `{success:true, code:SUCCESS, message}` 봉투와 `StreakPolicySet` 필드(id·effectiveMonth·milestones·createdBy·createdByName·createdAt) 대조 통과. `effectiveMonth`·일수·마일스톤 id 불변. 화면 카드 즉시 반영, 원복 후 GET 재조회로 원본 일치.
+- 결과: 두 PUT 모두 200, `{success:true, code:SUCCESS, message}` 봉투와 `effectiveMonth`·`milestones(milestoneDays·rewardTicketCount)` 값·`id`/`createdByName`/`createdAt` 존재를 대조했다. `effectiveMonth`·마일스톤 구성(일수·보상·개수)은 원복 후 GET 재조회로 원본 일치, 화면 카드 즉시 반영. (마일스톤 `id`·`createdBy` 불변 대조는 스크립트 보강으로 추가됐다 — 기록된 증거에는 없다.)
 - 증거: `reports/20261024-gd331-ap06-streak-update.json`, `reports/gd331-ap06/after-update.png`·`after-restore.png`, 스크립트 `scripts/verifyGd331Ap06Update.py`.
 
 ## AP05 — 미측정 유지

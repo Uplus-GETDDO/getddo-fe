@@ -132,7 +132,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 배포본을 읽기 전용(GET만, 쓰기 0건)으로 순회해 잔여 표본의 존재 여부를 재확인했다([스크립트](../scripts/verifyGd330SpecSamples.py), [증거](../reports/20261023-gd330-spec-samples.json)):
 
-- **표본 확보**: 응모권 이력에 실물 GOLD 2건·PLATINUM 87건이 존재한다(기존 "플래티넘 0장" 기록 갱신). 연속 출석 정책에 미래 `effectiveMonth` 예약 1건이 있어 AP05/AP06 200의 관측 대상이 생겼다 — 다만 200 측정 자체는 예약 수정 PUT이라 읽기 범위를 넘어 미측정으로 남겼다(2026-10-24 GD-331에서 사용자 쓰기 승인으로 AP06을 실측, 아래 절).
+- **표본 확보**: 응모권 이력에 실물 GOLD 2건·PLATINUM 87건이 존재한다(기존 "플래티넘 0장" 기록 갱신). 연속 출석 정책에 미래 `effectiveMonth` 예약 1건이 있어 AP06 200의 관측 대상이 생겼다(AP05는 일일 예약 표본이 여전히 없다) — 다만 200 측정 자체는 예약 수정 PUT이라 읽기 범위를 넘어 미측정으로 남겼다(2026-10-24 GD-331에서 사용자 쓰기 승인으로 AP06을 실측, 아래 절).
 - **표본 부재 유지**: abuse-case 10건 전부 `triggerScope=USER`(EVENT 기준 사례 없음), 관리자 사용자 전원 `ACTIVE`(INACTIVE 0건), 이벤트 58건의 추첨 실행 60건이 `CONFIRMED 44`·`NO_ENTRIES 16`으로 실패 실행 없음(실패 재개 미검증 유지).
 - **알림 목록 배포 확인**: 사용자 알림 목록은 FE 계약 경로 `GET /v1/notifications/me`로 200 — 총 23건·표본 20건 전부 이벤트 연결(eventId)·미읽음 7건. 최초 측정의 404는 미사용 경로(`/v1/notifications`)를 호출한 측정 오류였으며, 알림 통합의 목록 관측은 가능해졌다(도착 트리거 연동은 별도 시나리오). 2026-10-24 GD-331에서 목록·필터·커서 페이징·개별 읽음·`linkUrl` 이동·빈 목록을 실측했고, 발표→알림 생성 도착의 트리거 연동만 남는다(아래 절).
 - 자정/월 경계 적용 관측은 여전히 시점 의존이며, 배너 CRUD는 쓰기 인수(GD-261)에서 이미 실측됐으므로 재측정하지 않았다.
@@ -141,7 +141,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 사용자 승인 쓰기 3건(AP06 수정·원복 PUT 2회, N02 읽음 PUT 1회)과 읽기 관측을 배포본에서 수행했다(엔트리 청크 `index-DRCSlZyx.js`로 최신 배포 확인):
 
-- **AP06 200 실측 완료**: 관리자 출석 정책 화면의 '예약된 변경' 수정 다이얼로그로 2026-11 연속 정책 묶음을 두 번 수정했다(28일 마일스톤 보상 7→8, 확인 후 8→7 원복). 두 PUT 모두 200·`{success, code:SUCCESS, message}` 봉투·`StreakPolicySet` 필드(`id`·`effectiveMonth`·`milestones[].id/milestoneDays/rewardTicketCount`·`createdBy`·`createdByName`·`createdAt`) 대조 통과. `effectiveMonth`와 마일스톤 일수·id는 수정 전후 불변, 화면 예약 카드가 각 변경을 즉시 반영했고, 원복 후 GET 재조회로 원본(7→1/14→3/28→7)과 일치함을 확인했다. 스크린샷은 `reports/gd331-ap06/`, 증거는 [AP06 JSON](../reports/20261024-gd331-ap06-streak-update.json)·[스크립트](../scripts/verifyGd331Ap06Update.py).
+- **AP06 200 실측 완료**: 관리자 출석 정책 화면의 '예약된 변경' 수정 다이얼로그로 2026-11 연속 정책 묶음을 두 번 수정했다(28일 마일스톤 보상 7→8, 확인 후 8→7 원복). 두 PUT 모두 200·`{success, code:SUCCESS, message}` 봉투와 `effectiveMonth`·`milestones(milestoneDays·rewardTicketCount)` 값·`id`/`createdByName`/`createdAt` 존재를 대조했다(마일스톤 `id`·`createdBy` 불변 대조는 스크립트 보강으로 추가 — 기록된 증거에는 불린 대조가 없다). `effectiveMonth`와 마일스톤 구성(일수·보상·개수)은 원복 후 GET 재조회로 원본(7→1/14→3/28→7)과 일치함을 확인했고, 화면 예약 카드가 각 변경을 즉시 반영했다. 스크린샷은 `reports/gd331-ap06/`, 증거는 [AP06 JSON](../reports/20261024-gd331-ap06-streak-update.json)·[스크립트](../scripts/verifyGd331Ap06Update.py).
 - **AP05는 미측정 유지**: 일일 정책 3건 전부 적용 중·과거라 미래 예약 표본이 없다. 표본을 만드는 AP02 생성은 예약 삭제 API가 없어 영구 잔존하므로 수행하지 않았다 — 표본이 생기면 같은 절차로 측정한다.
 - **알림 N01 읽기 실측**: API로 커서 페이징을 추적했다(size=5, 5쪽·23건, `nextCursor` 종단까지, `createdAt` 내림차순·id 중복 0·`totalElements` 일치). `isRead` 필터는 false 7·true 16·합계 23으로 대조 일치하고 필터 결과는 전부 미읽음이었다. UI에서는 드로어의 미읽음 배지(`알림, 읽지 않음 N개`)·'읽지 않음 N개' 문구·목록 렌더와 `/my-notifications`의 번호 페이징(2쪽 이동 시 서버 커서 추적 요청 확인)·'읽지 않음' Segmented 필터(요청 `isRead=false`, 표시 6건=미읽음 잔여)를 확인했다.
 - **N02 읽음 전이 실측**(승인 1건): 미읽음 알림 1건 클릭 → `PUT /v1/notifications/{id}/read` 200·`{id, isRead:true}` 봉투 → `linkUrl`로 내부 이동(클릭한 알림은 `/events/{id}` 계열 → 래플 이벤트라 `EventDetailPage`가 `/time-raffle/{id}`로 안내) → 무효화 재조회로 벨 미읽음 7→6 감소.

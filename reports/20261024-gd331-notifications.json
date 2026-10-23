@@ -248,6 +248,76 @@
                 "size": "20"
             },
             "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "cursor": "<cursor>",
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
         }
     ],
     "puts": [
@@ -312,7 +382,7 @@
         {
             "name": "linkUrl 내부 이동",
             "landedPattern": "/time-raffle/{id}",
-            "isEventsPath": false
+            "navigated": true
         },
         {
             "name": "읽음 후 미읽음 델타",
@@ -336,13 +406,16 @@
                 },
                 {
                     "status": 200
+                },
+                {
+                    "status": 200
                 }
             ],
             "cursorUsed": true
         },
         {
             "name": "읽지 않음 필터 전환",
-            "isReadFalseCalls": 10,
+            "isReadFalseCalls": 15,
             "shownItems": 6,
             "expectedUnread": 6
         },

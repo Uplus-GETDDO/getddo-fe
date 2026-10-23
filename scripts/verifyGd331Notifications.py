@@ -29,6 +29,9 @@ from playwright.sync_api import sync_playwright
 
 BASE = os.environ.get('L6_DEPLOY_URL', 'https://getddo-fe.vercel.app').rstrip('/')
 OUTPUT = Path('reports/20261024-gd331-notifications.json')
+# 클릭 직후 응답 기록 전에 중단되면 쓰기 적용 여부가 불명해진다 — 선택한 알림의
+# 쓰기 의도를 증거 밖 임시 파일에 먼저 남겨 재실행 시 서버 상태로 대조한다
+INTENT = Path('.gd331-n02-intent.tmp.json')
 IMAGES = Path('reports/gd331-notifications')
 IMAGES.mkdir(parents=True, exist_ok=True)
 COMMIT = subprocess.run(
@@ -63,6 +66,12 @@ if OUTPUT.exists():
         '콘솔 오류',
     }
     evidence['checks'] = [c for c in evidence['checks'] if c['name'] not in RERUN]
+    # 구버전 증거 정규화 — 'linkUrl 내부 이동' 체크의 필드명을 현재 스크립트와 맞춘다
+    for c in evidence['checks']:
+        if c['name'] == 'linkUrl 내부 이동' and 'navigated' not in c:
+            c['navigated'] = c.get('landedPattern') not in (None, '/', '')
+            c.pop('isEventsPath', None)
+    OUTPUT.write_text(json.dumps(evidence, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
 def save():
@@ -104,6 +113,48 @@ def api_get(path, u):
     )
 
 
+def notification_read_state(u, nid):
+    """알림 id의 현재 isRead를 목록 커서 순회로 찾는다 — 없으면 None."""
+    cursor = None
+    for _ in range(50):
+        params = {'size': 20}
+        if cursor:
+            params['cursor'] = cursor
+        data = api_get(f'/v1/notifications/me?{urllib.parse.urlencode(params)}', u)['data']
+        for item in data['items']:
+            if item['id'] == nid:
+                return item['isRead']
+        cursor = data.get('nextCursor')
+        if not cursor:
+            return None
+    return None
+
+
+# 이전 실행이 클릭 후 PUT 기록 전에 중단됐으면 intent만 남는다 — 같은 쓰기를
+# 다시 보내지 않고 서버의 현재 읽음 상태로 결과를 대조한다
+if INTENT.exists() and not evidence['puts']:
+    intent = json.loads(INTENT.read_text(encoding='utf-8'))
+    state = notification_read_state(USER1, intent['notificationId'])
+    if state is True:
+        evidence['puts'].append(
+            {
+                'method': 'PUT',
+                'path': '/v1/notifications/{id}/read',
+                'status': None,
+                'envelope': None,
+                'dataIsRead': True,
+                'reconciled': True,
+            }
+        )
+        save()
+        INTENT.unlink()
+    else:
+        raise AssertionError(
+            '이전 N02 클릭의 서버 반영 여부가 불명하다(미읽음이거나 조회 실패) — '
+            '수동으로 확인하기 전까지 쓰기를 재시도하지 않는다'
+        )
+
+
 def mask_path(url):
     return UUID.sub('{id}', url.split('/api', 1)[1])
 
@@ -115,15 +166,20 @@ if api_done:
         c for c in evidence['apiChecks'] if c['name'] == 'N01 isRead 필터'
     )['unread']
 else:
-    # 커서 추적 — size=5로 여러 쪽을 걸어 nextCursor 계약을 본다
+    # 커서 추적 — size=5로 여러 쪽을 걸어 nextCursor 계약을 본다.
+    # nextCursor는 불투명 토큰이라 예약 문자를 urlencode로 보존하고,
+    # 진행되지 않는 커서·종단 없는 순회는 부분 결과로 넘기지 않고 실패시킨다
     walked = []
     all_items = []
     cursor = None
+    seen_cursors = set()
     total = None
     first_env = None
     for page_no in range(1, 11):
-        q = f'&cursor={cursor}' if cursor else ''
-        payload = api_get(f'/v1/notifications/me?size=5{q}', USER1)
+        params = {'size': 5}
+        if cursor:
+            params['cursor'] = cursor
+        payload = api_get(f'/v1/notifications/me?{urllib.parse.urlencode(params)}', USER1)
         if first_env is None:
             first_env = payload
         data = payload['data']
@@ -136,9 +192,18 @@ else:
         )
         all_items.extend(data['items'])
         total = data['totalElements']
-        cursor = data.get('nextCursor')
-        if not cursor:
+        nxt = data.get('nextCursor')
+        if not nxt:
+            cursor = None
             break
+        if nxt in seen_cursors:
+            raise AssertionError(
+                f'nextCursor가 진행되지 않는다(페이지 {page_no}에서 반복) — 순회 중단'
+            )
+        seen_cursors.add(nxt)
+        cursor = nxt
+    else:
+        raise AssertionError('10쪽 한계에 종단 커서 없이 도달 — 부분 결과로 보고하지 않는다')
     ordered = all(
         all_items[i]['createdAt'] >= all_items[i + 1]['createdAt']
         for i in range(len(all_items) - 1)
@@ -284,32 +349,69 @@ with sync_playwright() as p:
         )
         page.screenshot(path=str(IMAGES / 'drawer.png'), full_page=True)
 
-        # N02 — 첫 미읽음 알림(linkUrl 보유) 클릭: 읽음 PUT + linkUrl 이동을 함께 본다
+        # N02 — 첫 미읽음 알림(linkUrl 보유) 클릭: 읽음 PUT + linkUrl 이동을 함께 본다.
+        # 클릭 전에 선택 대상과 쓰기 의도를 남긴다 — 응답 기록 전 중단되면 재실행이
+        # 같은 알림의 서버 상태로 결과를 대조하고 쓰기를 다시 보내지 않는다
+        unread_first = api_get('/v1/notifications/me?size=1&isRead=false', USER1)[
+            'data'
+        ]['items']
+        assert unread_first, '미읽음 알림이 없다 — 승인된 N02 대상을 찾지 못했다'
+        expected_link = unread_first[0].get('linkUrl') or ''
+        INTENT.write_text(
+            json.dumps(
+                {
+                    'notificationId': unread_first[0]['id'],
+                    'linkUrl': expected_link,
+                    'selectedAt': datetime.now(timezone.utc).isoformat(),
+                }
+            ),
+            encoding='utf-8',
+        )
         drawer.locator('div.group button').first.click()
         page.wait_for_timeout(2000)
+        n02_ok = (
+            len(evidence['puts']) == 1
+            and evidence['puts'][0]['status'] == 200
+            and evidence['puts'][0]['dataIsRead'] is True
+        )
         check(
             'N02 읽음 PUT 응답',
             puts=evidence['puts'],
             count=len(evidence['puts']),
-            ok=len(evidence['puts']) == 1
-            and evidence['puts'][0]['status'] == 200
-            and evidence['puts'][0]['dataIsRead'] is True,
+            ok=n02_ok,
         )
+        assert n02_ok, f'N02 PUT이 계약대로 관측되지 않았다: {evidence["puts"]}'
+        INTENT.unlink(missing_ok=True)
         landed = page.url.replace(BASE, '')
+        link_id = UUID.search(expected_link)
         check(
             'linkUrl 내부 이동',
+            linkUrlPattern=UUID.sub('{id}', expected_link),
             landedPattern=UUID.sub('{id}', landed),
             navigated=landed != '/',
+            sameTargetId=bool(link_id) and link_id.group(0) in landed,
         )
+        assert landed != '/', 'linkUrl 클릭 후 목록에서 이동하지 않았다'
+        if link_id:
+            assert link_id.group(0) in landed, (
+                f'linkUrl({UUID.sub("{id}", expected_link)})과 다른 대상으로 이동했다: '
+                f'{UUID.sub("{id}", landed)}'
+            )
         page.screenshot(path=str(IMAGES / 'after-click.png'), full_page=True)
 
         # 무효화 후 미읽음 배지가 1 감소하는지 — 벨 라벨로 확인
         page.wait_for_timeout(2000)
         bell2 = page.get_by_role('button', name=re.compile('^알림'))
+        label2 = bell2.get_attribute('aria-label') or ''
+        unread_now = re.search(r'(\d+)개', label2)
         check(
             '읽음 후 미읽음 델타',
-            ariaLabel=bell2.get_attribute('aria-label'),
+            ariaLabel=label2,
             expectedUnread=baseline_unread - 1,
+            unreadNow=int(unread_now.group(1)) if unread_now else None,
+        )
+        assert unread_now and int(unread_now.group(1)) == baseline_unread - 1, (
+            f'읽음 후 미읽음이 {baseline_unread - 1}이어야 한다: {label2}'
         )
 
     # --- C. /my-notifications 페이징·필터 (읽기만) ---
