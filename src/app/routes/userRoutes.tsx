@@ -3,7 +3,6 @@ import type { RouteObject } from 'react-router-dom';
 
 import { lazy, Suspense } from 'react';
 
-import { UserLayout } from '@app/layouts/UserLayout';
 import { UserGuard } from '@app/routes/UserGuard';
 import { LoginPage } from '@pages/login/LoginPage';
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
@@ -21,6 +20,11 @@ const lazyPage = (importer: () => Promise<{ default: ComponentType }>) => {
     );
 };
 
+// 사용자 셸(헤더·푸터)도 관리자처럼 lazy로 분리해 /login 초기 번들에서 제외한다
+const UserLayoutLazy = lazy(() =>
+    import('@app/layouts/UserLayout').then((m) => ({ default: m.UserLayout })),
+);
+
 // 디자인 갤러리는 개발용 화면 — 운영 빌드에서는 라우트 자체를 등록하지 않는다
 const UiGalleryPageLazy = lazy(() =>
     import('@pages/uiGallery/UiGalleryPage').then((m) => ({ default: m.UiGalleryPage })),
@@ -31,7 +35,9 @@ export const userRoutes: RouteObject[] = [
     {
         element: (
             <UserGuard>
-                <UserLayout />
+                <Suspense fallback={<SkeletonDetail />}>
+                    <UserLayoutLazy />
+                </Suspense>
             </UserGuard>
         ),
         // Outlet 안쪽 오류는 레이아웃의 RouteErrorBoundary가 잡는다 —
