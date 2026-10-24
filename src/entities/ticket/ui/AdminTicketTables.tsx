@@ -9,6 +9,8 @@ import type { AdminTicketHistory } from '../model/admin';
 
 import { TICKET_OPERATION_LABEL, TICKET_STATUS_LABEL } from '../model/admin';
 import { TICKET_GRADE_LABEL } from '../model/grade';
+import { TICKET_GRADE_IMAGE } from '../model/gradeImage';
+import { TICKET_OPERATION_DELTA } from '../model/operation';
 
 // 관리자 응모권 전체 이력 표 — 조회 전용이라 행에 변경 버튼이 없다 (스펙: 수동 지급·회수 경로 없음)
 
@@ -45,7 +47,7 @@ function Frame({
                             <TableHead
                                 key={header}
                                 className={cn(
-                                    'text-caption text-fg-tertiary h-11 px-4 font-semibold',
+                                    'text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap',
                                     centered.includes(header) && 'text-center',
                                 )}
                             >
@@ -69,50 +71,84 @@ const Cell = ({ children, center = false }: { children: ReactNode; center?: bool
 function UserCell({ name, id }: { name: string; id: string }) {
     return (
         <div className="flex flex-col">
-            <span className="text-body-sm text-fg-primary">{name}</span>
-            <span className="text-caption text-fg-secondary">{id}</span>
+            <span className="text-body-sm-bold text-fg-primary">{name}</span>
+            <span className="text-caption text-fg-tertiary">{id}</span>
         </div>
     );
 }
 
-const Gray = ({ children }: { children: ReactNode }) => (
-    <span className={`${CHIP} bg-surface-sunken text-fg-secondary`}>{children}</span>
-);
+// 처리 유형 칩 — 늘어나는 처리(지급·반환)는 초록, 줄어드는 사용은 파랑, 만료는 흐리게, 정정은 노랑
+const OPERATION_CHIP: Record<AdminTicketHistory['operationType'], string> = {
+    GRANT: 'bg-status-approved text-status-approved-text',
+    REFUND: 'bg-status-approved text-status-approved-text',
+    USE: 'bg-status-active text-status-active-text',
+    EXPIRE: 'bg-surface-sunken text-fg-tertiary',
+    CORRECTION: 'bg-status-pending text-status-pending-text',
+};
 
 /** AO05 — 전체 이력 */
 export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }) {
     return (
         <Frame
-            centered={['처리', '등급']}
-            headers={['처리 시각', '사용자', '처리', '등급', '처리 후 상태', '이벤트·미션']}
+            headers={['처리', '등급', '사용자', '이벤트·미션', '처리 후 상태', '처리 시각']}
             label="응모권 이력 표 가로 스크롤"
         >
-            {rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-surface-sunken">
-                    <Cell>
-                        <span className={TIME}>{formatKst(row.createdAt)}</span>
-                    </Cell>
-                    <Cell>
-                        <UserCell name={row.userName} id={row.userId} />
-                    </Cell>
-                    <Cell center>
-                        <Gray>{TICKET_OPERATION_LABEL[row.operationType]}</Gray>
-                    </Cell>
-                    <Cell center>
-                        <Gray>{TICKET_GRADE_LABEL[row.grade]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <span className="text-body-sm text-fg-primary">
-                            {TICKET_STATUS_LABEL[row.status]}
-                        </span>
-                    </Cell>
-                    <Cell>
-                        <span className="text-body-sm text-fg-primary">
-                            {row.eventTitle ?? row.missionTitle ?? '-'}
-                        </span>
-                    </Cell>
-                </TableRow>
-            ))}
+            {rows.map((row) => {
+                const delta = TICKET_OPERATION_DELTA[row.operationType];
+                return (
+                    <TableRow key={row.id} className="hover:bg-surface-sunken">
+                        {/* 무엇이 일어났는지(처리)와 몇 장이 움직였는지를 맨 앞에 */}
+                        <Cell>
+                            <span className="flex items-center gap-2 whitespace-nowrap">
+                                <span className={cn(CHIP, OPERATION_CHIP[row.operationType])}>
+                                    {TICKET_OPERATION_LABEL[row.operationType]}
+                                </span>
+                                {delta !== null && (
+                                    <span
+                                        className={
+                                            delta > 0
+                                                ? 'text-body-sm-bold text-status-approved-text tabular-nums'
+                                                : 'text-body-sm-bold text-fg-secondary tabular-nums'
+                                        }
+                                    >
+                                        {delta > 0 ? `+${delta}` : `−${Math.abs(delta)}`}
+                                    </span>
+                                )}
+                            </span>
+                        </Cell>
+                        {/* 등급은 응모권 그림과 이름으로 — 등급 색 알약은 표를 얼룩지게 해 오히려 눈에 안 들어왔다 */}
+                        <Cell>
+                            <span className="flex items-center gap-2">
+                                <img
+                                    src={TICKET_GRADE_IMAGE[row.grade]}
+                                    alt=""
+                                    aria-hidden
+                                    className="h-5 w-auto shrink-0"
+                                />
+                                <span className="text-body-sm text-fg-primary">
+                                    {TICKET_GRADE_LABEL[row.grade]}
+                                </span>
+                            </span>
+                        </Cell>
+                        <Cell>
+                            <UserCell name={row.userName} id={row.userId} />
+                        </Cell>
+                        <Cell>
+                            <span className="text-body-sm text-fg-primary">
+                                {row.eventTitle ?? row.missionTitle ?? '-'}
+                            </span>
+                        </Cell>
+                        <Cell>
+                            <span className="text-body-sm text-fg-secondary">
+                                {TICKET_STATUS_LABEL[row.status]}
+                            </span>
+                        </Cell>
+                        <Cell>
+                            <span className={TIME}>{formatKst(row.createdAt)}</span>
+                        </Cell>
+                    </TableRow>
+                );
+            })}
         </Frame>
     );
 }

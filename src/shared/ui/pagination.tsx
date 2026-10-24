@@ -4,9 +4,6 @@ import { useState } from 'react';
 
 import { pageItems } from '@shared/utils/pagination';
 
-import { Button } from './button';
-import { Input } from './input';
-
 const CELL =
     'text-body-sm focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none';
 
@@ -89,7 +86,10 @@ function Pagination({
     );
 }
 
-/** 쪽 번호 입력 — 범위를 넘으면 처음·마지막 쪽으로 맞춘다. 엔터나 '이동'으로 확정한다 */
+/**
+ * 쪽 번호 입력 — `[ 3 / 120 | 이동 ]`을 테두리 하나로 묶어 번호 줄 옆에 붙은 한 덩어리로 보이게 한다.
+ * 범위를 넘으면 처음·마지막 쪽으로 맞춘다. 엔터나 '이동'으로 확정한다
+ */
 function PageJump({
     page,
     totalPages,
@@ -102,7 +102,7 @@ function PageJump({
     const [value, setValue] = useState('');
     return (
         <form
-            className="ml-3 flex items-center gap-1.5"
+            className="border-border-input bg-surface-page focus-within:border-border-focus focus-within:ring-border-focus/10 ml-3 flex h-9 shrink-0 items-center overflow-hidden rounded-lg border transition-colors focus-within:ring-3"
             onSubmit={(event) => {
                 event.preventDefault();
                 const next = Number.parseInt(value, 10);
@@ -112,19 +112,24 @@ function PageJump({
                 if (clamped !== page) onPageChange(clamped);
             }}
         >
-            <Input
+            <input
                 inputMode="numeric"
                 pattern="[0-9]*"
                 aria-label={`이동할 페이지 (1~${totalPages})`}
                 placeholder={String(page)}
                 value={value}
                 onChange={(event) => setValue(event.target.value.replace(/\D/g, ''))}
-                className="h-9 w-16 text-center tabular-nums"
+                className="text-body-sm text-fg-primary placeholder:text-fg-tertiary h-full w-12 bg-transparent text-right tabular-nums outline-none"
             />
-            <span className="text-body-sm text-fg-tertiary tabular-nums">/ {totalPages}</span>
-            <Button type="submit" variant="secondary" size="sm">
+            <span className="text-body-sm text-fg-tertiary pr-3 pl-1 tabular-nums">
+                / {totalPages}
+            </span>
+            <button
+                type="submit"
+                className="text-body-sm-bold text-fg-primary hover:bg-surface-sunken border-border-default h-full cursor-pointer border-l px-3 transition-colors focus-visible:outline-none"
+            >
                 이동
-            </Button>
+            </button>
         </form>
     );
 }

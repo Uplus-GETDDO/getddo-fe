@@ -1,4 +1,5 @@
 import { createColumnHelper, flexRender, tableFeatures, useTable } from '@tanstack/react-table';
+import { motion } from 'framer-motion';
 import { GripVertical } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 
@@ -78,19 +79,43 @@ export function AdminBannerTable({
     const columns = useMemo(
         () =>
             helper.columns([
+                /*
+                 * 끌 손잡이와 자리 번호를 맨 앞 한 칸에 — 손잡이가 끝에 있으면 '끌어 옮기는 표'라는 게 늦게 보였다.
+                 * 실제로 잡는 자리는 행 전체이고, 이 버튼은 마우스를 못 쓰는 경우의 유일한 길이라 방향키를 받는다.
+                 * 번호는 저장된 값이 아니라 목록 안의 자리를 센다 — 끄는 동안에도 숫자가 바로 따라온다
+                 */
                 helper.display({
                     id: 'order',
-                    header: () => <span className="block w-10 text-center">순서</span>,
-                    /*
-                     * 저장된 값이 아니라 목록 안의 자리를 센다 — 끄는 동안에도 숫자가 바로 따라온다.
-                     * 관리자 목록은 숨김 배너까지 1~N으로 오므로(05-api/banner.md) 평소 값과 같다.
-                     */
-                    cell: ({ row }) => (
-                        // 자릿수가 늘어도 가운데가 흔들리지 않게 너비를 고정하고 숫자 폭을 맞춘다
-                        <span className="text-body-bold text-fg-primary block w-10 text-center tabular-nums">
-                            {row.index + 1}
-                        </span>
-                    ),
+                    header: () => <span className="block pl-10">순서</span>,
+                    cell: ({ row }) => {
+                        const title = eventTitleOf(row.original.eventId);
+                        return (
+                            <div className="flex items-center gap-1">
+                                <Button
+                                    size="icon-sm"
+                                    variant="ghost"
+                                    className="text-fg-tertiary hover:text-fg-primary cursor-grab active:cursor-grabbing"
+                                    aria-label={`${title} 배너 순서 바꾸기 — 끌어 옮기거나 위·아래 방향키를 누르세요`}
+                                    disabled={disabled}
+                                    onKeyDown={(event) => {
+                                        if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')
+                                            return;
+                                        // 방향키는 표 안에서 자리를 옮기는 뜻으로 쓴다 — 화면이 같이 스크롤되지 않게 막는다
+                                        event.preventDefault();
+                                        onMove(
+                                            row.original,
+                                            event.key === 'ArrowUp' ? 'up' : 'down',
+                                        );
+                                    }}
+                                >
+                                    <GripVertical aria-hidden />
+                                </Button>
+                                <span className="text-body-bold text-fg-primary w-6 text-center tabular-nums">
+                                    {row.index + 1}
+                                </span>
+                            </div>
+                        );
+                    },
                 }),
                 helper.accessor('imageUrl', {
                     header: '이미지',
@@ -103,27 +128,25 @@ export function AdminBannerTable({
                 }),
                 helper.accessor('eventId', {
                     header: '연결 이벤트',
-                    cell: ({ getValue }) => (
-                        <span className="text-body-sm text-fg-primary">
-                            {eventTitleOf(getValue())}
-                        </span>
-                    ),
-                }),
-                helper.accessor('imageKey', {
-                    header: '이미지 키',
-                    cell: ({ getValue }) => (
-                        <span
-                            title={getValue()}
-                            className="text-caption text-fg-tertiary block max-w-48 truncate"
-                        >
-                            {getValue()}
-                        </span>
+                    cell: ({ row, getValue }) => (
+                        <div className="flex min-w-0 flex-col">
+                            <span className="text-body-sm-bold text-fg-primary">
+                                {eventTitleOf(getValue())}
+                            </span>
+                            {/* 이미지 키는 사람이 읽는 값이 아니라 이름 아래 작은 글로만 */}
+                            <span
+                                title={row.original.imageKey}
+                                className="text-caption text-fg-tertiary block max-w-56 truncate"
+                            >
+                                {row.original.imageKey}
+                            </span>
+                        </div>
                     ),
                 }),
                 helper.accessor('updatedAt', {
                     header: '수정일',
                     cell: ({ getValue }) => (
-                        <span className="text-body-sm text-fg-secondary whitespace-nowrap">
+                        <span className="text-body-sm text-fg-secondary whitespace-nowrap tabular-nums">
                             {formatKst(getValue(), {
                                 year: 'numeric',
                                 month: '2-digit',
@@ -132,46 +155,17 @@ export function AdminBannerTable({
                         </span>
                     ),
                 }),
-                helper.display({
-                    id: 'move',
-                    header: '순서 변경',
-                    /*
-                     * 끌어 옮긴다는 표시 한 개만 둔다. 실제로 잡는 자리는 행 전체이고,
-                     * 이 자리는 마우스를 못 쓰는 경우의 유일한 길이라 방향키를 받는다.
-                     */
-                    cell: ({ row }) => {
-                        const title = eventTitleOf(row.original.eventId);
-                        return (
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="hover:bg-surface-pressed hover:text-fg-primary text-fg-tertiary cursor-grab active:cursor-grabbing"
-                                aria-label={`${title} 배너 순서 바꾸기 — 끌어 옮기거나 위·아래 방향키를 누르세요`}
-                                disabled={disabled}
-                                onKeyDown={(event) => {
-                                    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')
-                                        return;
-                                    // 방향키는 표 안에서 자리를 옮기는 뜻으로 쓴다 — 화면이 같이 스크롤되지 않게 막는다
-                                    event.preventDefault();
-                                    onMove(row.original, event.key === 'ArrowUp' ? 'up' : 'down');
-                                }}
-                            >
-                                <GripVertical aria-hidden />
-                            </Button>
-                        );
-                    },
-                }),
+                // 수정·삭제는 오른쪽 끝에 같은 크기 테두리 버튼으로 나란히 — 삭제만 빨간 글씨
                 helper.display({
                     id: 'detail',
-                    header: '관리',
+                    header: () => <span className="block text-right">관리</span>,
                     cell: ({ row }) => {
                         const title = eventTitleOf(row.original.eventId);
                         return (
-                            <div className="flex gap-1">
+                            <div className="flex justify-end gap-2">
                                 <Button
                                     size="sm"
-                                    variant="ghost"
-                                    className="hover:bg-surface-pressed"
+                                    variant="secondary"
                                     aria-label={`${title} 배너 수정`}
                                     onClick={() => onEdit(row.original)}
                                 >
@@ -179,7 +173,8 @@ export function AdminBannerTable({
                                 </Button>
                                 <Button
                                     size="sm"
-                                    variant="destructive"
+                                    variant="secondary"
+                                    className="text-semantic-error-strong hover:text-semantic-error-strong"
                                     aria-label={`${title} 배너 삭제`}
                                     onClick={() => onDelete(row.original)}
                                 >
@@ -195,22 +190,36 @@ export function AdminBannerTable({
 
     const table = useTable({ features, columns, data: order });
 
+    /*
+     * 잡은 순간의 행 자리(위·아래 끝)를 적어 둔다. 끄는 동안 행들이 움직여도 이 칸 자리를 기준으로
+     * 몇 번째 칸 위에 있는지 고르고, 잡은 행은 포인터를 그대로 따라 그린다 — 칸에 뚝뚝 붙지 않는다
+     */
+    const [drag, setDrag] = useState<{
+        slots: { top: number; bottom: number }[];
+        /** 행 안에서 잡은 높이 — 행 위쪽 끝이 포인터에서 이만큼 떨어져 따라온다 */
+        grabOffset: number;
+        pointerY: number;
+    } | null>(null);
+
     const grab = (event: React.PointerEvent<HTMLTableRowElement>, bannerId: string) => {
-        if (disabled || event.button !== 0 || startsOnOwnControl(event.target)) return;
+        const body = bodyRef.current;
+        if (disabled || !body || event.button !== 0 || startsOnOwnControl(event.target)) return;
         // 이 행이 뒤이은 move·up을 끝까지 받게 잡아 둔다 — 표 밖으로 나가도 놓치지 않는다
         event.currentTarget.setPointerCapture(event.pointerId);
         event.preventDefault();
+        const slots = [...body.rows].map((row) => row.getBoundingClientRect());
+        const rowTop = event.currentTarget.getBoundingClientRect().top;
         setHeldId(bannerId);
+        setDrag({ slots, grabOffset: event.clientY - rowTop, pointerY: event.clientY });
     };
 
     const track = (event: React.PointerEvent<HTMLTableRowElement>) => {
-        const body = bodyRef.current;
-        if (!heldId || !body) return;
-
-        const to = rowIndexAt(
-            [...body.rows].map((row) => row.getBoundingClientRect()),
-            event.clientY,
-        );
+        if (!heldId || !drag) return;
+        setDrag({ ...drag, pointerY: event.clientY });
+        // 행 가운데가 들어간 칸으로 옮긴다 — 포인터 끝이 아니라 행 몸통 기준이라 자연스럽다
+        const rowCenter =
+            event.clientY - drag.grabOffset + (drag.slots[0]!.bottom - drag.slots[0]!.top) / 2;
+        const to = rowIndexAt(drag.slots, rowCenter);
         if (to === null) return;
         setOrder((prev) =>
             moveItem(
@@ -224,6 +233,7 @@ export function AdminBannerTable({
     const release = () => {
         if (!heldId) return;
         setHeldId(null);
+        setDrag(null);
         if (!sameOrder(order, banners)) onReorder(order.map((banner) => banner.id));
     };
 
@@ -231,7 +241,15 @@ export function AdminBannerTable({
     const cancel = () => {
         if (!heldId) return;
         setHeldId(null);
+        setDrag(null);
         setOrder(banners);
+    };
+
+    // 잡은 행이 지금 놓일 칸의 위쪽 끝에서 포인터까지 — 이만큼 옮겨 그려 손을 따라오게 한다
+    const heldShift = (index: number) => {
+        if (!drag) return 0;
+        const slot = drag.slots[index];
+        return slot ? drag.pointerY - drag.grabOffset - slot.top : 0;
     };
 
     return (
@@ -243,7 +261,7 @@ export function AdminBannerTable({
                             {headerGroup.headers.map((header) => (
                                 <TableHead
                                     key={header.id}
-                                    className="text-caption text-fg-tertiary h-11 px-4 font-semibold"
+                                    className="text-fg-tertiary h-11 px-4 text-xs font-semibold"
                                 >
                                     {flexRender(
                                         header.column.columnDef.header,
@@ -258,8 +276,12 @@ export function AdminBannerTable({
                     {table.getRowModel().rows.map((row) => {
                         const held = heldId === row.original.id;
                         return (
-                            <TableRow
+                            <motion.tr
                                 key={row.original.id}
+                                data-slot="table-row"
+                                // 다른 행은 비켜날 때 미끄러지듯 움직이고, 잡은 행은 포인터를 바로 따른다
+                                layout={held ? false : 'position'}
+                                transition={{ type: 'spring', stiffness: 600, damping: 45 }}
                                 aria-label={`${eventTitleOf(row.original.eventId)} 배너 — 끌어서 순서를 바꿀 수 있습니다`}
                                 style={{
                                     /*
@@ -268,25 +290,22 @@ export function AdminBannerTable({
                                      */
                                     touchAction: 'pan-y',
                                     cursor: disabled ? undefined : heldId ? 'grabbing' : 'grab',
+                                    y: held ? heldShift(row.index) : undefined,
                                 }}
                                 onPointerDown={(event) => grab(event, row.original.id)}
                                 onPointerMove={track}
                                 onPointerUp={release}
                                 onPointerCancel={cancel}
                                 className={cn(
-                                    'transition-colors',
+                                    'border-border-default border-b transition-colors',
                                     // 표 행 hover는 sunken까지만 (DESIGN-SYSTEM '관리자 hover 규약')
                                     !heldId && 'hover:bg-surface-sunken',
                                     'focus-within:bg-surface-sunken',
                                     heldId && 'select-none',
-                                    /*
-                                     * 들고 있는 행 — '선택된 행'의 brand/soft 바탕을 그대로 쓴다.
-                                     * 그림자는 한 단계만 줘서 표 위에 살짝 떠 보이게 한다.
-                                     * hover도 같은 색으로 묶는다 — 끄는 내내 포인터가 이 행 위에 있어
-                                     * TableRow의 기본 hover 색이 이겨 버린다.
-                                     */
+                                    // 들고 있는 행 — 흰 바탕에 그림자로 표 위에 떠오른다. 마젠타 대신 무채색으로 '집었다'만 보인다
                                     held &&
-                                        'bg-brand-soft hover:bg-brand-soft relative z-10 shadow-md',
+                                        'bg-surface-page ring-border-strong relative z-10 shadow-lg ring-1',
+                                    heldId && !held && 'bg-surface-canvas',
                                 )}
                             >
                                 {row.getAllCells().map((cell) => (
@@ -294,7 +313,7 @@ export function AdminBannerTable({
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </TableCell>
                                 ))}
-                            </TableRow>
+                            </motion.tr>
                         );
                     })}
                 </tbody>

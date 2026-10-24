@@ -82,7 +82,7 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByText(/총 2명/)).toBeInTheDocument();
         await user.click(screen.getByRole('link', { name: '참여자 조회 초기화' }));
         expect(
-            await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.'),
+            await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.'),
         ).toBeInTheDocument();
     });
 
@@ -109,7 +109,7 @@ describe('AdminEntriesPage', () => {
         );
         renderPage('/admin/entries?view=participants');
         expect(
-            await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.'),
+            await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.'),
         ).toBeInTheDocument();
         expect(calls).toBe(0);
     });
@@ -119,7 +119,16 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByRole('alert')).toHaveTextContent('이벤트를 찾을 수 없습니다.');
     });
 
-    it('잘못된 이벤트 ID를 제출하면 요청 없이 UUID 안내를 보여준다', async () => {
+    it('이벤트 ID를 붙여 넣으면 고르지 않아도 참여자를 보여준다', async () => {
+        const user = userEvent.setup();
+        renderPage('/admin/entries?view=participants');
+        await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.');
+        await user.click(screen.getByLabelText('참여자를 볼 이벤트'));
+        await user.paste(EVENT_ID);
+        expect(await screen.findByText(/총 2명/)).toBeInTheDocument();
+    });
+
+    it('이름 검색어만으로는 참여자를 요청하지 않는다', async () => {
         const user = userEvent.setup();
         let calls = 0;
         server.use(
@@ -132,10 +141,9 @@ describe('AdminEntriesPage', () => {
             }),
         );
         renderPage('/admin/entries?view=participants');
-        await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.');
-        await user.type(screen.getByLabelText('이벤트 ID 입력'), 'not-a-uuid');
-        await user.click(screen.getByRole('button', { name: '참여자 조회' }));
-        expect(await screen.findByText('올바른 UUID 형식이 아닙니다.')).toBeInTheDocument();
+        await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.');
+        await user.type(screen.getByLabelText('참여자를 볼 이벤트'), 'not-a-uuid');
+        expect(await screen.findByRole('listbox')).toBeInTheDocument();
         expect(calls).toBe(0);
     });
 

@@ -95,7 +95,7 @@ function DateField({
 }
 
 /**
- * 기간 필터 — 시작·종료 날짜를 테두리 하나로 묶은 높이 40 상자. 기준(예: 응모 시작일·KST)은 상자 안 앞머리에 둬서
+ * 기간 필터 — 시작·종료 날짜를 테두리 하나로 묶은 높이 40 상자. 날짜는 모두 한국 시간이다. 기준(예: 응모 시작일)은 상자 안 앞머리에 둬서
  * 아래 줄이 생기지 않게 한다 — 옆의 검색창·버튼과 윗선이 맞는다. 순서 오류 문구도 상자 아래에 띄워 줄을 밀지 않는다.
  * 좁은 화면에서는 상자 안쪽으로 줄바꿈해 페이지가 가로로 넘치지 않게 한다
  */
@@ -105,6 +105,7 @@ function DateRangeFilter({
     onFromChange,
     onToChange,
     basis,
+    name,
     error,
 }: {
     from: string;
@@ -113,6 +114,8 @@ function DateRangeFilter({
     onToChange: (value: string) => void;
     /** 이 기간 필터가 거는 시각의 의미 — "응모 시작일"·"생성일" 등 */
     basis?: string;
+    /** 화면에 기준 글을 띄우지 않을 때(바깥에 이름표가 있을 때) 화면 낭독기용 이름 — 예: "처리일" */
+    name?: string;
     /** 시작일이 종료일보다 늦은 등 순서 오류 문구 */
     error?: string | null;
 }) {
@@ -129,13 +132,13 @@ function DateRangeFilter({
             >
                 {basis && (
                     <span className="text-caption text-fg-tertiary border-border-default shrink-0 border-r pr-2 whitespace-nowrap">
-                        {basis} · KST
+                        {basis}
                     </span>
                 )}
                 <DateField
                     value={from}
                     onChange={onFromChange}
-                    label={basis ? `${basis} 시작일` : '시작일 필터'}
+                    label={(basis ?? name) ? `${basis ?? name} 시작일` : '시작일 필터'}
                     invalid={Boolean(error)}
                     describedBy={describedBy}
                 />
@@ -145,7 +148,7 @@ function DateRangeFilter({
                 <DateField
                     value={to}
                     onChange={onToChange}
-                    label={basis ? `${basis} 종료일` : '종료일 필터'}
+                    label={(basis ?? name) ? `${basis ?? name} 종료일` : '종료일 필터'}
                     invalid={Boolean(error)}
                     describedBy={describedBy}
                 />

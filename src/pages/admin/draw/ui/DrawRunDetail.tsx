@@ -165,7 +165,7 @@ export function DrawRunDetail({
                 }}
             >
                 <DialogHeader className="px-6 pt-6 pb-4">
-                    <DialogTitle className="text-title-3 text-fg-primary">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold">
                         {run
                             ? `${run.runNumber}회차 ${DRAW_TYPE_LABEL[run.drawType]} 상세`
                             : '추첨 실행 상세'}
