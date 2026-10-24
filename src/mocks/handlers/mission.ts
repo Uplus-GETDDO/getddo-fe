@@ -11,6 +11,7 @@ import type {
 import { env } from '@shared/config/env';
 import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
+import { DAY, demoTime } from '../demoTime';
 import { mockNow } from '../now';
 import { fail, failBody, ok, okBody } from './response';
 import { drawMockTicketGrade, recordMockTicketGrant } from './ticket';
@@ -35,8 +36,8 @@ const mockMissions: MockMission[] = [
         description:
             '응모 이벤트 서비스 이용 경험을 묻는 설문입니다. 필수 문항에 모두 답하면 완료됩니다.',
         missionType: 'SURVEY',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -66,8 +67,8 @@ const mockMissions: MockMission[] = [
         title: '5G 상식 OX 퀴즈',
         description: '5G 관련 상식을 확인하는 OX 퀴즈입니다. 정답을 맞혀야 완료됩니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -89,8 +90,8 @@ const mockMissions: MockMission[] = [
         title: '유플러스 브랜드 퀴즈',
         description: '브랜드를 얼마나 알고 있는지 묻는 단답 퀴즈입니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -111,8 +112,8 @@ const mockMissions: MockMission[] = [
         title: 'U+ 생활 상식 퀴즈',
         description: '통신·멤버십 상식을 묻는 5문항 퀴즈입니다. 모든 문항을 맞혀야 완료됩니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -184,8 +185,8 @@ const mockMissions: MockMission[] = [
         description:
             '응모 이벤트 이용 경험을 묻는 5문항 설문입니다. 필수 문항에 모두 답하면 완료됩니다.',
         missionType: 'SURVEY',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -247,8 +248,8 @@ const mockMissions: MockMission[] = [
         title: '9월 신규고객 웰컴 선물 설문',
         description: '이미 완료된 미션의 화면 상태를 보여주는 시드입니다.',
         missionType: 'SURVEY',
-        startsAt: '2026-09-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-55 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -266,8 +267,8 @@ const mockMissions: MockMission[] = [
         title: '지난 시즌 퀴즈',
         description: '운영 기간이 끝난 미션입니다. 제출하면 서버가 거절합니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-09-01T00:00:00Z',
-        endsAt: '2026-09-30T14:59:59Z',
+        startsAt: demoTime(-55 * DAY),
+        endsAt: demoTime(-25 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -305,15 +306,15 @@ const userIdOf = (request: Request) => request.headers.get('X-User-ID') ?? 'anon
 const seedCompletedSubmission = (): MissionSubmissionResult => ({
     submissionId: 'sub-seed-survey-done',
     missionId: 'msn-survey-done',
-    receivedAt: '2026-09-15T02:00:00Z',
+    receivedAt: demoTime(-40 * DAY),
     isCompleted: true,
     reward: {
         claimId: 'claim-seed-survey-done',
         ticketCount: 1,
-        grantedAt: '2026-09-15T02:00:00Z',
+        grantedAt: demoTime(-40 * DAY),
         expiresAt: null,
     },
-    createdAt: '2026-09-15T02:00:00Z',
+    createdAt: demoTime(-40 * DAY),
 });
 
 const submissionsFor = (userId: string) => {

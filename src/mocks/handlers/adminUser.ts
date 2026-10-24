@@ -4,6 +4,7 @@ import type { AdminUser } from '@entities/user';
 
 import { env } from '@shared/config/env';
 
+import { DAY, demoTime } from '../demoTime';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
@@ -24,8 +25,8 @@ const mkUser = (
     role,
     status,
     membership,
-    createdAt: '2026-09-01T00:00:00Z',
-    updatedAt: '2026-10-01T00:00:00Z',
+    createdAt: demoTime(-54 * DAY),
+    updatedAt: demoTime(-24 * DAY),
 });
 
 const adminUsers: AdminUser[] = [
