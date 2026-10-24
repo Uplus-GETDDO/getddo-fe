@@ -42,33 +42,49 @@ function ActiveRefresh({
 /**
  * 배너 수만큼의 점 — 지금 배너의 점만 알약으로 늘어나고, 자동 재생 중에는 그 안이 다음 배너까지 남은 시간만큼 찬다.
  * 채움도 알약 모양(점 크기에서 시작해 폭만 늘린다)이라 끝이 잘려 보이지 않는다. 멈추면 꽉 찬 알약으로 둔다.
- * 위치는 '01 / 04'가 알려 주므로 보조 기술에서는 감춘다
+ * 점을 누르면 그 배너로 바로 간다 — 점은 6px라 누르는 자리는 24px 높이로 넓힌다
  */
-function SlideDots({ total, index, playing }: { total: number; index: number; playing: boolean }) {
+function SlideDots({
+    total,
+    index,
+    playing,
+    onSelect,
+}: {
+    total: number;
+    index: number;
+    playing: boolean;
+    onSelect: (index: number) => void;
+}) {
     return (
-        <div aria-hidden className="flex items-center gap-1">
-            {Array.from({ length: total }, (_, dot) =>
-                dot === index ? (
-                    <span
-                        key={dot}
-                        className="bg-border-strong relative h-1.5 w-6 overflow-hidden rounded-full"
-                    >
-                        <motion.span
-                            key={playing ? `play-${index}` : 'still'}
-                            className="bg-fg-primary absolute inset-y-0 left-0 min-w-1.5 rounded-full"
-                            initial={{ width: playing ? '0%' : '100%' }}
-                            animate={{ width: '100%' }}
-                            transition={
-                                playing
-                                    ? { duration: AUTO_SLIDE_MS / 1000, ease: 'linear' }
-                                    : { duration: 0 }
-                            }
-                        />
-                    </span>
-                ) : (
-                    <span key={dot} className="bg-border-strong size-1.5 rounded-full" />
-                ),
-            )}
+        <div className="flex items-center">
+            {Array.from({ length: total }, (_, dot) => (
+                <button
+                    key={dot}
+                    type="button"
+                    aria-label={`${dot + 1}번째 배너`}
+                    aria-current={dot === index ? 'true' : undefined}
+                    onClick={() => onSelect(dot)}
+                    className="group focus-visible:ring-border-focus flex h-6 cursor-pointer items-center rounded-full px-0.5 focus-visible:ring-2 focus-visible:outline-none"
+                >
+                    {dot === index ? (
+                        <span className="bg-border-strong relative h-1.5 w-6 overflow-hidden rounded-full">
+                            <motion.span
+                                key={playing ? `play-${index}` : 'still'}
+                                className="bg-fg-primary absolute inset-y-0 left-0 min-w-1.5 rounded-full"
+                                initial={{ width: playing ? '0%' : '100%' }}
+                                animate={{ width: '100%' }}
+                                transition={
+                                    playing
+                                        ? { duration: AUTO_SLIDE_MS / 1000, ease: 'linear' }
+                                        : { duration: 0 }
+                                }
+                            />
+                        </span>
+                    ) : (
+                        <span className="bg-border-strong group-hover:bg-fg-tertiary size-1.5 rounded-full transition-colors" />
+                    )}
+                </button>
+            ))}
         </div>
     );
 }
@@ -235,7 +251,12 @@ export function BannerSlider({
                         )}
                         {total > 1 && (
                             <div className="flex items-center gap-1">
-                                <SlideDots total={total} index={safeIndex} playing={playing} />
+                                <SlideDots
+                                    total={total}
+                                    index={safeIndex}
+                                    playing={playing}
+                                    onSelect={(dot) => move(dot - safeIndex)}
+                                />
                                 {!reduceMotion && (
                                     <Button
                                         variant="ghost"
