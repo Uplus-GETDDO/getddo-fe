@@ -20,11 +20,18 @@ interface MockBanner {
     updatedAt: string;
 }
 
+/** 씨앗 배너 그림 — public/images/banners의 실제 파일. 왼쪽 55%는 비어 있고 경품 그림이 오른쪽에 있다 (피그마 02 Screens) */
+const SEED_BANNER_IMAGES = new Set([
+    'banners/nintendo.jpg',
+    'banners/attendance.jpg',
+    'banners/starbucks.jpg',
+    'banners/data-coupon.jpg',
+    'banners/chicken.jpg',
+]);
+
 /*
- * 올려 둔 그림이 있으면 그것을 돌려주고, 없으면 키를 새긴 자리표시자를 만든다.
- *
- * 씨앗 배너의 키(banners/weekly-buds.png 등)는 실제 파일이 없어 자리표시자가 맞다.
- * 그러나 관리자가 올린 그림까지 덮어 버리면 바꿔도 홈 화면이 그대로여서, 올린 것을 먼저 본다.
+ * 올려 둔 그림이 있으면 그것을, 씨앗 배너면 public의 실제 그림을 돌려주고, 둘 다 아니면 키를 새긴 자리표시자를 만든다.
+ * 관리자가 올린 그림까지 덮어 버리면 바꿔도 홈 화면이 그대로여서, 올린 것을 먼저 본다.
  *
  * 자리표시자는 배너 템플릿(1200×365)을 따라 왼쪽 55%를 글 자리로 비우고
  * 오른쪽 그림 자리에만 키를 작게 적는다 — 위에 얹는 이벤트 글과 겹치지 않게.
@@ -32,6 +39,7 @@ interface MockBanner {
 function imageUrlOf(imageKey: string) {
     const uploaded = resolveMockImageUrl(imageKey);
     if (uploaded) return uploaded;
+    if (SEED_BANNER_IMAGES.has(imageKey)) return `/images/${imageKey}`;
 
     const label = imageKey.slice(0, 40).replace(/[<>&"]/g, '');
     const svg =
@@ -48,8 +56,8 @@ const seedAt = '2026-10-01T00:00:00.000Z';
 const mockBanners: MockBanner[] = [
     {
         id: 'bnr-1',
-        eventId: 'evt-001',
-        imageKey: 'banners/weekly-buds.png',
+        eventId: 'evt-004',
+        imageKey: 'banners/nintendo.jpg',
         displayOrder: 1,
         createdAt: seedAt,
         updatedAt: seedAt,
@@ -57,7 +65,7 @@ const mockBanners: MockBanner[] = [
     {
         id: 'bnr-2',
         eventId: 'evt-002',
-        imageKey: 'banners/attendance-challenge.png',
+        imageKey: 'banners/attendance.jpg',
         displayOrder: 2,
         createdAt: seedAt,
         updatedAt: seedAt,
@@ -65,8 +73,25 @@ const mockBanners: MockBanner[] = [
     {
         id: 'bnr-3',
         eventId: 'evt-005',
-        imageKey: 'banners/starbucks-ecard.png',
+        imageKey: 'banners/starbucks.jpg',
         displayOrder: 3,
+        createdAt: seedAt,
+        updatedAt: seedAt,
+    },
+    {
+        id: 'bnr-4',
+        eventId: 'evt-006',
+        imageKey: 'banners/data-coupon.jpg',
+        displayOrder: 4,
+        createdAt: seedAt,
+        updatedAt: seedAt,
+    },
+    {
+        // 목업에 치킨 이벤트가 없어 같은 배달 쿠폰 이벤트에 잇는다
+        id: 'bnr-5',
+        eventId: 'evt-202',
+        imageKey: 'banners/chicken.jpg',
+        displayOrder: 5,
         createdAt: seedAt,
         updatedAt: seedAt,
     },
