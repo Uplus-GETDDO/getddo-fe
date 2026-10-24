@@ -1,0 +1,576 @@
+{
+    "collectedAt": "2026-10-24T01:24:12.364Z",
+    "base": "http://127.0.0.1:5196",
+    "conditions": {
+        "throttled": {
+            "runs": [
+                {
+                    "tShell": 1146,
+                    "tContent": 3530,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 7831,
+                            "dur": 349,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 7835,
+                            "dur": 344,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 7839,
+                            "dur": 277,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 7840,
+                            "dur": 558,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 8554,
+                            "dur": 1013,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 8558,
+                            "dur": 806,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 8569,
+                            "dur": 1046,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 8569,
+                            "dur": 1560,
+                            "size": 27608
+                        }
+                    ]
+                },
+                {
+                    "tShell": 1106,
+                    "tContent": 3493,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 7820,
+                            "dur": 341,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 7824,
+                            "dur": 337,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 7831,
+                            "dur": 268,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 7834,
+                            "dur": 545,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 8535,
+                            "dur": 1019,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 8538,
+                            "dur": 812,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 8550,
+                            "dur": 1049,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 8551,
+                            "dur": 1564,
+                            "size": 27608
+                        }
+                    ]
+                },
+                {
+                    "tShell": 1094,
+                    "tContent": 3462,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 7754,
+                            "dur": 340,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 7756,
+                            "dur": 338,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 7761,
+                            "dur": 271,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 7764,
+                            "dur": 566,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 8488,
+                            "dur": 1014,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 8491,
+                            "dur": 808,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 8500,
+                            "dur": 1048,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 8501,
+                            "dur": 1563,
+                            "size": 27608
+                        }
+                    ]
+                },
+                {
+                    "tShell": 1010,
+                    "tContent": 3377,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 7735,
+                            "dur": 353,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 7737,
+                            "dur": 350,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 7741,
+                            "dur": 284,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 7743,
+                            "dur": 563,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 8432,
+                            "dur": 1030,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 8434,
+                            "dur": 842,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 8439,
+                            "dur": 1070,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 8440,
+                            "dur": 1646,
+                            "size": 27608
+                        }
+                    ]
+                },
+                {
+                    "tShell": 1054,
+                    "tContent": 3431,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 7706,
+                            "dur": 353,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 7710,
+                            "dur": 349,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 7716,
+                            "dur": 281,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 7719,
+                            "dur": 574,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 8422,
+                            "dur": 1012,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 8426,
+                            "dur": 806,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 8433,
+                            "dur": 1049,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 8434,
+                            "dur": 1560,
+                            "size": 27608
+                        }
+                    ]
+                }
+            ],
+            "medianShell": 1094,
+            "medianContent": 3462
+        },
+        "local": {
+            "runs": [
+                {
+                    "tShell": 860,
+                    "tContent": 862,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 719,
+                            "dur": 5,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 719,
+                            "dur": 5,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 719,
+                            "dur": 4,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 720,
+                            "dur": 5,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 745,
+                            "dur": 4,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 745,
+                            "dur": 6,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 745,
+                            "dur": 8,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 745,
+                            "dur": 9,
+                            "size": 27608
+                        },
+                        {
+                            "name": "chip-ticket-2yQY44yA.png",
+                            "start": 1181,
+                            "dur": 8,
+                            "size": 15347
+                        }
+                    ]
+                },
+                {
+                    "tShell": 833,
+                    "tContent": 836,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 705,
+                            "dur": 6,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 705,
+                            "dur": 6,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 706,
+                            "dur": 6,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 706,
+                            "dur": 7,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 731,
+                            "dur": 7,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 731,
+                            "dur": 8,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 732,
+                            "dur": 10,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 732,
+                            "dur": 11,
+                            "size": 27608
+                        },
+                        {
+                            "name": "chip-ticket-2yQY44yA.png",
+                            "start": 1193,
+                            "dur": 8,
+                            "size": 15347
+                        }
+                    ]
+                },
+                {
+                    "tShell": 390,
+                    "tContent": 394,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 691,
+                            "dur": 4,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 692,
+                            "dur": 5,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 693,
+                            "dur": 4,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 693,
+                            "dur": 6,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 718,
+                            "dur": 7,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 718,
+                            "dur": 7,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 719,
+                            "dur": 10,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 719,
+                            "dur": 10,
+                            "size": 27608
+                        }
+                    ]
+                },
+                {
+                    "tShell": 855,
+                    "tContent": 858,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 696,
+                            "dur": 5,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 697,
+                            "dur": 5,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 697,
+                            "dur": 4,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 697,
+                            "dur": 6,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 726,
+                            "dur": 5,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 726,
+                            "dur": 6,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 727,
+                            "dur": 8,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 727,
+                            "dur": 8,
+                            "size": 27608
+                        },
+                        {
+                            "name": "chip-ticket-2yQY44yA.png",
+                            "start": 1228,
+                            "dur": 7,
+                            "size": 15347
+                        }
+                    ]
+                },
+                {
+                    "tShell": 379,
+                    "tContent": 381,
+                    "resources": [
+                        {
+                            "name": "UserLayout-BpZparrS.js",
+                            "start": 694,
+                            "dur": 4,
+                            "size": 10896
+                        },
+                        {
+                            "name": "controlVirtualClock-CraCFmPl.js",
+                            "start": 694,
+                            "dur": 5,
+                            "size": 9392
+                        },
+                        {
+                            "name": "switchVirtualUser-Dj6iQwme.js",
+                            "start": 695,
+                            "dur": 4,
+                            "size": 4227
+                        },
+                        {
+                            "name": "notificationBell-CRNqS6P7.js",
+                            "start": 695,
+                            "dur": 7,
+                            "size": 13661
+                        },
+                        {
+                            "name": "HomePage-CGZojBcL.js",
+                            "start": 724,
+                            "dur": 5,
+                            "size": 36534
+                        },
+                        {
+                            "name": "ticket-w6FMDpNL.js",
+                            "start": 724,
+                            "dur": 6,
+                            "size": 26354
+                        },
+                        {
+                            "name": "ticket-card-DKtvqXli.js",
+                            "start": 725,
+                            "dur": 8,
+                            "size": 3406
+                        },
+                        {
+                            "name": "event-C6kT6NlT.js",
+                            "start": 725,
+                            "dur": 10,
+                            "size": 27608
+                        }
+                    ]
+                }
+            ],
+            "medianShell": 833,
+            "medianContent": 836
+        }
+    }
+}

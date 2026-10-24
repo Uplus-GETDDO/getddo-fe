@@ -18,7 +18,16 @@ export function readEventSort(value: string | null): EventSort {
 const SORTERS: Record<EventSort, (a: Event, b: Event) => number> = {
     latest: (a, b) => b.startsAt.localeCompare(a.startsAt),
     closing: (a, b) => a.endsAt.localeCompare(b.endsAt),
-    // 당첨 인원은 서버가 늘 주지는 않는다 (GD-215) — 없는 건 0으로 봐 뒤로 보낸다
+    /*
+     * 당첨 인원순 — 계약에 없는 화면 자체 정렬이다.
+     *
+     * getddo-spec 05-api/event.md의 GD-251 절이 "당첨 인원순 정렬과 태그·추천 필드는 이번
+     * 계약에 추가하지 않는다"로 못 박았다. 서버가 정렬해 주지 않으므로 받아 온 페이지 안에서만
+     * 다시 세운다 — 전체 목록 기준이 아니라 지금 페이지 기준이라는 뜻이다.
+     * BE 정렬 계약이 생기면 쿼리 파라미터로 옮긴다.
+     *
+     * 당첨 인원은 서버가 늘 주지는 않는다 (GD-215) — 없는 건 0으로 봐 뒤로 보낸다.
+     */
     winners: (a, b) => (b.winnerCount ?? 0) - (a.winnerCount ?? 0),
 };
 

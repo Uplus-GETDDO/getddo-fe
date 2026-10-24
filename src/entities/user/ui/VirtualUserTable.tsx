@@ -89,7 +89,14 @@ export function VirtualUserTable({
     const table = useTable({ features, columns, data: users });
 
     return (
-        <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+        // 좁은 화면에서 표가 카드 밖으로 넘치면 카드 안쪽 가로 스크롤로 접근한다 — 스크롤 영역은
+        // 키보드 진입이 가능해야 하므로 region+tabIndex를 둔다 (GD-317 어뷰징 표와 같은 패턴)
+        <div
+            role="region"
+            aria-label="가상 사용자 표 가로 스크롤"
+            tabIndex={0}
+            className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto rounded-2xl border focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+        >
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (

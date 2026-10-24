@@ -86,6 +86,19 @@ describe('폴링 읽기 오류 정책', () => {
         });
         expect(getPollingRetryDelay(error)).toBe(90_000);
     });
+    /*
+     * 발표가 끝난 겟또타임 상세처럼 주기 조회를 멈춘 화면도 대기 중에는 깨어나야 한다.
+     * 깨우지 않으면 다시 그릴 계기가 없어 대기가 끝나도 '다시 불러오기'가 꺼진 채로 남는다.
+     */
+    it('주기 조회를 멈춘 화면도 429 대기 중에는 남은 기한만큼 깨운다', () => {
+        const error = new ApiError('LIMIT', '대기', 429, 30);
+        expect(pollingReadInterval({ state: { error } }, false)).toBe(30_000);
+    });
+    it('대기가 아니면 멈춘 화면은 그대로 멈춰 있는다', () => {
+        expect(pollingReadInterval({ state: { error: null } }, false)).toBe(false);
+        expect(pollingReadInterval({ state: { error: new Error('network') } }, false)).toBe(false);
+    });
+
     it('서버 대기가 타이머 한계를 넘으면 예약만 자르고 기한은 유지한다', async () => {
         const error = new ApiError('LIMIT', '대기', 429, 3_000_000);
         expect(getPollingRetryDelay(error)).toBeGreaterThan(2_147_483_647);

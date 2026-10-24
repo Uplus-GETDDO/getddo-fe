@@ -51,3 +51,6 @@ public/mockServiceWorker.js.bak
 # python
 __pycache__/
 *.pyc
+
+# dryforge 작업 문서
+.dryforge/

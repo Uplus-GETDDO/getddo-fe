@@ -1,0 +1,63 @@
+{
+    "kind": "GD-330 spec 미실측 표본 존재 여부 — 배포본 읽기 전용",
+    "checkedAt": "2026-10-23T15:51:16.421825+00:00",
+    "url": "https://getddo-fe.vercel.app",
+    "checks": [
+        {
+            "name": "abuse triggerScope 분포 (AR02 상세)",
+            "total": 10,
+            "byScope": {
+                "USER": 10
+            },
+            "eventSpecimen": false
+        },
+        {
+            "name": "admin users 상태 분포",
+            "total": 100,
+            "byStatus": {
+                "ACTIVE": 100
+            },
+            "inactiveSpecimen": false
+        },
+        {
+            "name": "draws 실행 상태 분포",
+            "events": 58,
+            "eventsScanned": 58,
+            "requestFailures": 0,
+            "scanIncomplete": false,
+            "executions": 60,
+            "byStatus": {
+                "CONFIRMED": 44,
+                "NO_ENTRIES": 16
+            },
+            "failedSpecimen": false
+        },
+        {
+            "name": "attendance 정책 표본",
+            "daily": 3,
+            "dailyFutureScheduled": 0,
+            "streak": 2,
+            "streakFutureScheduled": 1,
+            "scheduledSpecimen": true
+        },
+        {
+            "name": "ticket-histories 등급 분포",
+            "total": 100,
+            "byGrade": {
+                "BRONZE": 10,
+                "PLATINUM": 87,
+                "GOLD": 2,
+                "SILVER": 1
+            },
+            "goldOrPlatinum": true
+        },
+        {
+            "name": "notifications 목록",
+            "sample": 20,
+            "total": 23,
+            "hasNextCursor": true,
+            "unreadInSample": 7,
+            "eventLinked": 20
+        }
+    ]
+}

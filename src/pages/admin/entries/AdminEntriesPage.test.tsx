@@ -33,6 +33,15 @@ describe('AdminEntriesPage', () => {
         expect(screen.getAllByText('응모권이 부족합니다.').length).toBeGreaterThan(0);
     });
 
+    it('좁은 화면의 표 가로 스크롤 영역은 키보드로 진입할 수 있다', async () => {
+        renderPage();
+        await screen.findAllByText('10월 럭키 드로우');
+        expect(screen.getByRole('region', { name: '응모 이력 표 가로 스크롤' })).toHaveAttribute(
+            'tabindex',
+            '0',
+        );
+    });
+
     it('사용자 필터 링크로 들어오면 해당 사용자 응모만 보여준다', async () => {
         renderPage(`/admin/entries?userId=${USER_ID}`);
         expect(await screen.findByText('PLATINUM 특별 추첨')).toBeInTheDocument();
@@ -81,6 +90,10 @@ describe('AdminEntriesPage', () => {
         renderPage(`/admin/entries?view=participants&eventId=${EVENT_ID}`);
         expect(await screen.findByText(/총 2명/)).toBeInTheDocument();
         expect(screen.getByText('2장')).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: '참여자 표 가로 스크롤' })).toHaveAttribute(
+            'tabindex',
+            '0',
+        );
     });
 
     it('참여자 보기에서 이벤트 ID가 없으면 요청 없이 입력을 안내한다', async () => {

@@ -78,7 +78,7 @@
 
 ## 기술 스택
 
-- **Front end**: TypeScript, React, Vite, React Router, TanStack Query, Zustand, Redux Toolkit, TailwindCSS, shadcn/ui, TanStack Table, react-day-picker, React Hook Form, Zod, GSAP, Framer Motion, canvas-confetti, MSW, Vitest, React Testing Library
+- **Front end**: TypeScript, React, Vite, React Router, TanStack Query, Zustand, Redux Toolkit, TailwindCSS, shadcn/ui, TanStack Table, React Hook Form, Zod, Framer Motion, MSW, Vitest, React Testing Library
 - **Back end**: Java 21, Spring Boot, Spring MVC, Spring Data JPA, Hibernate, MySQL, Flyway, Gradle
 - BE는 Spring 기반 자체 API 서버 + MySQL 구조. 인증·권한 제어·추첨 로직은 애플리케이션 레이어에서 구현하며 스키마 이력은 Flyway로 관리한다.
 
@@ -360,7 +360,7 @@
 FE-BE 연동은 `../getddo-spec/05-api/`의 개별 채택 범위와 현행 구현 표기를 따른다. 아래 정책 확정·계약 채택·현행 구현은 배포·FE 연동 완료와 구분하며, 나머지 검토 대기 초안은 확정 정책처럼 적용하지 않는다. 전체 목록과 코드 차이는 [CONTEXT.md](CONTEXT.md)의 '백엔드 연동 전 임시 상태'를 따른다.
 
 - [확정] 사용자 알림 N01~N03·관리자 알림 AN01~AN05 — `05-api/notification.md`. 알림은 마감 +1분·추첨 완료가 아니라 관리자의 발표 요청으로 실제 공개될 때 발생한다(2026-10-17 문구 동기화, 대기 시간은 GD-268)
-- [확정·채택] 배너 B01·AB01~AB05, 관리자 사용자 AO01·AO02, 관리자 응모권 AO03·AO04·AO05·AO08·AO09, 사용자 결과 E08·E09, 추첨 GD-87·GD-138 일부·GD-169 선택 범위, 어뷰징 조회 AR01/AR02(채택·미배포), 게임 G01·G02·G05 및 색깔·타꼬런·타이밍·주문 G03/G04를 따른다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 검색 건수 `totalElements`와 구분한다. E01 목록의 `winnerCount`는 경품 인원 합계다(GD-251)
+- [확정·채택] 배너 B01·AB01~AB05, 관리자 사용자 AO01·AO02, 관리자 응모권 AO03·AO04·AO05·AO08·AO09, 사용자 결과 E08·E09, 추첨 GD-87·GD-138 일부·GD-169 선택 범위, 어뷰징 조회 AR01/AR02(채택·배포·실측 완료), 게임 G01·G02·G05 및 색깔·타꼬런·타이밍·주문 G03/G04를 따른다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 검색 건수 `totalElements`와 구분한다. E01 목록의 `winnerCount`는 경품 인원 합계다(GD-251)
 - [확정 정책·병합·배포됨] 최초 발표는 육안 검토 후 `POST /admin/draws/{runId}/result-confirmation` 한 번으로 최종 확인·전체 공개를 함께 처리한다. 별도 확인 버튼·선행 확인 호출·최초 발표의 `publication` 추가 호출은 없다. GD-199는 PR #108로 2026-10-17 병합·배포됐고 FE는 GD-253에서 연결했다. 본문·추가 멱등 헤더 없는 최신 검토 `runId`·기존 DTO/오류·성공 재시도 계약은 `05-api/drawing.md`를 따른다
 - [현행 구현] 미션 M01~M04·AM01~AM05, 응모 E03~E07·AO06·AO07, 출석 AT01~AT03·AP01~AP06, T01·T02와 U01 비활성 거절(403 `USER-007`) — `05-api/mission.md`·`entry.md`·`attendance.md`·`ticket.md`·`user.md`. 미션 보상은 1장 고정이며 관리자 등록도 생략 또는 1만 허용한다
 - [확정·구현 예정] 관리자 응답의 사용자·처리자·작성자 이름 필드(ADR-028)는 추첨·응모·알림·응모권 정합성·미션·출석 DTO에 추가됐다. BE 구현·배포 전이며 ID가 null이면 이름도 null이다

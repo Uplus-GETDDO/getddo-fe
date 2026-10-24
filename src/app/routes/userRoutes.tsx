@@ -1,11 +1,9 @@
 import type { ComponentType } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
-import { UserLayout } from '@app/layouts/UserLayout';
 import { UserGuard } from '@app/routes/UserGuard';
-import { HomePage } from '@pages/home/HomePage';
 import { LoginPage } from '@pages/login/LoginPage';
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
 import { env } from '@shared/config/env';
@@ -22,24 +20,51 @@ const lazyPage = (importer: () => Promise<{ default: ComponentType }>) => {
     );
 };
 
+// 사용자 셸(헤더·푸터)도 관리자처럼 lazy로 분리해 /login 초기 번들에서 제외한다
+const UserLayoutLazy = lazy(() =>
+    import('@app/layouts/UserLayout').then((m) => ({ default: m.UserLayout })),
+);
+
 // 디자인 갤러리는 개발용 화면 — 운영 빌드에서는 라우트 자체를 등록하지 않는다
 const UiGalleryPageLazy = lazy(() =>
     import('@pages/uiGallery/UiGalleryPage').then((m) => ({ default: m.UiGalleryPage })),
 );
 
+// /login 체류 동안 사용자 셸·홈 청크를 미리 받는다 — 셸이 lazy라 진입 시 자식 페이지 청크가
+// 직렬로 이어지는 워터폴을 없애기 위함이다 (GD-334 후속). 로그인 후 진입 경로는 '/'로 고정이다.
+// pages→app 참조가 금지라 라우트 단에서 처리한다.
+const LoginWithShellPrefetch = () => {
+    useEffect(() => {
+        void import('@app/layouts/UserLayout');
+        void import('@pages/home/HomePage');
+    }, []);
+    return <LoginPage />;
+};
+
 export const userRoutes: RouteObject[] = [
-    { path: '/login', element: <LoginPage />, errorElement: <RouteErrorFallback /> },
+    {
+        path: '/login',
+        element: <LoginWithShellPrefetch />,
+        errorElement: <RouteErrorFallback />,
+    },
     {
         element: (
             <UserGuard>
-                <UserLayout />
+                <Suspense fallback={<SkeletonDetail />}>
+                    <UserLayoutLazy />
+                </Suspense>
             </UserGuard>
         ),
         // Outlet 안쪽 오류는 레이아웃의 RouteErrorBoundary가 잡는다 —
         // 여기서는 레이아웃 자체의 렌더 오류·lazy import 실패를 최후 방어선으로 받는다 (레이아웃 없이 표시)
         errorElement: <RouteErrorFallback />,
         children: [
-            { path: '/', element: <HomePage /> },
+            {
+                path: '/',
+                element: lazyPage(() =>
+                    import('@pages/home/HomePage').then((m) => ({ default: m.HomePage })),
+                ),
+            },
             {
                 path: '/time-raffle',
                 element: lazyPage(() =>
