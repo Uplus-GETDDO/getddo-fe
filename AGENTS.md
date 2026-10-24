@@ -6,7 +6,7 @@
 ## 프로젝트 개요
 
 - LG유플러스 응모 이벤트 플랫폼 프론트엔드 (가상 사용자 기반 응모/추첨 이벤트)
-- 기술 스택: TypeScript, React 19, Vite 8, React Router 7, TanStack Query, Zustand, Redux Toolkit, TailwindCSS v4, shadcn/ui, React Hook Form + Zod
+- 기술 스택: TypeScript, React 19, Vite 8, React Router 7, TanStack Query, Zustand, TailwindCSS v4, shadcn/ui, React Hook Form + Zod
 - 백엔드는 별도 레포 — API가 준비되기 전까지 MSW로 목업한다
 - Node >= 20.19 (`package.json` `engines` 기준, 24.x 권장) / npm
 
@@ -112,7 +112,7 @@ app → pages → widgets → features → entities → shared
 - 여러 컴포넌트가 같은 행동을 중복 요청할 수 있으면 `useRef` Set으로 동기적으로 차단하고, 서버 측 중복은 멱등키로 막는다 (ADR-0005)
 - 컴포넌트 트리 밖 → 안쪽으로 신호를 보낼 때는 props 드릴링 대신 "의도" store(pending flag + consume) 패턴을 쓴다
 
-역할 분리 기준은 `docs/adr/ADR-0003-state-management-roles.md`를 따른다. Redux Toolkit은 의존성만 있고 스토어는 아직 없다 — 필요한 전역 플로우가 생길 때 도입한다. 가상 시계는 상태 라이브러리가 아닌 `shared/model/virtualClock`의 React context다 — context·훅·Provider·저장 키가 한 폴더에 있다. Provider 중첩은 `QueryClientProvider`가 가장 바깥이다 — Context 기반 상태(가상 시계)가 쿼리의 `enabled`·queryFn에 영향을 줄 수 있어야 한다.
+역할 분리 기준은 `docs/adr/ADR-0003-state-management-roles.md`를 따른다. Redux Toolkit은 미사용으로 의존성을 제거했다 (GD-342) — 필요한 전역 플로우가 생길 때 ADR-0003의 판단 기준대로 재도입한다. 가상 시계는 상태 라이브러리가 아닌 `shared/model/virtualClock`의 React context다 — context·훅·Provider·저장 키가 한 폴더에 있다. Provider 중첩은 `QueryClientProvider`가 가장 바깥이다 — Context 기반 상태(가상 시계)가 쿼리의 `enabled`·queryFn에 영향을 줄 수 있어야 한다.
 
 ### 스타일
 
