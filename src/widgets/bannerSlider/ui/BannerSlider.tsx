@@ -40,45 +40,43 @@ function ActiveRefresh({
 }
 
 /**
- * 정지 버튼 둘레의 원 — 넘김 화살표(lucide CircleArrow: 24 viewBox, 반지름 10, 선 1.5)와 같은 원을 그린다.
- * 자동 재생 중에는 연한 원 위에 진한 원이 다음 배너까지 남은 시간만큼 12시 방향부터 차오르고,
- * 멈추면 화살표처럼 진한 원 하나만 남는다. 다시 돌면 타이머처럼 처음부터 채운다
+ * 배너 수만큼의 점 — 지금 배너의 점만 알약으로 늘어나고, 자동 재생 중에는 그 안이 다음 배너까지 남은 시간만큼 찬다.
+ * 채움도 알약 모양(점 크기에서 시작해 폭만 늘린다)이라 끝이 잘려 보이지 않는다. 멈추면 꽉 찬 알약으로 둔다.
+ * 위치는 '01 / 04'가 알려 주므로 보조 기술에서는 감춘다
  */
-function PlaybackRing({ playing, index }: { playing: boolean; index: number }) {
+function SlideDots({ total, index, playing }: { total: number; index: number; playing: boolean }) {
     return (
-        <svg
-            aria-hidden
-            viewBox="0 0 24 24"
-            fill="none"
-            strokeWidth={1.5}
-            className="pointer-events-none absolute inset-0 size-full -rotate-90"
-        >
-            {playing ? (
-                <>
-                    <circle cx="12" cy="12" r="10" className="stroke-border-strong" />
-                    <motion.circle
-                        key={index}
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: AUTO_SLIDE_MS / 1000, ease: 'linear' }}
-                    />
-                </>
-            ) : (
-                <circle cx="12" cy="12" r="10" stroke="currentColor" />
+        <div aria-hidden className="flex items-center gap-1">
+            {Array.from({ length: total }, (_, dot) =>
+                dot === index ? (
+                    <span
+                        key={dot}
+                        className="bg-border-strong relative h-1.5 w-6 overflow-hidden rounded-full"
+                    >
+                        <motion.span
+                            key={playing ? `play-${index}` : 'still'}
+                            className="bg-fg-primary absolute inset-y-0 left-0 min-w-1.5 rounded-full"
+                            initial={{ width: playing ? '0%' : '100%' }}
+                            animate={{ width: '100%' }}
+                            transition={
+                                playing
+                                    ? { duration: AUTO_SLIDE_MS / 1000, ease: 'linear' }
+                                    : { duration: 0 }
+                            }
+                        />
+                    </span>
+                ) : (
+                    <span key={dot} className="bg-border-strong size-1.5 rounded-full" />
+                ),
             )}
-        </svg>
+        </div>
     );
 }
 
 /**
  * 홈 관리 배너 —관리자가 등록한 배너(B01)를 순서대로 넘긴다.
  * 자동 재생은 계속 돌고, 마우스·포커스가 안에 있거나 정지 버튼을 누르면 멈춘다. 동작 줄이기 설정이면 켜지 않는다.
- * 자동 재생 중에는 정지 버튼 둘레의 원이 다음 배너까지 남은 시간을 채워 보여 준다 (PlaybackRing).
+ * 자동 재생 중에는 넘김 컨트롤 옆 알약 점이 다음 배너까지 남은 시간을 채워 보여 준다 (SlideDots).
  * 배너 아래 한 줄 — 왼쪽은 페이지가 넣는 내용(바로가기), 오른쪽은 갱신 표시·정지·넘김 화살표.
  * 바로가기를 따로 한 줄로 떼면 배너와 아래 섹션 사이에 홀로 떠 보여, 배너에서 16px 띄운 한 줄로 묶는다
  */
@@ -237,23 +235,19 @@ export function BannerSlider({
                         )}
                         {total > 1 && (
                             <div className="flex items-center gap-1">
+                                <SlideDots total={total} index={safeIndex} playing={playing} />
                                 {!reduceMotion && (
                                     <Button
                                         variant="ghost"
                                         size="icon-sm"
-                                        className="text-fg-primary hover:text-fg-secondary relative size-7.5 rounded-full hover:bg-transparent active:bg-transparent"
+                                        className="ml-1 rounded-full"
                                         aria-label={stopped ? '자동 재생 시작' : '자동 재생 정지'}
                                         onClick={() => {
                                             if (stopped) setFocused(false);
                                             setPaused(!stopped);
                                         }}
                                     >
-                                        <PlaybackRing playing={playing} index={safeIndex} />
-                                        {stopped ? (
-                                            <Play aria-hidden className="size-3 fill-current" />
-                                        ) : (
-                                            <Pause aria-hidden className="size-3 fill-current" />
-                                        )}
+                                        {stopped ? <Play aria-hidden /> : <Pause aria-hidden />}
                                     </Button>
                                 )}
                                 {/* 피그마 홈 — 원형 화살표 사이에 '01 / 04' (공용 Pager) */}
