@@ -92,13 +92,19 @@ describe('AR01 차단 이력 목록', () => {
     });
 
     it('오프셋 표기(+09:00)도 같은 순간으로 비교한다', async () => {
-        // 2026-10-20T14:00:00+09:00 = 05:00Z, 16:00+09:00 = 07:00Z — 사이는 05:32Z 한 건
+        // fixture의 blockedAt을 +09:00 표기로 ±1시간 감싸도 같은 순간으로 잡혀야 한다
+        const all = page(abuseCaseSchema, (await get('/v1/admin/abuse-cases')).data).items;
+        const target = all.find((i) => i.id === CASE_ID);
+        if (!target) throw new Error('fixture missing');
+        const at = new Date(target.blockedAt).getTime();
+        const kst = (ms: number) =>
+            new Date(ms + 9 * 60 * 60 * 1000).toISOString().replace('Z', '+09:00');
         const items = page(
             abuseCaseSchema,
             (
                 await get('/v1/admin/abuse-cases', {
-                    from: '2026-10-20T14:00:00+09:00',
-                    to: '2026-10-20T16:00:00+09:00',
+                    from: kst(at - 60 * 60 * 1000),
+                    to: kst(at + 60 * 60 * 1000),
                 })
             ).data,
         ).items;

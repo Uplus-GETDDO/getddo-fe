@@ -12,6 +12,7 @@ import { adminTicketHistorySchema } from '@entities/ticket';
 import { env } from '@shared/config/env';
 import { recentKstDays } from '@shared/utils/date';
 
+import { DAY, demoTime } from '../demoTime';
 import { mockNow } from '../now';
 import { fail, ok } from './response';
 
@@ -91,9 +92,9 @@ const FLOW_STEPS: Record<Flow, { op: TicketOperationType; status: TicketStatus }
     ],
 };
 
-const GRANT_EXPIRES_AT = '2026-10-31T15:00:00.000Z';
-const REFUND_EXPIRES_AT = '2026-11-30T15:00:00.000Z';
-const BASE_TIME = Date.parse('2026-10-01T00:00:00Z');
+const GRANT_EXPIRES_AT = demoTime(30 * DAY);
+const REFUND_EXPIRES_AT = demoTime(60 * DAY);
+const BASE_TIME = Date.parse(demoTime(-24 * DAY));
 const STEP_MS = 60 * 60 * 1000;
 
 const EVENTS = [

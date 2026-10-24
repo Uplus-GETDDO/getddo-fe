@@ -4,6 +4,7 @@ import type { AbuseCaseDetail } from '@entities/abuseCase';
 
 import { env } from '@shared/config/env';
 
+import { DAY, MINUTE, demoTime } from '../demoTime';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
@@ -23,13 +24,13 @@ const abuseCases: AbuseCaseDetail[] = [
         sourceType: 'ENTRY',
         detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
         detectionReason: '1분 내 응모 요청 거절 10회 누적 — 10분 일시 차단',
-        blockedAt: '2026-10-20T05:32:00Z',
-        blockedUntil: '2026-10-20T05:42:00Z',
+        blockedAt: demoTime(-5 * DAY),
+        blockedUntil: demoTime(-5 * DAY + 10 * MINUTE),
         evidence: {
             ruleVersion: 'v1',
             triggerScope: 'EVENT',
-            windowStartedAt: '2026-10-20T05:31:00Z',
-            windowEndsAt: '2026-10-20T05:32:00Z',
+            windowStartedAt: demoTime(-5 * DAY - MINUTE),
+            windowEndsAt: demoTime(-5 * DAY),
             requestLimit: 10,
             rejectedCount: 10,
             rejectionThreshold: 10,
@@ -44,13 +45,13 @@ const abuseCases: AbuseCaseDetail[] = [
         sourceType: 'ENTRY',
         detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
         detectionReason: '1분 내 응모 요청 거절 12회 누적 — 10분 일시 차단',
-        blockedAt: '2026-10-19T16:15:00Z',
-        blockedUntil: '2026-10-19T16:25:00Z',
+        blockedAt: demoTime(-6 * DAY),
+        blockedUntil: demoTime(-6 * DAY + 10 * MINUTE),
         evidence: {
             ruleVersion: 'v1',
             triggerScope: 'EVENT',
-            windowStartedAt: '2026-10-19T16:14:00Z',
-            windowEndsAt: '2026-10-19T16:15:00Z',
+            windowStartedAt: demoTime(-6 * DAY - MINUTE),
+            windowEndsAt: demoTime(-6 * DAY),
             requestLimit: 10,
             rejectedCount: 12,
             rejectionThreshold: 10,
@@ -65,13 +66,13 @@ const abuseCases: AbuseCaseDetail[] = [
         sourceType: 'ENTRY',
         detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
         detectionReason: '사용자 기준 1분 내 응모 요청 거절 25회 누적 — 30분 일시 차단',
-        blockedAt: '2026-10-18T07:47:00Z',
-        blockedUntil: '2026-10-18T08:17:00Z',
+        blockedAt: demoTime(-7 * DAY),
+        blockedUntil: demoTime(-7 * DAY + 30 * MINUTE),
         evidence: {
             ruleVersion: 'v1',
             triggerScope: 'USER',
-            windowStartedAt: '2026-10-18T07:46:00Z',
-            windowEndsAt: '2026-10-18T07:47:00Z',
+            windowStartedAt: demoTime(-7 * DAY - MINUTE),
+            windowEndsAt: demoTime(-7 * DAY),
             requestLimit: 20,
             rejectedCount: 25,
             rejectionThreshold: 20,
@@ -86,13 +87,13 @@ const abuseCases: AbuseCaseDetail[] = [
         sourceType: 'ENTRY',
         detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
         detectionReason: '1분 내 응모 요청 거절 10회 누적 — 10분 일시 차단',
-        blockedAt: '2026-10-15T11:02:00Z',
-        blockedUntil: '2026-10-15T11:12:00Z',
+        blockedAt: demoTime(-10 * DAY),
+        blockedUntil: demoTime(-10 * DAY + 10 * MINUTE),
         evidence: {
             ruleVersion: 'v1',
             triggerScope: 'EVENT',
-            windowStartedAt: '2026-10-15T11:01:00Z',
-            windowEndsAt: '2026-10-15T11:02:00Z',
+            windowStartedAt: demoTime(-10 * DAY - MINUTE),
+            windowEndsAt: demoTime(-10 * DAY),
             requestLimit: 10,
             rejectedCount: 10,
             rejectionThreshold: 10,
