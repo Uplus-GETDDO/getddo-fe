@@ -30,11 +30,13 @@ const UiGalleryPageLazy = lazy(() =>
     import('@pages/uiGallery/UiGalleryPage').then((m) => ({ default: m.UiGalleryPage })),
 );
 
-// /login 체류 동안 사용자 셸 청크를 미리 받는다 — 셸이 lazy라 진입 시 자식 페이지 청크가
-// 직렬로 이어지는 워터폴을 없애기 위함이다 (GD-334 후속). pages→app 참조가 금지라 라우트 단에서 처리한다.
+// /login 체류 동안 사용자 셸·홈 청크를 미리 받는다 — 셸이 lazy라 진입 시 자식 페이지 청크가
+// 직렬로 이어지는 워터폴을 없애기 위함이다 (GD-334 후속). 로그인 후 진입 경로는 '/'로 고정이다.
+// pages→app 참조가 금지라 라우트 단에서 처리한다.
 const LoginWithShellPrefetch = () => {
     useEffect(() => {
         void import('@app/layouts/UserLayout');
+        void import('@pages/home/HomePage');
     }, []);
     return <LoginPage />;
 };
