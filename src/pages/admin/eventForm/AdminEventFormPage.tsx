@@ -3,6 +3,8 @@ import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import type { AdminEvent } from '@entities/event';
+
 import { EVENT_TYPE_LABEL, MEMBERSHIP_LABEL, useAdminEvent } from '@entities/event';
 import { ImageUploadField } from '@entities/image';
 import { useCreateEvent, useUpdateEvent } from '@features/manageEvent';
@@ -27,11 +29,34 @@ const MEMBERSHIP_OPTIONS = (
     Object.entries(MEMBERSHIP_LABEL) as [EventFormValues['membershipRule'], string][]
 ).map(([value, label]) => ({ value, label: `${label} 이상` }));
 
-export function AdminEventFormPage() {
-    const { eventId } = useParams();
+/** 새 이벤트의 빈 양식 */
+const NEW_EVENT_VALUES: EventFormInput = {
+    title: '',
+    description: '',
+    imageKey: '',
+    eventType: 'TICKET',
+    weightingEnabled: true,
+    maxTicketsPerUser: '5',
+    membershipRule: 'excellent',
+    startsAt: '',
+    endsAt: '',
+    prizes: [{ rank: 1, name: '', winnerCount: 1, description: '', imageKey: '' }],
+};
+
+/**
+ * 이벤트 등록·수정 양식.
+ *
+ * 수정은 상세가 도착한 뒤에만 이 컴포넌트를 세우고(AdminEventFormPage의 가드), 저장된 값을
+ * defaultValues로 받는다 — 첫 렌더부터 제 값을 들고 시작해야 한다.
+ *
+ * 전에는 values로 넘겼다. RHF는 values를 마운트 뒤 effect에서 반영하므로 첫 렌더는 빈 양식으로
+ * 그려지고, 그 뒤 값이 바뀐다. 그 시점에 Select는 아직 목록을 펼친 적이 없어 새 값의 라벨을
+ * 찾지 못해 빈칸이 되고 폼 값까지 ''로 떨어졌다 — 저장된 값이 빈 양식의 값과 다른 이벤트
+ * (응모권 미사용·VIP·VVIP)는 수정 자체가 불가능했다 (2026-10-24 배포본에서 재현).
+ */
+function EventFormBody({ event, eventId }: { event?: AdminEvent; eventId?: string }) {
     const isEdit = Boolean(eventId);
     const navigate = useNavigate();
-    const { data: event, isPending, isError } = useAdminEvent(eventId ?? '');
     const createEvent = useCreateEvent();
     const updateEvent = useUpdateEvent();
     const mutation = isEdit ? updateEvent : createEvent;
@@ -43,19 +68,7 @@ export function AdminEventFormPage() {
         formState: { errors, isDirty },
     } = useForm<EventFormInput, undefined, EventFormValues>({
         resolver: zodResolver(eventFormSchema),
-        values: event ? eventToFormValues(event) : undefined,
-        defaultValues: {
-            title: '',
-            description: '',
-            imageKey: '',
-            eventType: 'TICKET',
-            weightingEnabled: true,
-            maxTicketsPerUser: '5',
-            membershipRule: 'excellent',
-            startsAt: '',
-            endsAt: '',
-            prizes: [{ rank: 1, name: '', winnerCount: 1, description: '', imageKey: '' }],
-        },
+        defaultValues: event ? eventToFormValues(event) : NEW_EVENT_VALUES,
     });
 
     // 경품 데이터의 id(수정 시 기존 경품 식별)와 RHF 내부 키가 겹치지 않게 keyName을 바꾼다
@@ -67,39 +80,6 @@ export function AdminEventFormPage() {
     const eventType = useWatch({ control, name: 'eventType' });
     const weightingEnabled = useWatch({ control, name: 'weightingEnabled' });
     const showTicketOptions = eventType === 'TICKET';
-
-    if (isEdit && isPending) {
-        return (
-            <LoadingBlock className="pb-10">
-                <CardSkeleton rows={8} />
-            </LoadingBlock>
-        );
-    }
-    if (isEdit && (isError || !event)) {
-        return (
-            <div className="flex flex-col gap-4 pb-10">
-                <p className="text-semantic-error-strong text-body-sm">
-                    이벤트를 불러오지 못했습니다.
-                </p>
-                <Button variant="secondary" className="w-fit" asChild>
-                    <Link to="/admin/events">목록으로</Link>
-                </Button>
-            </div>
-        );
-    }
-    // 수정은 진행 예정만 허용 — URL 직접 진입도 서버 검증 전에 가드한다
-    if (isEdit && event && event.status !== 'SCHEDULED') {
-        return (
-            <div className="flex flex-col gap-4 pb-10">
-                <p className="text-body-sm text-fg-secondary">
-                    진행 예정 상태의 이벤트만 수정할 수 있습니다.
-                </p>
-                <Button variant="secondary" className="w-fit" asChild>
-                    <Link to={`/admin/events/${eventId}`}>이벤트로 돌아가기</Link>
-                </Button>
-            </div>
-        );
-    }
 
     // 취소·뒤로의 목적지를 명시한다 — 직접 진입 시 navigate(-1)의 행선지가 불명확하다
     const cancelTo = isEdit ? `/admin/events/${eventId}` : '/admin/events';
@@ -532,4 +512,50 @@ export function AdminEventFormPage() {
             </div>
         </form>
     );
+}
+
+/**
+ * 등록·수정 화면의 껍데기 — 수정은 상세를 받아 둔 뒤에만 양식을 세운다.
+ *
+ * key에 이벤트 id를 걸어, 다른 이벤트의 수정 주소로 바로 옮겨 가도 양식이 새로 만들어진다.
+ */
+export function AdminEventFormPage() {
+    const { eventId } = useParams();
+    const isEdit = Boolean(eventId);
+    const { data: event, isPending, isError } = useAdminEvent(eventId ?? '');
+
+    if (isEdit && isPending) {
+        return (
+            <LoadingBlock className="pb-10">
+                <CardSkeleton rows={8} />
+            </LoadingBlock>
+        );
+    }
+    if (isEdit && (isError || !event)) {
+        return (
+            <div className="flex flex-col gap-4 pb-10">
+                <p className="text-semantic-error-strong text-body-sm">
+                    이벤트를 불러오지 못했습니다.
+                </p>
+                <Button variant="secondary" className="w-fit" asChild>
+                    <Link to="/admin/events">목록으로</Link>
+                </Button>
+            </div>
+        );
+    }
+    // 수정은 진행 예정만 허용 — URL 직접 진입도 서버 검증 전에 가드한다
+    if (isEdit && event && event.status !== 'SCHEDULED') {
+        return (
+            <div className="flex flex-col gap-4 pb-10">
+                <p className="text-body-sm text-fg-secondary">
+                    진행 예정 상태의 이벤트만 수정할 수 있습니다.
+                </p>
+                <Button variant="secondary" className="w-fit" asChild>
+                    <Link to={`/admin/events/${eventId}`}>이벤트로 돌아가기</Link>
+                </Button>
+            </div>
+        );
+    }
+
+    return <EventFormBody key={eventId ?? 'new'} event={event} eventId={eventId} />;
 }
