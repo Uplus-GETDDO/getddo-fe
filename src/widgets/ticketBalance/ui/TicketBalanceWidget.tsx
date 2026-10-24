@@ -17,6 +17,7 @@ import { isMissionOpenByServerTime, missionThumbnail, useMissionList } from '@en
 import { TICKET_GRADE_IMAGE, TICKET_RANDOM_IMAGE } from '@entities/ticket';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
+import { TOUR_TARGET } from '@shared/config/tourTargets';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { Button } from '@shared/ui/button';
 import { LoadError } from '@shared/ui/load-error';
@@ -150,7 +151,7 @@ export function TicketBalanceWidget({
     }
 
     return (
-        <section className="flex flex-col gap-6">
+        <section data-tour={TOUR_TARGET.earnTickets} className="flex flex-col gap-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-3">
                     <h2 className="text-title-3 text-fg-primary">오늘 받을 수 있는 응모권</h2>

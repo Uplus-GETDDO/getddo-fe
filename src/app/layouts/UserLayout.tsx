@@ -7,6 +7,7 @@ import { VirtualClockTicker } from '@features/controlVirtualClock';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
 import { env } from '@shared/config/env';
+import { TOUR_TARGET } from '@shared/config/tourTargets';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
@@ -180,7 +181,10 @@ export function UserLayout() {
                                 readOnly={user.role !== 'ADMIN'}
                             />
                         )}
-                        <NotificationBell />
+                        {/* 첫 방문 안내가 짚는 자리 — 종 단추만 감싸 밝힌다 */}
+                        <div data-tour={TOUR_TARGET.notifications} className="flex">
+                            <NotificationBell />
+                        </div>
                         {/* 피그마 홈 — 아바타·이름·멤버십 알약(그림자) + 아래 화살표 */}
                         <VirtualUserSwitcher
                             trigger={

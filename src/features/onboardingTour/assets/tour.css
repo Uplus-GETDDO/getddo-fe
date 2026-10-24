@@ -1,0 +1,118 @@
+/*
+ * driver.js 말풍선을 서비스 토큰으로 다시 칠한다 — 기본은 회색 테두리 버튼·5px 모서리라 화면과 따로 놀았다.
+ * 말풍선은 다른 카드처럼 16 모서리·그림자, 다음 버튼은 공용 primary Small(36), 이전 버튼은 secondary
+ */
+.getddo-tour.driver-popover {
+    --driver-popover-font-family: inherit;
+    color: var(--color-fg-primary);
+    background-color: var(--color-surface-elevated);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    padding: 20px;
+    min-width: 280px;
+    max-width: min(340px, calc(100vw - 32px));
+}
+
+.getddo-tour .driver-popover-title {
+    font-size: var(--text-subhead);
+    line-height: var(--text-subhead--line-height);
+    font-weight: var(--text-subhead--font-weight);
+    padding-right: 28px;
+}
+
+.getddo-tour .driver-popover-description {
+    color: var(--color-fg-secondary);
+    font-size: var(--text-body-sm);
+    line-height: var(--text-body-sm--line-height);
+    word-break: keep-all;
+}
+
+.getddo-tour .driver-popover-title[style*='block'] + .driver-popover-description {
+    margin-top: 4px;
+}
+
+.getddo-tour .driver-popover-close-btn {
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-lg);
+    color: var(--color-fg-tertiary);
+}
+
+.getddo-tour .driver-popover-close-btn:hover,
+.getddo-tour .driver-popover-close-btn:focus-visible {
+    color: var(--color-fg-primary);
+    background-color: var(--color-surface-canvas);
+}
+
+.getddo-tour .driver-popover-footer {
+    margin-top: 20px;
+    gap: 12px;
+}
+
+.getddo-tour .driver-popover-progress-text {
+    color: var(--color-fg-tertiary);
+    font-size: var(--text-caption);
+    font-variant-numeric: tabular-nums;
+}
+
+.getddo-tour .driver-popover-navigation-btns {
+    gap: 8px;
+}
+
+.getddo-tour .driver-popover-navigation-btns button + button {
+    margin-left: 0;
+}
+
+.getddo-tour .driver-popover-footer-btn {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    line-height: 36px;
+    text-shadow: none;
+    color: var(--color-fg-primary);
+    background-color: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-strong);
+    transition: background-color 0.15s;
+}
+
+.getddo-tour .driver-popover-footer-btn:hover {
+    background-color: var(--color-surface-canvas);
+}
+
+.getddo-tour .driver-popover-footer-btn:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+}
+
+.getddo-tour .driver-popover-next-btn {
+    color: var(--color-fg-on-brand);
+    background-color: var(--color-action-neutral);
+    border-color: var(--color-action-neutral);
+}
+
+.getddo-tour .driver-popover-next-btn:hover {
+    background-color: var(--color-action-neutral-hover);
+}
+
+/* 첫 단계의 '이전'은 누를 수 없으니 자리만 차지하지 않게 감춘다 */
+.getddo-tour .driver-popover-prev-btn.driver-popover-btn-disabled {
+    display: none;
+}
+
+/* 꼬리는 테두리 한 면만 칠해 그린다 — 말풍선이 놓인 쪽의 면만 바탕색으로 */
+.getddo-tour .driver-popover-arrow-side-left {
+    border-left-color: var(--color-surface-elevated);
+}
+.getddo-tour .driver-popover-arrow-side-right {
+    border-right-color: var(--color-surface-elevated);
+}
+.getddo-tour .driver-popover-arrow-side-top {
+    border-top-color: var(--color-surface-elevated);
+}
+.getddo-tour .driver-popover-arrow-side-bottom {
+    border-bottom-color: var(--color-surface-elevated);
+}
