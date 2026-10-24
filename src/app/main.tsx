@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -33,6 +34,9 @@ void prepareRuntime()
         createRoot(document.getElementById('root')!).render(
             <StrictMode>
                 <App />
+                {/* Vercel Speed Insights — 실사용자 Web Vitals 수집 (GD-342).
+                    대시보드에서 Speed Insights를 활성화해야 데이터가 쌓인다. */}
+                <SpeedInsights />
             </StrictMode>,
         );
     })
