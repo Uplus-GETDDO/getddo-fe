@@ -7,7 +7,7 @@ import type { EntryTickets } from '@entities/entry';
 import { ENTRIES_KEY, entrySchema } from '@entities/entry';
 import { EVENTS_KEY, eventEntriesApiPath } from '@entities/event';
 import { TICKETS_KEY } from '@entities/ticket';
-import { apiClient } from '@shared/api/client';
+import { ApiError, apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
 import { createIdempotencyKey, IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
@@ -61,9 +61,16 @@ export function useEnterEvent(eventId: string) {
             ]);
         },
         onError: (error) => {
-            // 서버가 응답한 거절(4xx/5xx)은 결과가 키에 묶여 저장되므로 다음 시도는 새 키로 간다.
-            // 응답을 받지 못한 네트워크 오류만 같은 키를 유지해 재시도로 식별되게 한다 (ADR-0005)
-            if (isAxiosError(error) && error.response) {
+            // 저장이 확정된 업무 거절(4xx)만 결과가 키에 묶이므로 다음 시도는 새 키로 간다.
+            // 5xx·503은 커밋 뒤 응답만 유실됐을 수 있고, 응답이 없는 네트워크 오류·timeout은
+            // 서버 도달 여부를 알 수 없으므로 같은 키를 유지해 재시도로 식별되게 한다 (ADR-0005)
+            const status =
+                error instanceof ApiError
+                    ? error.status
+                    : isAxiosError(error)
+                      ? error.response?.status
+                      : undefined;
+            if (status !== undefined && status >= 400 && status < 500) {
                 attemptRef.current = null;
             }
         },
