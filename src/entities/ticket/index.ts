@@ -12,7 +12,7 @@ export {
     TICKET_GRADE_ODDS,
     TICKET_GRADE_WEIGHT,
 } from './model/grade';
-export { TICKET_GRADE_IMAGE, TICKET_GRADES } from './model/gradeImage';
+export { TICKET_GRADE_IMAGE, TICKET_GRADES, TICKET_RANDOM_IMAGE } from './model/gradeImage';
 export { TICKET_OPERATION_DELTA } from './model/operation';
 export {
     MY_TICKETS_API_PATH,

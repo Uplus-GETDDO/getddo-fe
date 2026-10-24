@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 
-import { CalendarCheck, ChevronRight, ClipboardList, Gamepad2, Ticket } from 'lucide-react';
+import { CalendarCheck, ChevronRight, ClipboardList, Gamepad2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import type { Game } from '@entities/game';
@@ -14,6 +14,7 @@ import {
     useGameStatisticsList,
 } from '@entities/game';
 import { isMissionOpenByServerTime, missionThumbnail, useMissionList } from '@entities/mission';
+import { TICKET_GRADE_IMAGE, TICKET_RANDOM_IMAGE } from '@entities/ticket';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
@@ -33,6 +34,8 @@ interface EarnCard extends OrderableEarnCard {
     description: string;
     /** 스텁에 적는 보상 단위 — 출석은 브론즈 고정, 미션·게임은 지급 시 확률 추첨의 등급 응모권 (getddo-spec ticket.md) */
     rewardKind: string;
+    /** 보상 옆 응모권 그림 — 등급이 정해진 출석은 브론즈, 받을 때 등급을 뽑는 미션·게임은 '?' 응모권 */
+    rewardImage: string;
     href: string;
     actionLabel: string;
     /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(출석·미션·게임), 없으면 회색 블록 + 아이콘 */
@@ -91,6 +94,7 @@ export function TicketBalanceWidget({
                       title: '오늘 출석 체크',
                       description: '하루 한 번, 누르면 바로 받아요',
                       rewardKind: '브론즈 응모권',
+                      rewardImage: TICKET_GRADE_IMAGE.BRONZE,
                       rewardTickets: attendance.dailyRewardTicketCount,
                       // 미션 페이지의 출석 섹션으로 바로 내려간다 (missionList MISSION_SECTION_IDS.attendance)
                       href: '/missions#today-attendance',
@@ -111,6 +115,7 @@ export function TicketBalanceWidget({
                 title: mission.title,
                 description: '미션 완료 시 등급 추첨 응모권을 받아요',
                 rewardKind: '등급 응모권',
+                rewardImage: TICKET_RANDOM_IMAGE,
                 rewardTickets: mission.rewardTicketCount,
                 // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
                 href: `/missions?mission=${mission.id}`,
@@ -127,6 +132,7 @@ export function TicketBalanceWidget({
                 title: game.name,
                 description: '게임별 최소 점수로 완료하면 하루 1장, 횟수 제한 없이 플레이',
                 rewardKind: '등급 응모권',
+                rewardImage: TICKET_RANDOM_IMAGE,
                 rewardTickets: 1,
                 href: gameDetailPath(game.id),
                 actionLabel: '게임하러 가기',
@@ -199,6 +205,7 @@ export function TicketBalanceWidget({
                                 <GameTicketCard
                                     game={card.game}
                                     rewardedToday={claimed(card.game.id)}
+                                    rewardImage={card.rewardImage}
                                     href={card.href}
                                     ready={hasGamePlayer(card.game.code)}
                                     className="w-full"
@@ -229,7 +236,13 @@ function EarnTicketCard({ card }: { card: EarnCard }) {
                     <div className="mt-3.75 flex h-4.5 items-center justify-between gap-2">
                         <span className="text-fg-tertiary text-caption">{card.rewardKind}</span>
                         <span className="text-fg-primary text-body-sm-bold flex items-center gap-1">
-                            <Ticket className="size-4.5" />+{card.rewardTickets}
+                            <img
+                                src={card.rewardImage}
+                                alt=""
+                                aria-hidden
+                                className="h-4.5 w-auto object-contain"
+                            />
+                            +{card.rewardTickets}
                         </span>
                     </div>
                     {card.completed ? (
