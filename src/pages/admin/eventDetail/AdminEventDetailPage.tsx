@@ -45,6 +45,33 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
     );
 }
 
+function DangerRow({
+    title,
+    description,
+    onClick,
+}: {
+    title: string;
+    description: string;
+    onClick: () => void;
+}) {
+    return (
+        <div className="border-border-default flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+            <div className="flex min-w-0 flex-col gap-0.5">
+                <span className="text-body-sm-bold text-fg-primary">{title}</span>
+                <span className="text-caption text-fg-secondary">{description}</span>
+            </div>
+            <Button
+                variant="secondary"
+                size="sm"
+                className="text-semantic-error-strong hover:text-semantic-error-strong"
+                onClick={onClick}
+            >
+                {title}
+            </Button>
+        </div>
+    );
+}
+
 // 작은 썸네일로는 올린 사진의 상태를 확인할 수 없다 — 누르면 원본 크기에 가깝게 확대해서 보여 준다
 function ZoomableThumbnail({
     src,
@@ -160,7 +187,21 @@ export function AdminEventDetailPage() {
                         <X aria-hidden className="size-5" />
                     </Button>
                 </div>
+                {/*
+                 * 지금 상태에서 할 일 하나만 채운 버튼으로 — 시작 전엔 수정, 마감 뒤엔 추첨 관리.
+                 * 조회는 테두리 버튼으로 뒤에 두고, 되돌릴 수 없는 삭제·취소는 맨 아래 '이벤트 정리'로 뗀다
+                 */}
                 <div className="flex flex-wrap gap-2">
+                    {hasDraw && (
+                        <Button asChild>
+                            <Link to={`/admin/draw?eventId=${event.id}`}>추첨 관리</Link>
+                        </Button>
+                    )}
+                    {canEdit && (
+                        <Button asChild>
+                            <Link to={`/admin/events/${event.id}/edit`}>수정</Link>
+                        </Button>
+                    )}
                     <Button variant="secondary" asChild>
                         <Link to={`/admin/entries?view=participants&eventId=${event.id}`}>
                             참여자 조회
@@ -169,26 +210,6 @@ export function AdminEventDetailPage() {
                     <Button variant="secondary" asChild>
                         <Link to={`/admin/entries?eventId=${event.id}`}>응모 이력 조회</Link>
                     </Button>
-                    {hasDraw && (
-                        <Button variant="secondary" asChild>
-                            <Link to={`/admin/draw?eventId=${event.id}`}>추첨 관리</Link>
-                        </Button>
-                    )}
-                    {canEdit && (
-                        <Button variant="secondary" asChild>
-                            <Link to={`/admin/events/${event.id}/edit`}>수정</Link>
-                        </Button>
-                    )}
-                    {canEdit && (
-                        <Button variant="secondary" onClick={() => setAction('delete')}>
-                            삭제
-                        </Button>
-                    )}
-                    {canCancel && (
-                        <Button variant="destructive" onClick={() => setAction('cancel')}>
-                            취소
-                        </Button>
-                    )}
                 </div>
             </section>
 
@@ -284,6 +305,35 @@ export function AdminEventDetailPage() {
                     </TableBody>
                 </Table>
             </section>
+
+            {/*
+             * 이벤트 정리 — 드물게 쓰고 되돌릴 수 없는 행동이라 운영 버튼과 떼어 맨 아래에 둔다.
+             * 무엇이 일어나는지 한 줄씩 적고, 버튼은 채우지 않은 빨간 글자로 — 최종 확인은 대화상자가 한 번 더 받는다
+             */}
+            {(canEdit || canCancel) && (
+                <section
+                    aria-labelledby="event-cleanup-title"
+                    className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-5"
+                >
+                    <h3 id="event-cleanup-title" className="text-body-bold text-fg-primary">
+                        이벤트 정리
+                    </h3>
+                    {canEdit && (
+                        <DangerRow
+                            title="이벤트 삭제"
+                            description="시작 전이라 목록에서 완전히 지울 수 있어요."
+                            onClick={() => setAction('delete')}
+                        />
+                    )}
+                    {canCancel && (
+                        <DangerRow
+                            title="이벤트 취소"
+                            description="응모를 멈추고 쓴 응모권을 돌려줘요. 되돌릴 수 없어요."
+                            onClick={() => setAction('cancel')}
+                        />
+                    )}
+                </section>
+            )}
 
             <Dialog open={preview !== null} onOpenChange={(open) => !open && setPreview(null)}>
                 <DialogContent className="sm:max-w-lg">

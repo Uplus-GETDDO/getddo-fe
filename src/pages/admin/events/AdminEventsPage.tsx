@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Outlet, useMatch, useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -161,10 +162,15 @@ export function AdminEventsPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            {/* '이벤트 관리' 설명 기본안 — 이 화면이 하는 일을 한 줄로 말해 준다 */}
-            <p className="text-body-sm text-fg-secondary">
-                이벤트 일정과 경품을 설정하고 운영 상태를 관리합니다.
-            </p>
+            {/* 화면이 하는 일 한 줄과, 이 화면의 주된 행동(등록)을 오른쪽 위에 둔다 — 검색 줄 끝에 있으면 줄바꿈에 밀려 묻혔다 */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-body-sm text-fg-secondary">
+                    이벤트 일정과 경품을 설정하고 운영 상태를 관리합니다.
+                </p>
+                <Button size="lg" onClick={() => void navigate('/admin/events/new')}>
+                    <Plus aria-hidden />새 이벤트 등록
+                </Button>
+            </div>
             {/* 첫 줄은 검색어·기간 검색과 등록, 둘째 줄은 바로 걸리는 선택형 필터(상태·유형·정렬·가중치)를 한데 묶는다 */}
             <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-3">
@@ -221,9 +227,6 @@ export function AdminEventsPage() {
                             초기화
                         </Button>
                     </form>
-                    <Button className="ml-auto" onClick={() => void navigate('/admin/events/new')}>
-                        새 이벤트 등록
-                    </Button>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
