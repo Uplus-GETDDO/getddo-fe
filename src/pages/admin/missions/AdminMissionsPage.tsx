@@ -89,13 +89,8 @@ export function AdminMissionsPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            <div className="flex justify-end">
-                <Button size="lg" onClick={() => setFormOpen(true)}>
-                    미션 등록
-                </Button>
-            </div>
-
             <FilterPanel
+                actions={<Button onClick={() => setFormOpen(true)}>미션 등록</Button>}
                 search={
                     <TextFilter
                         value={draft.keyword}

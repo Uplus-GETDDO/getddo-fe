@@ -6,7 +6,6 @@ import type { useAdminEvents } from '@entities/event';
 
 import { useEntryStatisticsList } from '@entities/entry';
 import { useVirtualClock } from '@shared/model/virtualClock';
-import { badgeVariants } from '@shared/ui/badge';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
@@ -22,11 +21,14 @@ const URGENT_MS = 60 * 60 * 1000;
 /** 목록 안 최다 대비 이 비율 미만이면 '응모 저조' */
 const LOW_RATIO = 0.25;
 
-/** 숫자를 비교하지 않아도 되게 판단을 칩으로 — 마감 임박 > 인기 > 응모 저조 순으로 하나만 */
+/**
+ * 숫자를 비교하지 않아도 되게 판단을 한 낱말로 — 마감 임박 > 인기 > 응모 저조 순으로 하나만.
+ * 색 칩을 줄마다 달면 표가 얼룩져, 다른 관리자 표처럼 작은 점 + 글자로 둔다
+ */
 const STATUS_CHIP = {
-    urgent: { label: '마감 임박', className: 'bg-status-pending text-status-pending-text' },
-    hot: { label: '인기', className: 'bg-brand-soft text-fg-brand' },
-    low: { label: '응모 저조', className: 'bg-surface-sunken text-fg-secondary' },
+    urgent: { label: '마감 임박', dot: 'bg-semantic-error-strong', text: 'text-fg-primary' },
+    hot: { label: '인기', dot: 'bg-brand-primary', text: 'text-fg-brand' },
+    low: { label: '응모 저조', dot: 'bg-fg-disabled', text: 'text-fg-tertiary' },
 } as const;
 
 function eventStatus(remainingMs: number, spent: number | undefined, maxSpent: number) {
@@ -106,7 +108,13 @@ function OpenEventRow({
             </TableCell>
             <TableCell className="w-28 text-center">
                 {status && (
-                    <span className={cn(badgeVariants({ variant: null }), status.className)}>
+                    <span
+                        className={cn(
+                            'inline-flex items-center gap-1.5 text-xs font-semibold',
+                            status.text,
+                        )}
+                    >
+                        <span aria-hidden className={cn('size-1.5 rounded-full', status.dot)} />
                         {status.label}
                     </span>
                 )}
@@ -159,14 +167,24 @@ export function OpenEventsPanel({
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="text-fg-tertiary">No</TableHead>
-                            <TableHead className="text-fg-tertiary">이벤트</TableHead>
-                            <TableHead className="text-fg-tertiary">마감까지</TableHead>
-                            <TableHead className="text-fg-tertiary pr-10 text-right">
+                            <TableHead className="text-fg-tertiary text-xs font-semibold">
+                                No
+                            </TableHead>
+                            <TableHead className="text-fg-tertiary text-xs font-semibold">
+                                이벤트
+                            </TableHead>
+                            <TableHead className="text-fg-tertiary text-xs font-semibold">
+                                마감까지
+                            </TableHead>
+                            <TableHead className="text-fg-tertiary pr-10 text-right text-xs font-semibold">
                                 응모자
                             </TableHead>
-                            <TableHead className="text-fg-tertiary">사용 응모권</TableHead>
-                            <TableHead className="text-fg-tertiary text-center">상태</TableHead>
+                            <TableHead className="text-fg-tertiary text-xs font-semibold">
+                                사용 응모권
+                            </TableHead>
+                            <TableHead className="text-fg-tertiary text-center text-xs font-semibold">
+                                상태
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

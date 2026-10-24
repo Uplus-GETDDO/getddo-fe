@@ -36,7 +36,7 @@ export function DrawEventPicker({
                         <TableHead className={HEAD}>마감</TableHead>
                         {!compact && (
                             <>
-                                <TableHead className={cn(HEAD, 'text-right')}>당첨 인원</TableHead>
+                                <TableHead className={HEAD}>당첨 인원</TableHead>
                                 <TableHead className={HEAD}>등록일</TableHead>
                             </>
                         )}
@@ -91,10 +91,7 @@ export function DrawEventPicker({
                                 {!compact && (
                                     <>
                                         <TableCell
-                                            className={cn(
-                                                CELL,
-                                                'text-fg-primary text-right tabular-nums',
-                                            )}
+                                            className={cn(CELL, 'text-fg-primary tabular-nums')}
                                         >
                                             {formatNumber(winners)}명
                                         </TableCell>

@@ -1,7 +1,7 @@
 import { useAdminDailyStats } from '@entities/adminStats';
 import { useAdminEvents } from '@entities/event';
 import { useVirtualClock } from '@shared/model/virtualClock';
-import { recentKstDays } from '@shared/utils/date';
+import { formatKst, recentKstDays } from '@shared/utils/date';
 import { AdminStatSummary } from '@widgets/adminStatSummary';
 
 import { TREND_DAYS, toTrendRows } from './hooks/useTicketTrend';
@@ -19,19 +19,30 @@ const OPEN_EVENTS_SIZE = 100;
  * AS01은 서버 저장 데이터 조회일 뿐 관리자 가상 시계가 서버 시간을 바꾸지는 않는다
  */
 export function AdminDashboardPage() {
-    const days = recentKstDays(useVirtualClock().now(), TREND_DAYS);
+    const now = useVirtualClock().now();
+    const days = recentKstDays(now, TREND_DAYS);
     const stats = useAdminDailyStats({
         from: days[0]!.ymd,
         to: days[days.length - 1]!.ymd,
     });
     const rows = toTrendRows(stats.data?.days ?? []);
-    // 진행 중 이벤트는 페이지가 한 번만 구독해 두 패널에 나눠 준다 — 같은 키의 폴링 observer를 둘 이상 두지 않는다
+    // 진행 중 이벤트 목록은 페이지가 구독해 응모 현황 표에 넘긴다
     const openEvents = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
 
     return (
-        <div className="flex flex-col gap-6 pb-10 md:pr-10">
+        <div className="flex flex-col gap-5 pb-10 md:pr-10">
+            {/* 제목 아래 작은 날짜 줄 — 숫자들이 언제 기준인지 먼저 알린다 */}
+            <p className="text-body-sm text-fg-tertiary -mt-1">
+                {formatKst(now, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long',
+                })}{' '}
+                · 최근 {TREND_DAYS}일 집계
+            </p>
             <AdminStatSummary stats={stats} />
-            <div className="grid gap-4 lg:grid-cols-3">
+            <div className="grid gap-5 lg:grid-cols-3">
                 <TicketTrendPanel
                     rows={rows}
                     isPending={stats.isPending}
@@ -39,9 +50,9 @@ export function AdminDashboardPage() {
                     onRetry={() => void stats.refetch()}
                     className="lg:col-span-2"
                 />
-                <ActionQueuePanel openEvents={openEvents} />
+                <ActionQueuePanel />
             </div>
-            <div className="grid gap-4 lg:grid-cols-3">
+            <div className="grid gap-5 lg:grid-cols-3">
                 <EventStagePanel />
                 <OpenEventsPanel className="lg:col-span-2" query={openEvents} />
             </div>

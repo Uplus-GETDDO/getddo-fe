@@ -34,6 +34,7 @@ function FilterPanel({
     activeCount = 0,
     error,
     submitLabel = '검색',
+    actions,
     children,
     className,
 }: {
@@ -47,6 +48,8 @@ function FilterPanel({
     /** 검색 조건 오류 — 줄 아래에 띄운다 */
     error?: string | null;
     submitLabel?: string;
+    /** 줄 오른쪽 끝의 화면 주 버튼(예: 새 이벤트 등록) — 따로 한 줄을 차지하면 검색 줄이 다른 화면보다 아래로 밀렸다 */
+    actions?: ReactNode;
     /** FilterRow(알약)들 */
     children?: ReactNode;
     className?: string;
@@ -86,6 +89,7 @@ function FilterPanel({
                             필터 초기화
                         </Button>
                     )}
+                    {actions && <div className="ml-auto flex items-center gap-2">{actions}</div>}
                 </div>
                 {error && (
                     <p role="alert" className="text-semantic-error-strong text-caption">

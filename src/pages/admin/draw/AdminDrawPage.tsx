@@ -102,16 +102,15 @@ export function AdminDrawPage() {
 
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
-            <p className="text-body-sm text-fg-secondary">
-                마감된 이벤트의 추첨 결과를 확인하고, 필요하면 당첨 취소·재추첨을 한 뒤 당첨자를
-                공개해요.
-            </p>
-
-            {/* 단계 칸 — 개수와 할 일을 함께 보이고, 누르면 그 단계만 거른다. 발표 대기가 가장 먼저 */}
+            {/*
+             * 단계 탭 — 개수와 할 일을 함께 보이고, 누르면 그 단계만 거른다. 발표 대기가 가장 먼저.
+             * 따로 떨어진 카드에 얇은 테두리만 바뀌면 누르는 곳인지 몰라, 한 판에 이어 붙인 탭으로 두고
+             * 고른 칸은 바닥에 굵은 먹색 줄을 긋는다
+             */}
             <div
                 role="radiogroup"
                 aria-label="추첨 단계"
-                className="grid grid-cols-2 gap-3 lg:grid-cols-5"
+                className="bg-border-default border-border-default grid grid-cols-2 gap-px overflow-hidden rounded-2xl border lg:grid-cols-5"
             >
                 <StageTile
                     label="전체"
@@ -268,19 +267,29 @@ function StageTile({
             aria-checked={selected}
             onClick={onClick}
             className={cn(
-                'bg-surface-page focus-visible:ring-border-focus flex cursor-pointer flex-col items-start gap-1 rounded-2xl border p-4 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none',
+                'focus-visible:ring-border-focus flex cursor-pointer flex-col items-start gap-1.5 px-5 py-4 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                 selected
-                    ? 'border-fg-primary ring-fg-primary ring-1'
-                    : urgent
-                      ? 'border-border-brand-subtle hover:border-border-brand'
-                      : 'border-border-default hover:border-border-strong',
+                    ? 'bg-surface-canvas shadow-[inset_0_-3px_0_var(--color-fg-primary)]'
+                    : 'bg-surface-page hover:bg-surface-canvas',
             )}
         >
-            <span className="text-body-sm-bold text-fg-secondary flex items-center gap-1.5">
+            <span
+                className={cn(
+                    'flex items-center gap-1.5 text-sm',
+                    selected ? 'text-fg-primary font-semibold' : 'text-fg-secondary font-medium',
+                )}
+            >
                 {urgent && <span aria-hidden className="bg-brand-primary size-1.5 rounded-full" />}
                 {label}
             </span>
-            <span className="text-title-2 text-fg-primary tabular-nums">{count ?? '—'}</span>
+            <span
+                className={cn(
+                    'text-[1.75rem] leading-9 font-bold tracking-tight tabular-nums',
+                    urgent ? 'text-fg-brand' : 'text-fg-primary',
+                )}
+            >
+                {count ?? '—'}
+            </span>
             <span className="text-caption text-fg-tertiary">{hint}</span>
         </button>
     );

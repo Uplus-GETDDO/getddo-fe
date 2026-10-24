@@ -35,6 +35,8 @@ const MEMBERSHIP_OPTIONS = [
     ...Object.entries(MEMBERSHIP_LABEL).map(([value, label]) => ({ value, label })),
 ];
 
+const HEAD = 'text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap';
+
 const EMPTY = { keyword: '', userId: '', role: ALL, status: ALL, membership: ALL };
 
 // AO01/AO02 — DB 사용자 조회. 가상 사용자(/virtual-users)와 별개의 관리자 조회다
@@ -228,11 +230,12 @@ export function AdminUsersPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="px-4">사용자</TableHead>
-                                    <TableHead>역할</TableHead>
-                                    <TableHead>상태</TableHead>
-                                    <TableHead>멤버십</TableHead>
-                                    <TableHead>가입일</TableHead>
+                                    <TableHead className={HEAD}>사용자</TableHead>
+                                    {/* 역할 배지는 모두 같은 폭이라 가운데로 — 왼쪽에 붙이면 짧은 머리글과 어긋나 쏠려 보였다 */}
+                                    <TableHead className={`${HEAD} text-center`}>역할</TableHead>
+                                    <TableHead className={HEAD}>상태</TableHead>
+                                    <TableHead className={HEAD}>멤버십</TableHead>
+                                    <TableHead className={HEAD}>가입일</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -259,20 +262,20 @@ export function AdminUsersPage() {
                                                 {row.id}
                                             </span>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="px-4 text-center">
                                             <Badge
                                                 variant={row.role === 'ADMIN' ? 'info' : 'outline'}
                                             >
                                                 {USER_ROLE_LABEL[row.role]}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="px-4">
                                             <UserStatus status={row.status} />
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="px-4">
                                             <MembershipBadge membership={row.membership} />
                                         </TableCell>
-                                        <TableCell className="text-fg-secondary text-body-sm tabular-nums">
+                                        <TableCell className="text-fg-secondary px-4 text-sm tabular-nums">
                                             {formatKstFullDot(row.createdAt)}
                                         </TableCell>
                                     </TableRow>

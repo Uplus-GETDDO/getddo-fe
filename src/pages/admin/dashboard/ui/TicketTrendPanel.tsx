@@ -25,13 +25,13 @@ import { TREND_SOURCES } from '../hooks/useTicketTrend';
 import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';
 
-// 디자인 시스템 차트 규칙 — 현재 값은 chart/line 실선 + 아래로 옅어지는 영역.
+// 디자인 시스템 차트 규칙 — 현재 값은 chart/line 실선 + 아래로 아주 옅어지는 영역(진한 채움은 눈을 피로하게 했다).
 // 비교 값(응모 사용)은 마젠타 옆에서 가라앉는 짙은 회남색 동그란 점선 — 오늘 구간의 마젠타 긴 점선과도 구분된다
 const LINE = 'var(--color-chart-line)';
 const COMPARE = 'var(--color-fg-secondary)';
 const AXIS_TICK = { fill: 'var(--color-chart-axis)', fontSize: 12 };
-/** 값 점 — 평소에는 흰 속에 마젠타 테두리, 올리면 FocusLayer가 조금 큰 마젠타 점을 겹친다 */
-const POINT = { r: 4.5, fill: 'var(--color-surface-page)', stroke: LINE, strokeWidth: 2.5 };
+/** 값 점 — 평소에는 흰 속에 마젠타 테두리, 올린 날짜는 마젠타로 채워진 큰 점(맨 위층이라 선에 가리지 않는다) */
+const POINT = { r: 4.5, fill: 'var(--color-surface-page)', strokeWidth: 2.5 };
 
 /** 말풍선 크기 — 점 위에 꼬리를 달아 띄운다 */
 const BUBBLE_W = 168;
@@ -42,7 +42,8 @@ const BUBBLE_GAP = 14;
 const MOVE = '220ms cubic-bezier(0.22, 1, 0.36, 1)';
 
 /**
- * 올린 점과 말풍선 — 점마다 새로 그리지 않고 한 벌만 두어, 날짜가 바뀌면 그 자리로 미끄러진다.
+ * 올린 날짜의 하이라이트 띠와 말풍선 — 한 벌만 두어, 날짜가 바뀌면 그 자리로 미끄러지고 나타나고 사라질 때는 옅어지며 살짝 떠오른다.
+ * 띠도 여기서 그린다 — 툴팁 커서로 두면 올릴 때 갑자기 생기고 떠날 때 갑자기 사라졌다. 채워지는 점은 맨 위 층인 선의 dot이 맡는다.
  * 좌표는 고정한 y축 범위(0~yTop)와 그림 영역으로 직접 계산한다. 말풍선이 위로 잘리면 점 아래로 뒤집고,
  * 좌우 끝에서는 차트 안으로 밀어 넣되 꼬리는 점을 가리킨다
  */
@@ -52,12 +53,15 @@ function FocusLayer({
     visible,
     yTop,
     animate,
+    bandFillId,
 }: {
     rows: TrendRow[];
     index: number;
     visible: boolean;
     yTop: number;
     animate: boolean;
+    /** 위에서 아래로 옅어지는 띠 채움 그라데이션 id */
+    bandFillId: string;
 }) {
     const plot = usePlotArea();
     const chartWidth = useChartWidth() ?? 0;
@@ -69,20 +73,24 @@ function FocusLayer({
     const left = Math.min(Math.max(cx - BUBBLE_W / 2, 0), Math.max(chartWidth - BUBBLE_W, 0));
     const below = cy - BUBBLE_GAP - BUBBLE_H < 0;
     const top = below ? cy + BUBBLE_GAP : cy - BUBBLE_GAP - BUBBLE_H - 6;
+    // 나타날 때 점 쪽에서 6px 떠오른다 — 사라질 때는 반대로 가라앉는다
+    const lift = visible ? 0 : below ? -6 : 6;
+    const bandWidth = (plot.width / Math.max(rows.length - 1, 1)) * 0.5;
     return (
         <g
             className="pointer-events-none"
             style={{
                 opacity: visible ? 1 : 0,
-                transition: animate ? 'opacity 160ms ease-out' : 'none',
+                transition: animate ? 'opacity 200ms ease-out' : 'none',
             }}
         >
-            <circle
-                cx={cx}
-                cy={cy}
-                r={6}
-                fill={LINE}
-                style={{ transition: animate ? `cx ${MOVE}, cy ${MOVE}` : 'none' }}
+            <rect
+                x={cx - bandWidth / 2}
+                y={plot.y}
+                width={bandWidth}
+                height={plot.height}
+                fill={`url(#${bandFillId})`}
+                style={{ transition: animate ? `x ${MOVE}` : 'none' }}
             />
             <foreignObject
                 x={0}
@@ -95,26 +103,26 @@ function FocusLayer({
                     className={below ? 'absolute flex flex-col-reverse' : 'absolute flex flex-col'}
                     style={{
                         width: BUBBLE_W,
-                        transform: `translate(${left}px, ${top}px)`,
+                        transform: `translate(${left}px, ${top + lift}px)`,
                         transition: animate ? `transform ${MOVE}` : 'none',
                     }}
                 >
-                    <div className="bg-brand-primary text-fg-on-brand flex w-full flex-col gap-0.5 rounded-xl px-3 py-2 shadow-md">
-                        <span className="text-caption flex justify-between opacity-80">
+                    <div className="bg-surface-inverse text-fg-inverse flex w-full flex-col gap-0.5 rounded-xl px-3 py-2 shadow-md">
+                        <span className="text-caption text-fg-inverse/80 flex justify-between">
                             {row.ymd}
                             <span className="tabular-nums">사용 {formatNumber(row.used)}장</span>
                         </span>
                         <span className="text-body-bold tabular-nums">
                             지급 {formatNumber(row.granted)}장
                         </span>
-                        <span className="text-caption tabular-nums opacity-80">
+                        <span className="text-caption text-fg-inverse/80 tabular-nums">
                             {TREND_SOURCES.map(
                                 (source) =>
                                     `${TICKET_SOURCE_TYPE_LABEL[source]} ${formatNumber(row[source])}`,
                             ).join(' · ')}
                         </span>
-                        <span className="mt-0.5 text-[0.6875rem] opacity-70">
-                            눌러서 그날 지급 이력 보기 ›
+                        <span className="border-fg-inverse/20 text-fg-inverse mt-1.5 border-t pt-1.5 text-xs font-semibold">
+                            클릭해서 그날 지급 이력 보기 ›
                         </span>
                     </div>
                     {/* 꼬리 — 점을 가리키는 작은 삼각형 */}
@@ -125,46 +133,13 @@ function FocusLayer({
                         }}
                         className={
                             below
-                                ? 'border-b-brand-primary size-0 border-x-[6px] border-b-[6px] border-x-transparent'
-                                : 'border-t-brand-primary size-0 border-x-[6px] border-t-[6px] border-x-transparent'
+                                ? 'border-b-surface-inverse size-0 border-x-[6px] border-b-[6px] border-x-transparent'
+                                : 'border-t-surface-inverse size-0 border-x-[6px] border-t-[6px] border-x-transparent'
                         }
                     />
                 </div>
             </foreignObject>
         </g>
-    );
-}
-
-/**
- * 올린 날짜 칸 — 점 위아래로 옅은 브랜드색 사각형을 세워 어느 날을 보는지 분명히 한다.
- * 점 간격의 절반 너비로, 모서리 없이 위는 진하고 아래로 옅어진다
- */
-function HoverBand({
-    count,
-    fillId,
-    animate,
-    points,
-}: {
-    count: number;
-    animate: boolean;
-    /** 위에서 아래로 옅어지는 채움 그라데이션 id */
-    fillId: string;
-    points?: { x: number; y: number }[];
-}) {
-    const plot = usePlotArea();
-    const x = points?.[0]?.x;
-    if (!plot || x == null) return null;
-    const width = (plot.width / Math.max(count - 1, 1)) * 0.5;
-    return (
-        <rect
-            x={x - width / 2}
-            y={plot.y}
-            width={width}
-            height={plot.height}
-            fill={`url(#${fillId})`}
-            className="pointer-events-none"
-            style={{ transition: animate ? `x ${MOVE}` : 'none' }}
-        />
     );
 }
 
@@ -234,14 +209,14 @@ export function TicketTrendPanel({
             className={className}
         >
             {/* 기간 합계 — 세 값을 같은 크기로 나란히. 선 모양 범례가 그래프 선과 짝을 이룬다 */}
-            <dl className="divide-border-default flex flex-wrap divide-x">
+            <dl className="divide-border-default flex flex-wrap gap-y-3 divide-x">
                 {summary.map(({ label, legend, value }) => (
-                    <div key={label} className="flex flex-col gap-0.5 px-5 first:pl-0">
+                    <div key={label} className="flex flex-col gap-1 px-6 first:pl-0">
                         <dt className="text-caption text-fg-tertiary flex items-center gap-1.5">
                             {legend}
                             {label}
                         </dt>
-                        <dd className="text-title-3 text-fg-primary tabular-nums">
+                        <dd className="text-fg-primary text-2xl leading-8 font-bold tracking-tight tabular-nums">
                             {isPending ? <Skeleton className="h-7 w-16" /> : value}
                         </dd>
                     </div>
@@ -253,7 +228,7 @@ export function TicketTrendPanel({
                 </LoadingBlock>
             ) : (
                 <figure
-                    className="h-64 lg:h-auto lg:min-h-64 lg:flex-1"
+                    className="h-64 cursor-pointer lg:h-auto lg:min-h-64 lg:flex-1 [&_.recharts-surface]:cursor-pointer [&_.recharts-wrapper]:cursor-pointer"
                     aria-label={`최근 ${rows.length}일 응모권 지급과 응모 사용 추이`}
                 >
                     <ResponsiveContainer width="100%" height="100%">
@@ -267,10 +242,11 @@ export function TicketTrendPanel({
                             }}
                             onMouseLeave={() => setHovered(null)}
                             className="cursor-pointer"
+                            style={{ cursor: 'pointer' }}
                         >
                             <defs>
                                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={LINE} stopOpacity={0.32} />
+                                    <stop offset="0%" stopColor={LINE} stopOpacity={0.14} />
                                     <stop offset="100%" stopColor={LINE} stopOpacity={0.02} />
                                 </linearGradient>
                                 <linearGradient
@@ -280,7 +256,7 @@ export function TicketTrendPanel({
                                     x2="0"
                                     y2="1"
                                 >
-                                    <stop offset="0%" stopColor={LINE} stopOpacity={0.22} />
+                                    <stop offset="0%" stopColor={LINE} stopOpacity={0.1} />
                                     <stop offset="100%" stopColor={LINE} stopOpacity={0.02} />
                                 </linearGradient>
                             </defs>
@@ -303,17 +279,8 @@ export function TicketTrendPanel({
                                 domain={[0, yTop]}
                                 ticks={[0, yStep, yStep * 2, yStep * 3, yTop]}
                             />
-                            {/* 말풍선은 점 위에 직접 그리므로 툴팁 상자는 숨기고 세로 안내선만 둔다 */}
-                            <Tooltip
-                                content={() => null}
-                                cursor={
-                                    <HoverBand
-                                        count={rows.length}
-                                        fillId={`${gradientId}-band`}
-                                        animate={!reduceMotion}
-                                    />
-                                }
-                            />
+                            {/* 올린 날짜만 알면 된다 — 툴팁 상자·커서는 그리지 않고 FocusLayer가 띠와 말풍선을 그린다 */}
+                            <Tooltip content={() => null} cursor={false} />
                             <Line
                                 dataKey="used"
                                 type="linear"
@@ -359,7 +326,25 @@ export function TicketTrendPanel({
                                 dataKey="granted"
                                 type="linear"
                                 stroke="none"
-                                dot={POINT}
+                                dot={(props: { cx?: number; cy?: number; index?: number }) => {
+                                    const active = hovered != null && props.index === hovered;
+                                    return (
+                                        <circle
+                                            key={props.index}
+                                            cx={props.cx}
+                                            cy={props.cy}
+                                            r={active ? 6.5 : POINT.r}
+                                            fill={active ? LINE : POINT.fill}
+                                            stroke={active ? 'var(--color-surface-page)' : LINE}
+                                            strokeWidth={active ? 2 : POINT.strokeWidth}
+                                            style={{
+                                                transition: reduceMotion
+                                                    ? 'none'
+                                                    : 'r 180ms ease-out, fill 180ms ease-out',
+                                            }}
+                                        />
+                                    );
+                                }}
                                 activeDot={false}
                                 isAnimationActive={!reduceMotion}
                             />
@@ -369,6 +354,7 @@ export function TicketTrendPanel({
                                 visible={hovered != null}
                                 yTop={yTop}
                                 animate={!reduceMotion}
+                                bandFillId={`${gradientId}-band`}
                             />
                         </ComposedChart>
                     </ResponsiveContainer>
