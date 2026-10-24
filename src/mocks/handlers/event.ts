@@ -656,7 +656,8 @@ export const mockEvents: MockEvent[] = [
         description: '응모권 1장으로 참여하는 데이터 충전 쿠폰 추첨 이벤트',
         bannerImageUrl: '/images/events/data-coupon.webp',
         startsAt: '2026-09-08T00:00:00Z',
-        endsAt: '2026-10-24T14:59:59Z',
+        // 날짜를 고정하면 그날이 지나 마감돼 응모 테스트가 깨졌다 — 늘 일주일 뒤 마감으로 둔다
+        endsAt: kstAt(7, 23),
         status: 'open',
         requiredTickets: 1,
         prizeName: 'U+ 데이터 쿠폰 2GB',
