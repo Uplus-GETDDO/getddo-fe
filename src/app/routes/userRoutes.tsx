@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
 import { UserGuard } from '@app/routes/UserGuard';
 import { LoginPage } from '@pages/login/LoginPage';
@@ -30,8 +30,21 @@ const UiGalleryPageLazy = lazy(() =>
     import('@pages/uiGallery/UiGalleryPage').then((m) => ({ default: m.UiGalleryPage })),
 );
 
+// /login 체류 동안 사용자 셸 청크를 미리 받는다 — 셸이 lazy라 진입 시 자식 페이지 청크가
+// 직렬로 이어지는 워터폴을 없애기 위함이다 (GD-334 후속). pages→app 참조가 금지라 라우트 단에서 처리한다.
+const LoginWithShellPrefetch = () => {
+    useEffect(() => {
+        void import('@app/layouts/UserLayout');
+    }, []);
+    return <LoginPage />;
+};
+
 export const userRoutes: RouteObject[] = [
-    { path: '/login', element: <LoginPage />, errorElement: <RouteErrorFallback /> },
+    {
+        path: '/login',
+        element: <LoginWithShellPrefetch />,
+        errorElement: <RouteErrorFallback />,
+    },
     {
         element: (
             <UserGuard>
