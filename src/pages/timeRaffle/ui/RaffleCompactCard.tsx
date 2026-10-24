@@ -96,7 +96,7 @@ export function RaffleCompactCard({
                             {formatOpenChip(event, now)}
                         </span>
                     )}
-                    {/* 한도가 남았으면 '응모 중 · 쓴 장수', 다 썼으면 '응모 완료' — '완료'만 적으면 더 쓸 수 있는데 버튼이 죽은 줄 안다 */}
+                    {/* 한도가 남았으면 '쓴 장수 + 응모 중', 다 썼으면 '응모 완료' — '완료'만 적으면 더 쓸 수 있는데 버튼이 죽은 줄 안다 */}
                     {live && (
                         <RaffleEntryChip
                             event={event}
