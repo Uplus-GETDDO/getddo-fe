@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useMissionList } from '@entities/mission';
 import emptyMascot from '@shared/assets/ui/reward-mascot.png';
 import { useVirtualClock } from '@shared/model/virtualClock';
+import { Button } from '@shared/ui/button';
 import { ChipTabs, chipTabIds } from '@shared/ui/chip-tabs';
 import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
@@ -121,6 +122,18 @@ export function MissionBoard({
                             />
                         ))}
                     </div>
+                )}
+
+                {/* 100건씩 받아 붙인다 — 서버가 최근 시작 순이라 지난 미션일수록 뒤 페이지에 있다 */}
+                {missions && missionsQuery.hasNextPage && (
+                    <Button
+                        variant="secondary"
+                        className="self-center"
+                        disabled={missionsQuery.isFetchingNextPage}
+                        onClick={() => void missionsQuery.fetchNextPage()}
+                    >
+                        {missionsQuery.isFetchingNextPage ? '불러오는 중…' : '지난 미션 더 보기'}
+                    </Button>
                 )}
             </div>
         </section>

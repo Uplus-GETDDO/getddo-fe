@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
@@ -21,8 +21,6 @@ export const MISSIONS_KEY = ['missions'] as const;
 export const MISSIONS_API_PATH = '/v1/missions';
 
 export const missionApiPath = (missionId: string) => `${MISSIONS_API_PATH}/${missionId}`;
-
-const MISSIONS_PAGE_SIZE = 50;
 
 /** 서버가 허용하는 최대 페이지 크기 — 첫 페이지 한 번으로 지금 열린 미션을 덮는다 */
 const LATEST_MISSIONS_SIZE = 100;
@@ -50,27 +48,30 @@ export interface MissionSubmissionOutcome {
 }
 
 /**
- * 진행 중인 미션 목록 — Page<T>는 기본 20건씩이라 totalElements까지 전부 모은다.
- * 제출이 완료되면 features/submit-survey·submit-quiz가 이 쿼리를 무효화한다.
- * 미션 수만큼 호출이 늘어나므로 전체 목록이 필요한 미션 보드만 쓴다 — 홈 계열은 useLatestMissions
+ * 미션 보드 목록 — 전체를 한꺼번에 모으면 미션 수만큼 연속 호출이 늘어 첫 화면이 늦었다.
+ * 100건씩 페이지로 받고 '더 보기'로 다음 페이지를 붙인다. 서버가 startsAt 내림차순이라 열린 미션은 첫 페이지에 있다.
+ * 제출이 완료되면 features/submitMission이 MISSIONS_KEY로 무효화해 받아 둔 페이지를 다시 받는다
  */
 export function useMissionList({ passive = false }: { passive?: boolean } = {}) {
-    return useQuery({
+    const query = useInfiniteQuery({
         ...queryPresets.standard,
         ...pollingReadPolicy,
-        queryKey: [...MISSIONS_KEY, 'list'],
+        queryKey: [...MISSIONS_KEY, 'list', 'pages'],
         refetchInterval: missionListInterval(passive),
+        initialPageParam: 1,
         queryFn: (context) =>
-            withPollingReadGuard(context, async () => {
-                const missions: MissionSummary[] = [];
-                for (let page = 1; ; page += 1) {
-                    const parsed = await fetchMissionPage(page, MISSIONS_PAGE_SIZE, context.signal);
-                    missions.push(...parsed.items);
-                    if (missions.length >= parsed.totalElements || parsed.items.length === 0) break;
-                }
-                return missions;
-            }),
+            withPollingReadGuard(context, () =>
+                fetchMissionPage(context.pageParam, LATEST_MISSIONS_SIZE, context.signal),
+            ),
+        getNextPageParam: (last, pages) => {
+            const loaded = pages.reduce((sum, page) => sum + page.items.length, 0);
+            return loaded < last.totalElements && last.items.length > 0
+                ? pages.length + 1
+                : undefined;
+        },
     });
+    const missions: MissionSummary[] | undefined = query.data?.pages.flatMap((page) => page.items);
+    return { ...query, data: missions, totalElements: query.data?.pages[0]?.totalElements };
 }
 
 /**

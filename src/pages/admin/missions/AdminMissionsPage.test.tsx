@@ -23,7 +23,8 @@ describe('관리자 미션', () => {
         expect(await screen.findByText('등록된 미션이 없습니다.')).toBeInTheDocument();
         await userEvent.click(screen.getByRole('button', { name: '미션 등록' }));
         expect(screen.getByRole('dialog')).toBeInTheDocument();
-        expect(screen.getByText(/등록 즉시 ACTIVE/)).toBeInTheDocument();
+        expect(screen.getByText(/등록 즉시 진행 중/)).toBeInTheDocument();
+        expect(screen.getByRole('group', { name: '미션 유형' })).toBeInTheDocument();
         expect(screen.queryByText('DRAFT')).not.toBeInTheDocument();
     });
     it('상세를 열면 모달이 열리고 기본 기간으로 자동 집계한다', async () => {

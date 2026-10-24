@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { apiClient } from '@shared/api/client';
@@ -68,26 +68,29 @@ describe('최근 미션 첫 페이지', () => {
     });
 });
 
-describe('미션 전체 목록', () => {
-    it('totalElements까지 모은다', async () => {
-        vi.spyOn(apiClient, 'get').mockImplementation(async (_url, config) => {
-            await Promise.resolve();
-            const { page } = config?.params as { page: number };
-            return {
-                data: {
-                    success: true,
-                    data: {
-                        page,
-                        size: 50,
-                        totalElements: 51,
-                        items:
-                            page === 1 ? Array.from({ length: 50 }, (_, n) => item(n)) : [item(50)],
-                    },
-                },
-            };
+describe('미션 보드 목록', () => {
+    it('첫 페이지(100건)만 받고, 더 보기를 눌러야 다음 페이지를 붙인다', async () => {
+        const get = mockManyPages();
+        const { wrapper } = setup();
+        const hook = renderHook(() => useMissionList(), { wrapper });
+        await waitFor(() => expect(hook.result.current.data).toHaveLength(100));
+        expect(get).toHaveBeenCalledTimes(1);
+        expect(hook.result.current.hasNextPage).toBe(true);
+        await act(() => hook.result.current.fetchNextPage());
+        await waitFor(() => expect(hook.result.current.data).toHaveLength(200));
+        expect(get.mock.calls[1]?.[1]?.params).toEqual({ page: 2, size: 100 });
+    });
+
+    it('마지막 페이지까지 받으면 더 보기가 없다', async () => {
+        vi.spyOn(apiClient, 'get').mockResolvedValue({
+            data: {
+                success: true,
+                data: { page: 1, size: 100, totalElements: 2, items: [item(1), item(2)] },
+            },
         });
         const { wrapper } = setup();
         const hook = renderHook(() => useMissionList(), { wrapper });
-        await waitFor(() => expect(hook.result.current.data).toHaveLength(51));
+        await waitFor(() => expect(hook.result.current.data).toHaveLength(2));
+        expect(hook.result.current.hasNextPage).toBe(false);
     });
 });
