@@ -13,7 +13,7 @@ import {
     getGameContent,
     useGameStatisticsList,
 } from '@entities/game';
-import { isMissionOpenByServerTime, missionThumbnail, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, missionThumbnail, useLatestMissions } from '@entities/mission';
 import { TICKET_GRADE_IMAGE, TICKET_RANDOM_IMAGE } from '@entities/ticket';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
@@ -61,7 +61,7 @@ export function TicketBalanceWidget({
     hideMoreLink?: boolean;
 } = {}) {
     const attendanceQuery = useAttendanceToday();
-    const missionsQuery = useMissionList();
+    const missionsQuery = useLatestMissions();
     const gamesQuery = useGameList();
     const { data: attendance, isPending: attendancePending } = attendanceQuery;
     const { data: missions, isPending: missionsPending } = missionsQuery;

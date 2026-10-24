@@ -8,7 +8,7 @@ vi.mock('@entities/attendance', () => ({
     useAttendanceToday: () => ({ data: { attended: true } }),
 }));
 vi.mock('@entities/mission', () => ({
-    useMissionList: () => ({ data: [] }),
+    useLatestMissions: () => ({ data: [] }),
     isMissionOpen: () => true,
 }));
 vi.mock('@entities/user', () => ({
