@@ -74,6 +74,40 @@ describe('EntryConfirmDialog', () => {
 
         expect(screen.getByText('응모권 없이 참여하는 이벤트예요.')).toBeInTheDocument();
     });
+
+    it('접수 중에는 화면이 장수·잔액을 바꿔도 누른 순간의 내용을 유지한다', () => {
+        const props = {
+            open: true,
+            onOpenChange: NOOP,
+            title: '테스트 래플',
+            onConfirm: NOOP,
+        };
+        const { rerender } = render(
+            <EntryConfirmDialog
+                {...props}
+                tickets={{ BRONZE: 2 }}
+                balanceByGrade={{ BRONZE: 10, SILVER: 0, GOLD: 0, PLATINUM: 0 }}
+                notice={<p>잔액 안내</p>}
+            />,
+        );
+        // 접수 직후 화면이 고른 장수를 0으로 되돌리고 새 잔액을 받은 상태
+        rerender(
+            <EntryConfirmDialog
+                {...props}
+                pending
+                tickets={{}}
+                balanceByGrade={{ BRONZE: 8, SILVER: 0, GOLD: 0, PLATINUM: 0 }}
+                notice={<p>잔액 안내</p>}
+            />,
+        );
+
+        expect(screen.queryByText('응모권 없이 참여하는 이벤트예요.')).not.toBeInTheDocument();
+        const rows = within(screen.getByRole('group', { name: '응모 후 남는 응모권' }));
+        expect(rows.getAllByText('10장').length).toBeGreaterThan(0);
+        expect(rows.getAllByText('8장').length).toBeGreaterThan(0);
+        // 접수 중에는 갱신 안내 줄을 띄우지 않는다
+        expect(screen.queryByText('잔액 안내')).not.toBeInTheDocument();
+    });
 });
 
 describe('InsufficientTicketsDialog', () => {

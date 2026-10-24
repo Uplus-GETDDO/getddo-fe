@@ -8,6 +8,8 @@ const state = vi.hoisted(() => ({
     role: 'USER',
     success: true,
     claimed: false,
+    /** 받아 둔 현황이 있는 채로 다시 받기에 실패한 상태 (TanStack Query: isSuccess false, data 유지) */
+    refetchFailed: false,
     statistics: vi.fn(),
 }));
 vi.mock('@entities/attendance', () => ({
@@ -32,7 +34,7 @@ vi.mock('@entities/game', () => ({
         state.statistics(...args);
         return [
             {
-                isSuccess: state.success,
+                isSuccess: state.success && !state.refetchFailed,
                 data: state.success ? { rewardClaimedToday: state.claimed } : undefined,
             },
         ];
@@ -43,7 +45,7 @@ vi.mock('@shared/model/virtualClock', () => ({
     useVirtualClock: () => ({ now: () => new Date('2026-10-20T01:00:00Z') }),
 }));
 beforeEach(() => {
-    Object.assign(state, { role: 'USER', success: true, claimed: false });
+    Object.assign(state, { role: 'USER', success: true, claimed: false, refetchFailed: false });
     state.statistics.mockClear();
 });
 describe('홈 게임 바로가기 계약 통합', () => {
@@ -60,6 +62,16 @@ describe('홈 게임 바로가기 계약 통합', () => {
     });
     it('횟수 제한 대신 실제 당일 보상을 완료 상태로 표시한다', () => {
         state.claimed = true;
+        render(
+            <MemoryRouter>
+                <QuickLinks />
+            </MemoryRouter>,
+        );
+        expect(screen.getByRole('link', { name: '게임 보상 완료' })).toBeInTheDocument();
+    });
+    it('폴링 한 번이 실패해도 받아 둔 완료 상태를 유지한다', () => {
+        state.claimed = true;
+        state.refetchFailed = true;
         render(
             <MemoryRouter>
                 <QuickLinks />

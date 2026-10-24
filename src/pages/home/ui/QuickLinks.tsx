@@ -55,8 +55,10 @@ export function QuickLinks() {
             label: '게임하러 가기',
             doneLabel: '게임 보상 완료',
             image: stepGame,
+            // 받아 둔 현황이 있으면 그 값으로 판단한다 — 폴링 한 번이 실패(429 등)할 때마다 isSuccess가 꺼져
+            // '게임 보상 완료'가 '게임하러 가기'로 풀렸다가 다음 폴링에 다시 완료로 돌아왔다
             today: todayOf(
-                isUser && !!playable && statistics.every((query) => query.isSuccess),
+                isUser && !!playable && statistics.every((query) => query.data !== undefined),
                 statistics.some((query) => query.data?.rewardClaimedToday === false),
             ),
             highlight: true,

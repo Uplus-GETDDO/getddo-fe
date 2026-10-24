@@ -202,7 +202,8 @@ export function BannerSlider({
                                 onRefresh={() => void refetch()}
                             />
                         )}
-                        {active && renderRefresh && (
+                        {/* 배너 목록과 현황이 함께 실패하면(서버 장애) '갱신 실패 · 다시 시도'가 두 번 떴다 — 목록 실패 하나만 둔다 */}
+                        {!isError && active && renderRefresh && (
                             <ActiveRefresh
                                 eventId={active.eventId}
                                 summaryEvent={summaryOf(active.eventId)}

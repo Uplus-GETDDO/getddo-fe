@@ -72,7 +72,7 @@ export function LiveEntryStatus({
 }
 
 /**
- * 응모 현황 갱신 표시 — 30초 폴링 중임을 작게 알리고, 실패하면 이전 수치를 둔 채 '갱신 실패 · 다시 시도'로 바뀐다.
+ * 응모 현황 갱신 실패 표시 — 평소에는 숨고, 실패하면 이전 수치를 둔 채 '갱신 실패 · 다시 시도'를 띄운다.
  * 같은 쿼리 키라 칩(LiveEntryStatus)과 요청은 한 번만 나간다 — 폴링 소유자는 칩이고, 이 표시는
  * passive로 구독해 갱신 결과만 받는다(중복 주기 타이머 방지). 서버가 기다리라고 하면(429) 그동안 다시 받지 않는다
  */
@@ -85,7 +85,9 @@ export function LiveEntryRefresh({ eventId, isOpen, enabled = true }: LiveEntryS
     });
     const rateLimited = getPollingRetryDelay(query.error ?? query.failureReason) > 0;
 
-    if (!enabled) {
+    // 평소에는 아무것도 띄우지 않는다 — 배너 현황이 몇 초 늦어도 사용자는 신경 쓰지 않는데, 넘김 화살표 옆에서 도는
+    // 갱신 아이콘은 눈만 끌었다. 실패하거나 서버가 기다리라고 할 때만 '갱신 실패 · 다시 시도'를 작게 둔다
+    if (!enabled || !(query.isError || rateLimited)) {
         return null;
     }
 
@@ -93,10 +95,8 @@ export function LiveEntryRefresh({ eventId, isOpen, enabled = true }: LiveEntryS
         <RefreshStatus
             fetching={query.isFetching && !rateLimited}
             updatedAt={query.dataUpdatedAt || undefined}
-            error={query.isError || rateLimited}
+            error
             interval={isOpen ? '30초마다' : undefined}
-            // 평소엔 아이콘만 — 넘김 화살표 옆에 '방금 갱신 · 30초마다'까지 있으면 줄이 너무 길었다. 글은 툴팁·화면 낭독기로 남고, 실패만 글자로 보인다
-            labelClassName={query.isError || rateLimited ? undefined : 'sr-only'}
             onRefresh={() => {
                 if (!rateLimited) void query.refetch({ cancelRefetch: false });
             }}

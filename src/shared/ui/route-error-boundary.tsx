@@ -50,16 +50,16 @@ export class RouteErrorBoundary extends Component<
 export function RouteErrorFallback() {
     return (
         <div className="flex flex-col items-center gap-4 py-20 text-center">
-            <p className="text-title-2 text-fg-primary">화면을 표시하지 못했습니다</p>
+            {/* '표시하지 못했습니다'는 고장 난 것처럼 읽혀 사용자가 할 일(연결 확인·다시 시도)로 말한다.
+                주된 행동은 다시 시도라 검정 버튼, 홈은 보조 */}
+            <p className="text-title-2 text-fg-primary">화면을 불러오지 못했어요</p>
             <p className="text-body-sm text-fg-tertiary">
-                일시적인 문제일 수 있습니다. 다시 시도하거나 다른 화면으로 이동해 주세요.
+                인터넷 연결을 확인하고 다시 시도해 주세요.
             </p>
             <div className="flex gap-2">
-                <Button variant="secondary" onClick={() => window.location.reload()}>
-                    다시 시도
-                </Button>
-                <Button asChild>
-                    <Link to="/">홈으로 이동</Link>
+                <Button onClick={() => window.location.reload()}>다시 시도</Button>
+                <Button asChild variant="secondary">
+                    <Link to="/">홈으로</Link>
                 </Button>
             </div>
         </div>

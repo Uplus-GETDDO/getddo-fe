@@ -1,6 +1,7 @@
 import type { ReactNode, RefObject } from 'react';
 
 import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
 
 import type { EntryTickets } from '@entities/entry';
 import type { TicketGrade } from '@entities/ticket';
@@ -34,6 +35,42 @@ interface EntryConfirmDialogProps {
 }
 
 export function EntryConfirmDialog({
+    open,
+    onOpenChange,
+    title,
+    tickets,
+    balanceByGrade,
+    onConfirm,
+    pending = false,
+    disabled = false,
+    notice,
+    returnFocusTo,
+}: EntryConfirmDialogProps) {
+    // 접수 중과 닫히는 동안(사라지는 연출)에는 누른 순간의 내용을 그대로 둔다. 접수 직후 화면이 고른 장수를 0으로 되돌리고
+    // 잔액·한도를 새로 받으면, 사라지던 확인창이 '응모권 없이 참여'나 바뀐 남는 장수로 다시 그려져 한 번 더 뜬 것처럼 보였다
+    const live = { tickets, balanceByGrade };
+    const liveKey = JSON.stringify(live);
+    const [frozen, setFrozen] = useState({ key: liveKey, ...live });
+    const tracking = open && !pending;
+    if (tracking && frozen.key !== liveKey) setFrozen({ key: liveKey, ...live });
+    const shown = tracking ? live : frozen;
+    return (
+        <EntryConfirmDialogView
+            open={open}
+            onOpenChange={onOpenChange}
+            title={title}
+            tickets={shown.tickets}
+            balanceByGrade={shown.balanceByGrade}
+            onConfirm={onConfirm}
+            pending={pending}
+            disabled={disabled}
+            notice={tracking ? notice : null}
+            returnFocusTo={returnFocusTo}
+        />
+    );
+}
+
+function EntryConfirmDialogView({
     open,
     onOpenChange,
     title,
