@@ -55,7 +55,7 @@ export function RewardDialog({
                         className="text-fg-secondary hover:text-fg-primary absolute top-3 right-3 z-1 size-9 cursor-pointer hover:bg-transparent dark:hover:bg-transparent [&_svg:not([class*='size-'])]:size-5"
                     >
                         <XIcon />
-                        <span className="sr-only">Close</span>
+                        <span className="sr-only">닫기</span>
                     </Button>
                 </DialogClose>
                 {/* 모달이 열릴 때마다 뽑기를 처음부터 — 본문은 닫히면 사라지고 다시 열면 새로 그린다 */}

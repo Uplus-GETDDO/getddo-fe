@@ -95,7 +95,8 @@ export function RaffleDetailHero({
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <h2 className="text-title-1 text-fg-primary">{event.title}</h2>
+                        {/* 이 화면의 최상위 제목 — 아래 카드 제목들이 h2라 여기가 h1이어야 단계가 맞는다 */}
+                        <h1 className="text-title-1 text-fg-primary">{event.title}</h1>
                         {/* 전문은 아래 '이벤트 상세 안내'에 있다 — 위에서는 세 줄로 잘라 응모 칸을 밀어내지 않게 한다 */}
                         <p className="text-body text-fg-primary line-clamp-3">
                             {event.description}
