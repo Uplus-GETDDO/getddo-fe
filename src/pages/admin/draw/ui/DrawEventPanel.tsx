@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -22,7 +23,7 @@ const TABS: { value: PanelTab; label: string }[] = [
 ];
 
 // 이벤트 하나의 추첨 관리 — 실행 목록(AD01)·상세(AD02)·변경 이력(AD07)
-export function DrawEventPanel({ eventId }: { eventId: string }) {
+export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?: () => void }) {
     const {
         data: event,
         isPending: eventPending,
@@ -67,27 +68,60 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
                 </div>
             )}
             {event && status && (
-                <section className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6">
-                    <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-title-3 text-fg-primary truncate">{event.title}</h2>
-                        <span className={cn(badgeVariants({ variant: null }), status.chipClass)}>
-                            {status.label}
-                        </span>
-                        <Button size="sm" variant="secondary" className="ml-auto" asChild>
+                <section className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-5">
+                    <div className="flex items-start gap-3">
+                        <div className="flex min-w-0 flex-1 flex-col gap-2">
+                            <span
+                                className={cn(
+                                    badgeVariants({ variant: null }),
+                                    status.chipClass,
+                                    'self-start',
+                                )}
+                            >
+                                {status.label}
+                            </span>
+                            <h2 className="text-title-3 text-fg-primary break-words">
+                                {event.title}
+                            </h2>
+                            <p className="text-body-sm text-fg-secondary tabular-nums">
+                                {drawScheduledAt
+                                    ? `최초 자동 추첨 ${formatKst(drawScheduledAt)}`
+                                    : '마감 뒤 자동 추첨'}
+                            </p>
+                        </div>
+                        <Button size="sm" variant="secondary" asChild>
                             <Link to={`/admin/events/${event.id}`}>이벤트 상세</Link>
                         </Button>
+                        {onClose && (
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="size-9 shrink-0"
+                                aria-label="추첨 관리 닫기"
+                                onClick={onClose}
+                            >
+                                <X aria-hidden className="size-5" />
+                            </Button>
+                        )}
                     </div>
-                    <p className="text-body-sm text-fg-secondary">
-                        최초 추첨 기준{' '}
-                        {drawScheduledAt ? `${formatKst(drawScheduledAt)} (KST) · ` : ''}
-                        마감 + 1분부터 자동 추첨 대상이 되고, 당첨자 공개는 명단 확인 후 수동
-                        요청으로 진행합니다.
-                    </p>
-                    {awaitingFirstPublication && (
-                        <p className="text-body-sm text-fg-secondary">
-                            선정 완료만으로는 공개되지 않습니다. 추첨 실행 탭에서 최신 실행을 검토한
-                            뒤 당첨자 공개 요청으로 공개합니다. 공개 전까지 사용자에게 결과가
-                            노출되지 않습니다.
+                    {/* 지금 할 일 — 발표 대기면 최신 실행을 열어 공개하도록 바로 이끈다 */}
+                    {awaitingFirstPublication ? (
+                        <div className="border-border-brand-subtle bg-brand-soft flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3">
+                            <p className="text-body-sm text-fg-primary min-w-0 flex-1">
+                                <span className="text-body-sm-bold">당첨자 공개가 필요해요.</span>{' '}
+                                최신 실행에서 결과를 확인한 뒤 공개해 주세요. 공개 전까지 사용자에게
+                                보이지 않아요.
+                            </p>
+                            {latest.data?.items[0] && (
+                                <Button size="sm" onClick={() => select(latest.data.items[0]!.id)}>
+                                    최신 실행 열기
+                                </Button>
+                            )}
+                        </div>
+                    ) : (
+                        <p className="text-caption text-fg-tertiary">
+                            마감 1분 뒤부터 자동 추첨 대상이 되고, 당첨자 공개는 명단을 확인한 뒤
+                            직접 요청해요.
                         </p>
                     )}
                 </section>

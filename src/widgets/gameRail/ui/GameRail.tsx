@@ -1,4 +1,5 @@
 import { GameTicketCard, gameDetailPath, useGameList, useGameStatisticsList } from '@entities/game';
+import { TICKET_RANDOM_IMAGE } from '@entities/ticket';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import { useDragScroll } from '@shared/hooks/useDragScroll';
@@ -75,6 +76,7 @@ export function GameRail({
                             key={game.id}
                             game={game}
                             rewardedToday={claimed(game.id)}
+                            rewardImage={TICKET_RANDOM_IMAGE}
                             href={gameDetailPath(game.id)}
                             ready={hasGamePlayer(game.code)}
                             fluid
@@ -93,6 +95,7 @@ export function GameRail({
                             <GameTicketCard
                                 game={game}
                                 rewardedToday={claimed(game.id)}
+                                rewardImage={TICKET_RANDOM_IMAGE}
                                 href={gameDetailPath(game.id)}
                                 ready={hasGamePlayer(game.code)}
                             />

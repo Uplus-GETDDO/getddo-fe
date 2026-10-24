@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList, useGameStatisticsList } from '@entities/game';
-import { isMissionOpenByServerTime, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, useLatestMissions } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
@@ -82,7 +82,7 @@ export function TodayRewardsBanner() {
         : playableGames && statistics.every((item) => item.isSuccess)
           ? statistics.map((item) => ({ rewardedToday: item.data?.rewardClaimedToday }))
           : undefined;
-    const { data: missions } = useMissionList();
+    const { data: missions } = useLatestMissions();
     // 날짜·이번 달·진행 중 미션 판정 기준 시각 — 페이지를 열어 둔 채 기준일이 바뀌어도
     // 출석 상태(주기적으로 다시 받는다)와 같은 날을 보도록 1분마다 다시 읽는다
     const clock = useVirtualClock();

@@ -8,6 +8,7 @@ import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
 import { FeaturedEventCard, UpcomingEventCard, useEvent } from '@entities/event';
+import { TOUR_TARGET } from '@shared/config/tourTargets';
 import { Button } from '@shared/ui/button';
 import { Card } from '@shared/ui/card';
 import { EmptyState } from '@shared/ui/empty-state';
@@ -45,7 +46,7 @@ export function TicketEventSection({
     const featured = openEvents[0];
 
     return (
-        <section className="flex flex-col gap-6">
+        <section data-tour={TOUR_TARGET.getddoTime} className="flex flex-col gap-6">
             {/* 다른 홈 섹션처럼 제목 옆에 작은 설명을 둔다 */}
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-3">

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { adminBannerSchema, useAdminBanners, useBanners } from '@entities/banner';
 import { apiClient } from '@shared/api/client';
@@ -15,6 +15,11 @@ const wrapper = (client: QueryClient) =>
     };
 
 describe('배너 관리와 홈 갱신', () => {
+    // 씨앗 배너가 최대(5개)까지 차 있어 등록할 자리를 하나 비운다 — 아래는 4개에서 시작한다
+    beforeAll(async () => {
+        await apiClient.delete('/v1/admin/banners/bnr-5');
+    });
+
     it('등록·수정·순서·삭제는 같은 세션을 갱신하고 다른 세션은 재조회 후 반영한다', async () => {
         const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
         const otherClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -32,9 +37,9 @@ describe('배너 관리와 홈 갱신', () => {
         );
         let createdId: string | undefined;
         try {
-            await waitFor(() => expect(home.result.current.data).toHaveLength(3));
-            await waitFor(() => expect(other.result.current.data).toHaveLength(3));
-            await waitFor(() => expect(admin.result.current.list.data).toHaveLength(3));
+            await waitFor(() => expect(home.result.current.data).toHaveLength(4));
+            await waitFor(() => expect(other.result.current.data).toHaveLength(4));
+            await waitFor(() => expect(admin.result.current.list.data).toHaveLength(4));
             await act(async () => {
                 const created = await admin.result.current.create.mutateAsync({
                     eventId: 'evt-001',
@@ -45,7 +50,7 @@ describe('배너 관리와 홈 갱신', () => {
             });
             await waitFor(() => expect(admin.result.current.list.data?.[0]?.id).toBe(createdId));
             await waitFor(() => expect(home.result.current.data?.[0]?.id).toBe(createdId));
-            expect(other.result.current.data).toHaveLength(3);
+            expect(other.result.current.data).toHaveLength(4);
             await act(async () => {
                 await other.result.current.refetch();
             });
@@ -102,7 +107,7 @@ describe('배너 관리와 홈 갱신', () => {
         );
         let createdId: string | undefined;
         try {
-            await waitFor(() => expect(admin.result.current.list.data).toHaveLength(3));
+            await waitFor(() => expect(admin.result.current.list.data).toHaveLength(4));
             const staleIds = admin.result.current.list.data!.map((banner) => banner.id);
             const response = await apiClient.post<{ data: unknown }>('/v1/admin/banners', {
                 eventId: 'evt-001',
@@ -115,7 +120,7 @@ describe('배너 관리와 홈 갱신', () => {
                     admin.result.current.reorder.mutateAsync(staleIds),
                 ).rejects.toMatchObject({ status: 409, code: 'BANNER-005' });
             });
-            await waitFor(() => expect(admin.result.current.list.data).toHaveLength(4));
+            await waitFor(() => expect(admin.result.current.list.data).toHaveLength(5));
             await waitFor(() => expect(admin.result.current.list.data?.[0]?.id).toBe(createdId));
         } finally {
             if (createdId) await apiClient.delete(`/v1/admin/banners/${createdId}`);

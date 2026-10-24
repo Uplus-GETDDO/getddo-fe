@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 
 import { useAttendanceToday } from '@entities/attendance';
 import { useGameList, useGameStatisticsList } from '@entities/game';
-import { isMissionOpenByServerTime, useMissionList } from '@entities/mission';
+import { isMissionOpenByServerTime, useLatestMissions } from '@entities/mission';
 import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import stepAttendance from '@shared/assets/step/step-attendance.png';
 import stepGame from '@shared/assets/step/step-game.png';
 import stepMission from '@shared/assets/step/step-mission.png';
+import { SkeletonText } from '@shared/ui/skeleton';
 /** 오늘 이 바로가기의 할 일 — 남음(점)·다 함(체크)·아직 모름(받기 전) */
 type Today = 'pending' | 'done' | 'unknown';
 
@@ -21,6 +22,8 @@ interface QuickLink {
     today: Today;
     /** 할 일이 남았을 때 노란 바탕으로 가장 먼저 눈에 띄게 한다 (게임) */
     highlight?: boolean;
+    /** 응답 전(unknown)에는 이름 대신 스켈레톤 — 기본 이름이 보였다가 '완료'로 바뀌는 깜빡임을 막는다 (퀴즈·설문) */
+    skeletonWhileUnknown?: boolean;
 }
 
 const todayOf = (known: boolean, pending: boolean): Today =>
@@ -37,7 +40,7 @@ export function QuickLinks() {
     // 출석·미션·게임 현황의 폴링은 아래 TicketBalanceWidget이 같은 키로 이미 건다 —
     // 여기는 passive로 구독해 그 갱신만 받아 같은 키의 주기 타이머가 겹치지 않게 한다
     const { data: attendance } = useAttendanceToday({ passive: true });
-    const { data: missions } = useMissionList({ passive: true });
+    const { data: missions } = useLatestMissions({ passive: true });
     const { data: games } = useGameList();
 
     // 플레이 화면이 있는 게임만 센다 — 후보·준비 중 게임은 홈 어디에도 두지 않는다
@@ -55,8 +58,10 @@ export function QuickLinks() {
             label: '게임하러 가기',
             doneLabel: '게임 보상 완료',
             image: stepGame,
+            // 받아 둔 현황이 있으면 그 값으로 판단한다 — 폴링 한 번이 실패(429 등)할 때마다 isSuccess가 꺼져
+            // '게임 보상 완료'가 '게임하러 가기'로 풀렸다가 다음 폴링에 다시 완료로 돌아왔다
             today: todayOf(
-                isUser && !!playable && statistics.every((query) => query.isSuccess),
+                isUser && !!playable && statistics.every((query) => query.data !== undefined),
                 statistics.some((query) => query.data?.rewardClaimedToday === false),
             ),
             highlight: true,
@@ -80,6 +85,7 @@ export function QuickLinks() {
                     (mission) => !mission.completed && isMissionOpenByServerTime(mission),
                 ) ?? false,
             ),
+            skeletonWhileUnknown: true,
         },
     ];
     // 다 한 곳은 뒤로 — 같은 상태끼리는 위 순서(게임 → 출석 → 퀴즈·설문)를 지킨다
@@ -132,10 +138,17 @@ function QuickLinkButton({ link }: { link: QuickLink }) {
                     </span>
                 )}
             </span>
-            <span className="text-body-sm-bold flex items-center gap-1">
-                {done ? link.doneLabel : link.label}
-                {done && <Check aria-hidden className="size-4" />}
-            </span>
+            {link.skeletonWhileUnknown && link.today === 'unknown' ? (
+                <span className="flex h-5.5 items-center">
+                    <SkeletonText className="w-16" />
+                    <span className="sr-only">{link.label}</span>
+                </span>
+            ) : (
+                <span className="text-body-sm-bold flex items-center gap-1">
+                    {done ? link.doneLabel : link.label}
+                    {done && <Check aria-hidden className="size-4" />}
+                </span>
+            )}
         </Link>
     );
 }

@@ -4,9 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { env } from '@shared/config/env';
 
 import { App } from './App';
+import { installChunkReload } from './config/chunkReload';
 import { unregisterMockServiceWorker } from './config/serviceWorkerCleanup';
 import './config/sessionSync';
 import './styles/globals.css';
+
+installChunkReload();
 
 // Pretendard @font-face는 별도 CSS 청크로 나눠 렌더블로킹 경로에서 뺀다 (GD-332).
 // 선언이 늦게 도착해도 font-display: swap이 시스템 폰트로 먼저 그리고 바꿔 끼운다.

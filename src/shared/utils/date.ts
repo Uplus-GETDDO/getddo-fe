@@ -172,6 +172,11 @@ export function formatKstDot(date: Date | string, withTime = false): string {
     return withTime ? `${day} ${pad(k.getUTCHours())}:${pad(k.getUTCMinutes())}` : day;
 }
 
+/** "2026.09.17" 또는 시각까지 "2026.09.17 20:05" — 해를 넘겨 쌓이는 관리자 목록(가입일 등)의 날짜 표기 (KST) */
+export function formatKstFullDot(date: Date | string, withTime = false): string {
+    return `${toKst(date).getUTCFullYear()}.${formatKstDot(date, withTime)}`;
+}
+
 /** KST 하루 구간 — 날짜("YYYY-MM-DD")와 그날 00:00~다음 날 00:00의 `[from, to)` UTC ISO */
 export interface KstDayRange {
     ymd: string;

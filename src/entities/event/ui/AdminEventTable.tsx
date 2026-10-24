@@ -2,24 +2,19 @@ import { createColumnHelper, flexRender, tableFeatures, useTable } from '@tansta
 import { useMemo } from 'react';
 
 import { badgeVariants } from '@shared/ui/badge';
-import { Button } from '@shared/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
 import type { AdminEvent } from '../model/adminTypes';
 
-import {
-    ADMIN_STATUS_META,
-    EVENT_TYPE_CHIP,
-    EVENT_TYPE_LABEL,
-    MEMBERSHIP_LABEL,
-} from '../model/adminStatusMeta';
+import { ADMIN_STATUS_META, EVENT_TYPE_CHIP, MEMBERSHIP_LABEL } from '../model/adminStatusMeta';
 
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
 const CHIP = badgeVariants({ variant: null });
 // 칩만 담는 열 — 칩 너비가 제각각이라 왼쪽 정렬이면 들쭉날쭉해 보여 머리글과 함께 가운데로 맞춘다
-const CENTER_COLUMNS = new Set<string>(['eventType', 'status']);
+// 표에서는 계약 값 대신 서비스 이름으로 — 등록 화면·목록 필터와 같은 말
+const KIND_LABEL = { TICKET: '겟또타임', NO_TICKET: '일반' } as const;
 
 // 좁은 칸 모드에서 남기는 열
 const COMPACT_COLUMNS = new Set(['title', 'status', 'detail']);
@@ -58,33 +53,61 @@ export function AdminEventTable({
     const columns = useMemo(
         () =>
             helper.columns([
+                // 운영자가 먼저 훑는 건 지금 상태 — 맨 앞 색 칩으로 둔다
+                helper.accessor('status', {
+                    header: '상태',
+                    cell: ({ getValue }) => {
+                        const status = ADMIN_STATUS_META[getValue()];
+                        return (
+                            <span className={cn(CHIP, 'whitespace-nowrap', status.chipClass)}>
+                                {status.label}
+                            </span>
+                        );
+                    },
+                }),
+                // 이름을 진하게, 종류(겟또타임·일반)와 응모권 방식은 이름 아래 한 줄로 — 따로 열을 두면 표가 넓어지기만 했다
                 helper.accessor('title', {
                     header: '이벤트',
                     cell: ({ row, getValue }) => (
-                        <div className="flex max-w-64 flex-col">
-                            <span className="text-body-sm text-fg-primary truncate font-medium">
+                        <div className="flex max-w-72 min-w-0 flex-col gap-1">
+                            {/* 이름이 곧 상세 열기 — 줄 끝 '>' 칸은 어디를 눌러야 하는지 애매했다 */}
+                            <button
+                                type="button"
+                                aria-label={`${getValue()} 상세`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onRowClick?.(row.original);
+                                }}
+                                className="text-body-sm-bold text-fg-primary focus-visible:ring-border-focus cursor-pointer truncate rounded-sm text-left hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                            >
                                 {getValue()}
-                            </span>
-                            <span className="text-caption text-fg-secondary">
-                                {row.original.id}
+                            </button>
+                            <span className="flex flex-wrap items-center gap-1.5">
+                                <span className={cn(CHIP, EVENT_TYPE_CHIP[row.original.eventType])}>
+                                    {KIND_LABEL[row.original.eventType]}
+                                </span>
+                                {row.original.eventType === 'TICKET' && (
+                                    <span className="text-caption text-fg-tertiary">
+                                        {row.original.weightingEnabled
+                                            ? `가중치 · ${row.original.maxTicketsPerUser === null ? '상한 없음' : `최대 ${row.original.maxTicketsPerUser}장`}`
+                                            : '1장 고정'}
+                                    </span>
+                                )}
                             </span>
                         </div>
                     ),
                 }),
-                helper.accessor('eventType', {
-                    header: '유형',
-                    cell: ({ row, getValue }) => (
-                        <div className="flex flex-col items-center gap-1">
-                            <span className={cn(CHIP, EVENT_TYPE_CHIP[getValue()])}>
-                                {EVENT_TYPE_LABEL[getValue()]}
+                helper.display({
+                    id: 'period',
+                    header: '응모 기간',
+                    cell: ({ row }) => (
+                        <div className="flex flex-col whitespace-nowrap tabular-nums">
+                            <span className="text-body-sm text-fg-primary">
+                                {formatKst(row.original.startsAt, KST_YMD_HM)}
                             </span>
-                            {getValue() === 'TICKET' && (
-                                <span className="text-caption text-fg-secondary">
-                                    {row.original.weightingEnabled
-                                        ? `가중치 · ${row.original.maxTicketsPerUser === null ? '상한 없음' : `최대 ${row.original.maxTicketsPerUser}장`}`
-                                        : '가중치 없음 · 1장'}
-                                </span>
-                            )}
+                            <span className="text-caption text-fg-tertiary">
+                                ~ {formatKst(row.original.endsAt, KST_YMD_HM)}
+                            </span>
                         </div>
                     ),
                 }),
@@ -94,16 +117,6 @@ export function AdminEventTable({
                         <span className="text-body-sm text-fg-primary whitespace-nowrap">
                             {MEMBERSHIP_LABEL[getValue()]} 이상
                         </span>
-                    ),
-                }),
-                helper.display({
-                    id: 'period',
-                    header: '응모 기간',
-                    cell: ({ row }) => (
-                        <div className="text-body-sm text-fg-secondary flex flex-col whitespace-nowrap">
-                            <span>{formatKst(row.original.startsAt, KST_YMD_HM)}</span>
-                            <span>~ {formatKst(row.original.endsAt, KST_YMD_HM)}</span>
-                        </div>
                     ),
                 }),
                 helper.accessor('prizes', {
@@ -121,17 +134,10 @@ export function AdminEventTable({
                         );
                     },
                 }),
-                helper.accessor('status', {
-                    header: '상태',
-                    cell: ({ getValue }) => {
-                        const status = ADMIN_STATUS_META[getValue()];
-                        return <span className={cn(CHIP, status.chipClass)}>{status.label}</span>;
-                    },
-                }),
                 helper.accessor('createdAt', {
                     header: '등록일',
                     cell: ({ getValue }) => (
-                        <span className="text-body-sm text-fg-secondary whitespace-nowrap">
+                        <span className="text-body-sm text-fg-secondary whitespace-nowrap tabular-nums">
                             {formatKst(getValue(), {
                                 year: 'numeric',
                                 month: '2-digit',
@@ -139,25 +145,6 @@ export function AdminEventTable({
                             })}
                         </span>
                     ),
-                }),
-                helper.display({
-                    id: 'detail',
-                    header: '상세',
-                    cell: ({ row }) =>
-                        onRowClick ? (
-                            <Button
-                                size="sm"
-                                variant="ghost"
-                                className="hover:bg-surface-pressed"
-                                aria-label={`${row.original.title} 상세`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onRowClick(row.original);
-                                }}
-                            >
-                                상세
-                            </Button>
-                        ) : null,
                 }),
             ]),
         [onRowClick],
@@ -186,10 +173,7 @@ export function AdminEventTable({
                             {headerGroup.headers.map((header) => (
                                 <TableHead
                                     key={header.id}
-                                    className={cn(
-                                        'text-caption text-fg-tertiary h-11 px-4 font-semibold',
-                                        CENTER_COLUMNS.has(header.column.id) && 'text-center',
-                                    )}
+                                    className="text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap"
                                 >
                                     {flexRender(
                                         header.column.columnDef.header,
@@ -218,13 +202,7 @@ export function AdminEventTable({
                             )}
                         >
                             {row.getAllCells().map((cell) => (
-                                <TableCell
-                                    key={cell.id}
-                                    className={cn(
-                                        'px-4 py-3 align-middle',
-                                        CENTER_COLUMNS.has(cell.column.id) && 'text-center',
-                                    )}
-                                >
+                                <TableCell key={cell.id} className="px-4 py-3 align-middle">
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </TableCell>
                             ))}

@@ -36,9 +36,10 @@ function isEntryFull(event: Event, spent: number | undefined): boolean {
 }
 
 /**
- * 진행 중 겟또타임의 내 응모 칩 — 한도까지 더 쓸 수 있으면 '응모 중 · 1/5장', 다 썼으면 '응모 완료'.
+ * 진행 중 겟또타임의 내 응모 칩 — 한도까지 더 쓸 수 있으면 '1장 응모 중', 다 썼으면 '응모 완료'.
  * 둘 다 내가 한 일이라 같은 진한 노랑 바탕이고, 글과 완료 체크 아이콘으로만 나눈다 (응모 중은 아이콘 없이 글만).
  * '완료'라고만 적으면 더 쓸 수 있는데도 버튼이 죽은 줄 알고, '참여 중'만 적으면 몇 장 썼는지 따로 한 줄이 필요했다.
+ * 한도(1/5장)는 칩에 적지 않는다 — 분수가 칩을 무겁게 하고, 한도는 응모 시트에서 고를 때 보인다.
  * 쓴 장수(E03 mySpentTicketCount)를 받기 전에는 '응모 중'만 적는다. 응모하지 않았으면 그리지 않는다
  */
 export function RaffleEntryChip({
@@ -51,14 +52,13 @@ export function RaffleEntryChip({
     const entered = event.myEntered || (mySpentTicketCount ?? 0) > 0;
     if (!entered) return null;
     if (isEntryFull(event, mySpentTicketCount)) return <EnteredChip label="응모 완료" />;
-    const limit = event.maxTicketsPerUser;
     const count =
         mySpentTicketCount != null && mySpentTicketCount > 0
-            ? ` · ${formatNumber(mySpentTicketCount)}${limit != null ? `/${formatNumber(limit)}` : ''}장`
+            ? `${formatNumber(mySpentTicketCount)}장 `
             : '';
     return (
         <Badge variant="highlight" size="sm" className="font-semibold tabular-nums">
-            응모 중{count}
+            {count}응모 중
         </Badge>
     );
 }

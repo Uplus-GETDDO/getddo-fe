@@ -24,6 +24,7 @@ function PagedResult<T>({
     onRetry,
     emptyAction,
     loadingContent,
+    toolbar,
     children,
 }: {
     data: PageData<T> | undefined;
@@ -43,23 +44,34 @@ function PagedResult<T>({
     emptyAction?: ReactNode;
     /** 초기 로딩 모양 — 생략 시 테이블형 스켈레톤. 재조회에는 나타나지 않는다 */
     loadingContent?: ReactNode;
+    /** 총 건수 줄 오른쪽에 둘 보조 조작 — 예: 한 번에 보기 개수 */
+    toolbar?: ReactNode;
     children: (items: T[]) => ReactNode;
 }) {
     const totalPages = data ? Math.max(1, Math.ceil(data.totalElements / data.size)) : 0;
 
     return (
         <div className="flex flex-col gap-4">
+            {/* 총 건수는 목록 위에 — 검색 결과가 몇 건인지 먼저 보고 목록을 읽는다. 재조회 중에도 자리를 지킨다 */}
+            <div className="flex min-h-9 flex-wrap items-center justify-between gap-3">
+                <p className="flex items-center" aria-live="polite">
+                    <span className="text-body-bold text-fg-primary tabular-nums">
+                        {data ? `총 ${data.totalElements.toLocaleString('ko-KR')}${countUnit}` : ''}
+                    </span>
+                    {!isPending && isFetching && !isError && (
+                        <span role="status" className="text-caption text-fg-tertiary ml-2">
+                            새로 확인하는 중…
+                        </span>
+                    )}
+                </p>
+                {toolbar}
+            </div>
             {isPending &&
                 (loadingContent ?? (
                     <LoadingBlock>
                         <TableSkeleton rows={4} />
                     </LoadingBlock>
                 ))}
-            {!isPending && isFetching && !isError && (
-                <p role="status" className="text-caption text-fg-tertiary">
-                    목록을 새로 확인하는 중…
-                </p>
-            )}
             {isError && (
                 <div className="flex items-center gap-3" role="alert">
                     <p className="text-semantic-error-strong text-body-sm">{errorText}</p>
@@ -77,13 +89,14 @@ function PagedResult<T>({
                 </div>
             )}
             {data && data.items.length > 0 && children(data.items)}
-            {data && data.totalElements > 0 && (
-                <div className="flex items-center justify-between">
-                    <span className="text-body-sm text-fg-secondary" aria-live="polite">
-                        총 {data.totalElements}
-                        {countUnit}
-                    </span>
-                    <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
+            {data && totalPages > 1 && (
+                <div className="flex justify-center">
+                    <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                        jump={totalPages > 7}
+                    />
                 </div>
             )}
         </div>

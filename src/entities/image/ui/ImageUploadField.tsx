@@ -27,6 +27,8 @@ interface ImageUploadFieldProps {
     slot: ImageSlot;
     /** 수정 화면에서 이미 올라가 있던 이미지 — 키만으로는 주소를 만들 수 없어 따로 받는다 */
     initialPreviewUrl?: string | null;
+    /** 방금 올린 이미지 주소를 바깥 미리보기에 넘긴다 — 지우면 null */
+    onPreviewUrlChange?: (url: string | null) => void;
 }
 
 /**
@@ -43,6 +45,7 @@ export function ImageUploadField({
     onChange,
     slot,
     initialPreviewUrl,
+    onPreviewUrlChange,
 }: ImageUploadFieldProps) {
     const inputId = useId();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -78,6 +81,7 @@ export function ImageUploadField({
                 onSuccess: ({ imageKey, imageUrl }) => {
                     onChange(imageKey);
                     setUploadedUrl(imageUrl);
+                    onPreviewUrlChange?.(imageUrl);
                 },
             },
         );
@@ -86,6 +90,7 @@ export function ImageUploadField({
     const clear = () => {
         onChange('');
         setUploadedUrl(null);
+        onPreviewUrlChange?.(null);
         setRejection(null);
         setSizeWarning(null);
         if (inputRef.current) inputRef.current.value = '';

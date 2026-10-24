@@ -63,6 +63,33 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     );
 }
 
+/**
+ * 모달 아래에 붙는 공개 줄 — 스크롤 칸(px-6 pb-6)의 여백까지 덮어 끝에서 끝까지 깐다.
+ * 왼쪽은 지금 상태 안내, 오른쪽은 채운 기본 버튼
+ */
+function PublishBar({
+    title,
+    action,
+    children,
+}: {
+    title: string;
+    action: React.ReactNode;
+    children: React.ReactNode;
+}) {
+    return (
+        <section
+            aria-label={title}
+            className="bg-surface-page border-border-default sticky bottom-0 z-10 -mx-6 -mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t px-6 py-4"
+        >
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <h3 className="text-body-bold text-fg-primary">{title}</h3>
+                <div className="text-body-sm text-fg-secondary">{children}</div>
+            </div>
+            {action}
+        </section>
+    );
+}
+
 function ResultChips({ result }: { result: DrawResult }) {
     if (result.resultType === 'UNFILLED') {
         return <span className={cn(CHIP, 'bg-surface-sunken text-fg-secondary')}>미충원</span>;
@@ -138,7 +165,7 @@ export function DrawRunDetail({
                 }}
             >
                 <DialogHeader className="px-6 pt-6 pb-4">
-                    <DialogTitle className="text-title-3 text-fg-primary">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold">
                         {run
                             ? `${run.runNumber}회차 ${DRAW_TYPE_LABEL[run.drawType]} 상세`
                             : '추첨 실행 상세'}
@@ -662,108 +689,6 @@ function RunDetailBody({
                 </section>
             )}
 
-            {!changePending && !firstPublished && (
-                <section
-                    aria-labelledby="draw-run-first-publish-title"
-                    className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6"
-                >
-                    <div className="flex items-center gap-3">
-                        <h3
-                            id="draw-run-first-publish-title"
-                            className="text-body-bold text-fg-primary"
-                        >
-                            당첨자 공개
-                        </h3>
-                        {isLatestRun && !changeError && (
-                            <Button
-                                size="sm"
-                                disabled={!canFirstPublish}
-                                onClick={() => setFirstPublishOpen(true)}
-                            >
-                                당첨자 공개
-                            </Button>
-                        )}
-                    </div>
-                    {changeError ? (
-                        <div className="flex items-center gap-3">
-                            <p role="alert" className="text-semantic-error-strong text-body-sm">
-                                공개 명단 변경 이력을 불러오지 못해 공개 여부를 확인할 수 없습니다.
-                            </p>
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                onClick={() => void refetchChanges()}
-                            >
-                                다시 시도
-                            </Button>
-                        </div>
-                    ) : !isLatestRun ? (
-                        <p className="text-body-sm text-fg-secondary">
-                            당첨자 공개는 가장 최근 실행으로만 요청할 수 있습니다. 실행 목록에서
-                            최신 실행을 선택해 주세요.
-                        </p>
-                    ) : !confirmed ? (
-                        <p className="text-body-sm text-fg-secondary">
-                            이 실행의 선정이 완료되면 결과를 검토하고 당첨자 공개를 요청할 수
-                            있습니다.
-                        </p>
-                    ) : (
-                        <p className="text-body-sm text-fg-secondary">
-                            이 실행의 결과를 검토한 뒤 당첨자 공개 버튼 한 번으로 확인·공개가 함께
-                            확정됩니다. 공개 전까지 사용자에게 결과가 노출되지 않습니다.
-                        </p>
-                    )}
-                </section>
-            )}
-
-            {firstPublished && isRedraw && (
-                <section
-                    aria-labelledby="draw-run-publish-title"
-                    className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6"
-                >
-                    <div className="flex items-center gap-3">
-                        <h3 id="draw-run-publish-title" className="text-body-bold text-fg-primary">
-                            공개 명단 갱신
-                        </h3>
-                        <Button
-                            size="sm"
-                            disabled={!canPublish}
-                            onClick={() => setPublishOpen(true)}
-                        >
-                            공개 명단 갱신
-                        </Button>
-                    </div>
-                    {alreadyPublished && (
-                        <p className="text-body-sm text-fg-secondary">
-                            이 재추첨 결과는 이미 공개 명단을 갱신했습니다.
-                        </p>
-                    )}
-                    {!confirmed && (
-                        <p className="text-body-sm text-fg-secondary">
-                            재추첨의 선정이 완료되면 공개 명단을 갱신할 수 있습니다.
-                        </p>
-                    )}
-                    {confirmed && publicationCheckFailed && (
-                        <p className="text-body-sm text-fg-secondary">
-                            취소한 원본 실행의 공개 이력을 불러오지 못했습니다. 확인이 끝날 때까지
-                            공개 명단을 갱신할 수 없습니다.
-                        </p>
-                    )}
-                    {confirmed && !publicationCheckFailed && anyBeforeFirstPublication && (
-                        <p className="text-body-sm text-fg-secondary">
-                            공개 전 취소가 포함돼 이 API(AD06)로 갱신할 수 없습니다. 공개 전
-                            재추첨은 당첨자 공개 요청으로 함께 공개됩니다.
-                        </p>
-                    )}
-                    {confirmed && !anyBeforeFirstPublication && !alreadyPublished && (
-                        <p className="text-body-sm text-fg-secondary">
-                            갱신 전까지 취소자 표시와 본인 중간 결과는 <PolicyPendingChip /> 입니다.
-                            관리자 미확인 결과는 사용자에게 노출되지 않습니다.
-                        </p>
-                    )}
-                </section>
-            )}
-
             {!rosterComplete && (
                 <section
                     aria-labelledby="draw-run-roster-title"
@@ -955,6 +880,73 @@ function RunDetailBody({
                 <DrawCandidatesSection drawId={run.id} results={run.results} />
             )}
             {section === 'operations' && <DrawOperationsSection drawId={run.id} />}
+
+            {/*
+             * 공개는 이 모달의 마지막 결정이라 아래에 붙여 둔다 — 명단·결과를 어디까지 내려 봐도 버튼이 보인다.
+             * 공개 전엔 당첨자 공개(GD-199), 공개 뒤 재추첨이면 공개 명단 갱신(AD06). 못 누르는 까닭은 왼쪽 글로 알린다
+             */}
+            {!changePending && !firstPublished && (
+                <PublishBar
+                    title="당첨자 공개"
+                    action={
+                        isLatestRun &&
+                        !changeError && (
+                            <Button
+                                disabled={!canFirstPublish}
+                                onClick={() => setFirstPublishOpen(true)}
+                            >
+                                당첨자 공개
+                            </Button>
+                        )
+                    }
+                >
+                    {changeError ? (
+                        <span className="flex flex-wrap items-center gap-3">
+                            <span role="alert" className="text-semantic-error-strong">
+                                공개 명단 변경 이력을 불러오지 못해 공개 여부를 확인할 수 없습니다.
+                            </span>
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => void refetchChanges()}
+                            >
+                                다시 시도
+                            </Button>
+                        </span>
+                    ) : !isLatestRun ? (
+                        '가장 최근 실행으로만 공개할 수 있습니다. 실행 목록에서 최신 실행을 선택해 주세요.'
+                    ) : !confirmed ? (
+                        '선정이 완료되면 결과를 검토하고 공개할 수 있습니다.'
+                    ) : (
+                        '결과를 검토한 뒤 누르면 확인·공개가 함께 확정됩니다. 공개 전까지 사용자에게 보이지 않습니다.'
+                    )}
+                </PublishBar>
+            )}
+            {firstPublished && isRedraw && (
+                <PublishBar
+                    title="공개 명단 갱신"
+                    action={
+                        <Button disabled={!canPublish} onClick={() => setPublishOpen(true)}>
+                            공개 명단 갱신
+                        </Button>
+                    }
+                >
+                    {alreadyPublished ? (
+                        '이 재추첨 결과는 이미 공개 명단을 갱신했습니다.'
+                    ) : !confirmed ? (
+                        '재추첨의 선정이 완료되면 공개 명단을 갱신할 수 있습니다.'
+                    ) : publicationCheckFailed ? (
+                        '취소한 원본 실행의 공개 이력을 불러오지 못했습니다. 확인이 끝날 때까지 갱신할 수 없습니다.'
+                    ) : anyBeforeFirstPublication ? (
+                        '공개 전 취소가 포함돼 이 API(AD06)로 갱신할 수 없습니다. 공개 전 재추첨은 당첨자 공개 요청으로 함께 공개됩니다.'
+                    ) : (
+                        <>
+                            갱신 전까지 취소자 표시와 본인 중간 결과는 <PolicyPendingChip /> 입니다.
+                            관리자 미확인 결과는 사용자에게 노출되지 않습니다.
+                        </>
+                    )}
+                </PublishBar>
+            )}
 
             <CancelWinDialog
                 result={cancelTarget}

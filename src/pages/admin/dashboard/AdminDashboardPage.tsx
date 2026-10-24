@@ -30,9 +30,6 @@ export function AdminDashboardPage() {
 
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
-            <p className="text-body-sm text-fg-secondary">
-                운영 중 확인이 잦은 지표를 모았습니다. 카드를 눌러 각 관리 화면으로 이동하세요.
-            </p>
             <AdminStatSummary stats={stats} />
             <div className="grid gap-4 lg:grid-cols-3">
                 <TicketTrendPanel

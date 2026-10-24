@@ -184,7 +184,11 @@ export function BannerSlide({
                             {event.description}
                         </p>
                     )}
-                    {open && renderStatus?.(event, isActive)}
+                    {/* 현황 칩 자리는 늘 잡아 둔다 — 글 덩어리가 세로 가운데라 칩이 없으면(진행 전·넘어오기 전 슬라이드)
+                        제목이 아래로 내려갔다가 칩이 뜨면 다시 올라갔다. 칩 줄 높이(28)만큼 비워 두어 글 위치가 배너마다 같다 */}
+                    {renderStatus && (
+                        <div className="min-h-7">{open && renderStatus(event, isActive)}</div>
+                    )}
                 </div>
             </div>
         </Link>

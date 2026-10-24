@@ -33,14 +33,6 @@ export function AdminMissionsPage() {
     const query = useAdminMissions(params);
     return (
         <>
-            {/*
-             * 화면 이름은 관리자 레이아웃 위쪽 바가 이미 띄운다 — 본문에서 또 적지 않는다.
-             * 설명은 가운데 칸 밖에 둬서 다른 관리자 화면과 같은 자리에서 시작하게 하고,
-             * 제목이 이고 있던 등록 버튼만 칸 안에 남긴다.
-             */}
-            <p className="text-body-sm text-fg-secondary">
-                등록된 미션을 검색하고 상세와 설문 응답을 확인합니다.
-            </p>
             <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-6">
                 <div className="flex justify-end">
                     <Button className="min-h-11" onClick={() => setOpen(true)}>

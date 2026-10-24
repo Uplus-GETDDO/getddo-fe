@@ -85,8 +85,9 @@ describe('홈 관리 배너', () => {
         await act(() => vi.advanceTimersByTimeAsync(5_000));
         expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toBeInTheDocument();
 
+        // 정지 버튼 앞은 배너 점이다
         await user.tab({ shift: true });
-        expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toHaveFocus();
+        expect(screen.getByRole('button', { name: '2번째 배너' })).toHaveFocus();
         await act(() => vi.advanceTimersByTimeAsync(5_000));
         expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toBeInTheDocument();
     });
@@ -107,6 +108,23 @@ describe('홈 관리 배너', () => {
             '/time-raffle/ticket',
         );
         expect(container.querySelector('[inert] a')).toHaveAttribute('href', '/events/free');
+    });
+
+    it('점을 누르면 그 배너로 바로 가고 자동 재생을 멈춘다', async () => {
+        const user = userEvent.setup();
+        mount();
+        await screen.findByRole('link', { name: '일반 이벤트 상세 보기' });
+        expect(screen.getByRole('button', { name: '1번째 배너' })).toHaveAttribute(
+            'aria-current',
+            'true',
+        );
+        await user.click(screen.getByRole('button', { name: '2번째 배너' }));
+        expect(screen.getByRole('link', { name: '겟또타임 이벤트 상세 보기' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: '2번째 배너' })).toHaveAttribute(
+            'aria-current',
+            'true',
+        );
+        expect(screen.getByRole('button', { name: '자동 재생 시작' })).toBeInTheDocument();
     });
 
     it('빈 목록은 영역을 숨긴다', async () => {

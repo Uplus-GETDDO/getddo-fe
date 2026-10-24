@@ -79,12 +79,11 @@ export function AdminBannersPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            {/* 설명을 버튼 높이에 맞춰 가운데로 내리면 다른 화면보다 첫 줄이 아래에서 시작한다 */}
-            <div className="flex flex-wrap items-start gap-3">
-                <p className="text-body-sm text-fg-secondary">
-                    홈 화면 상단에 노출됩니다. 위쪽 배너가 먼저 보이며 최대 {BANNER_MAX_COUNT}개까지
-                    등록할 수 있습니다{banners ? ` (현재 ${count}개)` : ''}.
-                </p>
+            <div className="flex flex-wrap items-center gap-3">
+                {/* 소개 문구 대신 몇 개를 더 올릴 수 있는지만 */}
+                <span className="text-body-sm text-fg-secondary tabular-nums">
+                    {banners ? `${count} / ${BANNER_MAX_COUNT}개` : ''}
+                </span>
                 <Button
                     ref={addButtonRef}
                     className="ml-auto"
