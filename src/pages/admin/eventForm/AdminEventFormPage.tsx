@@ -172,10 +172,6 @@ export function AdminEventFormPage() {
                     <h2 className="text-title-2 text-fg-primary">
                         {isEdit ? '이벤트 수정' : '새 이벤트 등록'}
                     </h2>
-                    <p className="text-body-sm text-fg-secondary">
-                        종류를 고른 뒤 위에서부터 차례로 채우면 오른쪽에서 사용자 화면을 미리 볼 수
-                        있어요.
-                    </p>
                 </div>
                 <p className="text-caption text-fg-tertiary">
                     <span aria-hidden className="text-semantic-error-strong">

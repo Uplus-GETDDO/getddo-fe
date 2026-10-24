@@ -102,7 +102,7 @@ function PageJump({
     const [value, setValue] = useState('');
     return (
         <form
-            className="border-border-input bg-surface-page focus-within:border-border-focus focus-within:ring-border-focus/10 ml-3 flex h-9 shrink-0 items-center overflow-hidden rounded-lg border transition-colors focus-within:ring-3"
+            className="border-border-input bg-surface-page focus-within:border-border-focus ml-3 flex h-9 shrink-0 items-center overflow-hidden rounded-lg border transition-colors"
             onSubmit={(event) => {
                 event.preventDefault();
                 const next = Number.parseInt(value, 10);

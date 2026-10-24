@@ -158,11 +158,8 @@ export function AdminEventsPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            {/* 화면이 하는 일 한 줄과, 이 화면의 주된 행동(등록)을 오른쪽 위에 둔다 — 검색 줄 끝에 있으면 줄바꿈에 밀려 묻혔다 */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-body-sm text-fg-secondary">
-                    이벤트 일정과 경품을 설정하고 운영 상태를 관리합니다.
-                </p>
+            {/* 이 화면의 주된 행동(등록)을 오른쪽 위에 둔다 — 검색 줄 끝에 있으면 줄바꿈에 밀려 묻혔다 */}
+            <div className="flex justify-end">
                 <Button size="lg" onClick={() => void navigate('/admin/events/new')}>
                     새 이벤트 등록
                 </Button>

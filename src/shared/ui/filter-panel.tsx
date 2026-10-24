@@ -166,6 +166,11 @@ function FilterRow({
             </div>
             <PopoverContent
                 align="start"
+                // 열자마자 첫 입력창·항목에 포커스가 꽂히면 누르지도 않았는데 선택된 듯 보였다 — 창에만 두고 탭·클릭으로 들어가게 한다
+                onOpenAutoFocus={(event) => {
+                    event.preventDefault();
+                    (event.currentTarget as HTMLElement).focus();
+                }}
                 className="bg-surface-page border-border-default w-auto min-w-60 gap-3 rounded-xl border p-3 shadow-lg ring-0"
             >
                 <p className="text-body-sm-bold text-fg-primary">{label}</p>

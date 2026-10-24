@@ -86,11 +86,7 @@ export function AdminUsersPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            {/* 화면 이름은 관리자 레이아웃 위쪽 바가 이미 띄운다 — 본문에서 또 적지 않고 설명만 둔다 */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-body-sm text-fg-secondary">
-                    가입한 사용자를 찾아 응모·응모권 이력으로 이어 볼 수 있어요.
-                </p>
+            <div className="flex justify-end">
                 <span className="bg-surface-page border-border-default text-body-sm-bold text-fg-primary rounded-full border px-3 py-1">
                     현재 활성 일반 사용자 {listQuery.data?.totalUserCount ?? '—'}명
                 </span>

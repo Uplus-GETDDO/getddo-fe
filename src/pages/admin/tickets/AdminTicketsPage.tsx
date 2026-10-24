@@ -6,9 +6,6 @@ import { HistoriesTab } from './HistoriesTab';
 export function AdminTicketsPage() {
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            <p className="text-body-sm text-fg-secondary">
-                응모권이 언제 누구에게 지급되고 어디에 쓰였는지 확인해요.
-            </p>
             <HistoriesTab />
         </div>
     );

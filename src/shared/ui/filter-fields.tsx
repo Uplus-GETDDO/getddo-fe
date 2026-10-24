@@ -125,7 +125,7 @@ function DateRangeFilter({
         <div className="relative">
             <div
                 className={cn(
-                    'border-border-input bg-surface-page hover:border-border-input-hover focus-within:border-border-focus focus-within:ring-border-focus/10 flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border py-1 pr-1.5 pl-3 transition-colors focus-within:ring-3',
+                    'border-border-input bg-surface-page hover:border-border-input-hover focus-within:border-border-focus flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border py-1 pr-1.5 pl-3 transition-colors',
                     error &&
                         'border-semantic-error-strong hover:border-semantic-error-strong focus-within:border-semantic-error-strong',
                 )}

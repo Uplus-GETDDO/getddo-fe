@@ -42,9 +42,7 @@ afterEach(() => {
 describe('AdminTicketsPage', () => {
     it('탭 없이 전체 이력 단일 화면을 보여준다', async () => {
         renderPage();
-        expect(
-            screen.getByText('응모권이 언제 누구에게 지급되고 어디에 쓰였는지 확인해요.'),
-        ).toBeInTheDocument();
+        expect(screen.getByRole('search')).toBeInTheDocument();
         expect(screen.queryByRole('tab')).not.toBeInTheDocument();
         expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
