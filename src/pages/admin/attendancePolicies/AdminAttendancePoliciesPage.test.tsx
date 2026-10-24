@@ -78,13 +78,13 @@ describe('관리자 출석 정책', () => {
         // 현재 카드 — 일일 보상 장수·적용 시작, 연속 마일스톤·기준월
         expect(await screen.findByText('브론즈 3장')).toBeInTheDocument();
         expect(screen.getByText('브론즈 5장')).toBeInTheDocument();
-        expect(screen.getAllByText(/^적용 시작 .+ KST$/)).toHaveLength(2);
-        expect(screen.getByText(`적용 기준월 ${currentMonth} (KST)`)).toBeInTheDocument();
-        expect(screen.getByText(`적용 기준월 ${nextMonth} (KST)`)).toBeInTheDocument();
-        expect(screen.getByText('7일 연속: 브론즈 1장')).toBeInTheDocument();
-        expect(screen.getByText('14일 연속: 브론즈 2장')).toBeInTheDocument();
+        expect(screen.getAllByText('적용 시작')).toHaveLength(2);
+        expect(screen.getByText(currentMonth.replace('-', '.'))).toBeInTheDocument();
+        expect(screen.getByText(nextMonth.replace('-', '.'))).toBeInTheDocument();
+        expect(screen.getByLabelText('7일 연속: 브론즈 1장')).toBeInTheDocument();
+        expect(screen.getByLabelText('14일 연속: 브론즈 2장')).toBeInTheDocument();
         // 작성자 — 현재·예약 카드마다 1개씩 총 4개 (ADR-028 — ID 대신 현재 이름)
-        expect(screen.getAllByText('작성 관리자')).toHaveLength(4);
+        expect(screen.getAllByText('관리자')).toHaveLength(4);
         // 현재 카드에는 수정 버튼이 없고 예약 카드에만 있다
         const currentCards = screen.getAllByRole('article', { name: '현재 정책' });
         expect(currentCards).toHaveLength(2);
@@ -118,7 +118,7 @@ describe('관리자 출석 정책', () => {
         expect(
             (
                 await screen.findAllByText(
-                    '예약된 변경이 없습니다. 예약하지 않으면 기존 정책이 유지됩니다.',
+                    '예약된 변경이 없습니다. 예약하지 않으면 현재 정책이 계속 적용돼요.',
                 )
             ).length,
         ).toBe(2);

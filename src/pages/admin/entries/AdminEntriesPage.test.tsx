@@ -180,12 +180,12 @@ describe('AdminEntriesPage', () => {
         );
     });
 
-    it('보기 탭을 바꾸면 참여자 보기로 전환된다', async () => {
+    it('탭 없이 응모 이력을 열고, 이벤트를 걸면 그 이벤트 참여자 보기로 건너간다', async () => {
         const user = userEvent.setup();
-        renderPage();
-        await user.click(screen.getByRole('tab', { name: '이벤트 참여자' }));
-        expect(
-            screen.getByRole('tab', { name: '이벤트 참여자', selected: true }),
-        ).toBeInTheDocument();
+        renderPage(`/admin/entries?eventId=${EVENT_ID}`);
+        expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+        await user.click(await screen.findByRole('link', { name: '이 이벤트 참여자 보기' }));
+        expect(await screen.findByRole('link', { name: '이벤트 상세로' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /참여자$/ })).toBeInTheDocument();
     });
 });

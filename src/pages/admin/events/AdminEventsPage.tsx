@@ -111,7 +111,7 @@ export function AdminEventsPage() {
         createdFrom !== '' ||
         createdTo !== '';
 
-    const { data, isPending, isError, isFetching, refetch } = useAdminEvents({
+    const { data, isPending, isError, isFetching, dataUpdatedAt, refetch } = useAdminEvents({
         page,
         size: pageSize,
         keyword: keyword || undefined,
@@ -311,6 +311,7 @@ export function AdminEventsPage() {
                         isPending={isPending}
                         isError={isError}
                         isFetching={isFetching}
+                        updatedAt={dataUpdatedAt}
                         page={page}
                         onPageChange={setPage}
                         emptyText="해당하는 이벤트가 없습니다."

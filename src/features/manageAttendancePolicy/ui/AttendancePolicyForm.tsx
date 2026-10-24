@@ -54,18 +54,29 @@ export function AttendancePolicyForm({ kind }: { kind: 'daily' | 'streak' }) {
     });
     return (
         <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
-            <p>
+            <p className="text-caption text-fg-tertiary">
                 브론즈 응모권으로 지급하며,{' '}
                 {kind === 'daily' ? '다음 KST 기준일 00:00' : '다음 KST 기준월 1일 00:00'}부터
                 적용합니다.
             </p>
             <fieldset disabled={mutation.isPending} className="flex min-w-0 flex-col gap-3">
                 <PolicyFields kind={kind} register={register} fieldArray={fieldArray} />
-                <Button className="min-h-11" type="submit">
+                <Button className="self-start" type="submit">
                     {mutation.isPending ? '예약 중…' : `${label} 정책 예약`}
                 </Button>
             </fieldset>
-            {notice && <p role={mutation.isError ? 'alert' : 'status'}>{notice}</p>}
+            {notice && (
+                <p
+                    role={mutation.isError ? 'alert' : 'status'}
+                    className={
+                        mutation.isError
+                            ? 'text-body-sm text-semantic-error-strong'
+                            : 'text-body-sm text-fg-secondary'
+                    }
+                >
+                    {notice}
+                </p>
+            )}
         </form>
     );
 }

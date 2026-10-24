@@ -25,7 +25,7 @@ export function PolicyFields({
     return (
         <>
             {kind === 'daily' ? (
-                <label className="flex flex-col gap-2">
+                <label className="text-body-sm text-fg-secondary flex w-40 flex-col gap-1.5">
                     일일 보상 장수
                     <Input
                         type="number"
@@ -39,7 +39,7 @@ export function PolicyFields({
                 <>
                     {fields.map((field, i) => (
                         <div key={field.id} className="flex flex-wrap items-end gap-2">
-                            <label className="flex min-w-0 flex-1 flex-col gap-2">
+                            <label className="text-body-sm text-fg-secondary flex min-w-0 flex-1 flex-col gap-1.5">
                                 {i + 1}단계 일수
                                 <Input
                                     type="number"
@@ -51,7 +51,7 @@ export function PolicyFields({
                                     })}
                                 />
                             </label>
-                            <label className="flex min-w-0 flex-1 flex-col gap-2">
+                            <label className="text-body-sm text-fg-secondary flex min-w-0 flex-1 flex-col gap-1.5">
                                 {i + 1}단계 보상 장수
                                 <Input
                                     type="number"
@@ -64,7 +64,7 @@ export function PolicyFields({
                             </label>
                             <Button
                                 type="button"
-                                variant="secondary"
+                                variant="ghost"
                                 disabled={fields.length <= 1}
                                 onClick={() => remove(i)}
                                 aria-label={`${i + 1}단계 삭제`}
@@ -75,7 +75,8 @@ export function PolicyFields({
                     ))}
                     <Button
                         type="button"
-                        variant="secondary"
+                        variant="ghost"
+                        className="self-start"
                         disabled={fields.length >= 28}
                         onClick={() =>
                             append({
@@ -87,7 +88,7 @@ export function PolicyFields({
                             })
                         }
                     >
-                        단계 추가
+                        + 단계 추가
                     </Button>
                 </>
             )}

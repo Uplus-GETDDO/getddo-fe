@@ -7,9 +7,11 @@ import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-b
 import { cn } from '@shared/utils/cn';
 
 import { ADMIN_NAV_ITEMS } from './adminNavItems';
+import { useAdminNavBadges } from './useAdminNavBadges';
 
 export function AdminLayout() {
     const { pathname } = useLocation();
+    const badges = useAdminNavBadges();
     const current = ADMIN_NAV_ITEMS.find((item) =>
         item.end
             ? pathname === item.to
@@ -49,6 +51,15 @@ export function AdminLayout() {
                         >
                             <Icon className="size-4" />
                             {label}
+                            {badges[to] && (
+                                <span
+                                    title={badges[to].label}
+                                    className="bg-brand-primary text-fg-on-brand ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold tabular-nums"
+                                >
+                                    <span aria-hidden>{badges[to].count}</span>
+                                    <span className="sr-only">{badges[to].label}</span>
+                                </span>
+                            )}
                         </NavLink>
                     ))}
                 </nav>
@@ -89,6 +100,15 @@ export function AdminLayout() {
                             }
                         >
                             {label}
+                            {badges[to] && (
+                                <span
+                                    title={badges[to].label}
+                                    className="text-fg-brand ml-1 font-semibold tabular-nums"
+                                >
+                                    <span aria-hidden>{badges[to].count}</span>
+                                    <span className="sr-only">{badges[to].label}</span>
+                                </span>
+                            )}
                         </NavLink>
                     ))}
                     <NavLink

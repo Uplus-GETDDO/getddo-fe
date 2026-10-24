@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 
 import { useAdminEntries } from '@entities/entry';
@@ -177,11 +177,24 @@ export function EntryHistoryPanel() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
+                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 응모 이력이 없습니다."
                 errorText={getErrorMessage(query.error, '응모 이력을 불러오지 못했습니다.')}
                 onRetry={() => void query.refetch()}
+                toolbar={
+                    // 이벤트를 걸면 그 이벤트의 응모자(사람 단위) 목록으로 건너갈 수 있게 한다
+                    applied.eventId ? (
+                        <Button variant="secondary" size="sm" asChild>
+                            <Link
+                                to={`/admin/entries?view=participants&eventId=${applied.eventId}`}
+                            >
+                                이 이벤트 참여자 보기
+                            </Link>
+                        </Button>
+                    ) : undefined
+                }
                 emptyAction={
                     hasAppliedFilters ? (
                         <Button

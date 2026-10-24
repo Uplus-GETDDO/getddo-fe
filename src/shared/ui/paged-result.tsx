@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react';
 
+import { RotateCw } from 'lucide-react';
+
 import { Button } from '@shared/ui/button';
 import { Pagination } from '@shared/ui/pagination';
 import { LoadingBlock, TableSkeleton } from '@shared/ui/skeleton';
+import { formatKst } from '@shared/utils/date';
 
 interface PageData<T> {
     items: T[];
@@ -25,6 +28,7 @@ function PagedResult<T>({
     emptyAction,
     loadingContent,
     toolbar,
+    updatedAt,
     children,
 }: {
     data: PageData<T> | undefined;
@@ -46,6 +50,8 @@ function PagedResult<T>({
     loadingContent?: ReactNode;
     /** 총 건수 줄 오른쪽에 둘 보조 조작 — 예: 한 번에 보기 개수 */
     toolbar?: ReactNode;
+    /** 마지막으로 받아 온 시각(쿼리 dataUpdatedAt) — 총 건수 옆에 '14:32 기준'으로 띄워 지금 보는 목록이 언제 것인지 알린다 */
+    updatedAt?: number;
     children: (items: T[]) => ReactNode;
 }) {
     const totalPages = data ? Math.max(1, Math.ceil(data.totalElements / data.size)) : 0;
@@ -58,10 +64,34 @@ function PagedResult<T>({
                     <span className="text-body-bold text-fg-primary tabular-nums">
                         {data ? `총 ${data.totalElements.toLocaleString('ko-KR')}${countUnit}` : ''}
                     </span>
-                    {!isPending && isFetching && !isError && (
+                    {!isPending && isFetching && !isError ? (
                         <span role="status" className="text-caption text-fg-tertiary ml-2">
                             새로 확인하는 중…
                         </span>
+                    ) : (
+                        data &&
+                        updatedAt !== undefined &&
+                        updatedAt > 0 && (
+                            <span className="text-caption text-fg-tertiary ml-2 flex items-center gap-1 tabular-nums">
+                                {formatKst(new Date(updatedAt), {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: false,
+                                })}{' '}
+                                기준
+                                {onRetry && (
+                                    <button
+                                        type="button"
+                                        aria-label="목록 새로 고침"
+                                        onClick={onRetry}
+                                        className="text-fg-tertiary hover:text-fg-primary hover:bg-surface-sunken focus-visible:ring-border-focus flex size-6 cursor-pointer items-center justify-center rounded-full focus-visible:ring-2 focus-visible:outline-none"
+                                    >
+                                        <RotateCw aria-hidden className="size-3.5" />
+                                    </button>
+                                )}
+                            </span>
+                        )
                     )}
                 </p>
                 {toolbar}

@@ -53,7 +53,7 @@ export function AdminAbuseCasesPage() {
     const hasAppliedFilters =
         userId !== '' || eventId !== '' || from !== '' || to !== '' || sourceType !== 'all';
 
-    const { data, isPending, isError, isFetching, refetch } = useAbuseCases({
+    const { data, isPending, isError, isFetching, dataUpdatedAt, refetch } = useAbuseCases({
         page,
         size: PAGE_SIZE,
         userId: userId || undefined,
@@ -185,6 +185,7 @@ export function AdminAbuseCasesPage() {
                 isPending={isPending}
                 isError={isError}
                 isFetching={isFetching}
+                updatedAt={dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 차단 내역이 없습니다."

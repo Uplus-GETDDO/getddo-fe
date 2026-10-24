@@ -198,6 +198,7 @@ export function HistoriesTab() {
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
+                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 이력이 없습니다."

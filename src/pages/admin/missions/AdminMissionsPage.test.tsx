@@ -74,26 +74,33 @@ describe('관리자 미션', () => {
                 <AdminMissionsPage />
             </QueryClientProvider>,
         );
-        // ADR-028 — 목록의 작성자는 ID 대신 현재 이름으로 보인다 (유형·상태와 같은 셀 안 텍스트)
-        expect(await screen.findByText(/작성 박운영/)).toBeInTheDocument();
-        // 상태는 필터 옵션·목록 모두 한글 라벨로 표시한다
-        expect(screen.getByRole('option', { name: '진행 중' })).toBeInTheDocument();
-        expect(screen.getByRole('option', { name: '종료' })).toBeInTheDocument();
-        expect(screen.getByText(/SURVEY · 진행 중 · 보상 1장/)).toBeInTheDocument();
+        // ADR-028 — 목록의 작성자는 ID 대신 현재 이름으로 보인다
+        expect(await screen.findByRole('cell', { name: '박운영' })).toBeInTheDocument();
+        // 상태·유형은 영어 원문 대신 한글 라벨로 표시한다
+        expect(screen.getByRole('cell', { name: /진행 중/ })).toBeInTheDocument();
+        expect(screen.getByText('설문')).toBeInTheDocument();
+        expect(screen.queryByText(/SURVEY/)).not.toBeInTheDocument();
+        await userEvent.click(screen.getByRole('button', { name: /상태/ }));
+        expect(screen.getByRole('radio', { name: '진행 중' })).toBeInTheDocument();
+        expect(screen.getByRole('radio', { name: '종료' })).toBeInTheDocument();
+        await userEvent.keyboard('{Escape}');
         await userEvent.click(await screen.findByRole('button', { name: '설문 미션 상세' }));
         const dialog = await screen.findByRole('dialog');
         // 다이얼로그는 마운트 즉시 뜨고 상세는 useAdminMission 응답 뒤에 온다 — 첫 의존 요소는 findBy로 기다린다
         expect(
             await within(dialog).findByRole('heading', { name: '설문 미션' }),
         ).toBeInTheDocument();
-        expect(within(dialog).getByText(/진행 중 · 보상 1장/)).toBeInTheDocument();
-        expect(within(dialog).getByText('작성 박운영')).toBeInTheDocument();
+        expect(within(dialog).getByText('진행 중')).toBeInTheDocument();
+        expect(within(dialog).getByText('응모권 1장')).toBeInTheDocument();
+        expect(within(dialog).getByText('박운영')).toBeInTheDocument();
         // 기본 기간은 미션 시작~종료 — 31일을 넘으면 시작일부터 31일로 자르고 안내한다
         expect(within(dialog).getByLabelText('집계 시작일')).toHaveValue('2026-10-01');
         expect(within(dialog).getByLabelText('집계 종료일')).toHaveValue('2026-10-31');
         expect(within(dialog).getByText(/31일만 잘랐습니다/)).toBeInTheDocument();
         // 모달 오픈과 함께 기본 기간으로 자동 집계한다 — '집계 조회'를 누르지 않아도 결과가 보인다
-        expect(await within(dialog).findByText('2026-10-05: 2건')).toBeInTheDocument();
+        const daily = await within(dialog).findByRole('list', { name: '날짜별 완료 응답' });
+        expect(within(daily).getByText('10.05')).toBeInTheDocument();
+        expect(within(daily).getAllByText('2건').length).toBeGreaterThan(0);
     });
     it('집계 기간으로 자유 서술 답변을 조회해 텍스트로만 표시한다', async () => {
         const summary = {
@@ -323,7 +330,8 @@ describe('관리자 미션', () => {
         await userEvent.click(await screen.findByRole('button', { name: '퀴즈 미션 상세' }));
         const dialog = await screen.findByRole('dialog');
         // 종료된 미션은 '종료' 라벨로 표시된다 — 상세 응답 대기를 위해 findBy로 확인한다
-        expect(await within(dialog).findByText(/종료 · 보상 1장/)).toBeInTheDocument();
+        expect(await within(dialog).findByText('응모권 1장')).toBeInTheDocument();
+        expect(within(dialog).getByText('종료')).toBeInTheDocument();
         await userEvent.keyboard('{Escape}');
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
         // 트리거 없이 열린 모달은 Radix 복귀 대상이 없으므로 상세 버튼으로 포커스를 돌려준다

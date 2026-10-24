@@ -184,6 +184,7 @@ export function AdminUsersPage() {
                 isPending={listQuery.isPending}
                 isError={listQuery.isError}
                 isFetching={listQuery.isFetching}
+                updatedAt={listQuery.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
                 emptyText="해당하는 사용자가 없습니다."
