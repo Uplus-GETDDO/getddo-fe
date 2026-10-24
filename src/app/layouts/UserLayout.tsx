@@ -7,6 +7,7 @@ import { VirtualClockTicker } from '@features/controlVirtualClock';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
 import { env } from '@shared/config/env';
+import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
@@ -19,9 +20,20 @@ import { USER_NAV_ITEMS } from './userNavItems';
 export function UserLayout() {
     const navRef = useRef<HTMLElement>(null);
     const { pathname } = useLocation();
+    const matches = useMatches();
     // 라우트 handle에 fullBleed를 단 화면(게임 무대)은 위 여백 없이 헤더 바로 아래에서 시작한다
-    const fullBleed = useMatches().some(
+    const fullBleed = matches.some(
         (match) => (match.handle as { fullBleed?: boolean } | undefined)?.fullBleed,
+    );
+    /*
+     * 탭 제목은 가장 안쪽 라우트가 handle.title로 알려 준 이름을 쓴다 — 상세가 목록보다 우선한다.
+     * 화면마다 훅을 부르는 대신 여기서 한 번만 쓰므로, 제목을 두 곳에서 덮어쓸 일이 없다.
+     */
+    useDocumentTitle(
+        [...matches]
+            .reverse()
+            .map((match) => (match.handle as { title?: string } | undefined)?.title)
+            .find((title) => title != null),
     );
     // UserGuard가 미선택 상태를 먼저 걸러 주므로 여기서는 항상 있다
     const user = useSessionStore((state) => state.user)!;

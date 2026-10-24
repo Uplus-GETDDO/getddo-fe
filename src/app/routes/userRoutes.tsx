@@ -44,6 +44,7 @@ const LoginWithShellPrefetch = () => {
 export const userRoutes: RouteObject[] = [
     {
         path: '/login',
+        handle: { title: '로그인' },
         element: <LoginWithShellPrefetch />,
         errorElement: <RouteErrorFallback />,
     },
@@ -67,6 +68,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/time-raffle',
+                handle: { title: '겟또타임' },
                 element: lazyPage(() =>
                     import('@pages/timeRaffle/TimeRafflePage').then((m) => ({
                         default: m.TimeRafflePage,
@@ -75,6 +77,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/time-raffle/:id',
+                handle: { title: '겟또타임' },
                 element: lazyPage(() =>
                     import('@pages/timeRaffleDetail/TimeRaffleDetailPage').then((m) => ({
                         default: m.TimeRaffleDetailPage,
@@ -83,6 +86,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/events',
+                handle: { title: '이벤트' },
                 element: lazyPage(() =>
                     import('@pages/eventList/EventListPage').then((m) => ({
                         default: m.EventListPage,
@@ -91,6 +95,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/events/:id',
+                handle: { title: '이벤트' },
                 element: lazyPage(() =>
                     import('@pages/eventDetail/EventDetailPage').then((m) => ({
                         default: m.EventDetailPage,
@@ -100,6 +105,7 @@ export const userRoutes: RouteObject[] = [
             // 서버 알림 linkUrl이 /events/{id}/results를 쓴다 — 상세가 발표 후 결과를 함께 보여주므로 같은 페이지로 연다
             {
                 path: '/events/:id/results',
+                handle: { title: '이벤트 결과' },
                 element: lazyPage(() =>
                     import('@pages/eventDetail/EventDetailPage').then((m) => ({
                         default: m.EventDetailPage,
@@ -108,6 +114,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/missions',
+                handle: { title: '미션·게임' },
                 element: lazyPage(() =>
                     import('@pages/missionList/MissionListPage').then((m) => ({
                         default: m.MissionListPage,
@@ -116,6 +123,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/missions/:missionId',
+                handle: { title: '미션' },
                 element: lazyPage(() =>
                     import('@pages/missionDetail/MissionDetailPage').then((m) => ({
                         default: m.MissionDetailPage,
@@ -130,10 +138,11 @@ export const userRoutes: RouteObject[] = [
                         default: m.GameDetailPage,
                     })),
                 ),
-                handle: { fullBleed: true },
+                handle: { title: '게임', fullBleed: true },
             },
             {
                 path: '/my-tickets',
+                handle: { title: '내 응모권' },
                 element: lazyPage(() =>
                     import('@pages/myTickets/MyTicketsPage').then((m) => ({
                         default: m.MyTicketsPage,
@@ -142,6 +151,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/my-entries',
+                handle: { title: '내 응모 내역' },
                 element: lazyPage(() =>
                     import('@pages/myEntries/MyEntriesPage').then((m) => ({
                         default: m.MyEntriesPage,
@@ -150,6 +160,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/my-notifications',
+                handle: { title: '알림' },
                 element: lazyPage(() =>
                     import('@pages/myNotifications/MyNotificationsPage').then((m) => ({
                         default: m.MyNotificationsPage,
@@ -158,6 +169,7 @@ export const userRoutes: RouteObject[] = [
             },
             {
                 path: '/mypage',
+                handle: { title: '마이페이지' },
                 element: lazyPage(() =>
                     import('@pages/myPage/MyPage').then((m) => ({ default: m.MyPage })),
                 ),
@@ -166,6 +178,7 @@ export const userRoutes: RouteObject[] = [
                 ? ([
                       {
                           path: '/ui-gallery',
+                          handle: { title: 'UI 갤러리' },
                           element: (
                               <Suspense fallback={null}>
                                   <UiGalleryPageLazy />
@@ -175,7 +188,7 @@ export const userRoutes: RouteObject[] = [
                   ] satisfies RouteObject[])
                 : []),
             // 매칭되지 않는 모든 경로 — 헤더·푸터를 유지한 채 404를 보여준다
-            { path: '*', element: <NotFoundPage /> },
+            { path: '*', element: <NotFoundPage />, handle: { title: '페이지를 찾을 수 없음' } },
         ],
     },
 ];
