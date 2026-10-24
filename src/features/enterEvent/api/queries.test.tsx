@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { apiClient } from '@shared/api/client';
+import { ApiError, apiClient } from '@shared/api/client';
 import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 import { useEnterEvent } from './queries';
@@ -123,6 +123,34 @@ describe('응모 멱등키 수명', () => {
         });
         expect(post).toHaveBeenCalledTimes(2);
         expect(keyOf(post, 0)).not.toBe(keyOf(post, 1));
+    });
+
+    it('503 응답 뒤 같은 장수로 재시도하면 같은 키를 보낸다 — 커밋 후 응답만 유실됐을 수 있다', async () => {
+        const post = spyOnPost().mockRejectedValueOnce(serverRejection(503)).mockImplementation(ok);
+        const hook = setup();
+        await act(async () => {
+            await hook.result.current.mutateAsync({ ...TICKETS }).catch(() => undefined);
+        });
+        await act(async () => {
+            await hook.result.current.mutateAsync({ ...TICKETS });
+        });
+        expect(post).toHaveBeenCalledTimes(2);
+        expect(keyOf(post, 0)).toBe(keyOf(post, 1));
+    });
+
+    it('500 봉투 오류(ApiError) 뒤에도 같은 키를 유지한다', async () => {
+        const post = spyOnPost()
+            .mockRejectedValueOnce(new ApiError('COMMON-001', '서버 오류', 500))
+            .mockImplementation(ok);
+        const hook = setup();
+        await act(async () => {
+            await hook.result.current.mutateAsync({ ...TICKETS }).catch(() => undefined);
+        });
+        await act(async () => {
+            await hook.result.current.mutateAsync({ ...TICKETS });
+        });
+        expect(post).toHaveBeenCalledTimes(2);
+        expect(keyOf(post, 0)).toBe(keyOf(post, 1));
     });
 
     it('장수 맵이 바뀌면 같은 키를 쓰지 않는다 — 같은 키+다른 본문 충돌을 만들지 않는다', async () => {

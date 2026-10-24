@@ -148,3 +148,12 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - **빈 목록 상태**: 알림 0건인 ADMIN 계정으로 사용자 화면(`/my-notifications`)에 접근해 '새 알림이 없어요' 빈 상태와 '모두 읽었어요' 문구를 확인했다(UserGuard는 로그인 여부만 본다).
 - **잔여 관측 불가**: 발표→알림 생성 도착의 트리거 연동은 서버 이벤트 없이 유발할 수 없어 미관측으로 남긴다. N03 전체 읽음은 이번 쓰기 승인 범위 밖이라 미측정이다.
 - 증거: [알림 JSON](../reports/20261024-gd331-notifications.json)·[스크립트](../scripts/verifyGd331Notifications.py)·스크린샷 `reports/gd331-notifications/`. 콘솔 오류 0건.
+
+## GD-335 DB 일시 장애(503 `COMMON-007`) 대응 (2026-10-24)
+
+운영 DB 이중화 전환 동안 백엔드가 DB 연결 장애에 503 `COMMON-007`(`DB_TEMPORARILY_UNAVAILABLE`)을 반환한다(공개 메시지 "일시적으로 요청을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.", `data=null`, `Retry-After` 비필수 — BE PR #176, 명세상 운영 미반영). `common.md`는 "503은 미저장의 증거가 아니다"를 명문으로 둔다 — 커밋 후 응답만 유실될 수 있으므로 응모·미션은 같은 사용자·대상·키·본문으로 재시도한다.
+
+- **수정 전 결함**: `useEnterEvent`의 `onError`가 응답이 있는 모든 오류(4xx·5xx)에서 멱등키를 초기화했다 — 503 수신 후 재시도가 새 키로 가 중복 차감 가능했다.
+- **수정**: 4xx(저장 확정 거절)에서만 키를 초기화하고 5xx·무응답(네트워크·timeout)은 키·본문을 유지 — `useSubmitMission`의 기존 분기와 같은 기준이다. `useSubmitMission`·`CancelWinDialog`·`mutations.retry: 0`(자동 재전송 없음)은 변경 전부터 부합했다.
+- **문구**: `errorMessage.ts`에 `COMMON-007`·`DB_TEMPORARILY_UNAVAILABLE` 매핑을 추가했다 — 5xx는 서버 문구를 신뢰하지 않으므로 매핑이 없으면 공통 기본 문구로 떨어졌다.
+- **잔여**: 실서버 503 표본은 운영 배포 전이라 목업·단위 테스트 수준 검증이 한계다 — 장애 시험 완료를 뜻하지 않는다. 응모는 429(4xx)에 키를 초기화하고 미션은 429에 키 유지+대기로 다른 점이 의도인지 ADR-0005 갱신에 명시했다(응모의 429는 멱등키 저장 전에 차단되므로 새 키 재시도가 안전).

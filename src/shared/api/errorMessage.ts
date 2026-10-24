@@ -16,6 +16,9 @@ const ERROR_MESSAGES: Record<string, string> = {
     'COMMON-001': '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
     'COMMON-005': '요청 형식이 올바르지 않습니다.',
     'COMMON-006': '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+    // 503 DB 일시 장애 — common.md가 `COMMON-007`과 `DB_TEMPORARILY_UNAVAILABLE`을 같은 행에 둔다
+    'COMMON-007': '일시적으로 요청을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+    DB_TEMPORARILY_UNAVAILABLE: '일시적으로 요청을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.',
     'HTTP-404': '요청한 대상을 찾을 수 없습니다.',
     'USER-002': '사용자 정보를 확인할 수 없습니다. 다시 로그인해 주세요.',
     'USER-003': '사용자 정보를 확인할 수 없습니다. 다시 로그인해 주세요.',
