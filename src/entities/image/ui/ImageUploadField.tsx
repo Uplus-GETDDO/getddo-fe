@@ -101,7 +101,11 @@ export function ImageUploadField({
                 {label}
             </label>
 
-            <div className="flex items-start gap-4">
+            {/*
+             * 좁은 화면에서는 미리보기를 위로 올려 쌓는다 — 가로로 긴 배너 미리보기(184px)와
+             * 버튼을 한 줄에 두면 모달 폭 안에 버튼이 들어가지 못했다(GD-344).
+             */}
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-4">
                 {/*
                  * 칸을 꽉 채우고 모서리는 칸을 따라 깎는다 — overflow-hidden이 둥근 틀로 잘라 준다.
                  * 칸 비율은 그 자리의 권장 비율을 그대로 쓴다. 권장대로 올리면 잘릴 것이 없고,
@@ -141,7 +145,7 @@ export function ImageUploadField({
                 </div>
 
                 {/* flex-1·min-w-0이라야 아래 키 글자가 줄어들 폭을 갖는다 — 없으면 글자 길이대로 늘어나 칸을 뚫는다 */}
-                <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
+                <div className="flex w-full min-w-0 flex-col items-start gap-2 sm:flex-1">
                     <input
                         ref={inputRef}
                         id={inputId}
