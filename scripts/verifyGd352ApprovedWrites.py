@@ -208,6 +208,9 @@ try:
         for e in events:
             if (e.get('status') or '').upper() not in ('OPEN', 'IN_PROGRESS', 'ONGOING', 'ACTIVE'):
                 continue
+            # 가중치 적용 이벤트만 후보로 — 비가중 이벤트는 PLATINUM을 받지 않는다
+            if not (e.get('weightingEnabled') or e.get('weighted')):
+                continue
             try:
                 elig = api_get(f"/v1/events/{e.get('id')}/eligibility", TARGET)
                 ed = elig.get('data', elig)
