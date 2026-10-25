@@ -24,18 +24,20 @@ export function useCreateMission() {
             if (busy.current) throw new Error('미션 등록 처리 중입니다.');
             if (getPollingRetryDelay(lastError.current) > 0) throw lastError.current;
             busy.current = true;
+            // finally 절은 React Compiler가 건너뛴다 — 성공·실패 양쪽에서 직접 해제한다 (GD-347)
             try {
                 const { data } = await apiClient.post<unknown>(
                     ADMIN_MISSIONS_PATH,
                     missionWriteSchema.parse(body),
                 );
-                return envelopeSchema(adminMissionSchema).parse(data).data;
+                const created = envelopeSchema(adminMissionSchema).parse(data).data;
+                busy.current = false;
+                return created;
             } catch (error) {
+                busy.current = false;
                 lastError.current = error;
                 getPollingRetryDelay(error);
                 throw error;
-            } finally {
-                busy.current = false;
             }
         },
         onSettled: () =>

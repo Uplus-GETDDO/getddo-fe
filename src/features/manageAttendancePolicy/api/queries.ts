@@ -37,15 +37,18 @@ export function useCreateAttendancePolicy() {
                     `${ADMIN_ATTENDANCE_PATH}/${request.kind}`,
                     body,
                 );
-                return request.kind === 'daily'
-                    ? envelopeSchema(dailyAttendancePolicySchema).parse(data).data
-                    : envelopeSchema(streakPolicySetSchema).parse(data).data;
+                // finally 절은 React Compiler가 건너뛴다 — 성공·실패 양쪽에서 직접 해제한다 (GD-347)
+                const created =
+                    request.kind === 'daily'
+                        ? envelopeSchema(dailyAttendancePolicySchema).parse(data).data
+                        : envelopeSchema(streakPolicySetSchema).parse(data).data;
+                busy.current = false;
+                return created;
             } catch (error) {
+                busy.current = false;
                 lastError.current = error;
                 getPollingRetryDelay(error);
                 throw error;
-            } finally {
-                busy.current = false;
             }
         },
         onSettled: () => client.invalidateQueries({ queryKey: ADMIN_ATTENDANCE_KEY }),
@@ -74,15 +77,18 @@ export function useUpdateAttendancePolicy() {
                     `${ADMIN_ATTENDANCE_PATH}/${request.kind}/${request.id}`,
                     body,
                 );
-                return request.kind === 'daily'
-                    ? envelopeSchema(dailyAttendancePolicySchema).parse(data).data
-                    : envelopeSchema(streakPolicySetSchema).parse(data).data;
+                // finally 절은 React Compiler가 건너뛴다 — 성공·실패 양쪽에서 직접 해제한다 (GD-347)
+                const updated =
+                    request.kind === 'daily'
+                        ? envelopeSchema(dailyAttendancePolicySchema).parse(data).data
+                        : envelopeSchema(streakPolicySetSchema).parse(data).data;
+                busy.current = false;
+                return updated;
             } catch (error) {
+                busy.current = false;
                 lastError.current = error;
                 getPollingRetryDelay(error);
                 throw error;
-            } finally {
-                busy.current = false;
             }
         },
         onSettled: () => client.invalidateQueries({ queryKey: ADMIN_ATTENDANCE_KEY }),

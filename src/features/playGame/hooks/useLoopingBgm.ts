@@ -120,9 +120,12 @@ export function useLoopingBgm(music: GameSound) {
             applyVolume();
             return;
         }
-        bufferRef.current ??= (bytesRef.current ?? fetch(src).then((r) => r.arrayBuffer())).then(
-            (bytes) => ctx.decodeAudioData(bytes),
-        );
+        // 논리 할당(??=)은 React Compiler가 건너뛴다 — if 문으로 둔다 (GD-347)
+        if (!bufferRef.current) {
+            bufferRef.current = (bytesRef.current ?? fetch(src).then((r) => r.arrayBuffer())).then(
+                (bytes) => ctx.decodeAudioData(bytes),
+            );
+        }
         void bufferRef.current
             .then((buffer) => {
                 if (ctxRef.current !== ctx) return;

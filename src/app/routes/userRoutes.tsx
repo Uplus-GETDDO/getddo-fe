@@ -33,18 +33,20 @@ const UiGalleryPageLazy = lazy(() =>
 // /login 체류 동안 사용자 셸·홈 청크를 미리 받는다 — 셸이 lazy라 진입 시 자식 페이지 청크가
 // 직렬로 이어지는 워터폴을 없애기 위함이다 (GD-334 후속). 로그인 후 진입 경로는 '/'로 고정이다.
 // pages→app 참조가 금지라 라우트 단에서 처리한다.
+// import()를 컴포넌트 몸에 두면 React Compiler가 최적화를 건너뛴다 — 모듈 함수로 둔다 (GD-347)
+const prefetchUserShell = () => {
+    void import('@app/layouts/UserLayout');
+    void import('@pages/home/HomePage');
+};
+
 const LoginWithShellPrefetch = () => {
     useEffect(() => {
         // 첫 페인트 창의 대역을 양보한다 — 로그인 체류는 수 초라 유휴 시점 발사로도 목적을 채운다 (GD-342).
-        const prefetch = () => {
-            void import('@app/layouts/UserLayout');
-            void import('@pages/home/HomePage');
-        };
         if ('requestIdleCallback' in window) {
-            const id = window.requestIdleCallback(prefetch);
+            const id = window.requestIdleCallback(prefetchUserShell);
             return () => window.cancelIdleCallback(id);
         }
-        const id = setTimeout(prefetch, 0);
+        const id = setTimeout(prefetchUserShell, 0);
         return () => clearTimeout(id);
     }, []);
     return <LoginPage />;

@@ -28,18 +28,20 @@ export function useCheckAttendance() {
             if (busy.current) throw new Error('출석 처리 중입니다.');
             if (getPollingRetryDelay(lastError.current) > 0) throw lastError.current;
             busy.current = true;
+            // finally 절은 React Compiler가 건너뛴다 — 성공·실패 양쪽에서 직접 해제한다 (GD-347)
             try {
                 const [{ data }] = await Promise.all([
                     apiClient.post<unknown>(ATTENDANCES_API_PATH),
                     new Promise((resolve) => setTimeout(resolve, minDurationMs)),
                 ]);
-                return envelopeSchema(attendanceReceiptSchema).parse(data).data;
+                const receipt = envelopeSchema(attendanceReceiptSchema).parse(data).data;
+                busy.current = false;
+                return receipt;
             } catch (error) {
+                busy.current = false;
                 lastError.current = error;
                 getPollingRetryDelay(error);
                 throw error;
-            } finally {
-                busy.current = false;
             }
         },
         onSuccess: () => {

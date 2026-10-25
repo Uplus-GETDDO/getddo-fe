@@ -36,15 +36,17 @@ export function useEventList() {
             withPollingReadGuard(context, async () => {
                 // Page는 기본 20건씩 자른다 — 목록 화면은 전체를 그리므로 totalElements까지 전부 모은다
                 const events: Event[] = [];
-                for (let page = 1; ; page += 1) {
+                // for(;;)의 빈 조건은 React Compiler가 건너뛴다 — 수집 상한을 조건으로 쓴다 (GD-347)
+                let totalElements = Infinity;
+                for (let page = 1; events.length < totalElements; page += 1) {
                     const { data } = await apiClient.get<unknown>(EVENTS_API_PATH, {
                         params: { page, size: EVENTS_PAGE_SIZE },
                         signal: context.signal,
                     });
                     const parsed = eventListSchema.parse(data).data;
+                    totalElements = parsed.totalElements;
                     events.push(...parsed.items.map(toEvent));
-                    if (events.length >= parsed.totalElements) break;
-                    if (parsed.items.length === 0)
+                    if (parsed.items.length === 0 && events.length < totalElements)
                         throw new Error('이벤트 전체 목록을 받지 못했습니다. 다시 조회해 주세요.');
                 }
                 return events;

@@ -87,6 +87,7 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
             if (busy.current || !retryReady) return;
             busy.current = true;
             setError(null);
+            // finally 절은 React Compiler가 건너뛴다 — 성공·실패 양쪽에서 직접 해제한다 (GD-347)
             try {
                 const receipt = await submitPlay(input);
                 setResult(receipt);
@@ -95,15 +96,15 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
                     clearPendingSubmission(key);
                     setPending(undefined);
                 }
+                busy.current = false;
                 return {
                     ticketsGranted: receipt.reward?.ticketCount ?? 0,
                     reward: receipt.reward,
                 };
             } catch (failure) {
                 report(failure);
-                return;
-            } finally {
                 busy.current = false;
+                return;
             }
         },
         [key, report, retryReady, submitPlay],
@@ -149,19 +150,13 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
         busy.current = true;
         setError(null);
         setResult(null);
+        // finally 절과 try 안 throw는 React Compiler가 건너뛴다 — 시작 요청만 try로 묶고
+        // 규칙 버전 불일치의 조기 거절은 try 밖에서 같은 안내로 둔다 (GD-347)
+        let next: GameStart;
         try {
-            const next = await start.mutateAsync(gameId);
-            const versions: Record<string, string> = {
-                COLOR_WORD: 'color-word-v1',
-                TAKKO_RUN: 'takko-run-v1',
-                TAKKO_TIMING: 'takko-timing-v1',
-                TAKKO_ORDER: 'takko-order-v1',
-            };
-            if (code && versions[code] !== next.ruleVersion)
-                throw new Error('게임 종류와 시작 규칙 버전이 일치하지 않습니다.');
-            setSession(next);
-            setVisible(true);
+            next = await start.mutateAsync(gameId);
         } catch (failure) {
+            busy.current = false;
             if (failure instanceof ApiError) {
                 report(failure, true);
                 return;
@@ -169,9 +164,23 @@ export function useGamePlaySession(gameId: string, userId: string, isUser: boole
             setError(
                 '게임을 시작하지 못했습니다. 시작 응답 유실 시 자동으로 새 플레이를 발급하지 않습니다. 다시 시작을 눌러 주세요.',
             );
-        } finally {
-            busy.current = false;
+            return;
         }
+        busy.current = false;
+        const versions: Record<string, string> = {
+            COLOR_WORD: 'color-word-v1',
+            TAKKO_RUN: 'takko-run-v1',
+            TAKKO_TIMING: 'takko-timing-v1',
+            TAKKO_ORDER: 'takko-order-v1',
+        };
+        if (code && versions[code] !== next.ruleVersion) {
+            setError(
+                '게임을 시작하지 못했습니다. 시작 응답 유실 시 자동으로 새 플레이를 발급하지 않습니다. 다시 시작을 눌러 주세요.',
+            );
+            return;
+        }
+        setSession(next);
+        setVisible(true);
     };
     const complete = async (_score: number, validationData: ValidationData) => {
         if (!session || !isUser) return;
