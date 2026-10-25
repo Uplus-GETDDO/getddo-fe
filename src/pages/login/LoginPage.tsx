@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import type { VirtualUser } from '@entities/user';
 
 import { useSessionStore, useVirtualUsers, virtualUserLabel } from '@entities/user';
+import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
 import { SkeletonList } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 
 export function LoginPage() {
+    // 로그인은 사용자 레이아웃 바깥이라 라우트 handle을 읽어 줄 곳이 없다 — 여기서 직접 붙인다
+    useDocumentTitle('로그인');
     const navigate = useNavigate();
     const selectUser = useSessionStore((state) => state.selectUser);
     const { data: users, isPending, isError } = useVirtualUsers();

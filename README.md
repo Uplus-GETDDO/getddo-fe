@@ -43,7 +43,7 @@
 | 테스트/목업     | Vitest, React Testing Library, MSW              |
 | 품질            | ESLint(boundaries), Prettier, Husky, commitlint |
 
-Redux Toolkit은 복잡한 전역 흐름이 생길 때 사용하며 현재 스토어는 없습니다. React Hook Form은 관리자 이벤트·배너 폼에서 사용합니다. 설치된 라이브러리의 허용 범위와 도입 조건은 AGENTS.md를 따릅니다.
+복잡한 전역 흐름이 생기면 ADR-0003의 판단 기준대로 Redux Toolkit을 도입합니다 (현재 미사용). React Hook Form은 관리자 이벤트·배너 폼에서 사용합니다. 설치된 라이브러리의 허용 범위와 도입 조건은 AGENTS.md를 따릅니다.
 
 ## 폴더 구조 (FSD — Feature-Sliced Design)
 

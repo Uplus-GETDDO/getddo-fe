@@ -36,4 +36,5 @@
 ## 이력
 
 - 2026-09-29: 슬라이스가 하나도 없는 빈 Redux store가 매 로드 `Store does not have a valid reducer` 오류를 내서 `ReduxProvider`·`store.ts`를 제거했다. 첫 슬라이스를 도입할 때 Provider를 함께 되살린다 (의존성은 package.json에 유지).
+- 2026-10-25: 의존성만 남긴 채 한 달간 사용되지 않았으므로 `@reduxjs/toolkit`·`react-redux`를 package.json에서 제거했다 (GD-342). 표의 판단 기준은 유지한다 — 여러 화면에 걸친 복잡한 전역 플로우가 생기면 이 결정대로 Redux Toolkit을 재도입한다.
 - 2026-10-02: compProject(Ephyra) 상태관리 분석을 참고해 기준을 정제했다 — "화면 국한 상태 → Zustand"라는 모호한 행을 "로컬 `useState`/`useReducer`"와 "여러 컴포넌트가 공유하는 UI → Zustand"로 분리하고, React Context(Provider 생명주기·드문 변화) 행과 store 이중 캐시 금지·enabled 게이팅·동기적 중복 차단 패턴을 추가했다.

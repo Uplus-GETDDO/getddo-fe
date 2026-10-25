@@ -67,7 +67,7 @@ function DialogContent({
                             className="text-fg-secondary hover:text-fg-primary absolute top-3 right-3 size-9 cursor-pointer hover:bg-transparent dark:hover:bg-transparent [&_svg:not([class*='size-'])]:size-5"
                         >
                             <XIcon />
-                            <span className="sr-only">Close</span>
+                            <span className="sr-only">닫기</span>
                         </Button>
                     </DialogPrimitive.Close>
                 )}
@@ -107,7 +107,7 @@ function DialogFooter({
             {children}
             {showCloseButton && (
                 <DialogPrimitive.Close asChild>
-                    <Button variant="secondary">Close</Button>
+                    <Button variant="secondary">닫기</Button>
                 </DialogPrimitive.Close>
             )}
         </div>

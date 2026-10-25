@@ -3,6 +3,7 @@ import { NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-do
 
 import { VirtualClockTicker } from '@features/controlVirtualClock';
 import { env } from '@shared/config/env';
+import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
 import { cn } from '@shared/utils/cn';
 
@@ -17,6 +18,8 @@ export function AdminLayout() {
             ? pathname === item.to
             : pathname === item.to || pathname.startsWith(`${item.to}/`),
     );
+    // 위쪽 바에 쓰는 메뉴 이름을 탭 제목에도 쓴다 — 관리자 화면끼리도 탭에서 구분된다
+    useDocumentTitle(`${current?.label ?? '관리자'} · 관리자`);
 
     return (
         <div className="bg-surface-page flex min-h-screen">

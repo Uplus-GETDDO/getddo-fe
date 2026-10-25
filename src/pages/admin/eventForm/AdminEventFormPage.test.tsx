@@ -1,9 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { http, HttpResponse } from 'msw';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 
+import { server } from '../../../mocks/server';
 import { AdminEventFormPage } from './AdminEventFormPage';
 
 // 이미지는 파일 선택으로 바뀌어 name을 들고 있지 않다 — 라벨 연결만 따로 본다 (GD-253)
@@ -92,5 +94,72 @@ describe('AdminEventFormPage', () => {
             expect(input).toHaveAttribute('id', remainingIds[index]);
         });
         expect(prizes.getByLabelText('경품명')).toHaveValue('남은 경품');
+    });
+});
+
+/*
+ * 저장된 값이 폼 기본값(TICKET·excellent)과 다르면 Select가 빈칸으로 뜨고 저장이 조용히 막혔다.
+ * 배포본에서도 재현됐다 — 수정 가능한 이벤트 4건이 전부 걸려 있었다.
+ */
+describe('AdminEventFormPage 수정 화면의 저장된 값 표시', () => {
+    function renderEdit(eventId: string) {
+        const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+        render(
+            <QueryClientProvider client={client}>
+                <MemoryRouter initialEntries={[`/admin/events/${eventId}/edit`]}>
+                    <Routes>
+                        <Route
+                            path="/admin/events/:eventId/edit"
+                            element={<AdminEventFormPage />}
+                        />
+                    </Routes>
+                </MemoryRouter>
+            </QueryClientProvider>,
+        );
+        return { client };
+    }
+
+    it.each([
+        ['응모권 미사용 이벤트', 'evt-205', '일반 이벤트', 'VVIP 이상'],
+        ['VIP 전용 이벤트', 'evt-010', '겟또타임', 'VIP 이상'],
+    ])('%s의 유형·등급이 그대로 보인다', async (_name, eventId, type, membership) => {
+        renderEdit(eventId);
+        // 상세가 도착해 양식이 세워질 때까지 기다린다 — 유형은 고르는 카드(라디오)다
+        const kinds = await screen.findByRole('radiogroup', { name: '이벤트 종류' });
+
+        expect(within(kinds).getByRole('radio', { name: new RegExp(type) })).toBeChecked();
+        expect(screen.getByRole('combobox', { name: '최소 멤버십 등급' })).toHaveTextContent(
+            membership,
+        );
+    });
+});
+
+describe('AdminEventFormPage 수정 저장', () => {
+    it('아무것도 고치지 않아도 저장 요청이 나간다', async () => {
+        const user = userEvent.setup();
+        let sent = 0;
+        server.use(
+            http.put('*/v1/admin/events/:eventId', () => {
+                sent += 1;
+                return HttpResponse.json({ code: 'COMMON-001', message: '실패' }, { status: 500 });
+            }),
+        );
+        const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+        render(
+            <QueryClientProvider client={client}>
+                <MemoryRouter initialEntries={['/admin/events/evt-205/edit']}>
+                    <Routes>
+                        <Route
+                            path="/admin/events/:eventId/edit"
+                            element={<AdminEventFormPage />}
+                        />
+                    </Routes>
+                </MemoryRouter>
+            </QueryClientProvider>,
+        );
+        await screen.findByRole('radiogroup', { name: '이벤트 종류' });
+        await user.click(screen.getByRole('button', { name: '수정 저장' }));
+
+        await waitFor(() => expect(sent).toBe(1));
     });
 });

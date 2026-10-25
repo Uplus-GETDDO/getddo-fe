@@ -4,6 +4,7 @@ import type { AdminEntry, AdminParticipant } from '@entities/entry';
 
 import { env } from '@shared/config/env';
 
+import { DAY, HOUR, demoTime } from '../demoTime';
 import { mockAdminEventExists } from './adminEvent';
 import { fail, ok } from './response';
 
@@ -40,8 +41,8 @@ const mkEntry = (
         requestedTicketsByGrade: requested,
         deductedTicketCount: sum(deducted),
         deductedTicketsByGrade: deducted,
-        requestedAt: '2026-10-19T03:00:00Z',
-        acceptedAt: accepted ? '2026-10-19T03:00:01Z' : null,
+        requestedAt: demoTime(-6 * DAY),
+        acceptedAt: accepted ? demoTime(-6 * DAY + 1000) : null,
         rejectionCode: accepted ? null : 'INSUFFICIENT_TICKETS',
         rejectionReason: accepted ? null : '응모권이 부족합니다.',
         userId: userId(1),
@@ -59,14 +60,14 @@ const adminEntries: AdminEntry[] = [
         userId: userId(2),
         eventId: eventId(1),
         requestedTicketsByGrade: { ...zero, GOLD: 2 },
-        requestedAt: '2026-10-18T05:00:00Z',
-        acceptedAt: '2026-10-18T05:00:01Z',
+        requestedAt: demoTime(-7 * DAY),
+        acceptedAt: demoTime(-7 * DAY + 1000),
     }),
     mkEntry(3, {
         status: 'REJECTED',
         userId: userId(3),
         eventId: eventId(1),
-        requestedAt: '2026-10-19T07:00:00Z',
+        requestedAt: demoTime(-6 * DAY + 4 * HOUR),
     }),
     mkEntry(4, {
         status: 'ACCEPTED',
@@ -74,8 +75,8 @@ const adminEntries: AdminEntry[] = [
         eventId: eventId(2),
         eventTitle: 'PLATINUM 특별 추첨',
         requestedTicketsByGrade: { ...zero, PLATINUM: 1 },
-        requestedAt: '2026-10-19T09:00:00Z',
-        acceptedAt: '2026-10-19T09:00:01Z',
+        requestedAt: demoTime(-6 * DAY + 6 * HOUR),
+        acceptedAt: demoTime(-6 * DAY + 6 * HOUR + 1000),
     }),
     mkEntry(5, {
         status: 'REJECTED',
@@ -84,7 +85,7 @@ const adminEntries: AdminEntry[] = [
         eventTitle: 'PLATINUM 특별 추첨',
         rejectionCode: 'ALREADY_ENTERED',
         rejectionReason: '이미 응모한 이벤트입니다.',
-        requestedAt: '2026-10-19T10:00:00Z',
+        requestedAt: demoTime(-6 * DAY + 7 * HOUR),
     }),
 ];
 

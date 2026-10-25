@@ -13,7 +13,8 @@ describe('사용자 초기 경로의 게임 코드 분리', () => {
         const route = userRoutes
             .flatMap((item) => item.children ?? [])
             .find((item) => item.path === '/missions/games/:gameId');
-        expect(route?.handle).toEqual({ fullBleed: true });
+        // handle에는 탭 제목도 함께 실리므로 이 화면이 보는 fullBleed만 확인한다
+        expect(route?.handle).toMatchObject({ fullBleed: true });
         render(<>{route?.element}</>);
         expect(screen.getByRole('status')).toHaveTextContent('불러오는 중…');
         expect(await screen.findByText('게임 상세')).toBeInTheDocument();

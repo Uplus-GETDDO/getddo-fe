@@ -4,6 +4,8 @@ import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import type { AdminEvent } from '@entities/event';
+
 import { MEMBERSHIP_LABEL, useAdminEvent } from '@entities/event';
 import { ImageUploadField } from '@entities/image';
 import { useCreateEvent, useUpdateEvent } from '@features/manageEvent';
@@ -19,10 +21,9 @@ import { utcIsoToKstInput } from '@shared/utils/date';
 import type { EventFormInput, EventFormValues } from './utils/eventFormValues';
 
 import { EventFormPreview } from './ui/EventFormPreview';
+import { EventPrizesSection } from './ui/EventPrizesSection';
 import { FormField, FormStep } from './ui/FormField';
 import { eventFormSchema, eventFormToRequest, eventToFormValues } from './utils/eventFormValues';
-
-const FIELD_ERROR = 'text-semantic-error-strong text-caption';
 
 const MEMBERSHIP_OPTIONS = (
     Object.entries(MEMBERSHIP_LABEL) as [EventFormValues['membershipRule'], string][]
@@ -51,11 +52,34 @@ const WEIGHTING_OPTIONS = [
 const CHOICE_CARD =
     'border-border-default hover:border-border-strong has-[[data-state=checked]]:border-fg-primary has-[[data-state=checked]]:bg-surface-canvas flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors';
 
-export function AdminEventFormPage() {
-    const { eventId } = useParams();
+/** 새 이벤트의 빈 양식 */
+const NEW_EVENT_VALUES: EventFormInput = {
+    title: '',
+    description: '',
+    imageKey: '',
+    eventType: 'TICKET',
+    weightingEnabled: true,
+    maxTicketsPerUser: '5',
+    membershipRule: 'excellent',
+    startsAt: '',
+    endsAt: '',
+    prizes: [{ rank: 1, name: '', winnerCount: 1, description: '', imageKey: '' }],
+};
+
+/**
+ * 이벤트 등록·수정 양식.
+ *
+ * 수정은 상세가 도착한 뒤에만 이 컴포넌트를 세우고(AdminEventFormPage의 가드), 저장된 값을
+ * defaultValues로 받는다 — 첫 렌더부터 제 값을 들고 시작해야 한다.
+ *
+ * 전에는 values로 넘겼다. RHF는 values를 마운트 뒤 effect에서 반영하므로 첫 렌더는 빈 양식으로
+ * 그려지고, 그 뒤 값이 바뀐다. 그 시점에 Select는 아직 목록을 펼친 적이 없어 새 값의 라벨을
+ * 찾지 못해 빈칸이 되고 폼 값까지 ''로 떨어졌다 — 저장된 값이 빈 양식의 값과 다른 이벤트
+ * (응모권 미사용·VIP·VVIP)는 수정 자체가 불가능했다 (2026-10-24 배포본에서 재현).
+ */
+function EventFormBody({ event, eventId }: { event?: AdminEvent; eventId?: string }) {
     const isEdit = Boolean(eventId);
     const navigate = useNavigate();
-    const { data: event, isPending, isError } = useAdminEvent(eventId ?? '');
     const createEvent = useCreateEvent();
     const updateEvent = useUpdateEvent();
     const mutation = isEdit ? updateEvent : createEvent;
@@ -69,19 +93,7 @@ export function AdminEventFormPage() {
         formState: { errors, isDirty },
     } = useForm<EventFormInput, undefined, EventFormValues>({
         resolver: zodResolver(eventFormSchema),
-        values: event ? eventToFormValues(event) : undefined,
-        defaultValues: {
-            title: '',
-            description: '',
-            imageKey: '',
-            eventType: 'TICKET',
-            weightingEnabled: true,
-            maxTicketsPerUser: '5',
-            membershipRule: 'excellent',
-            startsAt: '',
-            endsAt: '',
-            prizes: [{ rank: 1, name: '', winnerCount: 1, description: '', imageKey: '' }],
-        },
+        defaultValues: event ? eventToFormValues(event) : NEW_EVENT_VALUES,
     });
 
     // 경품 데이터의 id(수정 시 기존 경품 식별)와 RHF 내부 키가 겹치지 않게 keyName을 바꾼다
@@ -92,39 +104,6 @@ export function AdminEventFormPage() {
     });
     const values = useWatch({ control });
     const showTicketOptions = values.eventType === 'TICKET';
-
-    if (isEdit && isPending) {
-        return (
-            <LoadingBlock className="pb-10">
-                <CardSkeleton rows={8} />
-            </LoadingBlock>
-        );
-    }
-    if (isEdit && (isError || !event)) {
-        return (
-            <div className="flex flex-col gap-4 pb-10">
-                <p className="text-semantic-error-strong text-body-sm">
-                    이벤트를 불러오지 못했습니다.
-                </p>
-                <Button variant="secondary" className="w-fit" asChild>
-                    <Link to="/admin/events">목록으로</Link>
-                </Button>
-            </div>
-        );
-    }
-    // 수정은 진행 예정만 허용 — URL 직접 진입도 서버 검증 전에 가드한다
-    if (isEdit && event && event.status !== 'SCHEDULED') {
-        return (
-            <div className="flex flex-col gap-4 pb-10">
-                <p className="text-body-sm text-fg-secondary">
-                    진행 예정 상태의 이벤트만 수정할 수 있습니다.
-                </p>
-                <Button variant="secondary" className="w-fit" asChild>
-                    <Link to={`/admin/events/${eventId}`}>이벤트로 돌아가기</Link>
-                </Button>
-            </div>
-        );
-    }
 
     // 취소·뒤로의 목적지를 명시한다 — 직접 진입 시 navigate(-1)의 행선지가 불명확하다
     const cancelTo = isEdit ? `/admin/events/${eventId}` : '/admin/events';
@@ -152,8 +131,6 @@ export function AdminEventFormPage() {
             }
         })(e);
     };
-
-    const prizeError = (index: number) => errors.prizes?.[index];
 
     return (
         <form onSubmit={submit} className="flex flex-col gap-6 pr-10">
@@ -425,144 +402,16 @@ export function AdminEventFormPage() {
                         )}
                     </FormStep>
 
-                    <FormStep
+                    <EventPrizesSection
                         step={4}
-                        title={`경품 (${fields.length}종)`}
-                        description="등수마다 한 종류의 경품만 등록할 수 있어요. 최소 1개가 필요해요."
-                        action={
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                size="sm"
-                                onClick={() =>
-                                    append({
-                                        rank: fields.length + 1,
-                                        name: '',
-                                        winnerCount: 1,
-                                        description: '',
-                                        imageKey: '',
-                                    })
-                                }
-                            >
-                                경품 추가
-                            </Button>
-                        }
-                    >
-                        {fields.map((field, index) => (
-                            <div
-                                key={field.fieldKey}
-                                className="border-border-default flex flex-col gap-4 rounded-xl border p-4"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <span className="text-body-bold text-fg-primary">
-                                        경품 {index + 1}
-                                    </span>
-                                    {fields.length > 1 && (
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => remove(index)}
-                                        >
-                                            제거
-                                        </Button>
-                                    )}
-                                </div>
-                                <div className="grid gap-4 sm:grid-cols-[6rem_minmax(0,1fr)_7rem]">
-                                    <FormField
-                                        id={`prize-${field.fieldKey}-rank`}
-                                        label="등수"
-                                        required
-                                        error={prizeError(index)?.rank?.message}
-                                    >
-                                        <Input
-                                            id={`prize-${field.fieldKey}-rank`}
-                                            type="number"
-                                            min={1}
-                                            aria-required
-                                            aria-invalid={Boolean(prizeError(index)?.rank)}
-                                            aria-describedby={
-                                                prizeError(index)?.rank
-                                                    ? `prize-${field.fieldKey}-rank-error`
-                                                    : undefined
-                                            }
-                                            {...register(`prizes.${index}.rank`)}
-                                        />
-                                    </FormField>
-                                    <FormField
-                                        id={`prize-${field.fieldKey}-name`}
-                                        label="경품명"
-                                        required
-                                        error={prizeError(index)?.name?.message}
-                                    >
-                                        <Input
-                                            id={`prize-${field.fieldKey}-name`}
-                                            placeholder="예) 스타벅스 아메리카노"
-                                            aria-required
-                                            aria-invalid={Boolean(prizeError(index)?.name)}
-                                            aria-describedby={
-                                                prizeError(index)?.name
-                                                    ? `prize-${field.fieldKey}-name-error`
-                                                    : undefined
-                                            }
-                                            {...register(`prizes.${index}.name`)}
-                                        />
-                                    </FormField>
-                                    <FormField
-                                        id={`prize-${field.fieldKey}-winner-count`}
-                                        label="당첨 인원"
-                                        required
-                                        error={prizeError(index)?.winnerCount?.message}
-                                    >
-                                        <Input
-                                            id={`prize-${field.fieldKey}-winner-count`}
-                                            type="number"
-                                            min={1}
-                                            aria-required
-                                            aria-invalid={Boolean(prizeError(index)?.winnerCount)}
-                                            aria-describedby={
-                                                prizeError(index)?.winnerCount
-                                                    ? `prize-${field.fieldKey}-winner-count-error`
-                                                    : undefined
-                                            }
-                                            {...register(`prizes.${index}.winnerCount`)}
-                                        />
-                                    </FormField>
-                                </div>
-                                <FormField
-                                    id={`prize-${field.fieldKey}-description`}
-                                    label="설명 (선택)"
-                                >
-                                    <Input
-                                        id={`prize-${field.fieldKey}-description`}
-                                        {...register(`prizes.${index}.description`)}
-                                    />
-                                </FormField>
-                                <Controller
-                                    control={control}
-                                    name={`prizes.${index}.imageKey`}
-                                    render={({ field: imageField }) => (
-                                        <ImageUploadField
-                                            label="경품 이미지 (선택)"
-                                            slot="PRIZE"
-                                            value={imageField.value ?? ''}
-                                            onChange={imageField.onChange}
-                                            initialPreviewUrl={
-                                                event?.prizes.find((prize) => prize.id === field.id)
-                                                    ?.imageUrl
-                                            }
-                                        />
-                                    )}
-                                />
-                            </div>
-                        ))}
-                        {errors.prizes?.root && (
-                            <p className={FIELD_ERROR}>{errors.prizes.root.message}</p>
-                        )}
-                        {typeof errors.prizes?.message === 'string' && (
-                            <p className={FIELD_ERROR}>{errors.prizes.message}</p>
-                        )}
-                    </FormStep>
+                        register={register}
+                        control={control}
+                        errors={errors}
+                        fields={fields}
+                        append={append}
+                        remove={remove}
+                        event={event}
+                    />
                 </div>
 
                 {/* 넓은 화면에서만 오른쪽에 붙어 따라온다 — 좁으면 폼 아래로 내려간다 */}
@@ -593,4 +442,50 @@ export function AdminEventFormPage() {
             </div>
         </form>
     );
+}
+
+/**
+ * 등록·수정 화면의 껍데기 — 수정은 상세를 받아 둔 뒤에만 양식을 세운다.
+ *
+ * key에 이벤트 id를 걸어, 다른 이벤트의 수정 주소로 바로 옮겨 가도 양식이 새로 만들어진다.
+ */
+export function AdminEventFormPage() {
+    const { eventId } = useParams();
+    const isEdit = Boolean(eventId);
+    const { data: event, isPending, isError } = useAdminEvent(eventId ?? '');
+
+    if (isEdit && isPending) {
+        return (
+            <LoadingBlock className="pb-10">
+                <CardSkeleton rows={8} />
+            </LoadingBlock>
+        );
+    }
+    if (isEdit && (isError || !event)) {
+        return (
+            <div className="flex flex-col gap-4 pb-10">
+                <p className="text-semantic-error-strong text-body-sm">
+                    이벤트를 불러오지 못했습니다.
+                </p>
+                <Button variant="secondary" className="w-fit" asChild>
+                    <Link to="/admin/events">목록으로</Link>
+                </Button>
+            </div>
+        );
+    }
+    // 수정은 진행 예정만 허용 — URL 직접 진입도 서버 검증 전에 가드한다
+    if (isEdit && event && event.status !== 'SCHEDULED') {
+        return (
+            <div className="flex flex-col gap-4 pb-10">
+                <p className="text-body-sm text-fg-secondary">
+                    진행 예정 상태의 이벤트만 수정할 수 있습니다.
+                </p>
+                <Button variant="secondary" className="w-fit" asChild>
+                    <Link to={`/admin/events/${eventId}`}>이벤트로 돌아가기</Link>
+                </Button>
+            </div>
+        );
+    }
+
+    return <EventFormBody key={eventId ?? 'new'} event={event} eventId={eventId} />;
 }

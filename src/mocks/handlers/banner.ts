@@ -3,6 +3,7 @@ import { http } from 'msw';
 import { BANNER_MAX_COUNT } from '@entities/banner';
 import { env } from '@shared/config/env';
 
+import { DAY, demoTime } from '../demoTime';
 import { mockNow } from '../now';
 import { mockAdminEventIsCanceled, resolveMockImageUrl } from './adminEvent';
 import { findMockEvent } from './event';
@@ -51,7 +52,7 @@ function imageUrlOf(imageKey: string) {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-const seedAt = '2026-10-01T00:00:00.000Z';
+const seedAt = demoTime(-24 * DAY);
 
 const mockBanners: MockBanner[] = [
     {

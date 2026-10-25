@@ -9,6 +9,7 @@ import { ticketGradeSchema } from '@entities/ticket';
 import { env } from '@shared/config/env';
 import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
+import { DAY, demoTime } from '../demoTime';
 import { mockNow } from '../now';
 import {
     entryRuleOf,
@@ -107,8 +108,8 @@ const seedEntry = (): EntryReceipt => ({
     deductedTicketCount: 1,
     deductedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
     status: 'ACCEPTED',
-    requestedAt: '2026-09-15T08:00:00Z',
-    acceptedAt: '2026-09-15T08:00:00Z',
+    requestedAt: demoTime(-40 * DAY),
+    acceptedAt: demoTime(-40 * DAY),
     rejectionCode: null,
     rejectionReason: null,
 });

@@ -5,81 +5,16 @@ import type { AdminEventStatus, Event, EventStatus, MembershipRule } from '@enti
 import { MEMBERSHIP_LABEL } from '@entities/event';
 import { env } from '@shared/config/env';
 
+import { DAY, DEMO_WINDOW_MS, MINUTE, demoTime, sessionFixedTime } from '../demoTime';
 import { mockNow } from '../now';
 // draw.ts도 이 모듈의 mockEvents를 읽는 순환이지만, 호출이 요청 시점으로 미뤄져 초기화 순서에 영향이 없다
 import { getMockDrawOverview } from './draw';
 import { mockUserHasAcceptedEntry } from './entry';
 import { fail, ok } from './response';
 
+export { sessionFixedTime };
+
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
-
-const MINUTE = 60 * 1000;
-
-const DEMO_EPOCH_KEY = 'getddo-mock-demo-epoch';
-
-/**
- * 시연 창의 길이 — 기준 시각에서 이만큼 지나면 응모할 수 있는 래플이 하나도 남지 않는다.
- * 아래 HERO 창(기준 +60분)과 같은 값이어야 한다.
- */
-const DEMO_WINDOW_MS = 60 * MINUTE;
-
-/**
- * 시연 기준 시각.
- *
- * Date.now() + n으로 매번 계산하면 페이지를 새로 열 때마다 마감이 그만큼 뒤로 밀려서
- * 카운트다운이 리셋된다 — docs/CONTEXT.md가 금지하는 동작이다. 그래서 세션에 저장해 고정한다.
- *
- * 다만 지난 값을 무조건 재사용하면, 탭을 한참 열어 둔 뒤 돌아왔을 때 모든 창이 과거로
- * 넘어가 응모할 래플이 하나도 없게 된다. 창이 전부 끝난 경우에만 기준을 다시 잡는다 —
- * 진행 중인 창은 그대로 두므로 새로고침으로 카운트다운이 밀리지는 않는다.
- *
- * 앵커를 따로따로 저장하지 않고 이 한 값에서 파생시킨다. 개별 저장은 그중 일부만
- * 다시 잡혔을 때 시작이 마감보다 늦는 창을 만든다.
- *
- * 기준을 다시 잡을지는 가상 시계가 아니라 실제로 흐른 시간으로 판단한다.
- * 앞당긴 시각으로 저장해 버리면 실제 시각으로 돌아왔을 때 모든 창이 미래가 되어
- * 래플이 전부 '오픈 예정'이 된다. 가상 시계는 이 창 위를 지나가는 역할만 한다 —
- * 시각을 앞으로 옮기면 마감·발표로 넘어가고, 창 자체는 그대로 남는다.
- */
-function demoEpoch(): number {
-    const now = Date.now();
-
-    try {
-        const saved = sessionStorage.getItem(DEMO_EPOCH_KEY);
-        if (saved) {
-            const at = new Date(saved).getTime();
-            if (!Number.isNaN(at) && now < at + DEMO_WINDOW_MS) return at;
-        }
-    } catch {
-        // 저장소를 쓸 수 없는 환경(테스트 등)에서는 매번 현재 시각을 쓴다
-    }
-
-    try {
-        sessionStorage.setItem(DEMO_EPOCH_KEY, new Date(now).toISOString());
-    } catch {
-        // 저장에 실패해도 이번 로드 동안은 같은 값을 쓴다
-    }
-    return now;
-}
-
-const DEMO_EPOCH = demoEpoch();
-
-/** 시연 기준 시각에서 offsetMs 만큼 떨어진 시각 */
-function demoTime(offsetMs: number): string {
-    return new Date(DEMO_EPOCH + offsetMs).toISOString();
-}
-
-/**
- * 세션에 고정된 상대 시각 — 관리자 목업(adminEvent.ts)이 등록·중단·취소 시각에 쓴다.
- *
- * 키마다 따로 저장하지 않고 기준 시각에서 파생시킨다. 개별 저장은 창이 지난 뒤에도
- * 과거 값을 그대로 돌려줘서, 탭을 오래 열어 두면 되살아나지 않는다.
- * key는 호출부에서 어떤 시각인지 읽히도록 남겨 둔다.
- */
-export function sessionFixedTime(key: string, offsetMs: number): string {
-    void key;
-    return demoTime(offsetMs);
-}
 
 // 홈 화면 "오늘의 타임 래플" 배너 데모용 — 세션이 유지되는 동안 마감 시각이 움직이지 않는다
 const HERO_STARTS_AT = demoTime(-30 * MINUTE);
@@ -232,8 +167,8 @@ export const mockEvents: MockEvent[] = [
         description:
             '이번 달 출석 미션 완주자 대상 추첨. 응모권 1장부터 참여하고 많이 쓸수록 당첨 확률이 올라가요.',
         bannerImageUrl: null,
-        startsAt: '2026-09-01T00:00:00Z',
-        endsAt: '2026-10-31T14:59:59Z',
+        startsAt: demoTime(-45 * DAY),
+        endsAt: demoTime(15 * DAY),
         status: 'open',
         requiredTickets: 3,
         prizeName: '네이버페이 포인트 5만원',
@@ -250,7 +185,7 @@ export const mockEvents: MockEvent[] = [
         description: '응모권 1장으로 참여하는 스타벅스 e카드 추첨 이벤트',
         bannerImageUrl: '/images/events/starbucks-set.webp',
         startsAt: UPCOMING_OPENS_AT,
-        endsAt: '2026-10-20T14:59:59Z',
+        endsAt: demoTime(7 * DAY),
         status: 'upcoming',
         requiredTickets: 1,
         prizeName: '스타벅스 e카드',
@@ -354,7 +289,7 @@ export const mockEvents: MockEvent[] = [
         membershipRule: 'vip',
         bannerImageUrl: '/images/events/data-coupon.webp',
         startsAt: demoTime(5 * 60 * MINUTE),
-        endsAt: '2026-10-20T14:59:59Z',
+        endsAt: demoTime(3 * DAY),
         status: 'upcoming',
         requiredTickets: 3,
         prizeName: 'U+ 데이터 쿠폰 5GB',
@@ -370,8 +305,8 @@ export const mockEvents: MockEvent[] = [
         title: '9월 데이터 쿠폰 래플',
         description: '응모권 1장으로 참여했던 데이터 쿠폰 추첨 이벤트',
         bannerImageUrl: '/images/events/data-coupon.webp',
-        startsAt: '2026-09-01T00:00:00Z',
-        endsAt: '2026-09-20T14:59:59Z',
+        startsAt: demoTime(-55 * DAY),
+        endsAt: demoTime(-36 * DAY),
         status: 'closed',
         requiredTickets: 1,
         prizeName: 'U+ 데이터 쿠폰 5GB',
@@ -387,8 +322,8 @@ export const mockEvents: MockEvent[] = [
         title: '8월 출석왕 챌린지',
         description: '8월 출석 미션 완주자 대상 추첨 이벤트',
         bannerImageUrl: null,
-        startsAt: '2026-08-01T00:00:00Z',
-        endsAt: '2026-08-31T14:59:59Z',
+        startsAt: demoTime(-85 * DAY),
+        endsAt: demoTime(-55 * DAY),
         status: 'drawn',
         requiredTickets: 2,
         prizeName: '네이버페이 포인트 3만원',
@@ -558,8 +493,8 @@ export const mockEvents: MockEvent[] = [
         title: '갤럭시 탭 S11 응모',
         description: '응모권 1장으로 참여하는 태블릿 추첨 이벤트',
         bannerImageUrl: null,
-        startsAt: '2026-09-05T00:00:00Z',
-        endsAt: '2026-10-05T14:59:59Z',
+        startsAt: demoTime(-20 * DAY),
+        endsAt: demoTime(10 * DAY),
         status: 'open',
         requiredTickets: 1,
         prizeName: '갤럭시 탭 S11',
@@ -655,9 +590,8 @@ export const mockEvents: MockEvent[] = [
         title: '데이터 2GB 충전 쿠폰 응모',
         description: '응모권 1장으로 참여하는 데이터 충전 쿠폰 추첨 이벤트',
         bannerImageUrl: '/images/events/data-coupon.webp',
-        startsAt: '2026-09-08T00:00:00Z',
-        // 날짜를 고정하면 그날이 지나 마감돼 응모 테스트가 깨졌다 — 늘 일주일 뒤 마감으로 둔다
-        endsAt: kstAt(7, 23),
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(DEMO_WINDOW_MS),
         status: 'open',
         requiredTickets: 1,
         prizeName: 'U+ 데이터 쿠폰 2GB',
@@ -695,8 +629,8 @@ export const mockEvents: MockEvent[] = [
         description:
             '응모권 1장부터 참여하고 많이 쓸수록 당첨 확률이 올라가는 영화 관람권 추첨 이벤트',
         bannerImageUrl: null,
-        startsAt: '2026-09-03T00:00:00Z',
-        endsAt: '2026-10-27T14:59:59Z',
+        startsAt: demoTime(-40 * DAY),
+        endsAt: demoTime(14 * DAY),
         status: 'open',
         requiredTickets: 2,
         prizeName: 'CGV 관람권 2매',
@@ -712,8 +646,8 @@ export const mockEvents: MockEvent[] = [
         title: '에어팟 4 응모',
         description: '응모권 1장부터 참여하고 많이 쓸수록 당첨 확률이 올라가는 이어폰 추첨 이벤트',
         bannerImageUrl: null,
-        startsAt: '2026-09-06T00:00:00Z',
-        endsAt: '2026-10-06T14:59:59Z',
+        startsAt: demoTime(-20 * DAY),
+        endsAt: demoTime(10 * DAY),
         status: 'open',
         requiredTickets: 2,
         prizeName: '에어팟 4',
