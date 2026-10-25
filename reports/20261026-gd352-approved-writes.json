@@ -1,0 +1,65 @@
+{
+    "kind": "GD-352 승인 쓰기 실측 + EVENT 차단 표본 상세 (테스트 계정 한정)",
+    "checkedAt": "2026-10-25T18:44:46.797041+00:00",
+    "url": "https://getddo-fe.vercel.app",
+    "entryChunk": "index-CfMwQGNi.js",
+    "requestCount": 17,
+    "writeCount": 3,
+    "checks": [
+        {
+            "name": "abuse EVENT 표본 상세 (필드 존재만)",
+            "ok": true,
+            "eventIdLinked": false,
+            "hasEventTitle": false,
+            "evidenceFields": {
+                "ruleVersion": [true, true],
+                "triggerScope": [true, true],
+                "windowStartedAt": [true, true],
+                "windowEndsAt": [true, true],
+                "requestLimit": [true, true],
+                "rejectedCount": [true, true],
+                "rejectionThreshold": [true, true]
+            }
+        },
+        {
+            "name": "N02 개별 읽음",
+            "ok": true,
+            "httpStatus": 200,
+            "isRead": true,
+            "unreadBefore": 8,
+            "unreadAfter": 7,
+            "delta": 1
+        },
+        {
+            "name": "N03 전체 읽음",
+            "ok": true,
+            "httpStatus": 200,
+            "updatedCount": 7,
+            "unreadBefore": 7,
+            "unreadAfter": 0
+        },
+        {
+            "name": "PLATINUM 응모",
+            "ok": true,
+            "httpStatus": 201,
+            "eventStatus": "OPEN",
+            "weighting": true,
+            "receiptKeys": [
+                "acceptedAt",
+                "deductedTicketCount",
+                "deductedTicketsByGrade",
+                "eventId",
+                "eventTitle",
+                "id",
+                "rejectionCode",
+                "rejectionReason",
+                "requestedAt",
+                "requestedTicketCount",
+                "requestedTicketsByGrade",
+                "status"
+            ],
+            "platinumBefore": 1000,
+            "platinumAfter": 999
+        }
+    ]
+}

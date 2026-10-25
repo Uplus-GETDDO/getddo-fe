@@ -1,0 +1,26 @@
+{
+    "kind": "GD-352 PLATINUM 화면 표시 실측 — 배포본 읽기",
+    "checkedAt": "2026-10-25T18:46:13.314934+00:00",
+    "url": "https://getddo-fe.vercel.app",
+    "checks": [
+        {
+            "name": "/my-tickets 플래티넘 표시",
+            "ok": true,
+            "platinumLabelCount": 5,
+            "screenshot": "reports\\gd352-platinum\\my-tickets.png"
+        },
+        {
+            "name": "/time-raffle 상세 플래티넘 표시",
+            "ok": true,
+            "platinumLabelCount": 3,
+            "screenshot": "reports\\gd352-platinum\\time-raffle-detail.png"
+        },
+        {
+            "name": "/admin/tickets 플래티넘 행",
+            "ok": true,
+            "platinumLabelCount": 2,
+            "screenshot": "reports\\gd352-platinum\\admin-tickets.png"
+        }
+    ],
+    "errors": []
+}
