@@ -1,67 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig, type Plugin } from 'vite';
-
-// 부트 지연 구조(GD-348, main.tsx의 setTimeout → import('./bootstrap'))에서 부팅 그래프의
-// fetch만 첫 페인트 창으로 앞당긴다. modulepreload는 fetch·compile만 하고 평가는 import()
-// 시점까지 미뤄지므로 FCP 이득을 유지한 채 LCP 체인의 네트워크 지연을 없앤다.
-function preloadBootGraph(): Plugin {
-    return {
-        name: 'preload-boot-graph',
-        apply: 'build',
-        transformIndexHtml: {
-            order: 'post',
-            handler(html, ctx) {
-                const bundle = ctx.bundle;
-                if (!bundle) return html;
-                const boot = Object.values(bundle).find(
-                    (asset) =>
-                        asset.type === 'chunk' &&
-                        asset.isDynamicEntry &&
-                        asset.facadeModuleId
-                            ?.replaceAll('\\', '/')
-                            .endsWith('src/app/bootstrap.tsx'),
-                );
-                if (!boot) {
-                    this.error(
-                        'preload-boot-graph: bootstrap 동적 entry를 찾지 못했다 — src/app/bootstrap.tsx를 옮겼다면 이 매칭 조건을 갱신하라',
-                    );
-                }
-                const files = new Set<string>();
-                const collect = (fileName: string) => {
-                    if (files.has(fileName)) return;
-                    files.add(fileName);
-                    const chunk = bundle[fileName];
-                    if (chunk?.type === 'chunk') chunk.imports.forEach(collect);
-                };
-                collect(boot.fileName);
-                // entry 정적 dep(preload-helper 등)은 Vite가 이미 넣은 링크와 중복되지 않게 걸러낸다
-                const existing = new Set(
-                    [...html.matchAll(/href="\/(assets\/[^"]+)"/g)].map((m) => m[1]),
-                );
-                // 대형 vendor 청크까지 조기 fetch하면 첫 페인트와 대역을 다퉈 FCP가 밀린다(로컬 sim
-                // +1.4s 실측). 두 청크만 기존 import() 시점의 병렬 fetch에 맡기면 선행 바이트가
-                // ~1/3으로 줄어 FCP를 지키면서 부팅 체인 대부분을 앞당긴다.
-                const LATE_FETCH = new Set(['vendor', 'react']);
-                return {
-                    html,
-                    tags: [...files]
-                        .filter((f) => !existing.has(f))
-                        .filter((f) => {
-                            const chunk = bundle[f];
-                            return !(chunk?.type === 'chunk' && LATE_FETCH.has(chunk.name));
-                        })
-                        .map((file) => ({
-                            tag: 'link',
-                            attrs: { rel: 'modulepreload', crossorigin: true, href: `/${file}` },
-                            injectTo: 'head' as const,
-                        })),
-                };
-            },
-        },
-    };
-}
+import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -71,7 +11,6 @@ export default defineConfig({
             compiler: { logDiagnostics: true },
         }),
         tailwindcss(),
-        preloadBootGraph(),
     ],
     resolve: {
         alias: {
