@@ -1,5 +1,6 @@
 import { useReducedMotion } from 'framer-motion';
 import { useId, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
     Area,
@@ -15,13 +16,11 @@ import {
     usePlotArea,
 } from 'recharts';
 
-import { TICKET_SOURCE_TYPE_LABEL } from '@entities/ticket';
 import { LoadingBlock, Skeleton } from '@shared/ui/skeleton';
 import { formatNumber } from '@shared/utils/format';
 
 import type { TrendRow } from '../hooks/useTicketTrend';
 
-import { TREND_SOURCES } from '../hooks/useTicketTrend';
 import { DashboardPanel } from './DashboardPanel';
 import { ViewAllLink } from './ViewAllLink';
 
@@ -33,19 +32,86 @@ const AXIS_TICK = { fill: 'var(--color-chart-axis)', fontSize: 12 };
 /** 값 점 — 평소에는 흰 속에 마젠타 테두리, 올린 날짜는 마젠타로 채워진 큰 점(맨 위층이라 선에 가리지 않는다) */
 const POINT = { r: 4.5, fill: 'var(--color-surface-page)', strokeWidth: 2.5 };
 
-/** 말풍선 크기 — 점 위에 꼬리를 달아 띄운다 */
-const BUBBLE_W = 168;
-const BUBBLE_H = 92;
-const BUBBLE_GAP = 14;
+/** 말풍선 폭과 점에서 떨어진 거리 — 점 옆에 두어 선과 점을 가리지 않는다 */
+const BUBBLE_W = 196;
+const BUBBLE_GAP = 18;
 
-/** 올린 날짜가 바뀔 때 점·말풍선·사각형이 미끄러지는 시간 */
-const MOVE = '220ms cubic-bezier(0.22, 1, 0.36, 1)';
+/** 올린 날짜가 바뀔 때 띠·말풍선이 미끄러지는 시간 */
+const MOVE = '240ms cubic-bezier(0.22, 1, 0.36, 1)';
+
+const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토'];
+const dayTitle = (ymd: string) => {
+    const [y, m, d] = ymd.split('-').map(Number);
+    const weekday = WEEKDAY[new Date(Date.UTC(y!, m! - 1, d)).getUTCDay()];
+    return `${m}월 ${d}일 ${weekday}요일`;
+};
+/** 꼬리가 말풍선 위에서 내려오는 높이 — 점과 같은 높이에 꼬리 끝이 오도록 말풍선 위치를 맞춘다 */
+const TAIL_Y = 30;
 
 /**
- * 올린 날짜의 하이라이트 띠와 말풍선 — 한 벌만 두어, 날짜가 바뀌면 그 자리로 미끄러지고 나타나고 사라질 때는 옅어지며 살짝 떠오른다.
- * 띠도 여기서 그린다 — 툴팁 커서로 두면 올릴 때 갑자기 생기고 떠날 때 갑자기 사라졌다. 채워지는 점은 맨 위 층인 선의 dot이 맡는다.
- * 좌표는 고정한 y축 범위(0~yTop)와 그림 영역으로 직접 계산한다. 말풍선이 위로 잘리면 점 아래로 뒤집고,
- * 좌우 끝에서는 차트 안으로 밀어 넣되 꼬리는 점을 가리킨다
+ * 올린 날짜 말풍선 — 날짜, 지급(크게), 응모 사용, 누르면 갈 곳 네 줄만. 출처 비율 같은 세부는 지급 이력 화면에서 본다.
+ * 점을 향한 꼬리를 달고, 그림(SVG) 밖 HTML 층에 띄워 선·점 뒤로 숨지 않는다
+ */
+function DayBubble({
+    row,
+    isToday,
+    tail,
+}: {
+    row: TrendRow;
+    isToday: boolean;
+    tail: 'left' | 'right';
+}) {
+    return (
+        <div className="relative">
+            {/* 꼬리 — 테두리색 삼각형 위에 흰 삼각형을 1px 안쪽으로 겹쳐 말풍선 테두리와 이어지게 한다 */}
+            <span
+                aria-hidden
+                style={{ top: TAIL_Y - 7 }}
+                className={
+                    tail === 'left'
+                        ? 'border-r-border-default absolute -left-[7px] size-0 border-y-[7px] border-r-[7px] border-y-transparent'
+                        : 'border-l-border-default absolute -right-[7px] size-0 border-y-[7px] border-l-[7px] border-y-transparent'
+                }
+            />
+            <span
+                aria-hidden
+                style={{ top: TAIL_Y - 6 }}
+                className={
+                    tail === 'left'
+                        ? 'border-r-surface-page absolute -left-[5.5px] z-10 size-0 border-y-[6px] border-r-[6px] border-y-transparent'
+                        : 'border-l-surface-page absolute -right-[5.5px] z-10 size-0 border-y-[6px] border-l-[6px] border-y-transparent'
+                }
+            />
+            <div className="bg-surface-page border-border-default flex flex-col gap-2 rounded-xl border px-4 py-3 shadow-lg">
+                <p className="text-caption text-fg-tertiary flex items-center justify-between">
+                    {dayTitle(row.ymd)}
+                    {isToday && <span>집계 중</span>}
+                </p>
+                <p className="text-fg-primary flex items-baseline gap-1.5">
+                    <span className="text-body-sm text-fg-secondary">지급</span>
+                    <span className="text-xl leading-7 font-bold tabular-nums">
+                        {formatNumber(row.granted)}
+                    </span>
+                    <span className="text-body-sm text-fg-secondary">장</span>
+                </p>
+                <p className="text-body-sm text-fg-secondary tabular-nums">
+                    응모에 사용{' '}
+                    <span className="text-fg-primary font-semibold">
+                        {formatNumber(row.used)}장
+                    </span>
+                </p>
+                <p className="text-caption text-fg-brand font-semibold">
+                    클릭하면 그날 지급 이력 →
+                </p>
+            </div>
+        </div>
+    );
+}
+
+/**
+ * 올린 날짜의 하이라이트 띠(그림 안)와 말풍선(그림 위 HTML 층) — 한 벌만 두어, 날짜가 바뀌면 그 자리로 미끄러지고
+ * 나타나고 사라질 때는 옅어진다. 말풍선은 점 오른쪽(오른쪽 끝이면 왼쪽)에 두어 선을 가리지 않는다.
+ * 채워지는 점은 맨 위 층인 선의 dot이 맡는다. 좌표는 고정한 y축 범위(0~yTop)와 그림 영역으로 직접 계산한다
  */
 function FocusLayer({
     rows,
@@ -54,6 +120,7 @@ function FocusLayer({
     yTop,
     animate,
     bandFillId,
+    overlay,
 }: {
     rows: TrendRow[];
     index: number;
@@ -62,6 +129,8 @@ function FocusLayer({
     animate: boolean;
     /** 위에서 아래로 옅어지는 띠 채움 그라데이션 id */
     bandFillId: string;
+    /** 말풍선을 띄울 HTML 층 — 그림과 같은 크기로 겹쳐 둔다 */
+    overlay: HTMLElement | null;
 }) {
     const plot = usePlotArea();
     const chartWidth = useChartWidth() ?? 0;
@@ -70,76 +139,51 @@ function FocusLayer({
     if (!plot || !row) return null;
     const cx = plot.x + (plot.width * index) / Math.max(rows.length - 1, 1);
     const cy = plot.y + plot.height * (1 - row.granted / yTop);
-    const left = Math.min(Math.max(cx - BUBBLE_W / 2, 0), Math.max(chartWidth - BUBBLE_W, 0));
-    const below = cy - BUBBLE_GAP - BUBBLE_H < 0;
-    const top = below ? cy + BUBBLE_GAP : cy - BUBBLE_GAP - BUBBLE_H - 6;
-    // 나타날 때 점 쪽에서 6px 떠오른다 — 사라질 때는 반대로 가라앉는다
-    const lift = visible ? 0 : below ? -6 : 6;
+    const flip = cx + BUBBLE_GAP + BUBBLE_W > chartWidth;
+    const left = flip ? cx - BUBBLE_GAP - BUBBLE_W : cx + BUBBLE_GAP;
+    // 꼬리 끝이 점 높이에 오도록 — 그림 위아래로 넘치면 안쪽으로 밀어 넣는다(꼬리는 그대로 점 쪽)
+    const top = Math.max(0, Math.min(cy - TAIL_Y, chartHeight - 140));
     const bandWidth = (plot.width / Math.max(rows.length - 1, 1)) * 0.5;
+    const fade = {
+        opacity: visible ? 1 : 0,
+        transition: animate ? 'opacity 200ms ease-out' : 'none',
+    };
     return (
-        <g
-            className="pointer-events-none"
-            style={{
-                opacity: visible ? 1 : 0,
-                transition: animate ? 'opacity 200ms ease-out' : 'none',
-            }}
-        >
+        <>
             <rect
+                className="pointer-events-none"
                 x={cx - bandWidth / 2}
                 y={plot.y}
                 width={bandWidth}
                 height={plot.height}
                 fill={`url(#${bandFillId})`}
-                style={{ transition: animate ? `x ${MOVE}` : 'none' }}
+                style={{
+                    ...fade,
+                    transition: animate ? `x ${MOVE}, opacity 200ms ease-out` : 'none',
+                }}
             />
-            <foreignObject
-                x={0}
-                y={0}
-                width={chartWidth}
-                height={chartHeight}
-                className="overflow-visible"
-            >
-                <div
-                    className={below ? 'absolute flex flex-col-reverse' : 'absolute flex flex-col'}
-                    style={{
-                        width: BUBBLE_W,
-                        transform: `translate(${left}px, ${top + lift}px)`,
-                        transition: animate ? `transform ${MOVE}` : 'none',
-                    }}
-                >
-                    <div className="bg-surface-inverse text-fg-inverse flex w-full flex-col gap-0.5 rounded-xl px-3 py-2 shadow-md">
-                        <span className="text-caption text-fg-inverse/80 flex justify-between">
-                            {row.ymd}
-                            <span className="tabular-nums">사용 {formatNumber(row.used)}장</span>
-                        </span>
-                        <span className="text-body-bold tabular-nums">
-                            지급 {formatNumber(row.granted)}장
-                        </span>
-                        <span className="text-caption text-fg-inverse/80 tabular-nums">
-                            {TREND_SOURCES.map(
-                                (source) =>
-                                    `${TICKET_SOURCE_TYPE_LABEL[source]} ${formatNumber(row[source])}`,
-                            ).join(' · ')}
-                        </span>
-                        <span className="border-fg-inverse/20 text-fg-inverse mt-1.5 border-t pt-1.5 text-xs font-semibold">
-                            클릭해서 그날 지급 이력 보기 ›
-                        </span>
-                    </div>
-                    {/* 꼬리 — 점을 가리키는 작은 삼각형 */}
-                    <span
+            {overlay &&
+                createPortal(
+                    <div
+                        className="pointer-events-none absolute top-0 left-0"
                         style={{
-                            marginLeft: cx - left - 6,
-                            transition: animate ? `margin-left ${MOVE}` : 'none',
+                            width: BUBBLE_W,
+                            ...fade,
+                            transform: `translate(${left}px, ${top + (visible ? 0 : 6)}px)`,
+                            transition: animate
+                                ? `transform ${MOVE}, opacity 200ms ease-out`
+                                : 'none',
                         }}
-                        className={
-                            below
-                                ? 'border-b-surface-inverse size-0 border-x-[6px] border-b-[6px] border-x-transparent'
-                                : 'border-t-surface-inverse size-0 border-x-[6px] border-t-[6px] border-x-transparent'
-                        }
-                    />
-                </div>
-            </foreignObject>
-        </g>
+                    >
+                        <DayBubble
+                            row={row}
+                            isToday={index === rows.length - 1}
+                            tail={flip ? 'right' : 'left'}
+                        />
+                    </div>,
+                    overlay,
+                )}
+        </>
     );
 }
 
@@ -161,6 +205,7 @@ export function TicketTrendPanel({
     className?: string;
 }) {
     const reduceMotion = useReducedMotion() === true;
+    const [overlay, setOverlay] = useState<HTMLDivElement | null>(null);
     // useId 값의 특수문자는 SVG url(#…) 참조에서 깨질 수 있어 영숫자만 남긴다
     const gradientId = `trend-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
     const totalGranted = rows.reduce((sum, row) => sum + row.granted, 0);
@@ -227,8 +272,9 @@ export function TicketTrendPanel({
                     <Skeleton className="h-64 w-full rounded-xl" />
                 </LoadingBlock>
             ) : (
+                // 누르면 바로 이력으로 가므로 클릭 뒤 남는 포커스 테두리는 지운다 — 키보드 이동 때만 그림 둘레에 링
                 <figure
-                    className="h-64 cursor-pointer lg:h-auto lg:min-h-64 lg:flex-1 [&_.recharts-surface]:cursor-pointer [&_.recharts-wrapper]:cursor-pointer"
+                    className="relative h-64 cursor-pointer lg:h-auto lg:min-h-64 lg:flex-1 [&_*:focus]:outline-none [&_.recharts-surface]:cursor-pointer [&_.recharts-wrapper]:cursor-pointer"
                     aria-label={`최근 ${rows.length}일 응모권 지급과 응모 사용 추이`}
                 >
                     <ResponsiveContainer width="100%" height="100%">
@@ -355,9 +401,12 @@ export function TicketTrendPanel({
                                 yTop={yTop}
                                 animate={!reduceMotion}
                                 bandFillId={`${gradientId}-band`}
+                                overlay={overlay}
                             />
                         </ComposedChart>
                     </ResponsiveContainer>
+                    {/* 말풍선 층 — 그림 위에 겹쳐 선·점보다 항상 앞에 온다 */}
+                    <div ref={setOverlay} className="pointer-events-none absolute inset-0 z-10" />
                 </figure>
             )}
         </DashboardPanel>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -20,6 +20,8 @@ import { AdminUserDetailSheet } from './ui/AdminUserDetailSheet';
 import { MembershipBadge, UserStatus } from './ui/UserBadges';
 
 const SIZE_OPTIONS = [20, 50, 100];
+/** 서랍을 닫은 클릭이 아래 줄로 새어 다시 여는 것을 막는 시간 */
+const CLICK_THROUGH_MS = 400;
 const ROLE_OPTIONS = [
     { value: ALL, label: '전체' },
     { value: 'USER', label: '사용자' },
@@ -70,7 +72,17 @@ export function AdminUsersPage() {
     });
     const detailQuery = useAdminUser(validDetailId);
 
+    // 서랍 바깥을 눌러 닫으면 같은 클릭이 닫힌 뒤 아래 줄에 떨어져 서랍이 다시 열렸다 — 닫힌 직후 잠깐은 줄 클릭을 무시한다
+    const justClosed = useRef(false);
+    const openDetail = (id: string) => {
+        if (justClosed.current) return;
+        setSearchParams({ detail: id });
+    };
     const closeDetail = () => {
+        justClosed.current = true;
+        setTimeout(() => {
+            justClosed.current = false;
+        }, CLICK_THROUGH_MS);
         const next = new URLSearchParams(searchParams);
         next.delete('detail');
         setSearchParams(next);
@@ -88,12 +100,6 @@ export function AdminUsersPage() {
 
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
-            <div className="flex justify-end">
-                <span className="bg-surface-page border-border-default text-body-sm-bold text-fg-primary rounded-full border px-3 py-1">
-                    현재 활성 일반 사용자 {listQuery.data?.totalUserCount ?? '—'}명
-                </span>
-            </div>
-
             <FilterPanel
                 search={
                     <TextFilter
@@ -193,24 +199,30 @@ export function AdminUsersPage() {
                 errorText={getErrorMessage(listQuery.error, '사용자를 불러오지 못했습니다.')}
                 onRetry={() => void listQuery.refetch()}
                 toolbar={
-                    <Select
-                        value={String(size)}
-                        onValueChange={(v) => {
-                            setSize(Number(v));
-                            setPage(1);
-                        }}
-                    >
-                        <SelectTrigger className="w-28" aria-label="페이지 크기">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {SIZE_OPTIONS.map((n) => (
-                                <SelectItem key={n} value={String(n)}>
-                                    {n}개씩
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    // 검색과 무관한 전체 수 — 화면 맨 위 한 줄을 차지하면 검색 줄이 다른 화면보다 내려가 보여 목록 위 오른쪽으로 옮겼다
+                    <div className="flex items-center gap-4">
+                        <span className="text-body-sm text-fg-secondary tabular-nums">
+                            현재 활성 일반 사용자 {listQuery.data?.totalUserCount ?? '—'}명
+                        </span>
+                        <Select
+                            value={String(size)}
+                            onValueChange={(v) => {
+                                setSize(Number(v));
+                                setPage(1);
+                            }}
+                        >
+                            <SelectTrigger className="w-28" aria-label="페이지 크기">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {SIZE_OPTIONS.map((n) => (
+                                    <SelectItem key={n} value={String(n)}>
+                                        {n}개씩
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 }
                 emptyAction={
                     hasAppliedFilters ? (
@@ -226,7 +238,7 @@ export function AdminUsersPage() {
                 }
             >
                 {(rows) => (
-                    <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+                    <div className="bg-surface-page border-border-default overflow-hidden border-y">
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
@@ -245,11 +257,11 @@ export function AdminUsersPage() {
                                         className="cursor-pointer"
                                         role="button"
                                         tabIndex={0}
-                                        onClick={() => setSearchParams({ detail: row.id })}
+                                        onClick={() => openDetail(row.id)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter' || e.key === ' ') {
                                                 e.preventDefault();
-                                                setSearchParams({ detail: row.id });
+                                                openDetail(row.id);
                                             }
                                         }}
                                     >

@@ -8,7 +8,13 @@ import {
     DetailStats,
     DetailSummary,
 } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { formatKst } from '@shared/utils/date';
 
@@ -22,8 +28,8 @@ import {
 } from '../model/types';
 
 /**
- * 차단 내역 상세 드로어 — 목록 요약을 먼저 보여주고, AR02 상세가 오면
- * 차단 판정 근거(evidence)를 덧붙인다. 차단 기록은 조회 전용이라 액션 버튼이 없다.
+ * 차단 내역 상세 — 목록 요약을 먼저 보여주고, AR02 상세가 오면 차단 판정 근거(evidence)를 덧붙인다.
+ * 차단 기록은 조회 전용이고 내용이 짧아, 화면 끝 드로어 대신 가운데 모달로 띄워 바로 읽고 닫게 한다.
  */
 export function AbuseCaseDetailDrawer({
     abuseCase,
@@ -43,12 +49,14 @@ export function AbuseCaseDetailDrawer({
     const shown = abuseCase;
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-lg">
-                <SheetHeader>
-                    <SheetTitle>{shown ? shown.userNickname : '차단 내역'}</SheetTitle>
-                    <SheetDescription>차단 내역 상세</SheetDescription>
-                </SheetHeader>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
+                <DialogHeader className="border-border-default border-b px-6 py-5">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold">
+                        {shown ? shown.userNickname : '차단 내역'}
+                    </DialogTitle>
+                    <DialogDescription>차단 내역 상세</DialogDescription>
+                </DialogHeader>
                 {shown && (
                     <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                         {/* 핵심 — 왜, 언제부터 언제까지 막혔는지 */}
@@ -147,7 +155,7 @@ export function AbuseCaseDetailDrawer({
                         </DetailMeta>
                     </div>
                 )}
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }

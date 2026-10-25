@@ -95,7 +95,7 @@ export function NotificationJobTable({
     const table = useTable({ features, columns, data: jobs });
 
     return (
-        <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+        <div className="bg-surface-page border-border-default overflow-hidden border-y">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (

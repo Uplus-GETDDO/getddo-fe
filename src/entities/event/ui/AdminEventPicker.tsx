@@ -23,11 +23,17 @@ export function AdminEventPicker({
     eventId,
     onChange,
     label = '이벤트 찾기',
+    suggest = false,
 }: {
     /** 고른 이벤트 — 비었으면 찾기 칸을 보인다 */
     eventId: string;
     onChange: (eventId: string) => void;
     label?: string;
+    /**
+     * 검색어가 비었을 때 최근 등록한 이벤트를 후보로 펼쳐 둔다 — 배너처럼 '방금 만든 이벤트를 연결'하는 일이 많은 곳.
+     * 이벤트가 수천 건이어도 목록 전체를 받지 않고, 최근 몇 건과 이름 검색(서버 AE01 keyword)으로 찾는다
+     */
+    suggest?: boolean;
 }) {
     const listId = useId();
     // 필터 알약 창 안에서 쓰면 고른 뒤 창을 닫는다
@@ -42,6 +48,7 @@ export function AdminEventPicker({
     }, [text]);
 
     const searching = keyword !== '' && !isUuid(keyword);
+    const listing = searching || (suggest && keyword === '');
     const candidates = useAdminEvents({
         page: 1,
         size: 8,
@@ -83,7 +90,7 @@ export function AdminEventPicker({
         );
     }
 
-    const items = searching ? (candidates.data?.items ?? []) : [];
+    const items = listing ? (candidates.data?.items ?? []) : [];
     return (
         <div className={cn('relative w-full max-w-xl', inRow && 'w-80')}>
             <TextFilter
@@ -100,7 +107,7 @@ export function AdminEventPicker({
                 label={label}
                 className="w-full"
             />
-            {searching && (
+            {listing && (
                 <ul
                     id={listId}
                     role="listbox"
@@ -109,13 +116,20 @@ export function AdminEventPicker({
                         'flex max-h-80 w-full flex-col overflow-y-auto',
                         inRow
                             ? '-mx-1 mt-2'
-                            : 'bg-surface-page border-border-default absolute top-full z-20 mt-1 rounded-xl border p-1 shadow-lg',
+                            : suggest
+                              ? 'border-border-default mt-2 max-h-64 rounded-xl border p-1'
+                              : 'bg-surface-page border-border-default absolute top-full z-20 mt-1 rounded-xl border p-1 shadow-lg',
                     )}
                 >
+                    {suggest && !searching && (
+                        <li className="text-caption text-fg-tertiary px-3 pt-1.5 pb-1">
+                            최근 등록한 이벤트 · 이름을 치면 전체에서 찾아요
+                        </li>
+                    )}
                     {candidates.isPending && (
                         <li className="text-body-sm text-fg-tertiary px-3 py-2">찾는 중…</li>
                     )}
-                    {!candidates.isPending && items.length === 0 && (
+                    {!candidates.isPending && searching && items.length === 0 && (
                         <li className="text-body-sm text-fg-tertiary px-3 py-2">
                             &lsquo;{keyword}&rsquo;와(과) 맞는 이벤트가 없어요
                         </li>

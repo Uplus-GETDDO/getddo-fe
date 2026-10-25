@@ -149,10 +149,6 @@ export function AdminBannersPage() {
                     if (!open) setFormTarget(null);
                 }}
                 banner={editing}
-                events={events}
-                eventsPending={eventsPending}
-                eventsError={eventsError}
-                onEventsRetry={() => void refetchEvents()}
                 displayOrder={displayOrder}
             />
             <DeleteBannerDialog

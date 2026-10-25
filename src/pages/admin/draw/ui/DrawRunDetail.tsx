@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
 import type { DrawResult, DrawRunDetail as DrawRunDetailData } from '@entities/drawResult';
@@ -67,6 +68,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
  * 모달 아래에 붙는 공개 줄 — 스크롤 칸(px-6 pb-6)의 여백까지 덮어 끝에서 끝까지 깐다.
  * 왼쪽은 지금 상태 안내, 오른쪽은 채운 기본 버튼
  */
+/** 모달 아래 고정 칸 — 공개 바를 스크롤 영역 밖에 붙이려고 본문 깊은 곳에서 이 칸으로 옮겨 그린다 */
+const FooterSlot = createContext<HTMLElement | null>(null);
+
 function PublishBar({
     title,
     action,
@@ -76,10 +80,11 @@ function PublishBar({
     action: React.ReactNode;
     children: React.ReactNode;
 }) {
-    return (
+    const slot = useContext(FooterSlot);
+    const bar = (
         <section
             aria-label={title}
-            className="bg-surface-page border-border-default sticky bottom-0 z-10 -mx-6 -mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t px-6 py-4"
+            className="bg-surface-page border-border-default flex flex-wrap items-center gap-x-6 gap-y-3 border-t px-6 py-4"
         >
             <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <h3 className="text-body-bold text-fg-primary">{title}</h3>
@@ -88,6 +93,8 @@ function PublishBar({
             {action}
         </section>
     );
+    // 스크롤 영역 안에서 sticky로 붙이면 바 뒤 내용이 바 아래로 비쳐 보였다 — 모달 아래 고정 칸으로 옮긴다
+    return slot ? createPortal(bar, slot) : bar;
 }
 
 function ResultChips({ result }: { result: DrawResult }) {
@@ -145,6 +152,7 @@ export function DrawRunDetail({
         refetch,
         isFetching,
     } = useDrawRun(drawId);
+    const [footer, setFooter] = useState<HTMLDivElement | null>(null);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -170,7 +178,7 @@ export function DrawRunDetail({
                             ? `${run.runNumber}회차 ${DRAW_TYPE_LABEL[run.drawType]} 상세`
                             : '추첨 실행 상세'}
                     </DialogTitle>
-                    <DialogDescription className="text-body-sm text-fg-secondary">
+                    <DialogDescription className="sr-only">
                         선정 결과·후보·정합성 검증·운영 이력을 확인하고 당첨자 공개·취소·재추첨을
                         진행합니다.
                     </DialogDescription>
@@ -200,18 +208,21 @@ export function DrawRunDetail({
                         </div>
                     )}
                     {run && (
-                        <RunDetailBody
-                            run={run}
-                            eventCanceled={eventCanceled}
-                            eventReady={eventReady}
-                            onRunCreated={onRunCreated}
-                            refreshing={isFetching}
-                            updatedAt={dataUpdatedAt}
-                            refreshFailed={isRefetchError}
-                            onRefresh={() => void refetch()}
-                        />
+                        <FooterSlot.Provider value={footer}>
+                            <RunDetailBody
+                                run={run}
+                                eventCanceled={eventCanceled}
+                                eventReady={eventReady}
+                                onRunCreated={onRunCreated}
+                                refreshing={isFetching}
+                                updatedAt={dataUpdatedAt}
+                                refreshFailed={isRefetchError}
+                                onRefresh={() => void refetch()}
+                            />
+                        </FooterSlot.Provider>
                     )}
                 </div>
+                <div ref={setFooter} className="shrink-0" />
             </DialogContent>
         </Dialog>
     );

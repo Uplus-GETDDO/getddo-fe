@@ -27,7 +27,7 @@ export function DrawEventPicker({
     compact?: boolean;
 }) {
     return (
-        <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+        <div className="bg-surface-page border-border-default overflow-hidden border-y">
             <Table>
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
@@ -55,7 +55,7 @@ export function DrawEventPicker({
                                 className={cn(
                                     'hover:bg-surface-sunken focus-within:bg-surface-sunken cursor-pointer',
                                     selected &&
-                                        'bg-brand-soft hover:bg-brand-soft focus-within:bg-brand-soft',
+                                        'bg-surface-sunken hover:bg-surface-sunken focus-within:bg-surface-sunken [&>td:first-child]:shadow-[inset_3px_0_0_var(--color-fg-primary)]',
                                 )}
                             >
                                 <TableCell className={CELL}>

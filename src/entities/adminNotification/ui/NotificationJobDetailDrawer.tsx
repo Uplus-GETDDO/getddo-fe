@@ -16,6 +16,7 @@ import type { NotificationJob } from '../model/types';
 
 import { useAdminNotificationJob } from '../api/queries';
 import { NOTIFICATION_TYPE_LABEL } from '../model/types';
+import { ErrorBox } from './AdminNotificationDetailDrawer';
 import { AUTO_STOPPED_HINT, JobStatusTags } from './NotificationTags';
 
 const kstOrDash = (iso: string | null) => (iso ? formatKst(iso) : '-');
@@ -66,7 +67,7 @@ export function NotificationJobDetailDrawer({
                                 status={shown.status}
                                 stopped={shown.generationStoppedBy !== null}
                             />
-                            <p className="text-body-sm text-fg-primary">
+                            <p className="text-fg-primary text-lg leading-7 font-semibold">
                                 {shown.generationStoppedBy
                                     ? AUTO_STOPPED_HINT
                                     : shown.completedAt
@@ -75,14 +76,9 @@ export function NotificationJobDetailDrawer({
                                         ? `${formatKst(shown.nextAttemptAt)}에 자동으로 다시 시도해요`
                                         : `${formatKst(shown.scheduledAt)} 예정`}
                             </p>
-                            {detail?.lastError && (
-                                <p className="text-body-sm text-status-rejected-text">
-                                    마지막 오류 · {detail.lastError}
-                                </p>
-                            )}
+                            {detail?.lastError && <ErrorBox message={detail.lastError} />}
+                            {action && <div>{action(shown, detailReady)}</div>}
                         </DetailSummary>
-
-                        {action && <div>{action(shown, detailReady)}</div>}
 
                         <DetailSection title="처리">
                             <DetailList>
@@ -112,19 +108,28 @@ export function NotificationJobDetailDrawer({
                         </DetailSection>
 
                         {detail ? (
-                            <DetailSection title="진단">
-                                <DetailList>
-                                    <DetailItem label="원본 작업">
-                                        {detail.sourceJobId ?? '-'}
-                                    </DetailItem>
-                                    <DetailItem label="마지막 처리">
-                                        {detail.lastProcessedUserId ?? '-'}
-                                    </DetailItem>
-                                    <DetailItem label="선점 유효">
-                                        {kstOrDash(detail.leaseUntil)}
-                                    </DetailItem>
-                                </DetailList>
-                            </DetailSection>
+                            // 원본 작업·선점 같은 내부 값은 평소에 볼 일이 없어 접어 둔다
+                            <details className="group flex flex-col gap-3">
+                                <summary className="text-body-sm-bold text-fg-secondary hover:text-fg-primary cursor-pointer list-none">
+                                    내부 진단 값{' '}
+                                    <span className="text-fg-tertiary group-open:hidden">
+                                        펼치기
+                                    </span>
+                                </summary>
+                                <div className="pt-3">
+                                    <DetailList>
+                                        <DetailItem label="원본 작업">
+                                            {detail.sourceJobId ?? '-'}
+                                        </DetailItem>
+                                        <DetailItem label="마지막 처리">
+                                            {detail.lastProcessedUserId ?? '-'}
+                                        </DetailItem>
+                                        <DetailItem label="선점 유효">
+                                            {kstOrDash(detail.leaseUntil)}
+                                        </DetailItem>
+                                    </DetailList>
+                                </div>
+                            </details>
                         ) : isPending ? (
                             <LoadingBlock label="상세 정보를 불러오는 중…">
                                 <SkeletonRows rows={2} />

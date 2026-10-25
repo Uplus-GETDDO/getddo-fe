@@ -26,6 +26,7 @@ export function AdminDashboardPage() {
         to: days[days.length - 1]!.ymd,
     });
     const rows = toTrendRows(stats.data?.days ?? []);
+    const today = stats.data?.days.at(-1);
     // 진행 중 이벤트 목록은 페이지가 구독해 응모 현황 표에 넘긴다
     const openEvents = useAdminEvents({ page: 1, size: OPEN_EVENTS_SIZE, status: 'OPEN' });
 
@@ -50,7 +51,9 @@ export function AdminDashboardPage() {
                     onRetry={() => void stats.refetch()}
                     className="lg:col-span-2"
                 />
-                <ActionQueuePanel />
+                <ActionQueuePanel
+                    abuseToday={today ? { count: today.blockedCount, date: today.date } : undefined}
+                />
             </div>
             <div className="grid gap-5 lg:grid-cols-3">
                 <EventStagePanel />

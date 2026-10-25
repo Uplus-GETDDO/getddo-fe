@@ -15,6 +15,18 @@ import type { AdminNotification } from '../model/types';
 import { deliveryRetryBlockReason } from '../model/deliveryRetryReason';
 import { DeliveryStatusTag } from './NotificationTags';
 
+/** 마지막 오류 — 빨간 글자 한 줄은 눈에 덜 띄어 옅은 빨간 상자에 이름표와 함께 둔다 */
+export function ErrorBox({ message }: { message: string }) {
+    return (
+        <div className="border-semantic-error-strong/25 bg-semantic-error/5 flex flex-col gap-0.5 rounded-lg border px-3 py-2.5">
+            <span className="text-caption text-semantic-error-strong font-semibold">
+                마지막 오류
+            </span>
+            <span className="text-body-sm text-fg-primary break-words">{message}</span>
+        </div>
+    );
+}
+
 const kstOrDash = (iso: string | null) => (iso ? formatKst(iso) : '-');
 
 /**
@@ -57,25 +69,24 @@ export function AdminNotificationDetailDrawer({
                                     {notification.isRead ? '읽음' : '읽지 않음'}
                                 </span>
                             </div>
-                            <p className="text-body-sm text-fg-primary">
+                            <p className="text-fg-primary text-lg leading-7 font-semibold">
                                 {notification.mockSentAt
                                     ? `${formatKst(notification.mockSentAt)}에 보냈어요 · ${notification.deliveryAttemptCount}회 시도`
                                     : `아직 보내지 않았어요 · ${notification.deliveryAttemptCount}회 시도`}
                             </p>
                             {notification.lastDeliveryError && (
-                                <p className="text-body-sm text-status-rejected-text">
-                                    마지막 오류 · {notification.lastDeliveryError}
-                                </p>
+                                <ErrorBox message={notification.lastDeliveryError} />
                             )}
                             {blockReason && (
                                 <p className="text-caption text-fg-tertiary">{blockReason}</p>
                             )}
+                            {/* 할 수 있는 행동은 요약 바로 아래 — 상태를 읽고 같은 자리에서 복구한다 */}
+                            {action && <div>{action(notification, blockReason)}</div>}
                         </DetailSummary>
 
-                        {action && <div>{action(notification, blockReason)}</div>}
-
-                        <DetailSection title="알림 내용">
-                            <div className="border-border-default flex flex-col gap-1 rounded-xl border p-4">
+                        {/* 사용자가 받는 모습 그대로 — 알림 한 장처럼 보여 무엇이 나갔는지 바로 읽힌다 */}
+                        <DetailSection title="보낸 알림">
+                            <div className="border-border-default bg-surface-page flex flex-col gap-1 rounded-xl border p-4 shadow-sm">
                                 <p className="text-body-sm-bold text-fg-primary">
                                     {notification.title}
                                 </p>

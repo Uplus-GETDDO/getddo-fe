@@ -215,7 +215,7 @@ export function EntryHistoryPanel() {
                         role="region"
                         aria-label="응모 이력 표 가로 스크롤"
                         tabIndex={0}
-                        className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto rounded-2xl border focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+                        className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto border-y focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
                     >
                         <Table>
                             <TableHeader>

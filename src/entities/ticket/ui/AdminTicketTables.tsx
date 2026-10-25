@@ -1,7 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-
-import { Clock, Minus, PencilLine, Plus, Undo2 } from 'lucide-react';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
@@ -18,15 +15,15 @@ import { TICKET_OPERATION_DELTA } from '../model/operation';
 
 const TIME = 'text-fg-secondary text-body-sm whitespace-nowrap';
 
-/** right — 숫자 열의 머리글. 자릿수가 맞도록 오른쪽으로 붙인다 */
+/** wide — 남는 폭을 모두 가져갈 열(긴 이름). 나머지 칸은 내용 폭만큼만 차지해 왼쪽에 모인다 */
 function Frame({
     headers,
-    right = [],
+    wide = [],
     label,
     children,
 }: {
     headers: string[];
-    right?: string[];
+    wide?: string[];
     /** 가로 스크롤 영역의 이름 — 좁은 화면에서 표가 카드 안으로 스크롤할 때 읽힌다 */
     label: string;
     children: ReactNode;
@@ -38,7 +35,7 @@ function Frame({
             role="region"
             aria-label={label}
             tabIndex={0}
-            className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto rounded-2xl border focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+            className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto border-y focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
         >
             <Table>
                 <TableHeader>
@@ -48,7 +45,7 @@ function Frame({
                                 key={header}
                                 className={cn(
                                     'text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap',
-                                    right.includes(header) && 'text-right',
+                                    wide.includes(header) && 'w-full',
                                 )}
                             >
                                 {header}
@@ -62,10 +59,8 @@ function Frame({
     );
 }
 
-const Cell = ({ children, right = false }: { children: ReactNode; right?: boolean }) => (
-    <TableCell className={cn('px-4 py-3 align-middle', right && 'text-right')}>
-        {children}
-    </TableCell>
+const Cell = ({ children, wide = false }: { children: ReactNode; wide?: boolean }) => (
+    <TableCell className={cn('px-4 py-3 align-middle', wide && 'w-full')}>{children}</TableCell>
 );
 
 function UserCell({ name, id }: { name: string; id: string }) {
@@ -77,91 +72,75 @@ function UserCell({ name, id }: { name: string; id: string }) {
     );
 }
 
-// 처리 아이콘 — 색 칩 대신 통장 내역처럼 무엇이 일어났는지는 아이콘·글자로, 몇 장이 움직였는지는 맨 끝 숫자로 읽는다
-const OPERATION_ICON: Record<AdminTicketHistory['operationType'], LucideIcon> = {
-    GRANT: Plus,
-    REFUND: Undo2,
-    USE: Minus,
-    EXPIRE: Clock,
-    CORRECTION: PencilLine,
-};
+/** 처리 뒤 장수 변동 — 늘면 +1, 줄면 −1, 정정은 장수가 그대로라 표시하지 않는다 */
+function DeltaText({ delta }: { delta: number | null }) {
+    if (delta === null) return null;
+    return (
+        <span
+            className={cn(
+                'text-sm font-semibold tabular-nums',
+                delta > 0 ? 'text-status-approved-text' : 'text-fg-tertiary',
+            )}
+        >
+            {delta > 0 ? `+${delta}` : `−${Math.abs(delta)}`}
+        </span>
+    );
+}
 
-/** AO05 — 전체 이력. 조회 전용이라 줄에 올려도 눌리는 듯한 색을 입히지 않는다 */
+/**
+ * AO05 — 전체 이력. 조회 전용이라 줄에 올려도 눌리는 듯한 색을 입히지 않는다.
+ * 무엇이 일어났는지(처리)와 몇 장 움직였는지(변동)를 한 칸에 붙이고, 길이가 제각각인 이벤트·미션 이름을 맨 끝에 두어
+ * 짧은 값들이 왼쪽에 모이게 한다 — 칸이 표 전체 폭으로 흩어지면 좌우 끝을 오가며 읽어야 했다
+ */
 export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }) {
     return (
         <Frame
-            headers={['처리 시각', '처리', '사용자', '등급', '이벤트·미션', '처리 후 상태', '변동']}
-            right={['변동']}
+            headers={['처리 시각', '처리', '등급', '사용자', '처리 후 상태', '이벤트·미션']}
+            wide={['이벤트·미션']}
             label="응모권 이력 표 가로 스크롤"
         >
-            {rows.map((row) => {
-                const delta = TICKET_OPERATION_DELTA[row.operationType];
-                const Icon = OPERATION_ICON[row.operationType];
-                return (
-                    <TableRow key={row.id} className="hover:bg-transparent">
-                        <Cell>
-                            <span className={TIME}>{formatKst(row.createdAt)}</span>
-                        </Cell>
-                        <Cell>
-                            <span className="text-body-sm-bold text-fg-primary flex items-center gap-2 whitespace-nowrap">
-                                <span
-                                    aria-hidden
-                                    className="bg-surface-sunken text-fg-secondary flex size-6 shrink-0 items-center justify-center rounded-full"
-                                >
-                                    <Icon className="size-3.5" />
-                                </span>
+            {rows.map((row) => (
+                <TableRow key={row.id} className="hover:bg-transparent">
+                    <Cell>
+                        <span className={TIME}>{formatKst(row.createdAt)}</span>
+                    </Cell>
+                    <Cell>
+                        <span className="flex items-baseline gap-2 whitespace-nowrap">
+                            <span className="text-fg-primary text-sm font-semibold">
                                 {TICKET_OPERATION_LABEL[row.operationType]}
                             </span>
-                        </Cell>
-                        <Cell>
-                            <UserCell name={row.userName} id={row.userId} />
-                        </Cell>
-                        {/* 등급은 응모권 그림과 이름으로 — 등급 색 알약은 표를 얼룩지게 해 오히려 눈에 안 들어왔다 */}
-                        <Cell>
-                            <span className="flex items-center gap-2 whitespace-nowrap">
-                                <img
-                                    src={TICKET_GRADE_IMAGE[row.grade]}
-                                    alt=""
-                                    aria-hidden
-                                    className="h-5 w-auto shrink-0"
-                                />
-                                <span className="text-body-sm text-fg-primary">
-                                    {TICKET_GRADE_LABEL[row.grade]}
-                                </span>
+                            <DeltaText delta={TICKET_OPERATION_DELTA[row.operationType]} />
+                        </span>
+                    </Cell>
+                    {/* 등급은 응모권 그림과 이름으로 — 등급 색 알약은 표를 얼룩지게 해 오히려 눈에 안 들어왔다 */}
+                    <Cell>
+                        <span className="flex items-center gap-2 whitespace-nowrap">
+                            <img
+                                src={TICKET_GRADE_IMAGE[row.grade]}
+                                alt=""
+                                aria-hidden
+                                className="h-5 w-auto shrink-0"
+                            />
+                            <span className="text-fg-primary text-sm">
+                                {TICKET_GRADE_LABEL[row.grade]}
                             </span>
-                        </Cell>
-                        <Cell>
-                            <span className="text-body-sm text-fg-primary">
-                                {row.eventTitle ?? row.missionTitle ?? '-'}
-                            </span>
-                        </Cell>
-                        <Cell>
-                            <span className="text-body-sm text-fg-secondary whitespace-nowrap">
-                                {TICKET_STATUS_LABEL[row.status]}
-                            </span>
-                        </Cell>
-                        {/* 늘면 초록 +1, 줄면 회색 −1, 정정은 장수가 그대로라 비운다 */}
-                        <Cell right>
-                            <span
-                                className={cn(
-                                    'text-body-sm-bold tabular-nums',
-                                    delta === null
-                                        ? 'text-fg-tertiary'
-                                        : delta > 0
-                                          ? 'text-status-approved-text'
-                                          : 'text-fg-secondary',
-                                )}
-                            >
-                                {delta === null
-                                    ? '—'
-                                    : delta > 0
-                                      ? `+${delta}`
-                                      : `−${Math.abs(delta)}`}
-                            </span>
-                        </Cell>
-                    </TableRow>
-                );
-            })}
+                        </span>
+                    </Cell>
+                    <Cell>
+                        <UserCell name={row.userName} id={row.userId} />
+                    </Cell>
+                    <Cell>
+                        <span className="text-fg-secondary text-sm whitespace-nowrap">
+                            {TICKET_STATUS_LABEL[row.status]}
+                        </span>
+                    </Cell>
+                    <Cell wide>
+                        <span className="text-fg-primary text-sm">
+                            {row.eventTitle ?? row.missionTitle ?? '-'}
+                        </span>
+                    </Cell>
+                </TableRow>
+            ))}
         </Frame>
     );
 }

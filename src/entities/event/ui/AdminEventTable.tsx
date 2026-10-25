@@ -8,7 +8,7 @@ import { formatKst } from '@shared/utils/date';
 
 import type { AdminEvent } from '../model/adminTypes';
 
-import { ADMIN_STATUS_META, EVENT_TYPE_CHIP, MEMBERSHIP_LABEL } from '../model/adminStatusMeta';
+import { ADMIN_STATUS_META, MEMBERSHIP_LABEL } from '../model/adminStatusMeta';
 
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
 const CHIP = badgeVariants({ variant: null });
@@ -69,7 +69,7 @@ export function AdminEventTable({
                 helper.accessor('title', {
                     header: '이벤트',
                     cell: ({ row, getValue }) => (
-                        <div className="flex max-w-72 min-w-0 flex-col gap-1">
+                        <div className="flex max-w-72 min-w-0 flex-col gap-0.5">
                             {/* 이름이 곧 상세 열기 — 줄 끝 '>' 칸은 어디를 눌러야 하는지 애매했다 */}
                             <button
                                 type="button"
@@ -82,17 +82,15 @@ export function AdminEventTable({
                             >
                                 {getValue()}
                             </button>
-                            <span className="flex flex-wrap items-center gap-1.5">
-                                <span className={cn(CHIP, EVENT_TYPE_CHIP[row.original.eventType])}>
-                                    {KIND_LABEL[row.original.eventType]}
-                                </span>
-                                {row.original.eventType === 'TICKET' && (
-                                    <span className="text-caption text-fg-tertiary">
-                                        {row.original.weightingEnabled
+                            {/* 종류는 칩 대신 회색 한 줄 — 줄마다 색 칩이 붙으면 이름보다 칩이 먼저 보이고 줄 높이가 들쭉날쭉했다 */}
+                            <span className="text-caption text-fg-tertiary truncate">
+                                {KIND_LABEL[row.original.eventType]}
+                                {row.original.eventType === 'TICKET' &&
+                                    ` · ${
+                                        row.original.weightingEnabled
                                             ? `가중치 · ${row.original.maxTicketsPerUser === null ? '상한 없음' : `최대 ${row.original.maxTicketsPerUser}장`}`
-                                            : '1장 고정'}
-                                    </span>
-                                )}
+                                            : '1장 고정'
+                                    }`}
                             </span>
                         </div>
                     ),
@@ -165,7 +163,7 @@ export function AdminEventTable({
     const table = useTable({ features, columns: visibleColumns, data: events });
 
     return (
-        <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+        <div className="bg-surface-page border-border-default overflow-hidden border-y">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -198,7 +196,7 @@ export function AdminEventTable({
                                 'hover:bg-surface-sunken focus-within:bg-surface-sunken',
                                 onRowClick && 'cursor-pointer',
                                 row.original.id === selectedId &&
-                                    'bg-brand-soft hover:bg-brand-soft focus-within:bg-brand-soft',
+                                    'bg-surface-sunken hover:bg-surface-sunken focus-within:bg-surface-sunken [&>td:first-child]:shadow-[inset_3px_0_0_var(--color-fg-primary)]',
                             )}
                         >
                             {row.getAllCells().map((cell) => (

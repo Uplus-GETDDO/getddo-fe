@@ -105,7 +105,7 @@ export function AdminDrawPage() {
             {/*
              * 단계 탭 — 개수와 할 일을 함께 보이고, 누르면 그 단계만 거른다. 발표 대기가 가장 먼저.
              * 따로 떨어진 카드에 얇은 테두리만 바뀌면 누르는 곳인지 몰라, 한 판에 이어 붙인 탭으로 두고
-             * 고른 칸은 바닥에 굵은 먹색 줄을 긋는다
+             * 고른 칸은 먹색으로 통째로 채운다 (바닥 줄만 칠하면 흔한 템플릿처럼 보였다)
              */}
             <div
                 role="radiogroup"
@@ -268,15 +268,13 @@ function StageTile({
             onClick={onClick}
             className={cn(
                 'focus-visible:ring-border-focus flex cursor-pointer flex-col items-start gap-1.5 px-5 py-4 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
-                selected
-                    ? 'bg-surface-canvas shadow-[inset_0_-3px_0_var(--color-fg-primary)]'
-                    : 'bg-surface-page hover:bg-surface-canvas',
+                selected ? 'bg-surface-inverse' : 'bg-surface-page hover:bg-surface-sunken',
             )}
         >
             <span
                 className={cn(
                     'flex items-center gap-1.5 text-sm',
-                    selected ? 'text-fg-primary font-semibold' : 'text-fg-secondary font-medium',
+                    selected ? 'text-fg-inverse font-semibold' : 'text-fg-secondary font-medium',
                 )}
             >
                 {urgent && <span aria-hidden className="bg-brand-primary size-1.5 rounded-full" />}
@@ -285,12 +283,16 @@ function StageTile({
             <span
                 className={cn(
                     'text-[1.75rem] leading-9 font-bold tracking-tight tabular-nums',
-                    urgent ? 'text-fg-brand' : 'text-fg-primary',
+                    selected ? 'text-fg-inverse' : urgent ? 'text-fg-brand' : 'text-fg-primary',
                 )}
             >
                 {count ?? '—'}
             </span>
-            <span className="text-caption text-fg-tertiary">{hint}</span>
+            <span
+                className={cn('text-caption', selected ? 'text-fg-inverse/70' : 'text-fg-tertiary')}
+            >
+                {hint}
+            </span>
         </button>
     );
 }

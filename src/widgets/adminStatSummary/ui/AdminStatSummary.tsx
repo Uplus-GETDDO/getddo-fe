@@ -27,8 +27,6 @@ interface StatCellProps {
     unit?: string;
     /** 어제 같은 지표 — 있으면 설명 대신 어제보다 늘었는지·줄었는지 적는다 */
     previous?: number;
-    /** 최근 며칠 값(오래된 순) — 숫자 옆 작은 추세선으로 흐름을 함께 본다 */
-    trend?: number[];
 }
 
 /** 어제와 비교 — 늘고 준 것이 좋고 나쁨을 뜻하지 않으므로 색 대신 화살표로만 구분한다 */
@@ -48,34 +46,6 @@ function Delta({ value, previous, unit }: { value: number; previous: number; uni
     );
 }
 
-/** 작은 추세선 — 축 없이 모양만, 회색으로. 늘고 줆이 좋고 나쁨이 아니라 색으로 강조하지 않고 마지막 점(오늘)만 진하게 */
-function Sparkline({ values }: { values: number[] }) {
-    if (values.length < 2) return null;
-    const W = 88;
-    const H = 32;
-    const max = Math.max(...values);
-    const min = Math.min(...values);
-    const span = max - min || 1;
-    const points = values.map((v, i) => [
-        (i / (values.length - 1)) * (W - 4) + 2,
-        H - 4 - ((v - min) / span) * (H - 8),
-    ]);
-    const last = points[points.length - 1]!;
-    return (
-        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden className="shrink-0">
-            <polyline
-                points={points.map(([x, y]) => `${x},${y}`).join(' ')}
-                fill="none"
-                stroke="var(--color-chart-axis)"
-                strokeWidth={1.75}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <circle cx={last[0]} cy={last[1]} r={2.75} fill="var(--color-fg-secondary)" />
-        </svg>
-    );
-}
-
 /**
  * 숫자 칸 — 한 판 안에 칸막이로 나눈 지표 하나. 이름 · 큰 숫자 · (추세선) · 어제 대비.
  * 링크가 있으면 칸 전체가 눌리고 오른쪽 위 > 가 진해진다
@@ -90,7 +60,6 @@ function StatCell({
     to,
     unit = '건',
     previous,
-    trend,
 }: StatCellProps) {
     return (
         <div
@@ -138,7 +107,6 @@ function StatCell({
                         </>
                     )}
                 </div>
-                {!pending && !error && trend && <Sparkline values={trend} />}
             </div>
             {!pending && !error && value != null && previous != null ? (
                 <Delta value={value} previous={previous} unit={unit} />
@@ -161,8 +129,8 @@ const grantedOf = (day: DailyStatsDay | undefined) =>
 
 /**
  * 관리자 대시보드 지표 요약 — 대시보드 페이지가 조회한 AS01 일별 집계를 요약 칸과 함께 쓴다.
- * 네 지표를 카드 네 장 대신 한 판에 칸막이로 묶어 숫자가 먼저 읽히게 하고, 일별 값이 있는 지표는 추세선을 붙인다.
- * 탐지 기록은 지급 차단 확정이 아니므로 상세 링크를 두지 않는다(차단 메뉴의 실연동은 L2).
+ * 세 지표를 카드 대신 한 판에 칸막이로 묶어 숫자가 먼저 읽히게 한다.
+ * 어뷰징 탐지는 몇 건이 어제보다 늘었는지가 아니라 '있는지'가 중요해 숫자 칸에서 빼고, 있을 때만 '지금 처리할 일'에 띄운다.
  * 오늘·어제는 AS01 days의 마지막 두 항목(KST 날짜, 서버 기준)이다
  */
 export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> }) {
@@ -188,7 +156,7 @@ export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> 
     return (
         <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
             {/* 칸막이는 1px 틈 사이로 비치는 바탕선 — 줄 수가 바뀌어도 선이 겹치거나 빠지지 않는다 */}
-            <div className="bg-border-default grid gap-px sm:grid-cols-2 xl:grid-cols-4">
+            <div className="bg-border-default grid gap-px sm:grid-cols-3">
                 <StatCell
                     label="진행 중 이벤트"
                     value={openEvents.data?.totalElements}
@@ -202,7 +170,6 @@ export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> 
                     label="오늘 지급한 응모권"
                     value={grantedOf(today)}
                     previous={grantedOf(yesterday)}
-                    trend={days.map((day) => grantedOf(day) ?? 0)}
                     unit="장"
                     pending={stats.isPending}
                     error={stats.isError}
@@ -214,23 +181,12 @@ export function AdminStatSummary({ stats }: { stats: UseQueryResult<DailyStats> 
                     label="오늘 응모에 쓴 응모권"
                     value={today?.usedTickets}
                     previous={yesterday?.usedTickets}
-                    trend={days.map((day) => day.usedTickets)}
                     unit="장"
                     pending={stats.isPending}
                     error={stats.isError}
                     onRetry={() => void stats.refetch()}
                     description="이벤트 응모로 차감된 응모권(반환 미차감)"
                     to={today ? `/admin/tickets?date=${todayYmd}&operationType=USE` : undefined}
-                />
-                <StatCell
-                    label="오늘 어뷰징 탐지 기록"
-                    value={today?.blockedCount}
-                    previous={yesterday?.blockedCount}
-                    trend={days.map((day) => day.blockedCount)}
-                    pending={stats.isPending}
-                    error={stats.isError}
-                    onRetry={() => void stats.refetch()}
-                    description="탐지 기록 수 — 차단 확정 건수가 아님"
                 />
             </div>
             {/* 보조 지표 — 판 아래 띠에 작은 글로. 큰 숫자 넷과 무게를 나눈다 */}

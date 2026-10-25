@@ -55,6 +55,8 @@ function PagedResult<T>({
     children: (items: T[]) => ReactNode;
 }) {
     const totalPages = data ? Math.max(1, Math.ceil(data.totalElements / data.size)) : 0;
+    // 이전에 받은 목록이 남아 있는 실패 — 목록은 그대로 두고 총 건수 줄에서만 알린다
+    const staleError = isError && data !== undefined;
 
     return (
         <div className="flex flex-col gap-4">
@@ -67,6 +69,22 @@ function PagedResult<T>({
                     {!isPending && isFetching && !isError ? (
                         <span role="status" className="text-caption text-fg-tertiary ml-2">
                             새로 확인하는 중…
+                        </span>
+                    ) : staleError ? (
+                        // 받아 둔 목록이 있는데 다시 받기만 실패 — 표 위에 오류 줄을 끼우면 화면이 밀려, 이 줄 안에서 알린다
+                        <span role="alert" className="text-caption ml-2 flex items-center gap-1.5">
+                            <span className="text-semantic-error-strong font-semibold">
+                                갱신 실패
+                            </span>
+                            {onRetry && (
+                                <button
+                                    type="button"
+                                    onClick={onRetry}
+                                    className="text-fg-primary focus-visible:ring-border-focus cursor-pointer rounded-sm underline underline-offset-2 focus-visible:ring-2 focus-visible:outline-none"
+                                >
+                                    다시 시도
+                                </button>
+                            )}
                         </span>
                     ) : (
                         data &&
@@ -102,7 +120,7 @@ function PagedResult<T>({
                         <TableSkeleton rows={4} />
                     </LoadingBlock>
                 ))}
-            {isError && (
+            {isError && !staleError && (
                 <div className="flex items-center gap-3" role="alert">
                     <p className="text-semantic-error-strong text-body-sm">{errorText}</p>
                     {onRetry && (

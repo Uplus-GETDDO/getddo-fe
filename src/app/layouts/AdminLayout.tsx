@@ -19,7 +19,7 @@ export function AdminLayout() {
     );
 
     return (
-        <div className="bg-surface-canvas flex min-h-screen">
+        <div className="bg-surface-page flex min-h-screen">
             <ScrollRestoration />
             {/*
              * 화면 높이에 고정해 긴 페이지에서도 아래 '사용자 화면으로'가 항상 보이게 한다 — 메뉴가 넘치면 메뉴만 스크롤.
@@ -91,11 +91,9 @@ export function AdminLayout() {
                 </div>
             </aside>
             <div className="flex min-w-0 flex-1 flex-col">
-                {/* 화면 이름은 본문 위에 크게 — 띠 모양 머리줄 대신 바탕 위에 제목만 둔다 */}
-                <header className="bg-surface-canvas flex h-20 items-end px-4 pb-1 md:pr-10 md:pl-10">
-                    <h1 className="text-fg-primary text-[1.75rem] leading-9 font-bold tracking-tight">
-                        {current?.label ?? '관리자'}
-                    </h1>
+                {/* 화면 이름은 본문 위에 크게 — 띠 모양 머리줄 대신 바탕 위에 제목만 둔다. 바탕은 흰색 하나로, 칸 구분은 1px 선과 여백으로만 (회색 바탕 위 흰 카드는 화면을 상자투성이로 보이게 했다) */}
+                <header className="bg-surface-page flex h-20 items-end px-4 pb-1 md:pr-10 md:pl-10">
+                    <h1 className="text-title-2 text-fg-primary">{current?.label ?? '관리자'}</h1>
                     {/* 가상 시계는 로컬 개발 전용 표시 도구다 */}
                     {env.isDev && <VirtualClockTicker className="ml-auto hidden md:flex" />}
                 </header>

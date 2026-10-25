@@ -9,7 +9,7 @@ import {
     useAdminNotifications,
 } from '@entities/adminNotification';
 import { AdminEventPicker, AdminEventTitle } from '@entities/event';
-import { RetryDeliveryDialog } from '@features/retryAdminNotification';
+import { BulkRetryButton, RetryDeliveryDialog } from '@features/retryAdminNotification';
 import { ALL, isDateRangeOrdered, orUndefined, PAGE_SIZE } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
 import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
@@ -171,6 +171,18 @@ export function DeliveriesTab() {
                 updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
+                toolbar={
+                    // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
+                    <BulkRetryButton
+                        kind="delivery"
+                        targets={(query.data?.items ?? [])
+                            .filter((item) => item.retryable)
+                            .map((item) => ({
+                                id: item.id,
+                                label: `${item.title} · ${item.userName ?? item.userId}`,
+                            }))}
+                    />
+                }
                 emptyText="해당하는 발송 이력이 없습니다."
                 errorText="발송 이력을 불러오지 못했습니다."
                 onRetry={() => void query.refetch()}

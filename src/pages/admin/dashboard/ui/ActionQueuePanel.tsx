@@ -109,9 +109,15 @@ function QueueRow({
  * 2) 재추첨 중: 끝나면 공개 명단을 갱신해야 한다
  * 3) 실패한 알림 작업: 복구해야 사용자에게 간다
  * 4) 24시간 안에 시작: 시작하면 수정할 수 없어 마지막으로 확인할 이벤트
+ * 5) 오늘 어뷰징 탐지: 있을 때만 — 차단 내역에서 누가 왜 막혔는지 확인한다
  * 0건인 일은 숨기고, 모두 0건이면 "처리할 일이 없어요" 한 줄만 둔다. 메뉴로 가는 버튼은 사이드바와 겹쳐 두지 않는다
  */
-export function ActionQueuePanel() {
+export function ActionQueuePanel({
+    abuseToday,
+}: {
+    /** 오늘 어뷰징 탐지 기록 수(AS01) — 몇 건인지보다 있는지가 중요해 있을 때만 확인할 일로 띄운다 */
+    abuseToday?: { count: number; date: string };
+}) {
     const now = useVirtualClock().now();
     const publishWaiting = useAdminEvents({
         page: 1,
@@ -160,22 +166,20 @@ export function ActionQueuePanel() {
             unit: '개',
             to: '/admin/events?status=SCHEDULED',
         },
+        {
+            label: '오늘 어뷰징 탐지',
+            detail: '차단된 사용자와 판정 근거를 확인해 주세요',
+            count: abuseToday?.count ?? 0,
+            unit: '건',
+            to: `/admin/abuse-cases?date=${abuseToday?.date ?? ''}`,
+        },
     ].filter((row) => row.count > 0);
-    // 요약 문구용 — 발표 대기와 남은 줄의 가짓수
-    const pendingKinds = (publishCount > 0 ? 1 : 0) + rows.length;
     const allClear =
         !isPending && publishCount === 0 && !publishWaiting.isError && rows.length === 0;
 
     return (
         <DashboardPanel
             title="지금 처리할 일"
-            caption={
-                isPending
-                    ? '확인할 일을 모으는 중이에요'
-                    : allClear
-                      ? '지금은 모두 처리됐어요'
-                      : `오늘 손이 가야 하는 일 ${pendingKinds}가지`
-            }
             error={isError}
             onRetry={() => [...queries, publishWaiting].forEach((query) => void query.refetch())}
             tone="inverse"

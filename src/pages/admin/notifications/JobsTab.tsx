@@ -11,7 +11,7 @@ import {
     useAdminNotificationJobs,
 } from '@entities/adminNotification';
 import { AdminEventPicker, AdminEventTitle } from '@entities/event';
-import { RetryJobDialog } from '@features/retryAdminNotification';
+import { BulkRetryButton, RetryJobDialog } from '@features/retryAdminNotification';
 import { ALL, isDateRangeOrdered, orUndefined, PAGE_SIZE } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
 import { DateRangeFilter } from '@shared/ui/filter-fields';
@@ -23,7 +23,7 @@ import {
     rangeValue,
 } from '@shared/ui/filter-panel';
 import { PagedResult } from '@shared/ui/paged-result';
-import { kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
+import { formatKst, kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
 
 const STATUS_OPTIONS = [
     { value: ALL, label: '전체' },
@@ -175,6 +175,18 @@ export function JobsTab() {
                 updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
+                toolbar={
+                    // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
+                    <BulkRetryButton
+                        kind="job"
+                        targets={(query.data?.items ?? [])
+                            .filter((item) => item.retryable)
+                            .map((item) => ({
+                                id: item.id,
+                                label: `${NOTIFICATION_TYPE_LABEL[item.notificationType]} · ${formatKst(item.scheduledAt)} 예정`,
+                            }))}
+                    />
+                }
                 emptyText="해당하는 알림 작업이 없습니다."
                 errorText="알림 작업 목록을 불러오지 못했습니다."
                 onRetry={() => void query.refetch()}

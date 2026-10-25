@@ -81,7 +81,7 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                     </Button>
                 </div>
             )}
-            <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+            <div className="bg-surface-page border-border-default overflow-hidden border-y">
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">

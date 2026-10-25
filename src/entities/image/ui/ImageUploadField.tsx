@@ -29,6 +29,8 @@ interface ImageUploadFieldProps {
     initialPreviewUrl?: string | null;
     /** 방금 올린 이미지 주소를 바깥 미리보기에 넘긴다 — 지우면 null */
     onPreviewUrlChange?: (url: string | null) => void;
+    /** stacked — 미리보기를 칸 폭 가득 위에 크게 두고 버튼을 아래로. 배너처럼 그림 자체를 확인해야 하는 자리에 쓴다 */
+    layout?: 'inline' | 'stacked';
 }
 
 /**
@@ -46,6 +48,7 @@ export function ImageUploadField({
     slot,
     initialPreviewUrl,
     onPreviewUrlChange,
+    layout = 'inline',
 }: ImageUploadFieldProps) {
     const inputId = useId();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -106,7 +109,9 @@ export function ImageUploadField({
                 {label}
             </label>
 
-            <div className="flex items-start gap-4">
+            <div
+                className={layout === 'stacked' ? 'flex flex-col gap-3' : 'flex items-start gap-4'}
+            >
                 {/*
                  * 칸을 꽉 채우고 모서리는 칸을 따라 깎는다 — overflow-hidden이 둥근 틀로 잘라 준다.
                  * 칸 비율은 그 자리의 권장 비율을 그대로 쓴다. 권장대로 올리면 잘릴 것이 없고,
@@ -115,9 +120,13 @@ export function ImageUploadField({
                 <div
                     style={{ aspectRatio: `${guide.width} / ${guide.height}` }}
                     className={cn(
-                        'bg-surface-sunken relative h-20 shrink-0 overflow-hidden rounded-lg',
-                        // 가로로 긴 자리는 높이를 낮춰야 폼 한 줄에 들어간다
-                        guide.width / guide.height > 1.5 && 'h-14',
+                        'bg-surface-sunken relative shrink-0 overflow-hidden rounded-lg',
+                        layout === 'stacked'
+                            ? 'w-full'
+                            : // 가로로 긴 자리는 높이를 낮춰야 폼 한 줄에 들어간다
+                              guide.width / guide.height > 1.5
+                              ? 'h-14'
+                              : 'h-20',
                     )}
                 >
                     {preview.shown && (
