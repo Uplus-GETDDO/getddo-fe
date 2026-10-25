@@ -1,13 +1,4 @@
-import { SpeedInsights } from '@vercel/speed-insights/react';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-
-import { env } from '@shared/config/env';
-
-import { App } from './App';
 import { installChunkReload } from './config/chunkReload';
-import { unregisterMockServiceWorker } from './config/serviceWorkerCleanup';
-import './config/sessionSync';
 import './styles/globals.css';
 
 installChunkReload();
@@ -26,29 +17,12 @@ if ('requestIdleCallback' in window) {
     setTimeout(loadPretendard, 0);
 }
 
-function renderApp() {
-    createRoot(document.getElementById('root')!).render(
-        <StrictMode>
-            <App />
-            {/* Vercel Speed Insights — 실사용자 Web Vitals 수집 (GD-342).
-                대시보드에서 Speed Insights를 활성화해야 데이터가 쌓인다. */}
-            <SpeedInsights />
-        </StrictMode>,
-    );
-}
-
-// MSW는 서비스워커 등록이 끝난 뒤 렌더링해야 첫 API 호출도 가로챌 수 있다.
-// 목업을 쓰지 않는 빌드(배포)에서는 과거 목업 Worker 해제가 첫 페인트를 막지 않게 렌더링과 병렬로 둔다 (GD-342).
-if (env.enableMsw) {
-    void import('@mocks/browser')
-        .then(({ worker }) => worker.start({ onUnhandledRequest: 'bypass' }))
-        .then(renderApp)
-        .catch((error: unknown) => {
-            console.error('앱 초기화 실패:', error);
-        });
-} else {
-    renderApp();
-    void unregisterMockServiceWorker().catch((error: unknown) => {
-        console.warn('목업 서비스워커 해제 실패:', error);
+// 첫 페인트가 entry JS 평가를 기다리지 않게 앱 부팅을 별도 태스크로 미룬다 (GD-348).
+// 모듈 평가가 끝나면 렌더링 단계에서 index.html의 정적 로그인 셸이 먼저 그려지고,
+// 다음 태스크에서 부팅 청크가 로드·실행된다 — react·router·zod 같은 무거운 그래프는
+// 부팅 청크의 동적 그래프로 이동해 index.html의 modulepreload 대상에서 빠진다.
+setTimeout(() => {
+    void import('./bootstrap').catch((error: unknown) => {
+        console.error('앱 부팅 실패:', error);
     });
-}
+}, 0);
