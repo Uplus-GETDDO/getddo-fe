@@ -17,6 +17,7 @@ import {
 } from 'recharts';
 
 import { LoadingBlock, Skeleton } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
 import { formatNumber } from '@shared/utils/format';
 
 import type { TrendRow } from '../hooks/useTicketTrend';
@@ -35,6 +36,8 @@ const POINT = { r: 4.5, fill: 'var(--color-surface-page)', strokeWidth: 2.5 };
 /** 말풍선 폭과 점에서 떨어진 거리 — 점 옆에 두어 선과 점을 가리지 않는다 */
 const BUBBLE_W = 196;
 const BUBBLE_GAP = 18;
+/** 말풍선 대략 높이 — 그림 아래로 넘치지 않게 위로 밀어 올리는 기준 */
+const BUBBLE_H = 150;
 
 /** 올린 날짜가 바뀔 때 띠·말풍선이 미끄러지는 시간 */
 const MOVE = '240ms cubic-bezier(0.22, 1, 0.36, 1)';
@@ -62,46 +65,66 @@ function DayBubble({
     tail: 'left' | 'right';
 }) {
     return (
-        <div className="relative">
-            {/* 꼬리 — 테두리색 삼각형 위에 흰 삼각형을 1px 안쪽으로 겹쳐 말풍선 테두리와 이어지게 한다 */}
-            <span
-                aria-hidden
-                style={{ top: TAIL_Y - 7 }}
-                className={
-                    tail === 'left'
-                        ? 'border-r-border-default absolute -left-[7px] size-0 border-y-[7px] border-r-[7px] border-y-transparent'
-                        : 'border-l-border-default absolute -right-[7px] size-0 border-y-[7px] border-l-[7px] border-y-transparent'
-                }
-            />
+        // 그림자는 감싼 층의 drop-shadow로 — 몸통과 꼬리를 한 실루엣으로 보고 그려, 네모에만 그림자가 지고
+        // 꼬리는 맨살로 붙어 보이던 어색함이 없다. 테두리 없이 흰 면과 그림자만으로 떠 보이게 한다
+        <div className="relative drop-shadow-lg">
+            {/* 꼬리 — 몸통과 같은 흰 정사각형을 45° 돌려 반만 내민다. 끝 모서리만 살짝 둥글린다 */}
             <span
                 aria-hidden
                 style={{ top: TAIL_Y - 6 }}
-                className={
-                    tail === 'left'
-                        ? 'border-r-surface-page absolute -left-[5.5px] z-10 size-0 border-y-[6px] border-r-[6px] border-y-transparent'
-                        : 'border-l-surface-page absolute -right-[5.5px] z-10 size-0 border-y-[6px] border-l-[6px] border-y-transparent'
-                }
+                className={cn(
+                    'bg-surface-page absolute size-3 rotate-45',
+                    tail === 'left' ? '-left-1 rounded-bl-[3px]' : '-right-1 rounded-tr-[3px]',
+                )}
             />
-            <div className="bg-surface-page border-border-default flex flex-col gap-2 rounded-xl border px-4 py-3 shadow-lg">
-                <p className="text-caption text-fg-tertiary flex items-center justify-between">
-                    {dayTitle(row.ymd)}
-                    {isToday && <span>집계 중</span>}
-                </p>
-                <p className="text-fg-primary flex items-baseline gap-1.5">
-                    <span className="text-body-sm text-fg-secondary">지급</span>
-                    <span className="text-xl leading-7 font-bold tabular-nums">
-                        {formatNumber(row.granted)}
+            <div className="bg-surface-page relative flex flex-col rounded-2xl px-4 pt-3.5 pb-3">
+                <p className="flex items-center justify-between gap-2">
+                    <span className="text-fg-secondary text-xs font-semibold">
+                        {dayTitle(row.ymd)}
                     </span>
-                    <span className="text-body-sm text-fg-secondary">장</span>
+                    {isToday && (
+                        <span className="bg-surface-sunken text-fg-secondary rounded-full px-2 py-0.5 text-[11px] leading-4 font-medium">
+                            집계 중
+                        </span>
+                    )}
                 </p>
-                <p className="text-body-sm text-fg-secondary tabular-nums">
-                    응모에 사용{' '}
-                    <span className="text-fg-primary font-semibold">
-                        {formatNumber(row.used)}장
-                    </span>
-                </p>
-                <p className="text-caption text-fg-brand font-semibold">
-                    클릭하면 그날 지급 이력 →
+                {/* 두 값은 그래프 범례와 같은 표식(실선 마젠타·점선 회색)으로 어느 선의 값인지 바로 잇는다 */}
+                <dl className="mt-2.5 flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                        <dt className="text-fg-secondary flex flex-1 items-center gap-1.5 text-[13px]">
+                            <span
+                                aria-hidden
+                                style={{ background: LINE }}
+                                className="h-0.5 w-3 rounded-full"
+                            />
+                            지급
+                        </dt>
+                        <dd className="text-fg-primary text-xl leading-7 font-bold tracking-tight tabular-nums">
+                            {formatNumber(row.granted)}
+                            <span className="text-fg-secondary ml-0.5 text-[13px] font-medium">
+                                장
+                            </span>
+                        </dd>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <dt className="text-fg-secondary flex flex-1 items-center gap-1.5 text-[13px]">
+                            <span
+                                aria-hidden
+                                className="border-fg-secondary w-3 border-t-2 border-dotted"
+                            />
+                            응모에 사용
+                        </dt>
+                        <dd className="text-fg-primary text-[15px] font-semibold tabular-nums">
+                            {formatNumber(row.used)}
+                            <span className="text-fg-secondary ml-0.5 text-[13px] font-medium">
+                                장
+                            </span>
+                        </dd>
+                    </div>
+                </dl>
+                <p className="border-border-default text-fg-brand mt-3 flex items-center justify-between border-t pt-2.5 text-xs font-semibold">
+                    그날 지급 이력 보기
+                    <span aria-hidden>→</span>
                 </p>
             </div>
         </div>
@@ -142,7 +165,7 @@ function FocusLayer({
     const flip = cx + BUBBLE_GAP + BUBBLE_W > chartWidth;
     const left = flip ? cx - BUBBLE_GAP - BUBBLE_W : cx + BUBBLE_GAP;
     // 꼬리 끝이 점 높이에 오도록 — 그림 위아래로 넘치면 안쪽으로 밀어 넣는다(꼬리는 그대로 점 쪽)
-    const top = Math.max(0, Math.min(cy - TAIL_Y, chartHeight - 140));
+    const top = Math.max(0, Math.min(cy - TAIL_Y, chartHeight - BUBBLE_H));
     const bandWidth = (plot.width / Math.max(rows.length - 1, 1)) * 0.5;
     const fade = {
         opacity: visible ? 1 : 0,

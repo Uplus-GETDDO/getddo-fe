@@ -10,7 +10,7 @@ import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { formatKst } from '@shared/utils/date';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 const PAGE_SIZE = 10;
 
@@ -71,6 +71,7 @@ export function DrawOperationsSection({ drawId }: { drawId: string }) {
                 )}
                 {failures.data && failures.data.items.length > 0 && (
                     <>
+                        <PagedCount total={failures.data.totalElements} />
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
@@ -128,6 +129,7 @@ export function DrawOperationsSection({ drawId }: { drawId: string }) {
                 )}
                 {audits.data && audits.data.items.length > 0 && (
                     <>
+                        <PagedCount total={audits.data.totalElements} />
                         <div
                             role="region"
                             aria-label="실행 감사 표 가로 스크롤"

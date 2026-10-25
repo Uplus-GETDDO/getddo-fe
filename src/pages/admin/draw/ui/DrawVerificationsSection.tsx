@@ -10,7 +10,7 @@ import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 const PAGE_SIZE = 5;
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
@@ -94,6 +94,7 @@ export function DrawVerificationsSection({ drawId, canVerify }: DrawVerification
             )}
             {data && data.items.length > 0 && (
                 <>
+                    <PagedCount total={data.totalElements} />
                     <ul className="flex flex-col gap-3">
                         {data.items.map((verification) => (
                             <li

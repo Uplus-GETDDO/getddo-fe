@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
@@ -37,6 +37,8 @@ export function useAdminTicketHistories(params: AdminTicketHistoriesParams) {
     return useQuery({
         ...adminListOptions,
         queryKey: [...ADMIN_TICKETS_KEY, 'histories', params],
+        // 필터·페이지를 바꿔 다시 받는 동안 이전 목록을 그대로 두어 표가 스켈레톤으로 꺼졌다 켜지지 않게 한다
+        placeholderData: keepPreviousData,
         refetchInterval: (query) => pollingReadInterval(query),
         refetchIntervalInBackground: false,
         queryFn: async () => {

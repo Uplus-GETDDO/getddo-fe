@@ -6,7 +6,7 @@ import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { formatKst } from '@shared/utils/date';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 const PAGE_SIZE = 10;
 
@@ -50,6 +50,7 @@ export function ResultChangesSection({ eventId }: { eventId: string }) {
             )}
             {data && data.items.length > 0 && (
                 <>
+                    <PagedCount total={data.totalElements} />
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">

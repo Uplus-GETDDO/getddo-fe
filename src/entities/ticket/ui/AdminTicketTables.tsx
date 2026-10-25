@@ -15,15 +15,16 @@ import { TICKET_OPERATION_DELTA } from '../model/operation';
 
 const TIME = 'text-fg-secondary text-body-sm whitespace-nowrap';
 
-/** wide — 남는 폭을 모두 가져갈 열(긴 이름). 나머지 칸은 내용 폭만큼만 차지해 왼쪽에 모인다 */
+/**
+ * columns — 칸 이름과 표 전체에서 차지할 폭. 폭을 정해 두고(table-fixed) 고르게 펼친다 —
+ * 마지막 칸이 남는 폭을 다 가져가면 짧은 값들이 왼쪽에 쏠려 붙어 보였다
+ */
 function Frame({
-    headers,
-    wide = [],
+    columns,
     label,
     children,
 }: {
-    headers: string[];
-    wide?: string[];
+    columns: { header: string; width: string }[];
     /** 가로 스크롤 영역의 이름 — 좁은 화면에서 표가 카드 안으로 스크롤할 때 읽힌다 */
     label: string;
     children: ReactNode;
@@ -37,16 +38,14 @@ function Frame({
             tabIndex={0}
             className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto border-y focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
         >
-            <Table>
+            <Table className="min-w-[56rem] table-fixed">
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                        {headers.map((header) => (
+                        {columns.map(({ header, width }) => (
                             <TableHead
                                 key={header}
-                                className={cn(
-                                    'text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap',
-                                    wide.includes(header) && 'w-full',
-                                )}
+                                style={{ width }}
+                                className="text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap"
                             >
                                 {header}
                             </TableHead>
@@ -59,15 +58,15 @@ function Frame({
     );
 }
 
-const Cell = ({ children, wide = false }: { children: ReactNode; wide?: boolean }) => (
-    <TableCell className={cn('px-4 py-3 align-middle', wide && 'w-full')}>{children}</TableCell>
+const Cell = ({ children }: { children: ReactNode }) => (
+    <TableCell className="truncate px-4 py-3 align-middle">{children}</TableCell>
 );
 
 function UserCell({ name, id }: { name: string; id: string }) {
     return (
-        <div className="flex flex-col">
-            <span className="text-body-sm-bold text-fg-primary">{name}</span>
-            <span className="text-caption text-fg-tertiary">{id}</span>
+        <div className="flex min-w-0 flex-col">
+            <span className="text-body-sm-bold text-fg-primary truncate">{name}</span>
+            <span className="text-caption text-fg-tertiary truncate">{id}</span>
         </div>
     );
 }
@@ -89,16 +88,20 @@ function DeltaText({ delta }: { delta: number | null }) {
 
 /**
  * AO05 — 전체 이력. 조회 전용이라 줄에 올려도 눌리는 듯한 색을 입히지 않는다.
- * 무엇이 일어났는지(처리)와 몇 장 움직였는지(변동)를 한 칸에 붙이고, 길이가 제각각인 이벤트·미션 이름을 맨 끝에 두어
- * 짧은 값들이 왼쪽에 모이게 한다 — 칸이 표 전체 폭으로 흩어지면 좌우 끝을 오가며 읽어야 했다
+ * 무엇이 일어났는지(처리)와 몇 장 움직였는지(변동)를 한 칸에 붙이고, 길이가 제각각인 이벤트·미션 이름을 맨 끝에 둔다
  */
+const COLUMNS = [
+    { header: '처리 시각', width: '17%' },
+    { header: '처리', width: '11%' },
+    { header: '등급', width: '12%' },
+    { header: '사용자', width: '17%' },
+    { header: '처리 후 상태', width: '12%' },
+    { header: '이벤트·미션', width: '31%' },
+];
+
 export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }) {
     return (
-        <Frame
-            headers={['처리 시각', '처리', '등급', '사용자', '처리 후 상태', '이벤트·미션']}
-            wide={['이벤트·미션']}
-            label="응모권 이력 표 가로 스크롤"
-        >
+        <Frame columns={COLUMNS} label="응모권 이력 표 가로 스크롤">
             {rows.map((row) => (
                 <TableRow key={row.id} className="hover:bg-transparent">
                     <Cell>
@@ -134,7 +137,7 @@ export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }
                             {TICKET_STATUS_LABEL[row.status]}
                         </span>
                     </Cell>
-                    <Cell wide>
+                    <Cell>
                         <span className="text-fg-primary text-sm">
                             {row.eventTitle ?? row.missionTitle ?? '-'}
                         </span>

@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 export const DRAW_RUN_PAGE_SIZE = 10;
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
@@ -81,6 +81,7 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                     </Button>
                 </div>
             )}
+            <PagedCount total={data.totalElements} />
             <div className="bg-surface-page border-border-default overflow-hidden border-y">
                 <Table>
                     <TableHeader>

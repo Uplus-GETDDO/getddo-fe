@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import type { AdminEventStatus } from '@entities/event';
 
-import { useEventDraws } from '@entities/drawResult';
+import { DRAW_RUN_STATUS_META, useEventDraws } from '@entities/drawResult';
 import { ADMIN_STATUS_META, useAdminEvent } from '@entities/event';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -12,6 +12,7 @@ import { ChipTabs } from '@shared/ui/chip-tabs';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import { DrawRunDetail } from './DrawRunDetail';
 import { DRAW_RUN_PAGE_SIZE, DrawRunList } from './DrawRunList';
@@ -27,38 +28,27 @@ const TABS: { value: PanelTab; label: string }[] = [
 const FLOW_STEPS = ['자동 추첨', '결과 확인·조정', '당첨자 공개'] as const;
 
 /**
- * 상태별로 관리자가 지금 하는 일 — '실행' 같은 시스템 말 대신 할 일 순서(추첨 → 확인·조정 → 공개)로 안내한다.
- * step은 FLOW_STEPS의 지금 칸, action은 최신 추첨 결과를 여는 버튼 이름(없으면 기다리기만)
+ * 상태별 진행 칸 — 할 일 순서(추첨 → 확인·조정 → 공개) 중 지금 칸과, 최신 추첨 결과를 여는 버튼 이름(없으면 기다리기만).
+ * 무엇을 하라는 문장은 두지 않고 단계 막대와 아래 요약 값으로 보인다
  */
 const DRAW_FLOW: Partial<
-    Record<
-        AdminEventStatus,
-        { step: number; title: string; hint: string; action?: string; primary?: boolean }
-    >
+    Record<AdminEventStatus, { step: number; action?: string; primary?: boolean }>
 > = {
     CLOSED: {
         step: 0,
-        title: '자동 추첨을 기다리는 중이에요.',
-        hint: '마감 1분 뒤 자동으로 추첨해요. 끝나면 결과 확인 단계로 넘어가요.',
     },
     DRAW_CONFIRMED: {
         step: 1,
-        title: '당첨자를 확인하고 공개해 주세요.',
-        hint: '필요하면 당첨 취소·재추첨을 한 뒤 공개해요. 공개 전까지 사용자에게 보이지 않아요.',
         action: '결과 확인하고 공개하기',
         primary: true,
     },
     REDRAWING: {
         step: 1,
-        title: '재추첨 결과를 확인해 주세요.',
-        hint: '빈 자리를 채운 결과를 확인하고 공개 명단을 갱신해요.',
         action: '재추첨 결과 열기',
         primary: true,
     },
     PUBLISHED: {
         step: 3,
-        title: '당첨자 공개를 마쳤어요.',
-        hint: '당첨 취소가 필요하면 결과에서 취소하고 빈 자리를 다시 추첨할 수 있어요.',
         action: '공개된 결과 보기',
     },
 };
@@ -90,6 +80,7 @@ export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?
     const latestRun = latest.data?.items[0];
     // ADR-022 — 발표 예정 시각·카운트다운은 계약에서 제외됐다. 표시 시각은 최초 자동 추첨 기준이다
     const drawScheduledAt = event?.drawScheduledAt;
+    const winners = event?.prizes.reduce((sum, p) => sum + p.winnerCount, 0) ?? 0;
 
     return (
         <div className="flex flex-col gap-6">
@@ -187,17 +178,26 @@ export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?
                                 })}
                             </ol>
                             <div className="flex flex-wrap items-center gap-3">
-                                <p className="text-body-sm text-fg-secondary min-w-0 flex-1">
-                                    <span className="text-body-sm-bold text-fg-primary">
-                                        {flow.title}
-                                    </span>{' '}
-                                    {flow.hint}
-                                </p>
+                                {/* 안내 문장 대신 이 이벤트 추첨의 요약 값 두 개 — 규모와 최근 실행 상태를 한 줄로 */}
+                                <dl className="flex min-w-0 flex-1 flex-wrap items-center gap-x-5 gap-y-1">
+                                    <SummaryItem label="당첨">
+                                        {formatNumber(winners)}명
+                                    </SummaryItem>
+                                    <SummaryItem label="최근 추첨">
+                                        {latestRun
+                                            ? `${latestRun.runNumber}회차 · ${DRAW_RUN_STATUS_META[latestRun.status].label}`
+                                            : '아직 없음'}
+                                    </SummaryItem>
+                                </dl>
                                 {flow.action && latestRun && (
                                     <Button
                                         size="sm"
                                         variant={flow.primary ? 'primary' : 'secondary'}
-                                        onClick={() => select(latestRun.id)}
+                                        onClick={() => {
+                                            // 상세 모달은 추첨 기록 탭에서만 뜬다 — 다른 탭에서 눌러도 바로 열리게 탭을 옮긴다
+                                            setTab('runs');
+                                            select(latestRun.id);
+                                        }}
                                     >
                                         {flow.action}
                                     </Button>
@@ -207,8 +207,8 @@ export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?
                     ) : (
                         <p className="text-caption text-fg-tertiary border-border-default border-t pt-4">
                             {event.status === 'CANCELED'
-                                ? '취소된 이벤트라 추첨·공개를 할 수 없어요.'
-                                : '당첨자가 나오지 않은 이벤트예요. 추첨 기록에서 사유를 확인할 수 있어요.'}
+                                ? '취소된 이벤트 · 추첨 없음'
+                                : '당첨자 없음'}
                         </p>
                     )}
                 </section>
@@ -248,6 +248,15 @@ export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?
                     <ResultChangesSection eventId={eventId} />
                 </div>
             )}
+        </div>
+    );
+}
+
+function SummaryItem({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div className="flex min-w-0 items-baseline gap-1.5">
+            <dt className="text-body-sm text-fg-tertiary shrink-0">{label}</dt>
+            <dd className="text-body-sm-bold text-fg-primary truncate tabular-nums">{children}</dd>
         </div>
     );
 }

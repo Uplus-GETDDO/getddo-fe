@@ -164,20 +164,38 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByText('접수된 참여자가 없습니다.')).toBeInTheDocument();
     });
 
-    it('응모 이력의 사용자 링크는 이름을 보여주고 ID로 사용자 상세에 연결된다', async () => {
+    it('응모 이력의 사용자 이름을 누르면 머무를지·옮겨 갈지 고르는 메뉴가 ID로 연결된다', async () => {
+        const user = userEvent.setup();
         renderPage();
         await screen.findAllByText('10월 럭키 드로우');
-        // ADR-028 — 링크 텍스트는 현재 이름, 동일인 식별은 사용자 ID다
-        const links = screen.getAllByRole('link', { name: '김도윤' });
-        expect(links[0]).toHaveAttribute('href', `/admin/users?detail=${USER_ID}`);
+        // ADR-028 — 보이는 글은 현재 이름, 동일인 식별은 사용자 ID다
+        await user.click(screen.getAllByRole('button', { name: '김도윤' })[0]!);
+        expect(screen.getByRole('link', { name: '이 사용자 응모만 보기' })).toHaveAttribute(
+            'href',
+            `/admin/entries?userId=${USER_ID}`,
+        );
+        expect(screen.getByRole('link', { name: /사용자 상세 열기/ })).toHaveAttribute(
+            'href',
+            `/admin/users?detail=${USER_ID}`,
+        );
+        await user.keyboard('{Escape}');
         // 이름이 없는 응모 건은 기존처럼 사용자 ID를 보여준다
-        const unnamed = screen.getAllByRole('link', {
-            name: '00000000-0000-4000-8000-000000000004',
-        });
-        expect(unnamed[0]).toHaveAttribute(
+        await user.click(
+            screen.getAllByRole('button', { name: '00000000-0000-4000-8000-000000000004' })[0]!,
+        );
+        expect(screen.getByRole('link', { name: /사용자 상세 열기/ })).toHaveAttribute(
             'href',
             '/admin/users?detail=00000000-0000-4000-8000-000000000004',
         );
+    });
+
+    it('메뉴에서 이 사용자 응모만 보기를 고르면 같은 화면에서 사용자 필터가 걸린다', async () => {
+        const user = userEvent.setup();
+        renderPage();
+        await screen.findAllByText('10월 럭키 드로우');
+        await user.click(screen.getAllByRole('button', { name: '김도윤' })[0]!);
+        await user.click(screen.getByRole('link', { name: '이 사용자 응모만 보기' }));
+        expect(await screen.findByLabelText('사용자 ID 필터')).toHaveValue(USER_ID);
     });
 
     it('탭 없이 응모 이력을 열고, 이벤트를 걸면 그 이벤트 참여자 보기로 건너간다', async () => {

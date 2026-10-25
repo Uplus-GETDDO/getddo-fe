@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import type { AdminEventStatus, EventType } from '@entities/event';
+import type { AdminEvent, AdminEventStatus, EventType } from '@entities/event';
 
 import { ADMIN_STATUS_META, useAdminEventsByStatus } from '@entities/event';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
 import {
     chipValue,
@@ -43,13 +44,21 @@ const KIND_OPTIONS: { value: 'all' | EventType; label: string }[] = [
     { value: 'TICKET', label: '겟또타임' },
     { value: 'NO_TICKET', label: '이벤트' },
 ];
-// 단계 칸마다 지금 해야 할 일을 한 줄로 — '마감 이후 n개'처럼 숫자만 있으면 무엇을 하라는지 몰랐다
-const STAGE_HINT: Record<string, string> = {
-    DRAW_CONFIRMED: '결과를 확인하고 공개해 주세요',
-    REDRAWING: '재추첨이 끝나면 명단을 갱신해요',
-    CLOSED: '자동 추첨이 진행 중이에요',
-    PUBLISHED: '당첨자 공개가 끝났어요',
-};
+const HOUR_MS = 60 * 60 * 1000;
+
+/**
+ * 발표 대기 칸의 보조 값 — 가장 오래 기다린 이벤트가 추첨 뒤 얼마나 지났는지. 공개가 밀리면 문의로 이어져
+ * 무엇부터 처리할지 정하는 데 쓴다. 결과 확정 시각이 응답에 없어 최초 자동 추첨 시각부터 센다
+ */
+function longestWait(events: AdminEvent[], now: Date): string | null {
+    if (events.length === 0) return null;
+    const oldest = Math.min(...events.map((e) => new Date(e.drawScheduledAt).getTime()));
+    const hours = Math.floor((now.getTime() - oldest) / HOUR_MS);
+    if (hours < 1) return null;
+    return hours < 24
+        ? `가장 오래된 건 ${hours}시간째`
+        : `가장 오래된 건 ${Math.floor(hours / 24)}일째`;
+}
 const STAGE_ORDER: readonly AdminEventStatus[] = [
     'DRAW_CONFIRMED',
     'REDRAWING',
@@ -60,6 +69,7 @@ const STAGE_ORDER: readonly AdminEventStatus[] = [
 export function AdminDrawPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const eventId = searchParams.get('eventId') ?? '';
+    const now = useVirtualClock().now();
     const [kind, setKind] = useState<'all' | EventType>('all');
     const [stage, setStage] = useState<'all' | AdminEventStatus>('all');
     const [keywordInput, setKeywordInput] = useState('');
@@ -94,7 +104,8 @@ export function AdminDrawPage() {
 
     // 기간이 잘못되면 날짜 조건 없이 불러온 목록이라 보여 주지 않는다 (기간 입력칸이 오류를 알린다)
     const all = createdRangeError ? [] : [...items];
-    const countOf = (status: AdminEventStatus) => all.filter((e) => e.status === status).length;
+    const inStage = (status: AdminEventStatus) => all.filter((e) => e.status === status);
+    const countOf = (status: AdminEventStatus) => inStage(status).length;
     const events = all
         .filter((e) => stage === 'all' || e.status === stage)
         .sort((a, b) => (DRAW_PRIORITY[a.status] ?? 9) - (DRAW_PRIORITY[b.status] ?? 9));
@@ -103,7 +114,7 @@ export function AdminDrawPage() {
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
             {/*
-             * 단계 탭 — 개수와 할 일을 함께 보이고, 누르면 그 단계만 거른다. 발표 대기가 가장 먼저.
+             * 단계 탭 — 개수와 요약을 함께 보이고, 누르면 그 단계만 거른다. 발표 대기가 가장 먼저.
              * 따로 떨어진 카드에 얇은 테두리만 바뀌면 누르는 곳인지 몰라, 한 판에 이어 붙인 탭으로 두고
              * 고른 칸은 먹색으로 통째로 채운다 (바닥 줄만 칠하면 흔한 템플릿처럼 보였다)
              */}
@@ -115,7 +126,6 @@ export function AdminDrawPage() {
                 <StageTile
                     label="전체"
                     count={isPending ? null : all.length}
-                    hint="마감 이후 모든 이벤트"
                     selected={stage === 'all'}
                     onClick={() => setStage('all')}
                 />
@@ -124,7 +134,11 @@ export function AdminDrawPage() {
                         key={status}
                         label={ADMIN_STATUS_META[status].label}
                         count={isPending ? null : countOf(status)}
-                        hint={STAGE_HINT[status] ?? ''}
+                        note={
+                            status === 'DRAW_CONFIRMED' && !isPending
+                                ? longestWait(inStage(status), now)
+                                : null
+                        }
                         urgent={status === 'DRAW_CONFIRMED' && countOf(status) > 0}
                         selected={stage === status}
                         onClick={() => setStage(status)}
@@ -190,10 +204,12 @@ export function AdminDrawPage() {
             {/* 줄을 고르면 오른쪽에 그 이벤트의 추첨 관리가 열린다 — 이벤트 관리와 같은 2열 */}
             <div
                 className={cn(
-                    'flex flex-col gap-6 xl:grid xl:items-start xl:transition-[grid-template-columns,column-gap] xl:duration-300 xl:ease-out',
+                    'flex flex-col gap-6 xl:grid xl:items-start',
+                    // 칸 너비를 애니메이션하면 표가 매 프레임 다시 줄을 맞추며 덜컥거렸다 — 너비는 한 번에 바꾸고
+                    // 오른쪽 패널만 옅게 밀려 들어오게 한다
                     eventId
                         ? 'xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] xl:gap-x-4'
-                        : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0fr)] xl:gap-x-0',
+                        : 'xl:grid-cols-1',
                 )}
             >
                 <div className="flex min-w-0 flex-col gap-3">
@@ -227,7 +243,7 @@ export function AdminDrawPage() {
                 {eventId && (
                     <aside
                         aria-label="추첨 관리 상세"
-                        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-6 min-w-0 motion-safe:duration-300"
+                        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 min-w-0 motion-safe:duration-200"
                     >
                         <DrawEventPanel
                             key={eventId}
@@ -244,22 +260,26 @@ export function AdminDrawPage() {
     );
 }
 
-/** 단계 칸 — 개수를 크게, 할 일을 작게. 발표 대기가 남아 있으면 브랜드 테두리로 먼저 눈에 걸리게 한다 */
+/**
+ * 단계 칸 — 위에 단계 이름, 아래에 건수(크게). 발표 대기만 오른쪽 끝에 대기 기간(작게)을 바닥선에 맞춰 붙인다.
+ * 발표 대기가 남아 있으면 점과 브랜드색 건수로 먼저 눈에 걸리게 한다
+ */
 function StageTile({
     label,
     count,
-    hint,
+    note = null,
     selected,
     urgent = false,
     onClick,
 }: {
     label: string;
     count: number | null;
-    hint: string;
+    note?: string | null;
     selected: boolean;
     urgent?: boolean;
     onClick: () => void;
 }) {
+    const sub = selected ? 'text-fg-inverse/70' : 'text-fg-tertiary';
     return (
         <button
             type="button"
@@ -267,7 +287,7 @@ function StageTile({
             aria-checked={selected}
             onClick={onClick}
             className={cn(
-                'focus-visible:ring-border-focus flex cursor-pointer flex-col items-start gap-1.5 px-5 py-4 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
+                'focus-visible:ring-border-focus flex cursor-pointer flex-col gap-3 px-5 py-4 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                 selected ? 'bg-surface-inverse' : 'bg-surface-page hover:bg-surface-sunken',
             )}
         >
@@ -280,18 +300,21 @@ function StageTile({
                 {urgent && <span aria-hidden className="bg-brand-primary size-1.5 rounded-full" />}
                 {label}
             </span>
-            <span
-                className={cn(
-                    'text-[1.75rem] leading-9 font-bold tracking-tight tabular-nums',
-                    selected ? 'text-fg-inverse' : urgent ? 'text-fg-brand' : 'text-fg-primary',
+            <span className="flex w-full items-baseline justify-between gap-2">
+                <span
+                    className={cn(
+                        'text-[1.75rem] leading-8 font-bold tracking-tight tabular-nums',
+                        selected ? 'text-fg-inverse' : urgent ? 'text-fg-brand' : 'text-fg-primary',
+                    )}
+                >
+                    {count ?? '—'}
+                    <span className={cn('ml-0.5 text-sm font-medium', sub)}>건</span>
+                </span>
+                {note && (
+                    <span className={cn('text-caption whitespace-nowrap tabular-nums', sub)}>
+                        {note}
+                    </span>
                 )}
-            >
-                {count ?? '—'}
-            </span>
-            <span
-                className={cn('text-caption', selected ? 'text-fg-inverse/70' : 'text-fg-tertiary')}
-            >
-                {hint}
             </span>
         </button>
     );

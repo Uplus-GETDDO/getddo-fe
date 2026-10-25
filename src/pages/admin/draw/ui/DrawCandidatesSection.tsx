@@ -10,7 +10,7 @@ import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 /** 자격 스냅샷의 멤버십(excellent·vip·vvip)을 화면 라벨(우수·VIP·VVIP)로 — 모르는 값은 원문, 없으면 — */
 function membershipLabel(value: unknown) {
@@ -90,6 +90,7 @@ export function DrawCandidatesSection({
             )}
             {data && data.items.length > 0 && (
                 <>
+                    <PagedCount total={data.totalElements} />
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
