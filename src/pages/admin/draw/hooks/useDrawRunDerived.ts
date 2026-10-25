@@ -79,8 +79,11 @@ export function useDrawRunDerived(run: DrawRunDetailData) {
         const runNumber = run.runNumber;
         const totalPages = Math.ceil(runList.totalElements / RUN_LIST_PAGE_SIZE);
         void (async () => {
+            // 람다에 잡힌 page++·finally 절은 React Compiler가 건너뛴다 — while 순회와
+            // try 뒤 해제로 같은 동작을 둔다 (GD-347)
             try {
-                for (let page = 2; page <= totalPages && remaining.size > 0 && !cancelled; page++) {
+                let page = 2;
+                while (page <= totalPages && remaining.size > 0 && !cancelled) {
                     const list = await queryClient.fetchQuery({
                         queryKey: [
                             ...DRAWS_KEY,
@@ -91,25 +94,26 @@ export function useDrawRunDerived(run: DrawRunDetailData) {
                         queryFn: () =>
                             fetchEventDrawsPage(eventId, { page, size: RUN_LIST_PAGE_SIZE }),
                     });
+                    page += 1;
                     for (const item of list.items) {
                         if (item.runNumber >= runNumber) continue;
                         const detail = await queryClient.fetchQuery(drawRunOptions(item.id));
-                        if (cancelled) return;
+                        if (cancelled) break;
                         for (const r of detail.results) {
                             if (remaining.delete(r.id)) found.push(r);
                         }
                         if (remaining.size === 0) break;
                     }
                 }
-                if (cancelled) return;
-                setEarlierSearch({ runId, results: found, done: true, failed: false });
+                if (!cancelled) {
+                    setEarlierSearch({ runId, results: found, done: true, failed: false });
+                }
             } catch {
                 if (!cancelled) {
                     setEarlierSearch({ runId, results: found, done: false, failed: true });
                 }
-            } finally {
-                searchingRef.current = false;
             }
+            searchingRef.current = false;
         })();
         return () => {
             cancelled = true;

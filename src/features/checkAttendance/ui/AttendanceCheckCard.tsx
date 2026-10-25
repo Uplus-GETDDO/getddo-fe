@@ -181,9 +181,9 @@ export function AttendanceCheckCard({
             toast.error(
                 getErrorMessage(error, '출석 처리에 실패했어요. 잠시 후 다시 시도해 주세요.'),
             );
-        } finally {
-            endBaking();
         }
+        // finally 절은 React Compiler가 건너뛴다 — 굽기 장면 끄기는 성공·실패 뒤에 항상 둔다 (GD-347)
+        endBaking();
     };
 
     // 굽는 동안에는 결과를 미리 보여주지 않도록 오늘을 출석 전으로 둔다

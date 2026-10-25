@@ -54,20 +54,21 @@ export function useSubmitMission(missionId: string) {
                 };
             }
             busy.current = true;
-            try {
-                const { data, status } = await apiClient.post<unknown>(
+            // try/finally는 React Compiler가 건너뛴다 — 성공·실패 양쪽 해제는 promise.finally()로 둔다 (GD-347)
+            const { data, status } = await apiClient
+                .post<unknown>(
                     `${missionApiPath(missionId)}/submissions`,
                     { answers: attemptRef.current.answers },
                     { headers: { [IDEMPOTENCY_HEADER]: attemptRef.current.key } },
-                );
-                const outcome: MissionSubmissionOutcome = {
-                    result: envelopeSchema(missionSubmissionResultSchema).parse(data).data,
-                    isNewSubmission: status === 201,
-                };
-                return outcome;
-            } finally {
-                busy.current = false;
-            }
+                )
+                .finally(() => {
+                    busy.current = false;
+                });
+            const outcome: MissionSubmissionOutcome = {
+                result: envelopeSchema(missionSubmissionResultSchema).parse(data).data,
+                isNewSubmission: status === 201,
+            };
+            return outcome;
         },
         onSuccess: (outcome) => {
             attemptRef.current = null;
