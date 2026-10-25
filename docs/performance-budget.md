@@ -11,14 +11,16 @@
 
 ## 버짓
 
-| 지표               | 기준선 (2026-10-24 실측) | 버짓                | 헤드룸 |
+| 지표               | 기준선 (2026-10-25 실측) | 버짓                | 헤드룸 |
 | ------------------ | ------------------------ | ------------------- | ------ |
-| 초기 JS gzip 합계  | 237,816 B (232.2 KiB)    | 262,144 B (256 KiB) | ~10%   |
-| 초기 CSS gzip 합계 | 25,178 B (24.6 KiB)      | 30,720 B (30 KiB)   | ~22%   |
+| 초기 JS gzip 합계  | 241,793 B (236.1 KiB)    | 262,144 B (256 KiB) | ~8%    |
+| 초기 CSS gzip 합계 | 25,887 B (25.3 KiB)      | 30,720 B (30 KiB)   | ~19%   |
+
+- 2026-10-25 재산정 (GD-348 후속): 부트 지연으로 초기 JS가 1,766B까지 떨어졌으나, 부팅 그래프 modulepreload 주입으로 `dist/index.html`이 다시 부팅 청크들을 참조해 집계가 복귀했다. preload는 fetch만 앞당기고 평가는 `import()` 시점에 일어나므로 이 지표는 "초기 fetch 바이트"를 재는 것으로 해석한다 — 페인트 블로킹 평가 비용은 이 지표가 구분하지 않는다.
 
 근거:
 
-- 기준선은 `npm run build` 후 `node scripts/measureGd262Bundle.mjs <out> dist` 실측값 — `reports/20261024-gd340-baseline-bundle.json`.
+- 기준선은 `npm run build` 후 `node scripts/measureGd262Bundle.mjs <out> dist` 실측값 — `reports/20261025-gd348c-baseline-bundle.json`.
 - 초기 JS: GD-332에서 365→248 KiB로 줄였고 GD-334에서 사용자 셸이 분리돼 232 KiB까지 내려왔다 — 256 KiB는 정상적인 기능 추가분(의존성 증가·신규 슬라이스)을 흡수하면서도 10%를 넘는 회귀는 차단하는 값이다.
 - 초기 CSS: GD-332에서 @font-face 92개를 비동기 분리해 24.6 KiB로 떨어졌다. Tailwind 유틸 증가분은 천천히 자라므로 30 KiB면 충분하다.
 - 파일 수·개별 청크 버짓은 두지 않는다 — 청크 분할은 `vite.config.ts`의 codeSplitting 정책이 소유하고, 총량 버짓이 회귀 감지로 충분하다.
