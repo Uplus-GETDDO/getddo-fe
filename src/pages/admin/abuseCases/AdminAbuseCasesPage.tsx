@@ -43,6 +43,8 @@ export function AdminAbuseCasesPage() {
     // 기간도 Select와 달리 즉시 적용되지 않고 검색 버튼으로 함께 적용된다 ([from, to), blockedAt 기준)
     const [from, setFrom] = useState(linkedDate ? kstDateStartUtcIso(linkedDate) : '');
     const [to, setTo] = useState(linkedDate ? kstNextDateStartUtcIso(linkedDate) : '');
+    // 알약 요약은 적용된 날짜(YYYY-MM-DD)로 — 입력칸 값으로 그리면 적용 전 값이 보이거나, 입력만 비워도 알약이 꺼졌다
+    const [appliedRange, setAppliedRange] = useState({ from: linkedDate, to: linkedDate });
     const [sourceType, setSourceType] = useState('all');
     const [inputError, setInputError] = useState<string | null>(null);
     const [selected, setSelected] = useState<AbuseCase | null>(null);
@@ -73,6 +75,7 @@ export function AdminAbuseCasesPage() {
         setToInput('');
         setFrom('');
         setTo('');
+        setAppliedRange({ from: '', to: '' });
         setSourceType('all');
         setInputError(null);
         setPage(1);
@@ -102,20 +105,22 @@ export function AdminAbuseCasesPage() {
                         (trimmedEventId && !z.uuid().safeParse(trimmedEventId).success)
                     ) {
                         setInputError('사용자·이벤트 ID는 올바른 UUID 형식이어야 합니다.');
-                        return;
+                        return false;
                     }
                     if (!isDateRangeOrdered(fromInput, toInput)) {
                         setInputError(RANGE_ERROR);
-                        return;
+                        return false;
                     }
                     setInputError(null);
                     setUserId(trimmedUserId);
                     setEventId(trimmedEventId);
                     setFrom(draftFrom);
                     setTo(draftTo);
+                    setAppliedRange({ from: fromInput, to: toInput });
                     resetPage();
                 }}
-                error={inputError && inputError !== RANGE_ERROR ? inputError : null}
+                // 범위 오류도 줄 아래에 띄운다 — 알약 창이 닫혀 있으면 창 안의 오류만으로는 왜 검색이 안 되는지 몰랐다
+                error={inputError}
                 onReset={resetFilters}
                 activeCount={
                     [userId, eventId, from || to, sourceType !== 'all'].filter(Boolean).length
@@ -124,12 +129,13 @@ export function AdminAbuseCasesPage() {
                 <FilterRow
                     label="차단일"
                     apply
-                    value={from || to ? rangeValue(fromInput, toInput) : undefined}
+                    value={rangeValue(appliedRange.from, appliedRange.to)}
                     onClear={() => {
                         setFromInput('');
                         setToInput('');
                         setFrom('');
                         setTo('');
+                        setAppliedRange({ from: '', to: '' });
                         resetPage();
                     }}
                 >

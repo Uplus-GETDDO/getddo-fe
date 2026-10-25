@@ -126,7 +126,13 @@ export function ActionQueuePanel({
     });
     const redrawing = useAdminEvents({ page: 1, size: 1, status: 'REDRAWING' });
     const failedJobs = useAdminNotificationJobs({ page: 1, size: 1, status: 'FAILED' });
-    const scheduled = useAdminEvents({ page: 1, size: SCHEDULED_SIZE, status: 'SCHEDULED' });
+    // 곧 시작하는 것부터 받아야 앞 100건 안에 24시간 이내 시작이 다 든다 — 기본 정렬(등록 최신순)이면 뒤 쪽에 밀렸다
+    const scheduled = useAdminEvents({
+        page: 1,
+        size: SCHEDULED_SIZE,
+        status: 'SCHEDULED',
+        sort: 'startsAt,asc',
+    });
 
     const startingSoon = (scheduled.data?.items ?? [])
         .map((event) => ({

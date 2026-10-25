@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
  * 조건마다 이름표 줄을 두던 예전 상자는 셀렉트·칩이 오른쪽으로 밀려 보였고, 접힌 '상세 조건'은 눌러 볼 곳인지 몰랐다
  */
 
-const PanelContext = createContext<{ submit?: () => void }>({});
+const PanelContext = createContext<{ submit?: () => boolean | void }>({});
 const RowContext = createContext<{ close: () => void } | null>(null);
 
 /** 알약 창 안에 놓였는지 — 창 안에서는 목록을 겹쳐 띄우지 않고 그 자리에 펼친다 */
@@ -40,8 +40,11 @@ function FilterPanel({
 }: {
     /** 맨 앞 검색 칸 — 있으면 검색 버튼과 함께 둔다 */
     search?: ReactNode;
-    /** 검색 버튼·엔터, 알약 창의 '적용' — 글자·날짜처럼 다 쓴 뒤 거는 조건을 확정한다 */
-    onSubmit?: () => void;
+    /**
+     * 검색 버튼·엔터, 알약 창의 '적용' — 글자·날짜처럼 다 쓴 뒤 거는 조건을 확정한다.
+     * 검증에 걸려 적용하지 않았으면 false를 돌려준다 — 알약 창이 닫히지 않아 창 안의 오류가 보인다
+     */
+    onSubmit?: () => boolean | void;
     onReset?: () => void;
     /** 기본값과 다른 조건 수 — 1개 이상일 때만 '필터 초기화'를 보인다 */
     activeCount?: number;
@@ -195,8 +198,7 @@ function FilterRow({
                             type="button"
                             size="sm"
                             onClick={() => {
-                                submit();
-                                setOpen(false);
+                                if (submit() !== false) setOpen(false);
                             }}
                         >
                             적용
@@ -263,7 +265,10 @@ function chipValue<T extends string>(
 
 /** 알약에 띄울 기간 — 'MM.DD ~ MM.DD', 한쪽만 있으면 '~부터'·'~까지' */
 function rangeValue(from: string, to: string) {
-    const short = (ymd: string) => ymd.slice(5).replace('-', '.');
+    // 두 끝의 해가 다르면 해까지 적는다 — '01.01 ~ 01.01'로는 해를 넘긴 기간인지 알 수 없었다
+    const crossYear = Boolean(from && to && from.slice(0, 4) !== to.slice(0, 4));
+    const short = (ymd: string) =>
+        crossYear ? ymd.replaceAll('-', '.') : ymd.slice(5).replace('-', '.');
     if (from && to) return from === to ? short(from) : `${short(from)} ~ ${short(to)}`;
     if (from) return `${short(from)}부터`;
     if (to) return `${short(to)}까지`;

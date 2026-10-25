@@ -13,25 +13,25 @@ interface ChunkReloadDeps {
 
 export function installChunkReload({
     target = window,
-    storage = window.sessionStorage,
+    storage,
     reload = () => window.location.reload(),
     now = () => Date.now(),
 }: ChunkReloadDeps = {}): void {
     target.addEventListener('vite:preloadError', (event) => {
-        let last = 0;
+        // 저장소는 실패가 났을 때 try 안에서 꺼낸다 — 사이트 데이터가 막힌 브라우저는 window.sessionStorage를
+        // 읽기만 해도 던져, 시작할 때 꺼내 두면 앱이 뜨기 전에 멈췄다.
+        // 새로고침 시각을 남길 수 없으면 새로고침하지 않고 오류 화면을 둔다 — 시각 없이 새로고침하면
+        // 실패가 이어질 때 쉬는 시간 없이 계속 새로고침된다
         try {
-            last = Number(storage.getItem(LAST_RELOAD_KEY) ?? 0);
+            const store = storage ?? window.sessionStorage;
+            const last = Number(store.getItem(LAST_RELOAD_KEY) ?? 0);
+            if (now() - last < RELOAD_COOLDOWN_MS) return;
+            store.setItem(LAST_RELOAD_KEY, String(now()));
         } catch {
-            // 저장소를 못 쓰는 환경(사생활 보호 모드 등)이면 기록 없이 한 번 새로고침한다
+            return;
         }
-        if (now() - last < RELOAD_COOLDOWN_MS) return;
         // 기본 동작(오류를 던져 오류 화면을 띄움)을 막고 새 빌드로 다시 연다
         event.preventDefault();
-        try {
-            storage.setItem(LAST_RELOAD_KEY, String(now()));
-        } catch {
-            // 기록을 못 남겨도 새로고침은 한다
-        }
         reload();
     });
 }

@@ -126,8 +126,9 @@ function DateRangeFilter({
             <div
                 className={cn(
                     'border-border-input bg-surface-page hover:border-border-input-hover focus-within:border-border-focus flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border py-1 pr-1.5 pl-3 transition-colors',
+                    // 오류 중에는 테두리색이 이미 빨강이라 포커스가 안 보였다 — 번짐 없이 테두리만 두 겹으로 굵힌다
                     error &&
-                        'border-semantic-error-strong hover:border-semantic-error-strong focus-within:border-semantic-error-strong',
+                        'border-semantic-error-strong hover:border-semantic-error-strong focus-within:border-semantic-error-strong focus-within:ring-semantic-error-strong focus-within:ring-1',
                 )}
             >
                 {basis && (

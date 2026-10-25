@@ -49,4 +49,37 @@ describe('installChunkReload', () => {
         fire();
         expect(reload).toHaveBeenCalledTimes(2);
     });
+
+    it('새로고침 시각을 저장하지 못하면 쉬는 시간 없이 반복되지 않게 새로고침하지 않는다', () => {
+        const target = new EventTarget();
+        const reload = vi.fn();
+        installChunkReload({
+            target: target as unknown as Window,
+            storage: {
+                getItem: () => null,
+                setItem: () => {
+                    throw new Error('QuotaExceededError');
+                },
+            },
+            reload,
+        });
+        const event = new Event('vite:preloadError', { cancelable: true });
+        target.dispatchEvent(event);
+        expect(reload).not.toHaveBeenCalled();
+        expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('저장소를 읽기만 해도 던지는 브라우저에서도 시작은 멈추지 않는다', () => {
+        const target = new EventTarget();
+        const reload = vi.fn();
+        const spy = vi.spyOn(window, 'sessionStorage', 'get').mockImplementation(() => {
+            throw new DOMException('blocked', 'SecurityError');
+        });
+        expect(() =>
+            installChunkReload({ target: target as unknown as Window, reload }),
+        ).not.toThrow();
+        target.dispatchEvent(new Event('vite:preloadError', { cancelable: true }));
+        expect(reload).not.toHaveBeenCalled();
+        spy.mockRestore();
+    });
 });

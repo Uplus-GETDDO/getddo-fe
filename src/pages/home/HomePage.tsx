@@ -42,8 +42,11 @@ export function HomePage() {
     return (
         // 피그마 홈 간격 — 헤더 아래 64(UserLayout이 준다), 섹션 사이 80, 섹션 제목과 내용 24. 마지막 섹션과 푸터는 다른 화면과 같은 112(pb-28)
         <main className="flex w-full flex-col gap-20 pb-28">
-            {/* 처음 온 사용자에게 한 번만 — 목록이 와서 섹션 높이가 자리 잡은 뒤에 시작한다 */}
-            <OnboardingTour ready={!isPending} />
+            {/*
+             * 처음 온 사용자에게 한 번만 — 목록이 와서 섹션 높이가 자리 잡은 뒤에 시작한다.
+             * 첫 요청이 실패하면 오류 화면 위에서 안내를 띄우고 '봤다'로 남기지 않게, 목록이 도착해야 시작한다
+             */}
+            <OnboardingTour ready={events !== undefined} />
             {/*
              * 홈은 배너로 시작해 눈에 보이는 제목이 없다. 그래도 문서에는 최상위 제목이 있어야
              * 화면 읽기 프로그램이 "여기가 어디인지"를 먼저 알려 줄 수 있어, 보이지 않게만 둔다.

@@ -24,6 +24,8 @@ import { formatKstFullDot, kstDateStartUtcIso, kstNextDateStartUtcIso } from '@s
 import { MISSION_TYPE_LABEL } from './model/labels';
 import { MissionDetailSheet } from './ui/MissionDetailSheet';
 
+const RANGE_MSG = '시작일이 종료일보다 늦습니다.';
+
 const TYPE_OPTIONS = [
     { value: 'all', label: '전체' },
     { value: 'SURVEY', label: '설문' },
@@ -90,6 +92,8 @@ export function AdminMissionsPage() {
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
             <FilterPanel
+                // 범위 오류도 줄 아래에 띄운다 — 알약 창이 닫혀 있으면 창 안의 오류만으로는 왜 검색이 안 되는지 몰랐다
+                error={rangeError ? RANGE_MSG : null}
                 actions={<Button onClick={() => setFormOpen(true)}>미션 등록</Button>}
                 search={
                     <TextFilter
@@ -103,7 +107,7 @@ export function AdminMissionsPage() {
                 onSubmit={() => {
                     if (!isDateRangeOrdered(draft.from, draft.to)) {
                         setRangeError(true);
-                        return;
+                        return false;
                     }
                     setRangeError(false);
                     setApplied({ ...draft, keyword: draft.keyword.trim() });
@@ -148,7 +152,7 @@ export function AdminMissionsPage() {
                         to={draft.to}
                         onFromChange={(from) => patch({ from })}
                         onToChange={(to) => patch({ to })}
-                        error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                        error={rangeError ? RANGE_MSG : null}
                     />
                 </FilterRow>
             </FilterPanel>

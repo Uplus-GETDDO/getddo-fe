@@ -7,11 +7,15 @@ import { formatKstDot, kstInputToUtcIso } from '@shared/utils/date';
 
 import type { EventFormInput } from '../utils/eventFormValues';
 
-// datetime-local 값(KST)을 화면 표기로 — 비었거나 덜 쓴 값은 자리 글자로 둔다
+// datetime-local 값(KST)을 화면 표기로 — 비었거나 덜 쓴 값은 자리 글자로 둔다.
+// 다섯 자리 해처럼 날짜가 안 되는 값은 변환에서 던지므로 잡아서 자리 글자로 둔다 (입력 중 양식 전체가 꺼지지 않게)
 function formatInput(local: string | undefined) {
     if (!local) return '—';
-    const iso = kstInputToUtcIso(local);
-    return Number.isNaN(Date.parse(iso)) ? '—' : formatKstDot(iso, true);
+    try {
+        return formatKstDot(kstInputToUtcIso(local), true);
+    } catch {
+        return '—';
+    }
 }
 
 // 경품 숫자 칸은 입력 중 문자열·숫자가 섞여 들어온다 — 1 이상의 정수일 때만 보여 준다

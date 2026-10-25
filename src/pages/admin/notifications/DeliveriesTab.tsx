@@ -23,6 +23,8 @@ import {
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
 
+const RANGE_MSG = '시작일이 종료일보다 늦습니다.';
+
 const STATUS_OPTIONS = [
     { value: ALL, label: '전체' },
     ...Object.entries(MOCK_DELIVERY_STATUS_LABEL).map(([value, label]) => ({ value, label })),
@@ -82,6 +84,8 @@ export function DeliveriesTab() {
     return (
         <div className="flex flex-col gap-6">
             <FilterPanel
+                // 범위 오류도 줄 아래에 띄운다 — 알약 창이 닫혀 있으면 창 안의 오류만으로는 왜 검색이 안 되는지 몰랐다
+                error={rangeError ? RANGE_MSG : null}
                 search={
                     <TextFilter
                         value={draft.userId}
@@ -94,7 +98,7 @@ export function DeliveriesTab() {
                 onSubmit={() => {
                     if (!isDateRangeOrdered(draft.from, draft.to)) {
                         setRangeError(true);
-                        return;
+                        return false;
                     }
                     setRangeError(false);
                     setApplied({
@@ -144,7 +148,7 @@ export function DeliveriesTab() {
                         to={draft.to}
                         onFromChange={(from) => patch({ from })}
                         onToChange={(to) => patch({ to })}
-                        error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                        error={rangeError ? RANGE_MSG : null}
                     />
                 </FilterRow>
                 <FilterRow

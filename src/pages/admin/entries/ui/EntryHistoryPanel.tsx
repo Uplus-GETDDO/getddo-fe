@@ -117,17 +117,18 @@ export function EntryHistoryPanel() {
                         (eventId && !z.uuid().safeParse(eventId).success)
                     ) {
                         setInputError('사용자·이벤트 ID는 올바른 UUID 형식이어야 합니다.');
-                        return;
+                        return false;
                     }
                     if (!isDateRangeOrdered(draft.from, draft.to)) {
                         setInputError(RANGE_ERROR);
-                        return;
+                        return false;
                     }
                     setInputError(null);
                     setApplied({ ...draft, userId, eventId });
                     setPage(1);
                 }}
-                error={inputError && inputError !== RANGE_ERROR ? inputError : null}
+                // 범위 오류도 줄 아래에 띄운다 — 알약 창이 닫혀 있으면 창 안의 오류만으로는 왜 검색이 안 되는지 몰랐다
+                error={inputError}
                 onReset={resetFilters}
                 activeCount={activeCount}
             >

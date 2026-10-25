@@ -94,6 +94,7 @@ export function AdminBannerTable({
                                 <Button
                                     size="icon-sm"
                                     variant="ghost"
+                                    data-drag-handle
                                     className="text-fg-tertiary hover:text-fg-primary cursor-grab active:cursor-grabbing"
                                     aria-label={`${title} 배너 순서 바꾸기 — 끌어 옮기거나 위·아래 방향키를 누르세요`}
                                     disabled={disabled}
@@ -203,7 +204,11 @@ export function AdminBannerTable({
 
     const grab = (event: React.PointerEvent<HTMLTableRowElement>, bannerId: string) => {
         const body = bodyRef.current;
-        if (disabled || !body || event.button !== 0 || startsOnOwnControl(event.target)) return;
+        // 손잡이는 버튼이지만 끌기의 출발점이다 — 다른 버튼·링크 위에서 시작한 누름만 그 칸의 것으로 둔다
+        const onHandle =
+            event.target instanceof Element && event.target.closest('[data-drag-handle]') !== null;
+        if (disabled || !body || event.button !== 0) return;
+        if (!onHandle && startsOnOwnControl(event.target)) return;
         // 이 행이 뒤이은 move·up을 끝까지 받게 잡아 둔다 — 표 밖으로 나가도 놓치지 않는다
         event.currentTarget.setPointerCapture(event.pointerId);
         event.preventDefault();

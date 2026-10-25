@@ -18,6 +18,8 @@ import { PagedResult } from '@shared/ui/paged-result';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { cn } from '@shared/utils/cn';
 
+const RANGE_MSG = '시작일이 종료일보다 늦습니다.';
+
 // 한 화면에 보는 줄 수 — 수천 건을 넘겨 보려면 30·100개씩 고를 수 있어야 한다 (AE01 size 최대 100)
 const PAGE_SIZE_OPTIONS = [30, 100] as const;
 const SORT_OPTIONS = [
@@ -159,6 +161,8 @@ export function AdminEventsPage() {
     return (
         <div className="flex flex-col gap-6 pr-10 pb-10">
             <FilterPanel
+                // 범위 오류도 줄 아래에 띄운다 — 알약 창이 닫혀 있으면 창 안의 오류만으로는 왜 검색이 안 되는지 몰랐다
+                error={rangeError || createdRangeError ? RANGE_MSG : null}
                 actions={
                     <Button onClick={() => void navigate('/admin/events/new')}>
                         새 이벤트 등록
@@ -178,7 +182,7 @@ export function AdminEventsPage() {
                     const createdRangeValid = isDateRangeOrdered(createdFromInput, createdToInput);
                     setRangeError(!rangeValid);
                     setCreatedRangeError(!createdRangeValid);
-                    if (!rangeValid || !createdRangeValid) return;
+                    if (!rangeValid || !createdRangeValid) return false;
                     setKeyword(keywordInput.trim());
                     setFrom(fromInput);
                     setTo(toInput);
@@ -243,7 +247,7 @@ export function AdminEventsPage() {
                         to={toInput}
                         onFromChange={setFromInput}
                         onToChange={setToInput}
-                        error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                        error={rangeError ? RANGE_MSG : null}
                     />
                     {/* AE01 from/to는 모집 기간이 이 범위와 겹치는 이벤트를 찾는다 — 시작일 범위가 아니다 */}
                     <span className="text-caption text-fg-tertiary">
@@ -268,7 +272,7 @@ export function AdminEventsPage() {
                         to={createdToInput}
                         onFromChange={setCreatedFromInput}
                         onToChange={setCreatedToInput}
-                        error={createdRangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                        error={createdRangeError ? RANGE_MSG : null}
                     />
                 </FilterRow>
                 <FilterRow

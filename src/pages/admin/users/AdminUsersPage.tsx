@@ -114,21 +114,24 @@ export function AdminUsersPage() {
                     const trimmedId = draft.userId.trim();
                     if (trimmedId && !z.uuid().safeParse(trimmedId).success) {
                         setSearchError('올바른 UUID 형식이 아닙니다.');
-                        return;
+                        return false;
                     }
                     const keyword = draft.keyword.trim();
                     // UUID 형태의 검색어는 keyword(최대 20자)가 아니라 userId 필터로 라우팅한다
                     const keywordIsUuid = z.uuid().safeParse(keyword).success;
                     if (!keywordIsUuid && keyword.length > 20) {
                         setSearchError('검색어는 20자 이하여야 합니다.');
-                        return;
+                        return false;
                     }
                     setSearchError(null);
-                    setApplied({
+                    // 입력칸도 옮겨 적는다 — 검색칸에 UUID가 남아 있으면 사용자 ID 조건을 지워도 다음 검색에서 다시 걸렸다
+                    const next = {
                         ...draft,
                         userId: trimmedId || (keywordIsUuid ? keyword : ''),
                         keyword: keywordIsUuid ? '' : keyword,
-                    });
+                    };
+                    setDraft(next);
+                    setApplied(next);
                     setPage(1);
                 }}
                 error={searchError}
