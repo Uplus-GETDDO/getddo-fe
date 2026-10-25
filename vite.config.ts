@@ -32,6 +32,13 @@ export default defineConfig({
                 // cookie·path-to-regexp는 react-router도 쓰므로 msw 그룹에 넣으면 오히려 초기 경로로 끌려온다
                 codeSplitting: {
                     groups: [
+                        // dynamic import의 dep 프리로드 헬퍼 — router 청크에 들어가면 entry가 react·router를
+                        // 정적 import하게 돼 부트 지연(GD-348)의 의도가 깨진다. 전용 소형 청크로 분리한다.
+                        {
+                            name: 'preload-helper',
+                            test: /preload-helper|vite-preload|commonjsHelpers|rolldown/,
+                            priority: 5,
+                        },
                         {
                             name: 'msw',
                             test: /node_modules[\\/](msw|@mswjs|@open-draft|@inquirer|graphql|headers-polyfill|is-node-process|outvariant|picocolors|rettime|statuses|strict-event-emitter|tough-cookie|type-fest|until-async|yargs)[\\/]/,
