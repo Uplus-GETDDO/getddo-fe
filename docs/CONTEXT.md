@@ -25,7 +25,7 @@
 - 알림: `entities/notification`, `features/markNotificationRead`, `widgets/notificationBell`. 관리자 운영은 `entities/adminNotification`, `features/retryAdminNotification`, `pages/admin/notifications`다.
 - 배너: `entities/banner`, `features/manageBanner`, `pages/admin/banners`. GD-255에서 홈 최상단 `widgets/bannerSlider`를 B01 관리 이미지 배너로 연결했다. 겟또타임 안내·현황은 아래 기존 `TicketEventSection`이 맡는다. 같은 세션의 관리 변경은 B01·AB01 무효화, 다른 세션은 홈 재진입·창 재포커스·재조회로 반영한다.
 - 사용자: `entities/user`, `features/switchVirtualUser`, `pages/login`, `pages/admin/virtualUsers`. 시연 계정 목록은 서버 API가 아니라 `VITE_VIRTUAL_USERS_JSON` 설정이 공급한다(`model/virtualUsers.ts`). AO01/AO02 DB 사용자 조회와는 별개다.
-- 지급 전 차단: `entities/abuseCase`, `pages/admin/abuseCases`. AR01/AR02는 계약 채택(GD-141)·FE 정렬(GD-286)·배포 후 실측(GD-317)까지 완료했다 — 목록·상세+evidence·필터·정렬·오류 코드가 배포본에서 계약대로 동작한다. `triggerScope=EVENT`·`eventId` 연결 표본은 실데이터에 없어 미관측이다.
+- 지급 전 차단: `entities/abuseCase`, `pages/admin/abuseCases`. AR01/AR02는 계약 채택(GD-141)·FE 정렬(GD-286)·배포 후 실측(GD-317)까지 완료했다 — 목록·상세+evidence·필터·정렬·오류 코드가 배포본에서 계약대로 동작한다. `triggerScope=EVENT` 표본은 2026-10-26 GD-352에서 1건 확인됐으나 `eventId`·`eventTitle`이 null이라 이벤트 연결 여부는 담당자 확인 대기다.
 - 공통 감사: 전용 조회 API·화면은 범위 밖이며 GD-244에서 FE 조회 코드와 목업을 제거했다. 추첨 실패·실행 감사·공개 변경 이력은 추첨 업무에 속하므로 유지한다.
 
 ## 이벤트 상태와 결과 공개
@@ -77,9 +77,9 @@
 - GD-259는 관리자 출석 AP01~AP04를 `/admin/attendance-policies`, 미션 AM01~AM04를 `/admin/missions`에 연결했다. AP01/AP03·AM01/AM02/AM04의 실제 200·Zod·일반 사용자 403을 확인했다. AP02/AP04·AM03의 격리 실서버 쓰기는 GD-261에서 실측했으나 성공 생성분이 운영에 잔존한다(정리 방법 확인 중). AO06/AO07은 기존 GD-250 구현을 유지한다. GD-282(PR #121)에서 예약 정책 수정 AP05·AP06, 설문 자유 서술 답변 AM05, 미션 `ENDED` 상태 표시(GD-269)를 연결했고, 배포 후 실측은 GD-296에서 AM05 200·`ENDED` 반영·AP05/AP06 409 `ATTENDANCE-007` 거절까지 확인했다 — AP05·AP06 200 성공 표본만 격리 데이터 부재로 잔여다. [L5 인계](superpowers/plans/L5-handoff.md)에 경계·증거·L6 잔여를 기록한다.
 - 관리자 게임·보상 조건 관리는 2026-10-22 BE 확인으로 제공 범위에서 제외가 확정됐다 — AG01~AG03과 규칙 변경·비활성 전환·보상 조건 예약은 구현하지 않는다.
 - AR01/AR02는 채택 계약의 `userNickname`·`eventTitle`·`detectionReason`·`blockedAt`/`blockedUntil`과 `evidence` 객체 구조를 따른다. evidence 세부 필드(`ruleVersion`·`triggerScope`·`requestLimit`·`rejectedCount`·`rejectionThreshold` 등)와 업무 오류(`ABUSE-001` 403·`ABUSE-002` 404)는 2026-10-22 확정·배포됐고 GD-317 실측으로 대조했다. 응모 요청 반복 초과 시 사용자별 10분 일시 차단(GD-141)이 적용되고, 차단 중 응모 거절은 기존 429 `COMMON-006`과 `Retry-After`(남은 차단 초)를 쓴다.
-- 플래티넘(`PLATINUM`) 지급 활성화는 BE `main`에 병합됐다(GD-229, 확률 기본값 0.02%; GD-228 등급·응모 경로, GD-230 추첨 가중치·스냅샷 호환). 실서버 플래티넘 표본이 없어 지급·응모·추첨·화면 연동 검증은 미실시다.
+- 플래티넘(`PLATINUM`) 지급 활성화는 BE `main`에 병합됐다(GD-229, 확률 기본값 0.02%; GD-228 등급·응모 경로, GD-230 추첨 가중치·스냅샷 호환). 2026-10-26 GD-352에서 가상 계정의 PLATINUM 보유·지급 이력·응모(201)·화면 표시를 실측했다 — 추첨 가중치 반영은 시나리오 표본 대기다.
 - `/virtual-users` HTTP 경로는 GD-260에서 제거했다. 시연 계정은 `VITE_VIRTUAL_USERS_JSON`을 `entities/user/model/virtualUsers.ts`가 빌드 설정에서 직접 읽는다 — 미설정·형식 오류는 로그인 화면의 명시 안내로 표시하고 샘플로 대체하지 않는다. `id`는 실서버 DB 등록 UUID여야 한다. AO01을 일반 사용자 로그인용으로 호출하지 않는다.
-- 배너 이미지 업로드·형식·용량, 서버 시계 변경 API를 임의로 확정하지 않는다. 관리자 응답의 이름 필드(ADR-028)는 확정 계약이며 FE는 GD-287(PR #124)에서 스키마 선택 필드·null 표시로 반영했다 — ID가 null이면 이름도 null로 표시한다. BE는 GD-284로 `main`에 병합됐고 배포 서버 응답 확인은 별도다(명세 `common.md`·`drawing.md`·`notification.md`에는 구현 예정 표기가 남아 있다). 미확정 사항과 실행 선행 조건은 [연동 현황](backend-integration-status.md)에 모은다.
+- 배너 이미지 업로드·형식·용량, 서버 시계 변경 API를 임의로 확정하지 않는다. 관리자 응답의 이름 필드(ADR-028)는 확정 계약이며 FE는 GD-287(PR #124)에서 스키마 선택 필드·null 표시로 반영했다 — ID가 null이면 이름도 null로 표시한다. BE는 GD-284로 `main`에 병합됐고 2026-10-26 GD-352에서 배포 응답의 `userName`·`createdByName`·`actorName` 존재를 실측했다(명세 `common.md`·`drawing.md`·`notification.md`에는 구현 예정 표기가 남아 있다). 미확정 사항과 실행 선행 조건은 [연동 현황](backend-integration-status.md)에 모은다.
 
 ## 비공개·역할·시연
 
