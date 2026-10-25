@@ -27,6 +27,10 @@ interface ImageUploadFieldProps {
     slot: ImageSlot;
     /** 수정 화면에서 이미 올라가 있던 이미지 — 키만으로는 주소를 만들 수 없어 따로 받는다 */
     initialPreviewUrl?: string | null;
+    /** 방금 올린 이미지 주소를 바깥 미리보기에 넘긴다 — 지우면 null */
+    onPreviewUrlChange?: (url: string | null) => void;
+    /** stacked — 미리보기를 칸 폭 가득 위에 크게 두고 버튼을 아래로. 배너처럼 그림 자체를 확인해야 하는 자리에 쓴다 */
+    layout?: 'inline' | 'stacked';
 }
 
 /**
@@ -43,6 +47,8 @@ export function ImageUploadField({
     onChange,
     slot,
     initialPreviewUrl,
+    onPreviewUrlChange,
+    layout = 'inline',
 }: ImageUploadFieldProps) {
     const inputId = useId();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -78,6 +84,7 @@ export function ImageUploadField({
                 onSuccess: ({ imageKey, imageUrl }) => {
                     onChange(imageKey);
                     setUploadedUrl(imageUrl);
+                    onPreviewUrlChange?.(imageUrl);
                 },
             },
         );
@@ -86,6 +93,7 @@ export function ImageUploadField({
     const clear = () => {
         onChange('');
         setUploadedUrl(null);
+        onPreviewUrlChange?.(null);
         setRejection(null);
         setSizeWarning(null);
         if (inputRef.current) inputRef.current.value = '';
@@ -104,8 +112,15 @@ export function ImageUploadField({
             {/*
              * 좁은 화면에서는 미리보기를 위로 올려 쌓는다 — 가로로 긴 배너 미리보기(184px)와
              * 버튼을 한 줄에 두면 모달 폭 안에 버튼이 들어가지 못했다(GD-344).
+             * stacked는 화면 폭과 상관없이 늘 넓은 미리보기를 위에 둔다(배너 모달)
              */}
-            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-4">
+            <div
+                className={
+                    layout === 'stacked'
+                        ? 'flex flex-col gap-3'
+                        : 'flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-4'
+                }
+            >
                 {/*
                  * 칸을 꽉 채우고 모서리는 칸을 따라 깎는다 — overflow-hidden이 둥근 틀로 잘라 준다.
                  * 칸 비율은 그 자리의 권장 비율을 그대로 쓴다. 권장대로 올리면 잘릴 것이 없고,
@@ -114,9 +129,13 @@ export function ImageUploadField({
                 <div
                     style={{ aspectRatio: `${guide.width} / ${guide.height}` }}
                     className={cn(
-                        'bg-surface-sunken relative h-20 shrink-0 overflow-hidden rounded-lg',
-                        // 가로로 긴 자리는 높이를 낮춰야 폼 한 줄에 들어간다
-                        guide.width / guide.height > 1.5 && 'h-14',
+                        'bg-surface-sunken relative shrink-0 overflow-hidden rounded-lg',
+                        layout === 'stacked'
+                            ? 'w-full'
+                            : // 가로로 긴 자리는 높이를 낮춰야 폼 한 줄에 들어간다
+                              guide.width / guide.height > 1.5
+                              ? 'h-14'
+                              : 'h-20',
                     )}
                 >
                     {preview.shown && (

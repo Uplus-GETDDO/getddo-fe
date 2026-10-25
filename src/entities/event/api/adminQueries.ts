@@ -1,4 +1,4 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQueries, useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
@@ -35,6 +35,8 @@ export function useAdminEvents(params: AdminEventsParams) {
     return useQuery({
         ...queryPresets.realtime,
         queryKey: [...ADMIN_EVENTS_KEY, 'list', params],
+        // 필터·페이지를 바꿔 다시 받는 동안 이전 목록을 그대로 두어 표가 스켈레톤으로 꺼졌다 켜지지 않게 한다
+        placeholderData: keepPreviousData,
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(ADMIN_EVENTS_API_PATH, { params });
             return envelopeSchema(adminEventPageSchema).parse(data).data;
@@ -66,6 +68,7 @@ export function useAdminEventsByStatus(
             return {
                 ...queryPresets.realtime,
                 queryKey: [...ADMIN_EVENTS_KEY, 'list', query],
+                placeholderData: keepPreviousData,
                 queryFn: async () => {
                     const { data } = await apiClient.get<unknown>(ADMIN_EVENTS_API_PATH, {
                         params: query,

@@ -120,16 +120,14 @@ describe('AdminEventFormPage 수정 화면의 저장된 값 표시', () => {
     }
 
     it.each([
-        ['응모권 미사용 이벤트', 'evt-205', '응모권 미사용', 'VVIP 이상'],
-        ['VIP 전용 이벤트', 'evt-010', '응모권 사용', 'VIP 이상'],
+        ['응모권 미사용 이벤트', 'evt-205', '일반 이벤트', 'VVIP 이상'],
+        ['VIP 전용 이벤트', 'evt-010', '겟또타임', 'VIP 이상'],
     ])('%s의 유형·등급이 그대로 보인다', async (_name, eventId, type, membership) => {
         renderEdit(eventId);
-        // 상세가 도착해 제목 칸이 채워질 때까지 기다린다
-        await screen.findByRole('combobox', { name: '이벤트 유형' });
+        // 상세가 도착해 양식이 세워질 때까지 기다린다 — 유형은 고르는 카드(라디오)다
+        const kinds = await screen.findByRole('radiogroup', { name: '이벤트 종류' });
 
-        expect(await screen.findByRole('combobox', { name: '이벤트 유형' })).toHaveTextContent(
-            type,
-        );
+        expect(within(kinds).getByRole('radio', { name: new RegExp(type) })).toBeChecked();
         expect(screen.getByRole('combobox', { name: '최소 멤버십 등급' })).toHaveTextContent(
             membership,
         );
@@ -159,7 +157,7 @@ describe('AdminEventFormPage 수정 저장', () => {
                 </MemoryRouter>
             </QueryClientProvider>,
         );
-        await screen.findByRole('combobox', { name: '이벤트 유형' });
+        await screen.findByRole('radiogroup', { name: '이벤트 종류' });
         await user.click(screen.getByRole('button', { name: '수정 저장' }));
 
         await waitFor(() => expect(sent).toBe(1));

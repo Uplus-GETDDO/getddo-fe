@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useSurveyAnswers } from '@entities/mission';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { PagedResult } from '@shared/ui/paged-result';
-import { formatKst } from '@shared/utils/date';
+import { formatKstFullDot } from '@shared/utils/date';
 
 /**
  * AM05 자유 서술 답변 — 익명이라 사용자·제출 식별자가 없다.
@@ -24,7 +24,7 @@ export function FreeTextAnswers({
     const query = useSurveyAnswers(missionId, questionId, range, page);
     return (
         <div className="flex min-w-0 flex-col gap-2">
-            <h4 className="break-keep">{questionText}</h4>
+            <h4 className="text-body-sm-bold text-fg-primary break-keep">{questionText}</h4>
             <PagedResult
                 {...query}
                 page={page}
@@ -41,12 +41,14 @@ export function FreeTextAnswers({
                         {items.map((a, i) => (
                             <li
                                 key={`${a.submittedAt}-${i}`}
-                                className="border-border-default rounded-lg border p-3"
+                                className="bg-surface-canvas flex flex-col gap-1 rounded-xl px-4 py-3"
                             >
                                 {/* 답변 원문은 가공하지 않는다 — 텍스트로만 표시한다 (HTML 해석 금지, AM05 계약) */}
-                                <p className="break-words whitespace-pre-wrap">{a.answerText}</p>
-                                <p className="text-caption text-fg-tertiary">
-                                    {formatKst(a.submittedAt)} KST
+                                <p className="text-body-sm text-fg-primary break-words whitespace-pre-wrap">
+                                    {a.answerText}
+                                </p>
+                                <p className="text-caption text-fg-tertiary tabular-nums">
+                                    {formatKstFullDot(a.submittedAt, true)}
                                 </p>
                             </li>
                         ))}

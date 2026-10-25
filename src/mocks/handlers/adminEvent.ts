@@ -251,29 +251,6 @@ const extraSeeds: MockAdminEvent[] = [
             },
         ],
     }),
-    adminSeed({
-        id: '20000000-0000-4000-8000-000000000906',
-        title: '최초 추첨이 실패한 래플',
-        description: '최초 추첨 선정 중 오류가 나 재개를 기다리는 이벤트.',
-        startsAt: sessionFixedTime(
-            '20000000-0000-4000-8000-000000000906-starts',
-            -70 * 60 * MINUTE,
-        ),
-        endsAt: sessionFixedTime('20000000-0000-4000-8000-000000000906-ends', -20 * 60 * MINUTE),
-        status: 'DRAW_CONFIRMED',
-        entryCount: 420,
-        usedTicketTotal: 840,
-        prizes: [
-            {
-                id: '20000000-0000-4000-8000-000000000906-p1',
-                rank: 1,
-                name: '갤럭시 버즈',
-                description: null,
-                imageUrl: null,
-                winnerCount: 3,
-            },
-        ],
-    }),
 ];
 
 const mockAdminEvents: MockAdminEvent[] = [...mockEvents.map(toAdminSeed), ...extraSeeds];

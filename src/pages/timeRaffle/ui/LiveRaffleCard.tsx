@@ -77,7 +77,7 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
                         <Clock className="size-3.5" />
                         {formatRunningRange(event)}
                     </span>
-                    {/* 한도가 남았으면 '응모 중 · 쓴 장수', 다 썼으면 '응모 완료' */}
+                    {/* 한도가 남았으면 '쓴 장수 + 응모 중', 다 썼으면 '응모 완료' */}
                     <RaffleEntryChip
                         event={event}
                         mySpentTicketCount={statistics?.mySpentTicketCount}

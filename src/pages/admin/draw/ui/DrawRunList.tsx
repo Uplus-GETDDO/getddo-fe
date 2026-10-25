@@ -13,11 +13,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 export const DRAW_RUN_PAGE_SIZE = 10;
 // 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
 const CHIP = badgeVariants({ variant: null });
+const HEAD = 'text-fg-tertiary h-11 px-4 text-xs font-semibold';
 
 interface DrawRunListProps {
     eventId: string;
@@ -80,27 +81,16 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                     </Button>
                 </div>
             )}
-            <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
+            <PagedCount total={data.totalElements} />
+            <div className="bg-surface-page border-border-default overflow-hidden border-y">
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="text-caption text-fg-tertiary h-11 px-4">
-                                회차
-                            </TableHead>
-                            <TableHead className="text-caption text-fg-tertiary h-11 px-4">
-                                구분
-                            </TableHead>
-                            <TableHead className="text-caption text-fg-tertiary h-11 px-4 text-center">
-                                상태
-                            </TableHead>
-                            <TableHead className="text-caption text-fg-tertiary h-11 px-4">
-                                생성
-                            </TableHead>
-                            <TableHead className="text-caption text-fg-tertiary h-11 px-4">
-                                선정 완료
-                            </TableHead>
-                            <TableHead className="text-caption text-fg-tertiary h-11 px-4">
-                                상세
+                            <TableHead className={HEAD}>회차</TableHead>
+                            <TableHead className={HEAD}>상태</TableHead>
+                            <TableHead className={HEAD}>시각</TableHead>
+                            <TableHead className={HEAD}>
+                                <span className="sr-only">상세</span>
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -109,37 +99,54 @@ export function DrawRunList({ eventId, selectedId, onSelect }: DrawRunListProps)
                             const status = DRAW_RUN_STATUS_META[run.status];
                             const selected = run.id === selectedId;
                             return (
+                                // 줄 어디를 눌러도 상세가 열린다 — 키보드는 오른쪽 '보기' 버튼으로 같은 길을 간다
                                 <TableRow
                                     key={run.id}
                                     aria-selected={selected}
+                                    onClick={() => onSelect(run.id)}
                                     className={cn(
-                                        'hover:bg-surface-sunken focus-within:bg-surface-sunken',
+                                        'hover:bg-surface-sunken focus-within:bg-surface-sunken cursor-pointer',
                                         selected && 'bg-surface-canvas',
                                     )}
                                 >
-                                    <TableCell className="text-body-sm px-4 py-3 font-medium">
-                                        {run.runNumber}회차
+                                    <TableCell className="px-4 py-3">
+                                        <span className="text-body-sm-bold text-fg-primary block">
+                                            {run.runNumber}회차
+                                        </span>
+                                        <span className="text-caption text-fg-tertiary">
+                                            {DRAW_TYPE_LABEL[run.drawType]}
+                                        </span>
                                     </TableCell>
-                                    <TableCell className="text-body-sm text-fg-secondary px-4 py-3">
-                                        {DRAW_TYPE_LABEL[run.drawType]}
-                                    </TableCell>
-                                    <TableCell className="px-4 py-3 text-center">
-                                        <span className={cn(CHIP, status.chipClass)}>
+                                    <TableCell className="px-4 py-3">
+                                        <span
+                                            className={cn(
+                                                CHIP,
+                                                'whitespace-nowrap',
+                                                status.chipClass,
+                                            )}
+                                        >
                                             {status.label}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="text-body-sm text-fg-secondary px-4 py-3 whitespace-nowrap">
-                                        {formatKst(run.createdAt)}
+                                    <TableCell className="px-4 py-3 whitespace-nowrap tabular-nums">
+                                        <span className="text-body-sm text-fg-primary block">
+                                            {run.confirmedAt
+                                                ? `선정 ${formatKst(run.confirmedAt)}`
+                                                : '선정 전'}
+                                        </span>
+                                        <span className="text-caption text-fg-tertiary">
+                                            생성 {formatKst(run.createdAt)}
+                                        </span>
                                     </TableCell>
-                                    <TableCell className="text-body-sm text-fg-secondary px-4 py-3 whitespace-nowrap">
-                                        {run.confirmedAt ? formatKst(run.confirmedAt) : '—'}
-                                    </TableCell>
-                                    <TableCell className="px-4 py-3">
+                                    <TableCell className="px-4 py-3 text-right">
                                         <Button
                                             size="sm"
                                             variant={selected ? 'primary' : 'secondary'}
                                             aria-label={`${run.runNumber}회차 상세 보기`}
-                                            onClick={() => onSelect(run.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onSelect(run.id);
+                                            }}
                                         >
                                             보기
                                         </Button>

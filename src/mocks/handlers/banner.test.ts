@@ -31,8 +31,12 @@ const list = async () =>
 // 목업은 모듈 수준 상태를 들고 있어 테스트끼리 영향을 준다 — 순서에 의존하는 하나의 시나리오로 묶는다
 describe('배너 목업 핸들러', () => {
     it('1~N 순서이며 중간 삽입·이동·삭제 시 연속 순서를 유지한다', async () => {
+        // 씨앗 배너가 최대(5개)까지 차 있어 등록할 자리를 하나 비우고 시작한다
+        const seeds = await list();
+        expect(seeds.map((item) => item.displayOrder)).toEqual([1, 2, 3, 4, 5]);
+        await call('delete', `/v1/admin/banners/${seeds.at(-1)?.id}`);
         const before = await list();
-        expect(before.map((item) => item.displayOrder)).toEqual([1, 2, 3]);
+        expect(before.map((item) => item.displayOrder)).toEqual([1, 2, 3, 4]);
         const res = await call('post', '/v1/admin/banners', {
             eventId: 'evt-001',
             imageKey: 'banners/insert.png',
@@ -43,13 +47,12 @@ describe('배너 목업 핸들러', () => {
         expect((await list()).map((item) => item.id)).toEqual([
             before[0]?.id,
             inserted.id,
-            before[1]?.id,
-            before[2]?.id,
+            ...before.slice(1).map((item) => item.id),
         ]);
         const moved = await call('put', `/v1/admin/banners/${inserted.id}`, {
             eventId: 'evt-001',
             imageKey: inserted.imageKey,
-            displayOrder: 4,
+            displayOrder: 5,
         });
         expect(moved.status).toBe(200);
         expect((await list()).map((item) => item.id)).toEqual([
@@ -63,7 +66,7 @@ describe('배너 목업 핸들러', () => {
         });
         expect((await list())[0]?.id).toBe(inserted.id);
         await call('delete', `/v1/admin/banners/${inserted.id}`);
-        expect((await list()).map((item) => item.displayOrder)).toEqual([1, 2, 3]);
+        expect((await list()).map((item) => item.displayOrder)).toEqual([1, 2, 3, 4]);
         expect(adminBannerSchema.parse({ ...before[0], eventId: null }).eventId).toBeNull();
     });
 

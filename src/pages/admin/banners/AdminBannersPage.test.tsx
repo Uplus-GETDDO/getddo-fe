@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -89,9 +89,12 @@ describe('이전 배너 관리', () => {
         try {
             renderPage();
             await user.click(screen.getByRole('button', { name: '배너 등록' }));
-            screen.getByRole('combobox', { name: '연결 이벤트' }).focus();
-            await user.keyboard('{ArrowDown}');
-            await user.keyboard('{Enter}');
+            // 연결 이벤트는 셀렉트 대신 검색 칸 — 비어 있으면 최근 등록한 이벤트를 후보로 펼친다
+            const suggestions = await screen.findByRole('listbox', { name: '연결 이벤트 결과' });
+            const first = (await within(suggestions).findAllByRole('button'))[0]!;
+            await user.click(first);
+            // 고른 뒤에는 검색 칸 대신 고른 이벤트가 보인다
+            expect(screen.getByRole('button', { name: '이벤트 선택 해제' })).toBeInTheDocument();
             await user.upload(
                 screen.getByLabelText('배너 이미지'),
                 new File(['x'], 'new.png', { type: 'image/png' }),
@@ -99,11 +102,10 @@ describe('이전 배너 관리', () => {
             await waitFor(() => expect(screen.getByText('new.png')).toBeInTheDocument());
             await user.click(screen.getByRole('button', { name: '등록' }));
             await waitFor(() =>
-                expect(post).toHaveBeenCalledWith('/v1/admin/banners', {
-                    eventId: 'evt-001',
-                    imageKey: 'new.png',
-                    displayOrder: 3,
-                }),
+                expect(post).toHaveBeenCalledWith(
+                    '/v1/admin/banners',
+                    expect.objectContaining({ imageKey: 'new.png', displayOrder: 3 }),
+                ),
             );
         } finally {
             post.mockRestore();

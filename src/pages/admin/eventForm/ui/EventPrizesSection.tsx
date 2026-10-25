@@ -17,9 +17,11 @@ import { Input } from '@shared/ui/input';
 
 import type { EventFormInput, EventFormValues } from '../utils/eventFormValues';
 
-import { FIELD_ERROR, FIELD_LABEL } from '../model/formStyles';
+import { FIELD_ERROR } from '../model/formStyles';
+import { FormField, FormStep } from './FormField';
 
 interface EventPrizesSectionProps {
+    step: number;
     register: UseFormRegister<EventFormInput>;
     control: Control<EventFormInput, undefined, EventFormValues>;
     errors: FieldErrors<EventFormInput>;
@@ -30,6 +32,7 @@ interface EventPrizesSectionProps {
 }
 
 export function EventPrizesSection({
+    step,
     register,
     control,
     errors,
@@ -38,10 +41,14 @@ export function EventPrizesSection({
     remove,
     event,
 }: EventPrizesSectionProps) {
+    const prizeError = (index: number) => errors.prizes?.[index];
+
     return (
-        <section className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-6">
-            <div className="flex items-center justify-between">
-                <h3 className={FIELD_LABEL}>경품 ({fields.length}종)</h3>
+        <FormStep
+            step={step}
+            title={`경품 (${fields.length}종)`}
+            description="등수마다 한 종류의 경품만 등록할 수 있어요. 최소 1개가 필요해요."
+            action={
                 <Button
                     type="button"
                     variant="secondary"
@@ -58,22 +65,19 @@ export function EventPrizesSection({
                 >
                     경품 추가
                 </Button>
-            </div>
-            <p className="text-caption text-fg-tertiary">
-                등수마다 한 종류의 경품만 등록할 수 있습니다.
-            </p>
-
+            }
+        >
             {fields.map((field, index) => (
                 <div
                     key={field.fieldKey}
-                    className="border-border-default flex flex-col gap-3 rounded-xl border p-4"
+                    className="border-border-default flex flex-col gap-4 rounded-xl border p-4"
                 >
                     <div className="flex items-center justify-between">
                         <span className="text-body-bold text-fg-primary">경품 {index + 1}</span>
                         {fields.length > 1 && (
                             <Button
                                 type="button"
-                                variant="secondary"
+                                variant="ghost"
                                 size="sm"
                                 onClick={() => remove(index)}
                             >
@@ -81,128 +85,94 @@ export function EventPrizesSection({
                             </Button>
                         )}
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        <div className="flex w-24 flex-col gap-1">
-                            <label
-                                htmlFor={`prize-${field.fieldKey}-rank`}
-                                className="text-caption text-fg-tertiary"
-                            >
-                                등수
-                            </label>
+                    <div className="grid gap-4 sm:grid-cols-[6rem_minmax(0,1fr)_7rem]">
+                        <FormField
+                            id={`prize-${field.fieldKey}-rank`}
+                            label="등수"
+                            required
+                            error={prizeError(index)?.rank?.message}
+                        >
                             <Input
                                 id={`prize-${field.fieldKey}-rank`}
                                 type="number"
                                 min={1}
-                                aria-invalid={Boolean(errors.prizes?.[index]?.rank)}
+                                aria-required
+                                aria-invalid={Boolean(prizeError(index)?.rank)}
                                 aria-describedby={
-                                    errors.prizes?.[index]?.rank
+                                    prizeError(index)?.rank
                                         ? `prize-${field.fieldKey}-rank-error`
                                         : undefined
                                 }
                                 {...register(`prizes.${index}.rank`)}
                             />
-                            {errors.prizes?.[index]?.rank && (
-                                <p
-                                    id={`prize-${field.fieldKey}-rank-error`}
-                                    className={FIELD_ERROR}
-                                >
-                                    {errors.prizes[index]?.rank?.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="flex min-w-48 flex-1 flex-col gap-1">
-                            <label
-                                htmlFor={`prize-${field.fieldKey}-name`}
-                                className="text-caption text-fg-tertiary"
-                            >
-                                경품명
-                            </label>
+                        </FormField>
+                        <FormField
+                            id={`prize-${field.fieldKey}-name`}
+                            label="경품명"
+                            required
+                            error={prizeError(index)?.name?.message}
+                        >
                             <Input
                                 id={`prize-${field.fieldKey}-name`}
-                                aria-invalid={Boolean(errors.prizes?.[index]?.name)}
+                                placeholder="예) 스타벅스 아메리카노"
+                                aria-required
+                                aria-invalid={Boolean(prizeError(index)?.name)}
                                 aria-describedby={
-                                    errors.prizes?.[index]?.name
+                                    prizeError(index)?.name
                                         ? `prize-${field.fieldKey}-name-error`
                                         : undefined
                                 }
                                 {...register(`prizes.${index}.name`)}
                             />
-                            {errors.prizes?.[index]?.name && (
-                                <p
-                                    id={`prize-${field.fieldKey}-name-error`}
-                                    className={FIELD_ERROR}
-                                >
-                                    {errors.prizes[index]?.name?.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="flex w-28 flex-col gap-1">
-                            <label
-                                htmlFor={`prize-${field.fieldKey}-winner-count`}
-                                className="text-caption text-fg-tertiary"
-                            >
-                                당첨 인원
-                            </label>
+                        </FormField>
+                        <FormField
+                            id={`prize-${field.fieldKey}-winner-count`}
+                            label="당첨 인원"
+                            required
+                            error={prizeError(index)?.winnerCount?.message}
+                        >
                             <Input
                                 id={`prize-${field.fieldKey}-winner-count`}
                                 type="number"
                                 min={1}
-                                aria-invalid={Boolean(errors.prizes?.[index]?.winnerCount)}
+                                aria-required
+                                aria-invalid={Boolean(prizeError(index)?.winnerCount)}
                                 aria-describedby={
-                                    errors.prizes?.[index]?.winnerCount
+                                    prizeError(index)?.winnerCount
                                         ? `prize-${field.fieldKey}-winner-count-error`
                                         : undefined
                                 }
                                 {...register(`prizes.${index}.winnerCount`)}
                             />
-                            {errors.prizes?.[index]?.winnerCount && (
-                                <p
-                                    id={`prize-${field.fieldKey}-winner-count-error`}
-                                    className={FIELD_ERROR}
-                                >
-                                    {errors.prizes[index]?.winnerCount?.message}
-                                </p>
-                            )}
-                        </div>
+                        </FormField>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        <div className="flex min-w-48 flex-1 flex-col gap-1">
-                            <label
-                                htmlFor={`prize-${field.fieldKey}-description`}
-                                className="text-caption text-fg-tertiary"
-                            >
-                                설명 (선택)
-                            </label>
-                            <Input
-                                id={`prize-${field.fieldKey}-description`}
-                                {...register(`prizes.${index}.description`)}
+                    <FormField id={`prize-${field.fieldKey}-description`} label="설명 (선택)">
+                        <Input
+                            id={`prize-${field.fieldKey}-description`}
+                            {...register(`prizes.${index}.description`)}
+                        />
+                    </FormField>
+                    <Controller
+                        control={control}
+                        name={`prizes.${index}.imageKey`}
+                        render={({ field: imageField }) => (
+                            <ImageUploadField
+                                label="경품 이미지 (선택)"
+                                slot="PRIZE"
+                                value={imageField.value ?? ''}
+                                onChange={imageField.onChange}
+                                initialPreviewUrl={
+                                    event?.prizes.find((prize) => prize.id === field.id)?.imageUrl
+                                }
                             />
-                        </div>
-                        <div className="flex min-w-48 flex-1 flex-col gap-1">
-                            <Controller
-                                control={control}
-                                name={`prizes.${index}.imageKey`}
-                                render={({ field: imageField }) => (
-                                    <ImageUploadField
-                                        label="경품 이미지 (선택)"
-                                        slot="PRIZE"
-                                        value={imageField.value ?? ''}
-                                        onChange={imageField.onChange}
-                                        initialPreviewUrl={
-                                            event?.prizes.find((prize) => prize.id === field.id)
-                                                ?.imageUrl
-                                        }
-                                    />
-                                )}
-                            />
-                        </div>
-                    </div>
+                        )}
+                    />
                 </div>
             ))}
             {errors.prizes?.root && <p className={FIELD_ERROR}>{errors.prizes.root.message}</p>}
             {typeof errors.prizes?.message === 'string' && (
                 <p className={FIELD_ERROR}>{errors.prizes.message}</p>
             )}
-        </section>
+        </FormStep>
     );
 }

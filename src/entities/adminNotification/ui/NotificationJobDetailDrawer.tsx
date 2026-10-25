@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react';
 
 import { Button } from '@shared/ui/button';
+import {
+    DetailItem,
+    DetailList,
+    DetailMeta,
+    DetailSection,
+    DetailSummary,
+} from '@shared/ui/detail-list';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { formatKst } from '@shared/utils/date';
@@ -8,19 +15,9 @@ import { formatKst } from '@shared/utils/date';
 import type { NotificationJob } from '../model/types';
 
 import { useAdminNotificationJob } from '../api/queries';
-import { NOTIFICATION_JOB_STATUS_LABEL, NOTIFICATION_TYPE_LABEL } from '../model/types';
-
-const FIELD = 'text-caption text-fg-tertiary';
-const VALUE = 'text-body-sm text-fg-primary break-all';
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-    return (
-        <div className="flex flex-col gap-1">
-            <span className={FIELD}>{label}</span>
-            <span className={VALUE}>{children}</span>
-        </div>
-    );
-}
+import { NOTIFICATION_TYPE_LABEL } from '../model/types';
+import { ErrorBox } from './AdminNotificationDetailDrawer';
+import { AUTO_STOPPED_HINT, JobStatusTags } from './NotificationTags';
 
 const kstOrDash = (iso: string | null) => (iso ? formatKst(iso) : '-');
 
@@ -53,39 +50,86 @@ export function NotificationJobDetailDrawer({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="overflow-y-auto sm:max-w-md">
+            <SheetContent className="sm:max-w-lg">
                 <SheetHeader>
-                    <SheetTitle>알림 작업 상세</SheetTitle>
-                    <SheetDescription>{job ? job.id : ''}</SheetDescription>
+                    <SheetTitle>
+                        {shown
+                            ? `${NOTIFICATION_TYPE_LABEL[shown.notificationType]} 알림 작업`
+                            : '알림 작업'}
+                    </SheetTitle>
+                    <SheetDescription>알림 작업 상세</SheetDescription>
                 </SheetHeader>
                 {shown && (
-                    <div className="flex flex-col gap-4 px-4 pb-6">
-                        <Field label="유형">
-                            {NOTIFICATION_TYPE_LABEL[shown.notificationType]}{' '}
-                            <span className="text-fg-tertiary">({shown.notificationType})</span>
-                        </Field>
-                        <Field label="상태">
-                            {NOTIFICATION_JOB_STATUS_LABEL[shown.status]}
-                            {shown.generationStoppedBy &&
-                                ` · 생성 중지 (${shown.generationStoppedBy})`}
-                        </Field>
-                        <Field label="이벤트">{shown.eventId ?? '-'}</Field>
-                        <Field label="발표 건">{shown.publicationId ?? '-'}</Field>
-                        <Field label="처리 차수">{shown.attemptCount}회</Field>
-                        <Field label="예정 시각">{formatKst(shown.scheduledAt)}</Field>
-                        <Field label="생성 시각">{formatKst(shown.createdAt)}</Field>
-                        <Field label="다음 자동 재시도">{kstOrDash(shown.nextAttemptAt)}</Field>
-                        <Field label="완료 시각">{kstOrDash(shown.completedAt)}</Field>
-                        <Field label="복구 가능">{shown.retryable ? '가능' : '불가'}</Field>
+                    <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
+                        {/* 핵심 — 지금 상태와 처리 횟수, 다음에 무슨 일이 있는지 */}
+                        <DetailSummary>
+                            <JobStatusTags
+                                status={shown.status}
+                                stopped={shown.generationStoppedBy !== null}
+                            />
+                            <p className="text-fg-primary text-lg leading-7 font-semibold">
+                                {shown.generationStoppedBy
+                                    ? AUTO_STOPPED_HINT
+                                    : shown.completedAt
+                                      ? `${formatKst(shown.completedAt)}에 끝났어요`
+                                      : shown.nextAttemptAt
+                                        ? `${formatKst(shown.nextAttemptAt)}에 자동으로 다시 시도해요`
+                                        : `${formatKst(shown.scheduledAt)} 예정`}
+                            </p>
+                            {detail?.lastError && <ErrorBox message={detail.lastError} />}
+                            {action && <div>{action(shown, detailReady)}</div>}
+                        </DetailSummary>
+
+                        <DetailSection title="처리">
+                            <DetailList>
+                                <DetailItem label="처리 횟수">{shown.attemptCount}회</DetailItem>
+                                <DetailItem label="예정 시각">
+                                    {formatKst(shown.scheduledAt)}
+                                </DetailItem>
+                                <DetailItem label="생성 시각">
+                                    {formatKst(shown.createdAt)}
+                                </DetailItem>
+                                <DetailItem label="완료 시각">
+                                    {kstOrDash(shown.completedAt)}
+                                </DetailItem>
+                                <DetailItem label="다음 재시도">
+                                    {kstOrDash(shown.nextAttemptAt)}
+                                </DetailItem>
+                            </DetailList>
+                        </DetailSection>
+
+                        <DetailSection title="대상">
+                            <DetailList>
+                                <DetailItem label="이벤트">{shown.eventId ?? '-'}</DetailItem>
+                                <DetailItem label="발표 건">
+                                    {shown.publicationId ?? '-'}
+                                </DetailItem>
+                            </DetailList>
+                        </DetailSection>
+
                         {detail ? (
-                            <>
-                                <Field label="마지막 오류">{detail.lastError ?? '-'}</Field>
-                                <Field label="원본 작업">{detail.sourceJobId ?? '-'}</Field>
-                                <Field label="마지막 처리 사용자">
-                                    {detail.lastProcessedUserId ?? '-'}
-                                </Field>
-                                <Field label="선점 유효 시각">{kstOrDash(detail.leaseUntil)}</Field>
-                            </>
+                            // 원본 작업·선점 같은 내부 값은 평소에 볼 일이 없어 접어 둔다
+                            <details className="group flex flex-col gap-3">
+                                <summary className="text-body-sm-bold text-fg-secondary hover:text-fg-primary cursor-pointer list-none">
+                                    내부 진단 값{' '}
+                                    <span className="text-fg-tertiary group-open:hidden">
+                                        펼치기
+                                    </span>
+                                </summary>
+                                <div className="pt-3">
+                                    <DetailList>
+                                        <DetailItem label="원본 작업">
+                                            {detail.sourceJobId ?? '-'}
+                                        </DetailItem>
+                                        <DetailItem label="마지막 처리">
+                                            {detail.lastProcessedUserId ?? '-'}
+                                        </DetailItem>
+                                        <DetailItem label="선점 유효">
+                                            {kstOrDash(detail.leaseUntil)}
+                                        </DetailItem>
+                                    </DetailList>
+                                </div>
+                            </details>
                         ) : isPending ? (
                             <LoadingBlock label="상세 정보를 불러오는 중…">
                                 <SkeletonRows rows={2} />
@@ -94,7 +138,7 @@ export function NotificationJobDetailDrawer({
                             isError && (
                                 <div className="flex flex-col gap-2" role="alert">
                                     <p className="text-semantic-error-strong text-body-sm">
-                                        상세 정보를 불러오지 못했습니다. 아래는 목록에서 확인한
+                                        상세 정보를 불러오지 못했습니다. 위는 목록에서 확인한
                                         정보입니다.
                                     </p>
                                     <Button
@@ -107,7 +151,8 @@ export function NotificationJobDetailDrawer({
                                 </div>
                             )
                         )}
-                        {action?.(shown, detailReady)}
+
+                        <DetailMeta>작업 ID {shown.id}</DetailMeta>
                     </div>
                 )}
             </SheetContent>

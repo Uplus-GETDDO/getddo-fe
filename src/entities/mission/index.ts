@@ -24,6 +24,7 @@ export {
     MISSIONS_API_PATH,
     MISSIONS_KEY,
     missionApiPath,
+    useLatestMissions,
     useMissionDetail,
     useMissionList,
 } from './api/queries';

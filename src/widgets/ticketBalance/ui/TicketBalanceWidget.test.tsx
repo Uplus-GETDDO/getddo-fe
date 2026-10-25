@@ -26,7 +26,7 @@ vi.mock('@entities/mission', async (importOriginal) => ({
     isMissionOpenByServerTime: (await importOriginal<typeof MissionModule>())
         .isMissionOpenByServerTime,
     missionThumbnail: () => null,
-    useMissionList: () => ({
+    useLatestMissions: () => ({
         data: state.missions.map((mission) => ({
             rewardTicketCount: 1,
             completed: false,

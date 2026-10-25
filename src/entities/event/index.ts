@@ -52,6 +52,7 @@ export {
     EVENT_TYPE_LABEL,
     MEMBERSHIP_LABEL,
 } from './model/adminStatusMeta';
+export { AdminEventPicker, AdminEventTitle } from './ui/AdminEventPicker';
 export { AdminEventTable } from './ui/AdminEventTable';
 export { EnteredChip, RaffleEntryChip } from './ui/EnteredChip';
 export { EventCard } from './ui/EventCard';

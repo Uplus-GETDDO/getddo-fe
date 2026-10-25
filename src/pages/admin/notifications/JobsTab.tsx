@@ -10,20 +10,28 @@ import {
     NotificationJobTable,
     useAdminNotificationJobs,
 } from '@entities/adminNotification';
-import { RetryJobDialog } from '@features/retryAdminNotification';
+import { AdminEventPicker, AdminEventTitle } from '@entities/event';
+import { BulkRetryButton, RetryJobDialog } from '@features/retryAdminNotification';
 import { ALL, isDateRangeOrdered, orUndefined, PAGE_SIZE } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
-import { DateRangeFilter, OptionFilter, TextFilter } from '@shared/ui/filter-fields';
+import { DateRangeFilter } from '@shared/ui/filter-fields';
+import {
+    chipValue,
+    FilterChips,
+    FilterPanel,
+    FilterRow,
+    rangeValue,
+} from '@shared/ui/filter-panel';
 import { PagedResult } from '@shared/ui/paged-result';
-import { kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
+import { formatKst, kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
 
 const STATUS_OPTIONS = [
-    { value: ALL, label: '작업 상태' },
+    { value: ALL, label: '전체' },
     ...Object.entries(NOTIFICATION_JOB_STATUS_LABEL).map(([value, label]) => ({ value, label })),
 ];
 
 const TYPE_OPTIONS = [
-    { value: ALL, label: '알림 유형' },
+    { value: ALL, label: '전체' },
     ...Object.entries(NOTIFICATION_TYPE_LABEL).map(([value, label]) => ({ value, label })),
 ];
 
@@ -58,7 +66,6 @@ export function JobsTab() {
         setPage(1);
     }
     const [rangeError, setRangeError] = useState(false);
-    const hasPendingDraft = JSON.stringify(draft) !== JSON.stringify(applied);
     const hasAppliedFilters = JSON.stringify(applied) !== JSON.stringify(EMPTY);
     const resetFilters = () => {
         setDraft(EMPTY);
@@ -72,6 +79,27 @@ export function JobsTab() {
     const [selectedJob, setSelectedJob] = useState<NotificationJob | null>(null);
     const [retryJob, setRetryJob] = useState<NotificationJob | null>(null);
     const patch = (value: Partial<typeof EMPTY>) => setDraft((d) => ({ ...d, ...value }));
+    const applyNow = (value: Partial<typeof EMPTY>) => {
+        patch(value);
+        setApplied((d) => ({ ...d, ...value }));
+        setPage(1);
+    };
+    // 날짜는 순서가 맞을 때만 건다 — 한쪽만 채운 것도 그대로 건다
+    const applyRange = (next: typeof EMPTY) => {
+        setDraft(next);
+        const ordered = isDateRangeOrdered(next.from, next.to);
+        setRangeError(!ordered);
+        if (ordered) {
+            setApplied((d) => ({ ...d, from: next.from, to: next.to }));
+            setPage(1);
+        }
+    };
+    const activeCount = [
+        applied.status !== ALL,
+        applied.notificationType !== ALL,
+        applied.eventId,
+        applied.from || applied.to,
+    ].filter(Boolean).length;
 
     const query = useAdminNotificationJobs({
         page,
@@ -85,66 +113,80 @@ export function JobsTab() {
 
     return (
         <div className="flex flex-col gap-6">
-            <form
-                className="flex flex-wrap items-center gap-2"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!isDateRangeOrdered(draft.from, draft.to)) {
-                        setRangeError(true);
-                        return;
+            {/* 상태·유형·이벤트는 고르는 즉시, 날짜는 두 칸이 맞게 채워지면 바로 걸린다 — 따로 누를 검색 버튼이 없다 */}
+            <FilterPanel onReset={resetFilters} activeCount={activeCount}>
+                <FilterRow
+                    label="상태"
+                    value={chipValue(STATUS_OPTIONS, applied.status)}
+                    onClear={() => applyNow({ status: ALL })}
+                >
+                    <FilterChips
+                        value={draft.status}
+                        onChange={(status) => applyNow({ status })}
+                        options={STATUS_OPTIONS}
+                        label="작업 상태"
+                    />
+                </FilterRow>
+                <FilterRow
+                    label="알림 종류"
+                    value={chipValue(TYPE_OPTIONS, applied.notificationType)}
+                    onClear={() => applyNow({ notificationType: ALL })}
+                >
+                    <FilterChips
+                        value={draft.notificationType}
+                        onChange={(notificationType) => applyNow({ notificationType })}
+                        options={TYPE_OPTIONS}
+                        label="알림 종류"
+                    />
+                </FilterRow>
+                <FilterRow
+                    label="이벤트"
+                    value={
+                        applied.eventId ? <AdminEventTitle eventId={applied.eventId} /> : undefined
                     }
-                    setRangeError(false);
-                    setApplied({ ...draft, eventId: draft.eventId.trim() });
-                    setPage(1);
-                }}
-            >
-                <OptionFilter
-                    value={draft.status}
-                    onChange={(status) => patch({ status })}
-                    options={STATUS_OPTIONS}
-                    label="상태 필터"
-                />
-                <OptionFilter
-                    value={draft.notificationType}
-                    onChange={(notificationType) => patch({ notificationType })}
-                    options={TYPE_OPTIONS}
-                    label="유형 필터"
-                    className="w-40"
-                />
-                <TextFilter
-                    value={draft.eventId}
-                    onChange={(eventId) => patch({ eventId })}
-                    placeholder="이벤트 ID"
-                    label="이벤트 ID 필터"
-                />
-                <DateRangeFilter
-                    from={draft.from}
-                    to={draft.to}
-                    onFromChange={(from) => patch({ from })}
-                    onToChange={(to) => patch({ to })}
-                    basis="생성일"
-                    error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
-                />
-                <Button type="submit" variant="secondary">
-                    검색
-                </Button>
-                <Button type="button" variant="ghost" onClick={resetFilters}>
-                    초기화
-                </Button>
-                {hasPendingDraft && (
-                    <p className="text-fg-tertiary text-caption basis-full">
-                        변경한 조건은 검색을 눌러야 적용됩니다.
-                    </p>
-                )}
-            </form>
+                    onClear={() => applyNow({ eventId: '' })}
+                >
+                    <AdminEventPicker
+                        eventId={applied.eventId}
+                        onChange={(eventId) => applyNow({ eventId })}
+                    />
+                </FilterRow>
+                <FilterRow
+                    label="생성일"
+                    value={rangeValue(applied.from, applied.to)}
+                    onClear={() => applyRange({ ...draft, from: '', to: '' })}
+                >
+                    <DateRangeFilter
+                        name="생성일"
+                        from={draft.from}
+                        to={draft.to}
+                        onFromChange={(from) => applyRange({ ...draft, from })}
+                        onToChange={(to) => applyRange({ ...draft, to })}
+                        error={rangeError ? '시작일이 종료일보다 늦습니다.' : null}
+                    />
+                </FilterRow>
+            </FilterPanel>
 
             <PagedResult
                 data={query.data}
                 isPending={query.isPending}
                 isError={query.isError}
                 isFetching={query.isFetching}
+                updatedAt={query.dataUpdatedAt}
                 page={page}
                 onPageChange={setPage}
+                toolbar={
+                    // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
+                    <BulkRetryButton
+                        kind="job"
+                        targets={(query.data?.items ?? [])
+                            .filter((item) => item.retryable)
+                            .map((item) => ({
+                                id: item.id,
+                                label: `${NOTIFICATION_TYPE_LABEL[item.notificationType]} · ${formatKst(item.scheduledAt)} 예정`,
+                            }))}
+                    />
+                }
                 emptyText="해당하는 알림 작업이 없습니다."
                 errorText="알림 작업 목록을 불러오지 못했습니다."
                 onRetry={() => void query.refetch()}
@@ -170,34 +212,17 @@ export function JobsTab() {
                 onOpenChange={(open) => {
                     if (!open) setSelectedJob(null);
                 }}
-                action={(job, detailReady) => (
-                    <div className="mt-2 flex flex-col gap-1">
+                action={(job, detailReady) =>
+                    job.retryable ? (
                         <Button
-                            variant="secondary"
-                            disabled={!job.retryable || !detailReady}
-                            aria-describedby={
-                                job.retryable && detailReady
-                                    ? undefined
-                                    : 'job-retry-disabled-reason'
-                            }
+                            className="w-full"
+                            disabled={!detailReady}
                             onClick={() => setRetryJob(job)}
                         >
-                            생성 복구 재시도
+                            {detailReady ? '생성 복구 재시도' : '상세를 확인하는 중…'}
                         </Button>
-                        {(!job.retryable || !detailReady) && (
-                            <p
-                                id="job-retry-disabled-reason"
-                                className="text-fg-tertiary text-caption"
-                            >
-                                {!detailReady
-                                    ? '작업 상세를 불러오지 못해 복구를 진행할 수 없습니다.'
-                                    : job.generationStoppedBy
-                                      ? `생성이 중지된 작업입니다 (${job.generationStoppedBy}).`
-                                      : '복구할 수 없는 상태입니다.'}
-                            </p>
-                        )}
-                    </div>
-                )}
+                    ) : null
+                }
             />
 
             <RetryJobDialog

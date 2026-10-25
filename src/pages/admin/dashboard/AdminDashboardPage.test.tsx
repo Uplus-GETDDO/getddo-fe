@@ -58,7 +58,7 @@ it('요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 �
         </QueryClientProvider>,
     );
     try {
-        expect(await screen.findByText('오늘 어뷰징 탐지 기록')).toBeInTheDocument();
+        expect(await screen.findByText('오늘 응모에 쓴 응모권')).toBeInTheDocument();
         await waitFor(() => expect(client.isFetching()).toBe(0));
 
         const statsCalls = requests.filter((r) => r.startsWith('/api/v1/admin/stats/daily'));
@@ -77,8 +77,8 @@ it('요약·추이는 AS01 한 번의 조회를 공유하고 조건별 건수 �
             ),
         ).toEqual([]);
         expect(requests.filter((r) => r.startsWith('/api/v1/admin/abuse-cases'))).toEqual([]);
-        // AS01 지표가 요약·추이에 보인다 — 탐지 기록은 차단 확정 건수로 표기하지 않는다
-        expect(screen.getByText('오늘 어뷰징 탐지 기록')).toBeInTheDocument();
+        // AS01 지표가 요약·추이에 보인다 — 어뷰징 탐지는 숫자 칸에 두지 않고 있을 때만 할 일로 띄운다
+        expect(screen.queryByText('오늘 어뷰징 탐지 기록')).not.toBeInTheDocument();
         expect(screen.getByText('현재 활성 일반 사용자')).toBeInTheDocument();
         expect(screen.getByText('참여율(활동 사용자 ÷ 현재 활성 일반 사용자)')).toBeInTheDocument();
     } finally {

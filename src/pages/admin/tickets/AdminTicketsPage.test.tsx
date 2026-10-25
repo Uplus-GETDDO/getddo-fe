@@ -42,7 +42,7 @@ afterEach(() => {
 describe('AdminTicketsPage', () => {
     it('탭 없이 전체 이력 단일 화면을 보여준다', async () => {
         renderPage();
-        expect(screen.getByText('응모권 지급·사용 내역을 확인합니다.')).toBeInTheDocument();
+        expect(screen.getByRole('search')).toBeInTheDocument();
         expect(screen.queryByRole('tab')).not.toBeInTheDocument();
         expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
@@ -73,15 +73,15 @@ describe('AdminTicketsPage', () => {
 
     it('?tab=grants&date= 링크는 그날이 걸린 전체 이력이 열린다', async () => {
         renderPage('/admin/tickets?tab=grants&date=2026-10-02');
-        expect(await screen.findByLabelText('처리일 시작일')).toHaveValue('2026-10-02');
-        expect(screen.getByLabelText('처리일 종료일')).toHaveValue('2026-10-02');
+        // 날짜는 필터 알약 창 안에 있다 — 알약이 품은 값으로 확인한다
+        expect(await screen.findByRole('button', { name: /^처리일\s*10\.02/ })).toBeInTheDocument();
         expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
     it('대시보드 링크의 ?date=&operationType= 가 전체 이력 필터로 적용된다', async () => {
         renderPage('/admin/tickets?date=2026-10-02&operationType=USE');
-        expect(await screen.findByLabelText('처리일 시작일')).toHaveValue('2026-10-02');
-        expect(screen.getByLabelText('처리 유형 필터')).toHaveTextContent('사용');
+        expect(await screen.findByRole('button', { name: /^처리일\s*10\.02/ })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /^처리\s*사용/ })).toBeInTheDocument();
         expect(await screen.findByText(/총 \d+건/)).toBeInTheDocument();
     });
 
@@ -112,11 +112,15 @@ describe('AdminTicketsPage', () => {
             0,
         );
         try {
-            expect(await screen.findByLabelText('처리일 시작일')).toHaveValue('2026-10-19');
-            expect(screen.getByLabelText('처리 유형 필터')).toHaveTextContent('사용');
+            expect(
+                await screen.findByRole('button', { name: /^처리일\s*10\.19/ }),
+            ).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: /^처리\s*사용/ })).toBeInTheDocument();
             await act(() => router.navigate(1));
-            await waitFor(() => expect(screen.getByLabelText('처리일 시작일')).toHaveValue(''));
-            expect(screen.getByLabelText('처리 유형 필터')).toHaveTextContent('전체 처리');
+            await waitFor(() =>
+                expect(screen.getByRole('button', { name: '처리일' })).toBeInTheDocument(),
+            );
+            expect(screen.getByRole('button', { name: '처리' })).toBeInTheDocument();
         } finally {
             client.clear();
             router.dispose();

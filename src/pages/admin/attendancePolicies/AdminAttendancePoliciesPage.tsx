@@ -22,38 +22,30 @@ export function AdminAttendancePoliciesPage() {
     const dailySelection = selectDailyAttendancePolicies(daily.data?.items ?? [], now);
     const streakSelection = selectStreakPolicySets(streak.data?.items ?? [], kstMonth);
     return (
-        <>
-            {/*
-             * 화면 이름은 관리자 레이아웃 위쪽 바가 이미 띄운다 — 본문에서 또 적지 않고 설명만 둔다.
-             * 설명은 가운데 칸 밖에 둬서 다른 관리자 화면과 같은 자리(왼쪽 280·위 84)에서 시작하게 한다.
-             */}
-            <p className="text-body-sm text-fg-secondary">
-                기존 달성·지급 기록은 유지합니다. 같은 적용일·기준월의 중복 예약은 허용되지
-                않습니다.
-            </p>
-            <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4 sm:p-6">
-                <AttendancePolicySection
-                    kind="daily"
-                    title="일일 출석"
-                    current={dailySelection.current}
-                    scheduled={dailySelection.scheduled}
-                    query={daily}
-                    onEdit={(policy) => setEditing({ kind: 'daily', policy })}
-                    renderPolicy={(policy) => <DailyPolicySummary policy={policy} />}
-                />
-                <AttendancePolicySection
-                    kind="streak"
-                    title="월간 연속 출석"
-                    current={streakSelection.current}
-                    scheduled={streakSelection.scheduled}
-                    query={streak}
-                    onEdit={(policy) => setEditing({ kind: 'streak', policy })}
-                    renderPolicy={(policy) => <StreakPolicySummary policy={policy} />}
-                />
-                {editing && (
-                    <AttendancePolicyEditDialog target={editing} onClose={() => setEditing(null)} />
-                )}
-            </div>
-        </>
+        <div className="flex flex-col gap-10 pr-10 pb-10">
+            <AttendancePolicySection
+                kind="daily"
+                title="일일 출석"
+                description="하루 첫 출석에 주는 응모권"
+                current={dailySelection.current}
+                scheduled={dailySelection.scheduled}
+                query={daily}
+                onEdit={(policy) => setEditing({ kind: 'daily', policy })}
+                renderPolicy={(policy) => <DailyPolicySummary policy={policy} />}
+            />
+            <AttendancePolicySection
+                kind="streak"
+                title="월간 연속 출석"
+                description="한 달 안에 며칠 연속 출석하면 주는 응모권"
+                current={streakSelection.current}
+                scheduled={streakSelection.scheduled}
+                query={streak}
+                onEdit={(policy) => setEditing({ kind: 'streak', policy })}
+                renderPolicy={(policy) => <StreakPolicySummary policy={policy} />}
+            />
+            {editing && (
+                <AttendancePolicyEditDialog target={editing} onClose={() => setEditing(null)} />
+            )}
+        </div>
     );
 }

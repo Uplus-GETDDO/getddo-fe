@@ -39,7 +39,7 @@ describe('AdminUsersPage', () => {
         expect(await screen.findByText('총 1건')).toBeInTheDocument();
         expect(screen.getByText(/현재 활성 일반 사용자 12명/)).toBeInTheDocument();
         expect(screen.queryByText('박서연')).not.toBeInTheDocument();
-        await user.click(screen.getByRole('button', { name: '초기화' }));
+        await user.click(screen.getByRole('button', { name: '필터 초기화' }));
         expect(await screen.findByText('박서연')).toBeInTheDocument();
     });
 
@@ -120,8 +120,10 @@ describe('AdminUsersPage', () => {
             }),
         );
         renderPage();
-        await user.type(screen.getByLabelText('사용자 ID 필터'), 'not-a-uuid');
-        await user.click(screen.getByRole('button', { name: '검색' }));
+        // 사용자 ID는 필터 알약 창 안에 있다 — 알약을 열어 쓰고 적용한다
+        await user.click(screen.getByRole('button', { name: '사용자 ID' }));
+        await user.type(await screen.findByLabelText('사용자 ID 필터'), 'not-a-uuid');
+        await user.click(screen.getByRole('button', { name: '적용' }));
         expect(await screen.findByText('올바른 UUID 형식이 아닙니다.')).toBeInTheDocument();
         // 초기 목록 조회 1회만 발생하고 잘못된 제출은 요청을 늘리지 않는다
         expect(calls).toBe(1);

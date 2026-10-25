@@ -82,7 +82,7 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByText(/총 2명/)).toBeInTheDocument();
         await user.click(screen.getByRole('link', { name: '참여자 조회 초기화' }));
         expect(
-            await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.'),
+            await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.'),
         ).toBeInTheDocument();
     });
 
@@ -109,7 +109,7 @@ describe('AdminEntriesPage', () => {
         );
         renderPage('/admin/entries?view=participants');
         expect(
-            await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.'),
+            await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.'),
         ).toBeInTheDocument();
         expect(calls).toBe(0);
     });
@@ -119,7 +119,16 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByRole('alert')).toHaveTextContent('이벤트를 찾을 수 없습니다.');
     });
 
-    it('잘못된 이벤트 ID를 제출하면 요청 없이 UUID 안내를 보여준다', async () => {
+    it('이벤트 ID를 붙여 넣으면 고르지 않아도 참여자를 보여준다', async () => {
+        const user = userEvent.setup();
+        renderPage('/admin/entries?view=participants');
+        await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.');
+        await user.click(screen.getByLabelText('참여자를 볼 이벤트'));
+        await user.paste(EVENT_ID);
+        expect(await screen.findByText(/총 2명/)).toBeInTheDocument();
+    });
+
+    it('이름 검색어만으로는 참여자를 요청하지 않는다', async () => {
         const user = userEvent.setup();
         let calls = 0;
         server.use(
@@ -132,10 +141,9 @@ describe('AdminEntriesPage', () => {
             }),
         );
         renderPage('/admin/entries?view=participants');
-        await screen.findByText('이벤트 ID를 입력하면 참여자를 조회합니다.');
-        await user.type(screen.getByLabelText('이벤트 ID 입력'), 'not-a-uuid');
-        await user.click(screen.getByRole('button', { name: '참여자 조회' }));
-        expect(await screen.findByText('올바른 UUID 형식이 아닙니다.')).toBeInTheDocument();
+        await screen.findByText('이벤트를 고르면 참여자를 볼 수 있어요.');
+        await user.type(screen.getByLabelText('참여자를 볼 이벤트'), 'not-a-uuid');
+        expect(await screen.findByRole('listbox')).toBeInTheDocument();
         expect(calls).toBe(0);
     });
 
@@ -156,28 +164,46 @@ describe('AdminEntriesPage', () => {
         expect(await screen.findByText('접수된 참여자가 없습니다.')).toBeInTheDocument();
     });
 
-    it('응모 이력의 사용자 링크는 이름을 보여주고 ID로 사용자 상세에 연결된다', async () => {
+    it('응모 이력의 사용자 이름을 누르면 머무를지·옮겨 갈지 고르는 메뉴가 ID로 연결된다', async () => {
+        const user = userEvent.setup();
         renderPage();
         await screen.findAllByText('10월 럭키 드로우');
-        // ADR-028 — 링크 텍스트는 현재 이름, 동일인 식별은 사용자 ID다
-        const links = screen.getAllByRole('link', { name: '김도윤' });
-        expect(links[0]).toHaveAttribute('href', `/admin/users?detail=${USER_ID}`);
+        // ADR-028 — 보이는 글은 현재 이름, 동일인 식별은 사용자 ID다
+        await user.click(screen.getAllByRole('button', { name: '김도윤' })[0]!);
+        expect(screen.getByRole('link', { name: '이 사용자 응모만 보기' })).toHaveAttribute(
+            'href',
+            `/admin/entries?userId=${USER_ID}`,
+        );
+        expect(screen.getByRole('link', { name: /사용자 상세 열기/ })).toHaveAttribute(
+            'href',
+            `/admin/users?detail=${USER_ID}`,
+        );
+        await user.keyboard('{Escape}');
         // 이름이 없는 응모 건은 기존처럼 사용자 ID를 보여준다
-        const unnamed = screen.getAllByRole('link', {
-            name: '00000000-0000-4000-8000-000000000004',
-        });
-        expect(unnamed[0]).toHaveAttribute(
+        await user.click(
+            screen.getAllByRole('button', { name: '00000000-0000-4000-8000-000000000004' })[0]!,
+        );
+        expect(screen.getByRole('link', { name: /사용자 상세 열기/ })).toHaveAttribute(
             'href',
             '/admin/users?detail=00000000-0000-4000-8000-000000000004',
         );
     });
 
-    it('보기 탭을 바꾸면 참여자 보기로 전환된다', async () => {
+    it('메뉴에서 이 사용자 응모만 보기를 고르면 같은 화면에서 사용자 필터가 걸린다', async () => {
         const user = userEvent.setup();
         renderPage();
-        await user.click(screen.getByRole('tab', { name: '이벤트 참여자' }));
-        expect(
-            screen.getByRole('tab', { name: '이벤트 참여자', selected: true }),
-        ).toBeInTheDocument();
+        await screen.findAllByText('10월 럭키 드로우');
+        await user.click(screen.getAllByRole('button', { name: '김도윤' })[0]!);
+        await user.click(screen.getByRole('link', { name: '이 사용자 응모만 보기' }));
+        expect(await screen.findByLabelText('사용자 ID 필터')).toHaveValue(USER_ID);
+    });
+
+    it('탭 없이 응모 이력을 열고, 이벤트를 걸면 그 이벤트 참여자 보기로 건너간다', async () => {
+        const user = userEvent.setup();
+        renderPage(`/admin/entries?eventId=${EVENT_ID}`);
+        expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+        await user.click(await screen.findByRole('link', { name: '이 이벤트 참여자 보기' }));
+        expect(await screen.findByRole('link', { name: '이벤트 상세로' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /참여자$/ })).toBeInTheDocument();
     });
 });

@@ -1,7 +1,10 @@
+import { X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useEventDraws } from '@entities/drawResult';
+import type { AdminEventStatus } from '@entities/event';
+
+import { DRAW_RUN_STATUS_META, useEventDraws } from '@entities/drawResult';
 import { ADMIN_STATUS_META, useAdminEvent } from '@entities/event';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
@@ -9,6 +12,7 @@ import { ChipTabs } from '@shared/ui/chip-tabs';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 import { DrawRunDetail } from './DrawRunDetail';
 import { DRAW_RUN_PAGE_SIZE, DrawRunList } from './DrawRunList';
@@ -17,12 +21,40 @@ import { ResultChangesSection } from './ResultChangesSection';
 type PanelTab = 'runs' | 'changes';
 
 const TABS: { value: PanelTab; label: string }[] = [
-    { value: 'runs', label: '추첨 실행' },
+    { value: 'runs', label: '추첨 기록' },
     { value: 'changes', label: '공개 명단 변경 이력' },
 ];
 
-// 이벤트 하나의 추첨 관리 — 실행 목록(AD01)·상세(AD02)·변경 이력(AD07)
-export function DrawEventPanel({ eventId }: { eventId: string }) {
+const FLOW_STEPS = ['자동 추첨', '결과 확인·조정', '당첨자 공개'] as const;
+
+/**
+ * 상태별 진행 칸 — 할 일 순서(추첨 → 확인·조정 → 공개) 중 지금 칸과, 최신 추첨 결과를 여는 버튼 이름(없으면 기다리기만).
+ * 무엇을 하라는 문장은 두지 않고 단계 막대와 아래 요약 값으로 보인다
+ */
+const DRAW_FLOW: Partial<
+    Record<AdminEventStatus, { step: number; action?: string; primary?: boolean }>
+> = {
+    CLOSED: {
+        step: 0,
+    },
+    DRAW_CONFIRMED: {
+        step: 1,
+        action: '결과 확인하고 공개하기',
+        primary: true,
+    },
+    REDRAWING: {
+        step: 1,
+        action: '재추첨 결과 열기',
+        primary: true,
+    },
+    PUBLISHED: {
+        step: 3,
+        action: '공개된 결과 보기',
+    },
+};
+
+// 이벤트 하나의 추첨 관리 — 진행 단계 안내 + 추첨 기록(AD01)·상세(AD02)·변경 이력(AD07)
+export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?: () => void }) {
     const {
         data: event,
         isPending: eventPending,
@@ -44,9 +76,11 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
     };
 
     const status = event ? ADMIN_STATUS_META[event.status] : null;
-    const awaitingFirstPublication = event?.status === 'DRAW_CONFIRMED';
+    const flow = event ? DRAW_FLOW[event.status] : undefined;
+    const latestRun = latest.data?.items[0];
     // ADR-022 — 발표 예정 시각·카운트다운은 계약에서 제외됐다. 표시 시각은 최초 자동 추첨 기준이다
     const drawScheduledAt = event?.drawScheduledAt;
+    const winners = event?.prizes.reduce((sum, p) => sum + p.winnerCount, 0) ?? 0;
 
     return (
         <div className="flex flex-col gap-6">
@@ -67,27 +101,114 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
                 </div>
             )}
             {event && status && (
-                <section className="bg-surface-page border-border-default flex flex-col gap-3 rounded-2xl border p-6">
-                    <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-title-3 text-fg-primary truncate">{event.title}</h2>
-                        <span className={cn(badgeVariants({ variant: null }), status.chipClass)}>
-                            {status.label}
-                        </span>
-                        <Button size="sm" variant="secondary" className="ml-auto" asChild>
+                <section className="bg-surface-page border-border-default flex flex-col gap-4 rounded-2xl border p-5">
+                    <div className="flex items-start gap-3">
+                        <div className="flex min-w-0 flex-1 flex-col gap-2">
+                            <span
+                                className={cn(
+                                    badgeVariants({ variant: null }),
+                                    status.chipClass,
+                                    'self-start',
+                                )}
+                            >
+                                {status.label}
+                            </span>
+                            <h2 className="text-title-3 text-fg-primary break-words">
+                                {event.title}
+                            </h2>
+                            <p className="text-body-sm text-fg-secondary tabular-nums">
+                                {drawScheduledAt
+                                    ? `최초 자동 추첨 ${formatKst(drawScheduledAt)}`
+                                    : '마감 뒤 자동 추첨'}
+                            </p>
+                        </div>
+                        <Button size="sm" variant="secondary" asChild>
                             <Link to={`/admin/events/${event.id}`}>이벤트 상세</Link>
                         </Button>
+                        {onClose && (
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="size-9 shrink-0"
+                                aria-label="추첨 관리 닫기"
+                                onClick={onClose}
+                            >
+                                <X aria-hidden className="size-5" />
+                            </Button>
+                        )}
                     </div>
-                    <p className="text-body-sm text-fg-secondary">
-                        최초 추첨 기준{' '}
-                        {drawScheduledAt ? `${formatKst(drawScheduledAt)} (KST) · ` : ''}
-                        마감 + 1분부터 자동 추첨 대상이 되고, 당첨자 공개는 명단 확인 후 수동
-                        요청으로 진행합니다.
-                    </p>
-                    {awaitingFirstPublication && (
-                        <p className="text-body-sm text-fg-secondary">
-                            선정 완료만으로는 공개되지 않습니다. 추첨 실행 탭에서 최신 실행을 검토한
-                            뒤 당첨자 공개 요청으로 공개합니다. 공개 전까지 사용자에게 결과가
-                            노출되지 않습니다.
+                    {/* 관리자가 따라가는 세 단계 — 지금 단계와 그 단계에서 누를 버튼 하나만 둔다 */}
+                    {flow ? (
+                        <div className="border-border-default flex flex-col gap-4 border-t pt-4">
+                            <ol className="grid grid-cols-3 gap-2" aria-label="추첨 진행 단계">
+                                {FLOW_STEPS.map((label, index) => {
+                                    const state =
+                                        index < flow.step
+                                            ? 'done'
+                                            : index === flow.step
+                                              ? 'current'
+                                              : 'todo';
+                                    return (
+                                        <li
+                                            key={label}
+                                            aria-current={state === 'current' ? 'step' : undefined}
+                                            className="flex flex-col gap-1.5"
+                                        >
+                                            <span
+                                                aria-hidden
+                                                className={cn(
+                                                    'h-1 rounded-full',
+                                                    state === 'todo'
+                                                        ? 'bg-surface-sunken'
+                                                        : 'bg-fg-primary',
+                                                )}
+                                            />
+                                            <span
+                                                className={cn(
+                                                    'text-caption',
+                                                    state === 'current'
+                                                        ? 'text-fg-primary font-semibold'
+                                                        : 'text-fg-tertiary',
+                                                )}
+                                            >
+                                                {index + 1}. {label}
+                                            </span>
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                            <div className="flex flex-wrap items-center gap-3">
+                                {/* 안내 문장 대신 이 이벤트 추첨의 요약 값 두 개 — 규모와 최근 실행 상태를 한 줄로 */}
+                                <dl className="flex min-w-0 flex-1 flex-wrap items-center gap-x-5 gap-y-1">
+                                    <SummaryItem label="당첨">
+                                        {formatNumber(winners)}명
+                                    </SummaryItem>
+                                    <SummaryItem label="최근 추첨">
+                                        {latestRun
+                                            ? `${latestRun.runNumber}회차 · ${DRAW_RUN_STATUS_META[latestRun.status].label}`
+                                            : '아직 없음'}
+                                    </SummaryItem>
+                                </dl>
+                                {flow.action && latestRun && (
+                                    <Button
+                                        size="sm"
+                                        variant={flow.primary ? 'primary' : 'secondary'}
+                                        onClick={() => {
+                                            // 상세 모달은 추첨 기록 탭에서만 뜬다 — 다른 탭에서 눌러도 바로 열리게 탭을 옮긴다
+                                            setTab('runs');
+                                            select(latestRun.id);
+                                        }}
+                                    >
+                                        {flow.action}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-caption text-fg-tertiary border-border-default border-t pt-4">
+                            {event.status === 'CANCELED'
+                                ? '취소된 이벤트 · 추첨 없음'
+                                : '당첨자 없음'}
                         </p>
                     )}
                 </section>
@@ -127,6 +248,15 @@ export function DrawEventPanel({ eventId }: { eventId: string }) {
                     <ResultChangesSection eventId={eventId} />
                 </div>
             )}
+        </div>
+    );
+}
+
+function SummaryItem({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div className="flex min-w-0 items-baseline gap-1.5">
+            <dt className="text-body-sm text-fg-tertiary shrink-0">{label}</dt>
+            <dd className="text-body-sm-bold text-fg-primary truncate tabular-nums">{children}</dd>
         </div>
     );
 }

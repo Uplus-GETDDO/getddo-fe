@@ -99,15 +99,15 @@
 
     /* Status — 관리자 전용 뱃지 */
     --color-status-pending: #f1f3f5;
-    --color-status-active: #e7f0fe;
-    --color-status-revision: #fbf0d9;
-    --color-status-approved: #e6f5ee;
-    --color-status-rejected: #fbebee;
+    --color-status-active: #eaf1ff;
+    --color-status-revision: #fff0e6;
+    --color-status-approved: #e3f6f1;
+    --color-status-rejected: #fdecf0;
     --color-status-pending-text: #4b525c;
-    --color-status-active-text: #1d4ed8;
-    --color-status-revision-text: #92400e;
-    --color-status-approved-text: #0b6549;
-    --color-status-rejected-text: #b42318;
+    --color-status-active-text: #2450d6;
+    --color-status-revision-text: #c2410c;
+    --color-status-approved-text: #0a7a5c;
+    --color-status-rejected-text: #d61f45;
 
     /* Chart — 관리자 전용 */
     --color-chart-line: #e6007e;
@@ -335,15 +335,15 @@
     --color-semantic-error: #f04438;
     --color-semantic-error-strong: #d92d20;
     --color-status-pending: #f1f3f5;
-    --color-status-active: #e7f0fe;
-    --color-status-revision: #fbf0d9;
-    --color-status-approved: #e6f5ee;
-    --color-status-rejected: #fbebee;
+    --color-status-active: #eaf1ff;
+    --color-status-revision: #fff0e6;
+    --color-status-approved: #e3f6f1;
+    --color-status-rejected: #fdecf0;
     --color-status-pending-text: #4b525c;
-    --color-status-active-text: #1d4ed8;
-    --color-status-revision-text: #b45309;
-    --color-status-approved-text: #0b6549;
-    --color-status-rejected-text: #d92d20;
+    --color-status-active-text: #2450d6;
+    --color-status-revision-text: #c2410c;
+    --color-status-approved-text: #0a7a5c;
+    --color-status-rejected-text: #d61f45;
     --color-chart-compare: #cdd2d8;
     --color-chart-grid: #f1f3f5;
     --color-chart-axis: #9aa1ab;

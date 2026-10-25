@@ -1,4 +1,4 @@
-import { Gamepad2, Ticket } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@shared/ui/button';
@@ -23,9 +23,15 @@ export function GameTicketCard({
     fluid = false,
     className,
     rewardedToday,
+    rewardImage,
 }: {
     game: Game;
     rewardedToday?: boolean;
+    /**
+     * 보상 응모권 그림 — 게임 보상은 받을 때 등급을 뽑아 '?' 응모권을 쓴다.
+     * 응모권 그림은 entities/ticket에 있어 같은 레이어끼리 참조할 수 없으므로 부르는 위젯이 넘긴다
+     */
+    rewardImage: string;
     href: string;
     /** 플레이 화면이 준비됐는지 — false면 버튼을 '준비 중'으로 막는다 */
     ready?: boolean;
@@ -52,7 +58,13 @@ export function GameTicketCard({
                             <span className="text-caption text-fg-tertiary">오늘 받음</span>
                         ) : (
                             <span className="text-body-sm-bold text-fg-primary flex items-center gap-1">
-                                <Ticket aria-hidden className="size-4.5" />+{DAILY_GAME_REWARD}
+                                <img
+                                    src={rewardImage}
+                                    alt=""
+                                    aria-hidden
+                                    className="h-4.5 w-auto object-contain"
+                                />
+                                +{DAILY_GAME_REWARD}
                             </span>
                         )}
                     </div>

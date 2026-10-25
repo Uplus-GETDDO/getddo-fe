@@ -29,7 +29,7 @@ describe('DateRangeFilter', () => {
                 basis="차단 시작일"
             />,
         );
-        expect(screen.getByText('차단 시작일 · KST')).toBeInTheDocument();
+        expect(screen.getByText('차단 시작일')).toBeInTheDocument();
         expect(screen.getByLabelText('차단 시작일 시작일')).toHaveValue('2026-10-01');
         expect(screen.getByLabelText('차단 시작일 종료일')).toHaveValue('2026-10-23');
     });

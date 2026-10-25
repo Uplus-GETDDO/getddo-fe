@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useMissionList } from '@entities/mission';
 import emptyMascot from '@shared/assets/ui/reward-mascot.png';
 import { useVirtualClock } from '@shared/model/virtualClock';
+import { Button } from '@shared/ui/button';
 import { ChipTabs, chipTabIds } from '@shared/ui/chip-tabs';
 import { LoadError } from '@shared/ui/load-error';
 import { SkeletonCard } from '@shared/ui/skeleton';
@@ -91,20 +92,25 @@ export function MissionBoard({
                     />
                 )}
 
+                {/* 아직 받지 않은 지난 페이지가 있으면 '없다'고 단정하지 않고 더 보기로 이어 찾게 한다 */}
                 {missions && shown.length === 0 && (
                     <div className="bg-surface-sunken flex flex-col items-center gap-3 rounded-2xl px-6 py-10 text-center">
                         <img src={emptyMascot} alt="" className="h-24 w-auto" />
                         <p className="text-body-bold text-fg-primary">
                             {missions.length === 0
                                 ? '새 미션이 곧 올라와요'
-                                : filter === 'DONE'
-                                  ? '아직 참여한 미션이 없어요'
-                                  : '이 종류의 미션이 아직 없어요'}
+                                : missionsQuery.hasNextPage
+                                  ? '최근 미션 중에는 없어요'
+                                  : filter === 'DONE'
+                                    ? '아직 참여한 미션이 없어요'
+                                    : '이 종류의 미션이 아직 없어요'}
                         </p>
                         <p className="text-body-sm text-fg-tertiary">
                             {missions.length === 0
                                 ? '그동안 출석하고 게임하면서 응모권을 모아 두세요.'
-                                : '다른 미션부터 참여해 보세요.'}
+                                : missionsQuery.hasNextPage
+                                  ? '아래 지난 미션 더 보기로 이어서 찾아볼 수 있어요.'
+                                  : '다른 미션부터 참여해 보세요.'}
                         </p>
                     </div>
                 )}
@@ -120,6 +126,29 @@ export function MissionBoard({
                                 onOpen={onOpen}
                             />
                         ))}
+                    </div>
+                )}
+
+                {/* 100건씩 받아 붙인다 — 서버가 최근 시작 순이라 지난 미션일수록 뒤 페이지에 있다 */}
+                {missions && missionsQuery.hasNextPage && (
+                    <div className="flex flex-col items-center gap-2">
+                        {/* 더 받기에 실패하면 버튼만 되돌아와 실패인지 끝인지 몰랐다 — 버튼 위에 알린다 */}
+                        {missionsQuery.isFetchNextPageError && (
+                            <p role="alert" className="text-semantic-error-strong text-body-sm">
+                                지난 미션을 불러오지 못했어요. 다시 눌러 주세요.
+                            </p>
+                        )}
+                        <Button
+                            variant="secondary"
+                            disabled={missionsQuery.isFetchingNextPage}
+                            onClick={() => void missionsQuery.fetchNextPage()}
+                        >
+                            {missionsQuery.isFetchingNextPage
+                                ? '불러오는 중…'
+                                : missionsQuery.isFetchNextPageError
+                                  ? '다시 불러오기'
+                                  : '지난 미션 더 보기'}
+                        </Button>
                     </div>
                 )}
             </div>

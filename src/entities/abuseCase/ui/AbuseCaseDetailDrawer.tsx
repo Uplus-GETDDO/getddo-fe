@@ -1,7 +1,20 @@
-import type { ReactNode } from 'react';
-
+import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    DetailItem,
+    DetailList,
+    DetailMeta,
+    DetailSection,
+    DetailStats,
+    DetailSummary,
+} from '@shared/ui/detail-list';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { formatKst } from '@shared/utils/date';
 
@@ -14,21 +27,9 @@ import {
     ABUSE_TRIGGER_SCOPE_LABEL,
 } from '../model/types';
 
-const FIELD = 'text-caption text-fg-tertiary';
-const VALUE = 'text-body-sm text-fg-primary break-all';
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-    return (
-        <div className="flex flex-col gap-1">
-            <span className={FIELD}>{label}</span>
-            <span className={VALUE}>{children}</span>
-        </div>
-    );
-}
-
 /**
- * 차단 내역 상세 드로어 — 목록 요약을 먼저 보여주고, AR02 상세가 오면
- * 차단 판정 근거(evidence)를 덧붙인다. 차단 기록은 조회 전용이라 액션 버튼이 없다.
+ * 차단 내역 상세 — 목록 요약을 먼저 보여주고, AR02 상세가 오면 차단 판정 근거(evidence)를 덧붙인다.
+ * 차단 기록은 조회 전용이고 내용이 짧아, 화면 끝 드로어 대신 가운데 모달로 띄워 바로 읽고 닫게 한다.
  */
 export function AbuseCaseDetailDrawer({
     abuseCase,
@@ -48,67 +49,113 @@ export function AbuseCaseDetailDrawer({
     const shown = abuseCase;
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="overflow-y-auto sm:max-w-md">
-                <SheetHeader>
-                    <SheetTitle>차단 내역 상세</SheetTitle>
-                    <SheetDescription>{shown ? formatKst(shown.blockedAt) : ''}</SheetDescription>
-                </SheetHeader>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
+                <DialogHeader className="border-border-default border-b px-6 py-5">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold">
+                        {shown ? shown.userNickname : '차단 내역'}
+                    </DialogTitle>
+                    <DialogDescription>차단 내역 상세</DialogDescription>
+                </DialogHeader>
                 {shown && (
-                    <div className="flex flex-col gap-4 px-4 pb-6">
-                        <Field label="구분">{ABUSE_SOURCE_TYPE_LABEL[shown.sourceType]}</Field>
-                        <Field label="사용자">
-                            {shown.userNickname}{' '}
-                            <span className="text-fg-tertiary">({shown.userId})</span>
-                        </Field>
-                        <Field label="관련 이벤트">{shown.eventTitle ?? '-'}</Field>
-                        <Field label="탐지 유형">
-                            {ABUSE_DETECTION_TYPE_LABEL[shown.detectionType]}
-                        </Field>
-                        <Field label="차단 사유">{shown.detectionReason}</Field>
-                        <Field label="차단 시작">{formatKst(shown.blockedAt)}</Field>
-                        <Field label="차단 종료 예정">{formatKst(shown.blockedUntil)}</Field>
-                        {detail ? (
-                            <div className="bg-surface-sunken text-fg-secondary text-caption flex flex-col gap-1 rounded-lg p-3">
-                                <span className={FIELD}>차단 판정 근거</span>
-                                <span>규칙 버전 · {detail.evidence.ruleVersion}</span>
-                                <span>
-                                    판정 기준 ·{' '}
-                                    {ABUSE_TRIGGER_SCOPE_LABEL[detail.evidence.triggerScope]}
-                                </span>
-                                <span>
-                                    집계 구간 · {formatKst(detail.evidence.windowStartedAt)} ~{' '}
-                                    {formatKst(detail.evidence.windowEndsAt)}
-                                </span>
-                                <span>요청 허용 한도 · {detail.evidence.requestLimit}건</span>
-                                <span>관측 거절 횟수 · {detail.evidence.rejectedCount}건</span>
-                                <span>차단 기준 횟수 · {detail.evidence.rejectionThreshold}건</span>
+                    <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
+                        {/* 핵심 — 왜, 언제부터 언제까지 막혔는지 */}
+                        <DetailSummary>
+                            <div className="flex flex-wrap gap-1.5">
+                                <Badge variant="neutral">
+                                    {ABUSE_SOURCE_TYPE_LABEL[shown.sourceType]}
+                                </Badge>
+                                <Badge variant="outline">
+                                    {ABUSE_DETECTION_TYPE_LABEL[shown.detectionType]}
+                                </Badge>
                             </div>
-                        ) : (
-                            isPending && (
-                                <LoadingBlock label="상세 정보를 불러오는 중…">
-                                    <SkeletonRows rows={2} />
-                                </LoadingBlock>
-                            )
-                        )}
-                        {isError && (
-                            <div className="flex items-center gap-3">
-                                <p className="text-semantic-error-strong text-body-sm">
-                                    상세 정보를 불러오지 못했습니다.
-                                </p>
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={() => void refetch()}
-                                >
-                                    다시 시도
-                                </Button>
-                            </div>
-                        )}
-                        <Field label="차단 기록 ID">{shown.id}</Field>
+                            <p className="text-body-bold text-fg-primary">
+                                {shown.detectionReason}
+                            </p>
+                            <p className="text-body-sm text-fg-secondary tabular-nums">
+                                {formatKst(shown.blockedAt)} ~ {formatKst(shown.blockedUntil)}
+                            </p>
+                        </DetailSummary>
+
+                        <DetailSection title="대상">
+                            <DetailList>
+                                <DetailItem label="사용자">
+                                    {shown.userNickname}
+                                    <span className="text-caption text-fg-tertiary block">
+                                        {shown.userId}
+                                    </span>
+                                </DetailItem>
+                                <DetailItem label="관련 이벤트">
+                                    {shown.eventTitle ?? '—'}
+                                </DetailItem>
+                            </DetailList>
+                        </DetailSection>
+
+                        <DetailSection title="판정 근거">
+                            {detail ? (
+                                <>
+                                    {/* 거절 횟수가 기준을 넘어 막혔다 — 세 숫자를 나란히 놓아 비교가 바로 되게 한다 */}
+                                    <DetailStats
+                                        items={[
+                                            {
+                                                label: '허용 한도',
+                                                value: `${detail.evidence.requestLimit}건`,
+                                            },
+                                            {
+                                                label: '거절 횟수',
+                                                value: `${detail.evidence.rejectedCount}건`,
+                                                emphasis: true,
+                                            },
+                                            {
+                                                label: '차단 기준',
+                                                value: `${detail.evidence.rejectionThreshold}건`,
+                                            },
+                                        ]}
+                                    />
+                                    <DetailList>
+                                        <DetailItem label="판정 기준">
+                                            {
+                                                ABUSE_TRIGGER_SCOPE_LABEL[
+                                                    detail.evidence.triggerScope
+                                                ]
+                                            }
+                                        </DetailItem>
+                                        <DetailItem label="집계 구간">
+                                            {formatKst(detail.evidence.windowStartedAt)} ~{' '}
+                                            {formatKst(detail.evidence.windowEndsAt)}
+                                        </DetailItem>
+                                    </DetailList>
+                                </>
+                            ) : (
+                                isPending && (
+                                    <LoadingBlock label="판정 근거를 불러오는 중…">
+                                        <SkeletonRows rows={2} />
+                                    </LoadingBlock>
+                                )
+                            )}
+                            {isError && (
+                                <div className="flex items-center gap-3">
+                                    <p className="text-semantic-error-strong text-body-sm">
+                                        판정 근거를 불러오지 못했습니다.
+                                    </p>
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        onClick={() => void refetch()}
+                                    >
+                                        다시 시도
+                                    </Button>
+                                </div>
+                            )}
+                        </DetailSection>
+
+                        <DetailMeta>
+                            차단 기록 ID {shown.id}
+                            {detail && ` · 규칙 버전 ${detail.evidence.ruleVersion}`}
+                        </DetailMeta>
                     </div>
                 )}
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }

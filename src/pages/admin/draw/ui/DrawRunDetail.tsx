@@ -20,6 +20,7 @@ import { Segmented } from '@shared/ui/segmented';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 
 import { useDrawRunDerived } from '../hooks/useDrawRunDerived';
+import { FooterSlot } from '../model/footerSlot';
 import { DrawCandidatesSection } from './DrawCandidatesSection';
 import { DrawOperationsSection } from './DrawOperationsSection';
 import {
@@ -73,6 +74,7 @@ export function DrawRunDetail({
         refetch,
         isFetching,
     } = useDrawRun(drawId);
+    const [footer, setFooter] = useState<HTMLDivElement | null>(null);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,12 +95,12 @@ export function DrawRunDetail({
                 }}
             >
                 <DialogHeader className="px-6 pt-6 pb-4">
-                    <DialogTitle className="text-title-3 text-fg-primary">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold">
                         {run
                             ? `${run.runNumber}회차 ${DRAW_TYPE_LABEL[run.drawType]} 상세`
                             : '추첨 실행 상세'}
                     </DialogTitle>
-                    <DialogDescription className="text-body-sm text-fg-secondary">
+                    <DialogDescription className="sr-only">
                         선정 결과·후보·정합성 검증·운영 이력을 확인하고 당첨자 공개·취소·재추첨을
                         진행합니다.
                     </DialogDescription>
@@ -128,18 +130,21 @@ export function DrawRunDetail({
                         </div>
                     )}
                     {run && (
-                        <RunDetailBody
-                            run={run}
-                            eventCanceled={eventCanceled}
-                            eventReady={eventReady}
-                            onRunCreated={onRunCreated}
-                            refreshing={isFetching}
-                            updatedAt={dataUpdatedAt}
-                            refreshFailed={isRefetchError}
-                            onRefresh={() => void refetch()}
-                        />
+                        <FooterSlot.Provider value={footer}>
+                            <RunDetailBody
+                                run={run}
+                                eventCanceled={eventCanceled}
+                                eventReady={eventReady}
+                                onRunCreated={onRunCreated}
+                                refreshing={isFetching}
+                                updatedAt={dataUpdatedAt}
+                                refreshFailed={isRefetchError}
+                                onRefresh={() => void refetch()}
+                            />
+                        </FooterSlot.Provider>
                     )}
                 </div>
+                <div ref={setFooter} className="shrink-0" />
             </DialogContent>
         </Dialog>
     );
@@ -295,29 +300,6 @@ function RunDetailBody({
                 onRetryPublicationCheck={retryPublicationCheck}
             />
 
-            {!changePending && !firstPublished && (
-                <DrawFirstPublishSection
-                    isLatestRun={isLatestRun === true}
-                    confirmed={confirmed}
-                    changePending={changePending}
-                    changeError={changeError}
-                    canFirstPublish={canFirstPublish}
-                    onOpen={() => setFirstPublishOpen(true)}
-                    onRetry={() => void refetchChanges()}
-                />
-            )}
-
-            {firstPublished && isRedraw && (
-                <DrawPublishUpdateSection
-                    confirmed={confirmed}
-                    canPublish={canPublish}
-                    alreadyPublished={alreadyPublished}
-                    publicationCheckFailed={publicationCheckFailed}
-                    anyBeforeFirstPublication={anyBeforeFirstPublication}
-                    onOpen={() => setPublishOpen(true)}
-                />
-            )}
-
             <DrawRosterSection
                 firstPublished={firstPublished}
                 rosterComplete={rosterComplete}
@@ -349,6 +331,33 @@ function RunDetailBody({
                 <DrawCandidatesSection drawId={run.id} results={run.results} />
             )}
             {section === 'operations' && <DrawOperationsSection drawId={run.id} />}
+
+            {/*
+             * 공개는 이 모달의 마지막 결정이라 아래 고정 칸에 붙인다 — 명단·결과를 어디까지 내려 봐도 버튼이 보인다.
+             * 공개 전엔 당첨자 공개(GD-199), 공개 뒤 재추첨이면 공개 명단 갱신(AD06). 못 누르는 까닭은 왼쪽 글로 알린다
+             */}
+            {!changePending && !firstPublished && (
+                <DrawFirstPublishSection
+                    isLatestRun={isLatestRun === true}
+                    confirmed={confirmed}
+                    changePending={changePending}
+                    changeError={changeError}
+                    canFirstPublish={canFirstPublish}
+                    onOpen={() => setFirstPublishOpen(true)}
+                    onRetry={() => void refetchChanges()}
+                />
+            )}
+
+            {firstPublished && isRedraw && (
+                <DrawPublishUpdateSection
+                    confirmed={confirmed}
+                    canPublish={canPublish}
+                    alreadyPublished={alreadyPublished}
+                    publicationCheckFailed={publicationCheckFailed}
+                    anyBeforeFirstPublication={anyBeforeFirstPublication}
+                    onOpen={() => setPublishOpen(true)}
+                />
+            )}
 
             <CancelWinDialog
                 result={cancelTarget}
