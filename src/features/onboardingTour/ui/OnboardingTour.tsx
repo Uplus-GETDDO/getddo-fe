@@ -12,7 +12,7 @@ import { hasSeenTour, markTourSeen } from '../utils/tourSeen';
 const START_DELAY_MS = 800;
 
 /**
- * 홈 첫 방문 안내 — 가상 사용자마다 처음 한 번만 4단계 말풍선으로 화면을 짚는다 (driver.js).
+ * 홈 첫 방문 안내 — 가상 사용자마다 처음 한 번만 5단계 말풍선으로 화면을 짚는다 (driver.js).
  * 시작하는 순간 본 것으로 적는다 — 중간에 닫거나 다른 화면으로 가도 다시 뜨지 않는다.
  * 그리는 것은 driver.js가 body에 직접 붙이므로 이 컴포넌트는 아무것도 렌더하지 않는다.
  * ready: 홈 목록이 도착해 짚을 자리가 화면에 다 그려졌는지
