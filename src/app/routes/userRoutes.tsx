@@ -35,8 +35,17 @@ const UiGalleryPageLazy = lazy(() =>
 // pages→app 참조가 금지라 라우트 단에서 처리한다.
 const LoginWithShellPrefetch = () => {
     useEffect(() => {
-        void import('@app/layouts/UserLayout');
-        void import('@pages/home/HomePage');
+        // 첫 페인트 창의 대역을 양보한다 — 로그인 체류는 수 초라 유휴 시점 발사로도 목적을 채운다 (GD-342).
+        const prefetch = () => {
+            void import('@app/layouts/UserLayout');
+            void import('@pages/home/HomePage');
+        };
+        if ('requestIdleCallback' in window) {
+            const id = window.requestIdleCallback(prefetch);
+            return () => window.cancelIdleCallback(id);
+        }
+        const id = setTimeout(prefetch, 0);
+        return () => clearTimeout(id);
     }, []);
     return <LoginPage />;
 };
