@@ -126,4 +126,15 @@ describe('ImageUploadField', () => {
         await waitFor(() => expect(screen.getByText(/prizes\//)).toBeInTheDocument());
         expect(screen.queryByText(/밝은 부분은/)).toBeNull();
     });
+
+    /*
+     * 가로로 긴 배너 미리보기(184px)와 버튼을 한 줄에 두면 좁은 모달에서 버튼이 상자를 뚫었다.
+     * 좁은 화면에서는 세로로 쌓고 넓은 화면에서만 한 줄에 둔다(GD-344).
+     */
+    it('좁은 화면에서는 미리보기와 버튼을 세로로 쌓는다', () => {
+        render(<Harness slot="BANNER" />);
+
+        const row = screen.getByLabelText('대표 이미지').closest('div')?.parentElement;
+        expect(row).toHaveClass('flex-col', 'sm:flex-row');
+    });
 });
