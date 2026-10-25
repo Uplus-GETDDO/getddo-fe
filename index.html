@@ -28,7 +28,132 @@
         </script>
     </head>
     <body>
-        <div id="root"></div>
+        <div id="root">
+            <!-- 첫 페인트가 entry JS 다운로드·실행을 기다리지 않도록 로그인 셸을 정적으로 둔다 (GD-348).
+                 React 마운트 시 #root가 교체되므로 하이드레이션 불일치는 없다. 다만 CLS를 0으로 유지하려고
+                 행 상자·텍스트 라인 높이를 LoginPage 첫 렌더(prod 가상 사용자 5명)와 동일하게 맞춘다 —
+                 행 수나 여백을 바꿀 때는 pages/login/LoginPage의 실제 마크업과 대조한다.
+                 미인증 진입은 라우트 가드가 전부 /login으로 돌리므로 다른 경로에서도 이 셸이 자연스럽다. -->
+            <main class="bg-surface-page flex min-h-screen items-center justify-center px-6">
+                <section class="flex w-full max-w-120 flex-col gap-8">
+                    <div class="flex flex-col gap-2 text-center">
+                        <h1 class="text-title-1 text-fg-primary">
+                            U<span class="text-fg-brand">+</span> GETDDO
+                        </h1>
+                        <p class="text-body-sm text-fg-tertiary">
+                            시연용 가상 사용자를 선택해 시작해요
+                        </p>
+                    </div>
+                    <ul class="flex flex-col gap-3" aria-hidden="true">
+                        <li>
+                            <div
+                                class="bg-surface-page border-border-default flex w-full items-center gap-4 rounded-2xl border p-5 motion-safe:animate-pulse"
+                            >
+                                <div class="bg-surface-sunken size-6 shrink-0 rounded-full"></div>
+                                <div class="flex flex-1 flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-subhead"
+                                            ><span
+                                                class="bg-surface-sunken inline-block h-4 w-24 rounded-md"
+                                            ></span
+                                        ></span>
+                                    </div>
+                                    <span class="text-body-sm"
+                                        ><span
+                                            class="bg-surface-sunken inline-block h-3.5 w-40 rounded-md"
+                                        ></span
+                                    ></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div
+                                class="bg-surface-page border-border-default flex w-full items-center gap-4 rounded-2xl border p-5 motion-safe:animate-pulse"
+                            >
+                                <div class="bg-surface-sunken size-6 shrink-0 rounded-full"></div>
+                                <div class="flex flex-1 flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-subhead"
+                                            ><span
+                                                class="bg-surface-sunken inline-block h-4 w-24 rounded-md"
+                                            ></span
+                                        ></span>
+                                    </div>
+                                    <span class="text-body-sm"
+                                        ><span
+                                            class="bg-surface-sunken inline-block h-3.5 w-40 rounded-md"
+                                        ></span
+                                    ></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div
+                                class="bg-surface-page border-border-default flex w-full items-center gap-4 rounded-2xl border p-5 motion-safe:animate-pulse"
+                            >
+                                <div class="bg-surface-sunken size-6 shrink-0 rounded-full"></div>
+                                <div class="flex flex-1 flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-subhead"
+                                            ><span
+                                                class="bg-surface-sunken inline-block h-4 w-24 rounded-md"
+                                            ></span
+                                        ></span>
+                                    </div>
+                                    <span class="text-body-sm"
+                                        ><span
+                                            class="bg-surface-sunken inline-block h-3.5 w-40 rounded-md"
+                                        ></span
+                                    ></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div
+                                class="bg-surface-page border-border-default flex w-full items-center gap-4 rounded-2xl border p-5 motion-safe:animate-pulse"
+                            >
+                                <div class="bg-surface-sunken size-6 shrink-0 rounded-full"></div>
+                                <div class="flex flex-1 flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-subhead"
+                                            ><span
+                                                class="bg-surface-sunken inline-block h-4 w-24 rounded-md"
+                                            ></span
+                                        ></span>
+                                    </div>
+                                    <span class="text-body-sm"
+                                        ><span
+                                            class="bg-surface-sunken inline-block h-3.5 w-40 rounded-md"
+                                        ></span
+                                    ></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div
+                                class="bg-surface-page border-border-default flex w-full items-center gap-4 rounded-2xl border p-5 motion-safe:animate-pulse"
+                            >
+                                <div class="bg-surface-sunken size-6 shrink-0 rounded-full"></div>
+                                <div class="flex flex-1 flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-subhead"
+                                            ><span
+                                                class="bg-surface-sunken inline-block h-4 w-24 rounded-md"
+                                            ></span
+                                        ></span>
+                                    </div>
+                                    <span class="text-body-sm"
+                                        ><span
+                                            class="bg-surface-sunken inline-block h-3.5 w-40 rounded-md"
+                                        ></span
+                                    ></span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+            </main>
+        </div>
         <script type="module" src="/src/app/main.tsx"></script>
     </body>
 </html>
