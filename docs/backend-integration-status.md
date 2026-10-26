@@ -166,7 +166,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - **미션 제출 플로우**: QUIZ 미션 상세에서 OX 답 선택 → 제출 → 201·완료·보상 신호 확인.
 - **503 안내 문구(GD-335)**: 제출 POST를 프록시 계층에서 503 `COMMON-007`로 차단 시 토스트에 "일시적으로 요청을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요."가 표시되고 '원본 답변으로 결과 다시 확인' 버튼이 뜬다. 차단 해제 후 재시도는 **같은 `Idempotency-Key`**로 전송돼 실제 201을 받았다 — 5xx에서 키 유지 동작을 배포본에서 확인. 실서버가 돌리는 실 503 표본은 여전히 미관측(운영 배포·장애 시험 전).
 - **모바일 375px 사용자 화면 13경로 실측**: `/`, `/events`, `/events/:id`, `/events/:id/results`, `/time-raffle`, `/time-raffle/:id`, `/missions`, `/missions/:id`, `/missions/games/:id`, `/my-tickets`, `/my-entries`, `/my-notifications`, `/mypage` — **가로 넘침 전부 0px**, 페이지 오류(pageerror) 0건. 햄버거 메뉴 탭 → '이벤트' 링크 탭 이동으로 터치 동작 확인. 관리자 화면의 375px 점검은 GD-317/GD-328 기준(320px 넘침 해소)이며 나머지 관리자 화면은 미점검으로 남긴다.
-- **발견 이슈 — 24px 미만 터치 대상**: WCAG 2.5.8 최소(24×24 CSS px) 기준 미달 컨트롤이 있다 — `/time-raffle` 래플 캐러셀 이전/다음 버튼 20×20·'응모권 등급 안내' 버튼 16×16, `/missions` 등급 안내 16×16·'내역' 텍스트 링크 22px, mission-detail·my-tickets·my-entries·my-notifications에 16~22px 보조 컨트롤 각 1~4건. 치명적 깨짐은 아니나 별도 접근성 티켓 후보로 기록한다.
+- ~~**발견 이슈 — 24px 미만 터치 대상**~~: WCAG 2.5.8 기준 미달 컨트롤은 GD-353에서 전부 해소했다(아래 GD-353 절의 재측정 표 참조).
 - **관측 한계**: Playwright 모바일 컨텍스트에서 `ERR_INSUFFICIENT_RESOURCES` 콘솔 오류가 다수 발생했다 — 앱 오류가 아니라 도구의 리소스 한계이며 pageerror·4xx/5xx 업무 응답은 없었다. `/my-tickets` 네트워크 유휴 대기가 길어 보조 관측에서 goto 타임아웃 1회(본 스윕에서는 통과) — 폴링·긴 요청의 영향일 가능성이 있다.
 
 ## GD-352 통합 검증 잔여 정리 (2026-10-26)
@@ -178,4 +178,26 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - **abuse `triggerScope=EVENT` 표본 신규 확인**: AR02 상세 11건 중 EVENT 1건 — evidence 필드(ruleVersion·triggerScope·windowStartedAt/EndsAt·requestLimit·rejectedCount·rejectionThreshold) 전부 존재. 단 `eventId`·`eventTitle`이 null이라 이벤트 연결 계약 충족 여부는 담당자 질의로 남긴다(요청 R7).
 - **N02·N03 실측 완료**: 미읽음 최소 계정(user0, 8건)에서 개별 읽음 PUT 200·`isRead:true`·미읽음 8→7, 전체 읽음 PUT 200·`updatedCount:7`·미읽음 7→0을 대조했다.
 - **미관측 유지**: INACTIVE 사용자(100명 전원 ACTIVE), 추첨 FAILED 실행(72건 전부 CONFIRMED 54·NO_ENTRIES 18), AP05 대상 일일 미래 예약 표본(AP01 3건 전부 적용 중·과거 — 연속 정책의 미래 `effectiveMonth` 1건은 AP06 측정 대상으로 이미 소비됨).
-- **잔여 이관**: 추첨 시나리오 C1~C6·발표→알림 트리거·503 `COMMON-007` 장애 시험·배너 실서버 CRUD+업로드 계약·`[TEST-GD261]` 정리·INACTIVE/FAILED 표본·배송 정보 계약(product-context 범위 제외 표기와 WinnerBanner TODO의 충돌)·자정/월 경계 관측·결과 성능 측정·AP05 일일 예약 표본은 [BE 요청 문구](superpowers/plans/2026-10-26-gd352-be-requests.md)로 정리했다. Speed Insights 누적은 사용자가 Vercel 대시보드에서 확인한다.
+- **잔여 이관**: 추첨 시나리오 C1~C6·발표→알림 트리거·503 `COMMON-007` 장애 시험·배너 실서버 CRUD+업로드 계약·`[TEST-GD261]` 정리·INACTIVE/FAILED 표본·배송 정보 계약(product-context 범위 제외 표기와 WinnerBanner TODO의 충돌 — FE 버튼·TODO는 GD-353에서 제거, 계약 확정 자체는 R8 대기 유지)·자정/월 경계 관측·결과 성능 측정·AP05 일일 예약 표본은 [BE 요청 문구](superpowers/plans/2026-10-26-gd352-be-requests.md)로 정리했다. Speed Insights 누적은 사용자가 Vercel 대시보드에서 확인한다.
+
+## GD-353 FE 잔여 해소 — 배송 버튼·터치 대상·GAME 문구·관리자 목업 (2026-10-26)
+
+GD-352/GD-341 실측에서 남은 FE 자체 해결 항목을 `feat/GD-353`에서 처리했다. 검증: `format:check`·`lint`(경고 0)·`test:ci`(924개)·`build` 전부 통과, 브라우저 실측은 로컬 dev+MSW(Chrome DevTools, 페이지 단위 `getBoundingClientRect`) 기준.
+
+- **배송 정보 버튼 제거**: `WinnerBanner`의 disabled '배송 정보 입력하기' 버튼과 TODO를 제거하고 '가입하신 연락처로 따로 보내 드려요' 안내 문구는 유지했다. 320·375·1280px에서 배너 렌더·가로 넘침 0·버튼 부재를 확인했다. 수령 정보 계약 자체는 R8로 BE 확정 대기를 유지한다 — 계약이 생기면 버튼을 되돌린다.
+- **터치 대상 24px(WCAG 2.5.8) 해소 — 375px 재측정**:
+
+    | 경로                                                  | 대상                                             | 수정 전 | 수정 후                           |
+    | ----------------------------------------------------- | ------------------------------------------------ | ------- | --------------------------------- |
+    | `/time-raffle`                                        | 캐러셀 이전·다음 버튼                            | 20×20   | 24×24                             |
+    | `/time-raffle`                                        | 응모권 등급 안내 버튼                            | 16×16   | 24×24                             |
+    | `/missions`                                           | 응모권 등급 안내 버튼                            | 16×16   | 24×24                             |
+    | `/missions`                                           | '내역' 텍스트 링크                               | ~42×22  | 42.2×26                           |
+    | `/missions`                                           | '전체보기' 텍스트 버튼(`size="text"`)            | ~72×20  | 72×25.6                           |
+    | mission-detail·my-tickets·my-entries·my-notifications | 뒤로가기·모두 읽음·재시도·행 링크 등 보조 컨트롤 | 18~22px | 전부 24px 이상(스윕에서 미달 0건) |
+
+    아이콘 그림 크기는 그대로 두고 패딩·최소 크기·음수 마진으로 누름 칸만 키웠다. 미션 상세의 라디오 점(20×20)은 실제 포인터 대상이 감싸는 label 카드(327×53)라 WCAG 2.5.8 '동등 대상' 예외로 남겼다.
+
+- **GAME 오류 문구 매핑**: `errorMessage.ts`에 GAME-001~008을 추가했다 — 게임 플레이 화면이 쓰는 공개 문구와 같은 문장이다. GAME-004는 '아직 지원하지 않는 게임입니다' 별도 분기가 없어 오류 경로에서 매핑 문구("상세 정보를 제공할 수 없는 게임입니다.")를 보여 준다.
+- **관리자 목업 보강(로컬 전용)**: MSW에 AM01~AM03(미션 관리 목록·상세·등록)과 AP01·AP03(출석 일일·연속 정책 목록)을 추가했다 — `/admin/missions`·`/admin/attendance-policies`가 로컬에서도 목업 데이터를 표시한다. AM04 설문 집계·AM05 자유 서술 답변은 아직 미커버로, 상세 시트의 집계 패널만 로컬에서 조회 실패로 보인다. 배포 빌드는 `VITE_ENABLE_MSW=false`라 영향 없다.
+- **`entities/event` TODO 정리**: 주석을 현행 계약·구현 상태로 고쳤다 — `detailImageUrl`은 R4 대기 표기, `myEntryCount`·`myTicketCount`는 `useMyEventEntries` 계산 경로가 구현 완료임을 명시, `eventType` 전환은 계약 영향 별도 작업으로 표기했다(실제 전환 없음).

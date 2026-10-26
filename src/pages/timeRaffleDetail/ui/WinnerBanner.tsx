@@ -7,7 +7,6 @@ import type { Prize } from '@entities/drawResult';
 
 import { useSessionStore } from '@entities/user';
 import { Badge } from '@shared/ui/badge';
-import { Button } from '@shared/ui/button';
 import { maskName } from '@shared/utils/format';
 
 import type { Burst } from './ConfettiBurst';
@@ -179,14 +178,6 @@ export function WinnerBanner({ prize }: { prize: Prize | null }) {
                         경품 수령 안내는 가입하신 연락처로 따로 보내 드려요.
                     </motion.p>
                 </div>
-
-                {/*
-                 * TODO: 배송 정보 입력은 API 계약이 없다 (getddo-spec 05-api에 수령 정보 엔드포인트 없음).
-                 * 시안의 '입력 마감 D-7' 칩도 기한을 내려 주는 필드가 없어 임의로 적지 않고 비워 둔다.
-                 */}
-                <Button size="lg" disabled className="shrink-0 lg:w-55">
-                    배송 정보 입력하기
-                </Button>
             </div>
         </motion.section>
     );

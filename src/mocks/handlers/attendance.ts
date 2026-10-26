@@ -142,6 +142,82 @@ const milestonesFor = (state: AttendanceState, month: string): AttendanceMilesto
         };
     });
 
+// 'YYYY-MM'에서 offset만큼 떨어진 달 — 월 산술만 하므로 UTC 기준으로 계산한다
+const shiftMonth = (month: string, offset: number) => {
+    const year = Number(month.slice(0, 4));
+    const m = Number(month.slice(5, 7));
+    return new Date(Date.UTC(year, m - 1 + offset, 1)).toISOString().slice(0, 7);
+};
+
+// AP01 시드 — 사용자 출석이 따르는 policy 값을 관리자 계약(DailyAttendancePolicy) 행으로 낸다.
+// 종료된 과거 정책 → 현재 적용 중 → 다음 자정부터의 예약 건 순이며, 예약이 있으면 현재 건의
+// effectiveUntil이 예약 시작 시각이다 (AP02 계약과 같은 모양)
+const dailyPolicyFixtures = () => {
+    const now = mockNow();
+    const scheduledFrom = nextKstMidnight(now);
+    const base = {
+        createdBy: 'admin-demo',
+        createdByName: '관리자',
+    };
+    return [
+        {
+            ...base,
+            id: 'dap-past',
+            rewardTicketCount: 1,
+            effectiveFrom: new Date(now.getTime() - 120 * DAY_MS).toISOString(),
+            effectiveUntil: new Date(now.getTime() - 60 * DAY_MS).toISOString(),
+            createdAt: new Date(now.getTime() - 120 * DAY_MS).toISOString(),
+        },
+        {
+            ...base,
+            id: 'dap-current',
+            rewardTicketCount: policy.dailyRewardTickets,
+            effectiveFrom: new Date(now.getTime() - 60 * DAY_MS).toISOString(),
+            effectiveUntil: scheduledFrom,
+            createdAt: new Date(now.getTime() - 60 * DAY_MS).toISOString(),
+        },
+        {
+            ...base,
+            id: 'dap-scheduled',
+            rewardTicketCount: 2,
+            effectiveFrom: scheduledFrom,
+            effectiveUntil: null,
+            createdAt: now.toISOString(),
+        },
+    ];
+};
+
+// AP03 시드 — 지난달·이번 달(사용자 보상이 따르는 policy.streakBonuses)·다음 달 예약 묶음
+const streakSetFixtures = () => {
+    const month = toDate(mockNow()).slice(0, 7);
+    const setOf = (id: string, effectiveMonth: string, bonuses = policy.streakBonuses) => ({
+        id,
+        effectiveMonth,
+        milestones: bonuses.map((bonus, index) => ({
+            id: `${id}-m${index + 1}`,
+            milestoneDays: bonus.days,
+            rewardTicketCount: bonus.rewardTickets,
+        })),
+        createdBy: 'admin-demo',
+        createdByName: '관리자',
+        createdAt: `${effectiveMonth}-01T00:00:00+09:00`,
+    });
+    return [
+        setOf('sps-prev', shiftMonth(month, -1)),
+        setOf('sps-current', month),
+        setOf('sps-next', shiftMonth(month, 1), [
+            { days: 7, rewardTickets: 1 },
+            { days: 14, rewardTickets: 4 },
+            { days: 28, rewardTickets: 8 },
+        ]),
+    ];
+};
+
+// 예약 행의 적용 시각은 세션 동안 고정한다 — 요청마다 mockNow로 다시 계산하면
+// '다음 자정'이 계속 미뤄져 예약 전환을 볼 수 없다
+const dailyPolicyRows = dailyPolicyFixtures();
+const streakSetRows = streakSetFixtures();
+
 export const attendanceHandlers = [
     // AT01 초안 — 오늘 출석 여부·연속 일수·일일 보상량·이번 달 단계·다음 초기화 시각
     http.get(api('/v1/attendances/today'), ({ request }) => {
@@ -249,5 +325,29 @@ export const attendanceHandlers = [
             milestones: milestonesFor(state, month),
             serverTime: mockNow().toISOString(),
         });
+    }),
+    // AP01 — 일일 정책 목록. 위 policy 값을 계약 모양(DailyAttendancePolicy)으로 낸다.
+    // 적용 시작 시각 내림차순이며, 예약 건이 있으면 현재 건의 effectiveUntil이 그 시작 시각이다
+    http.get(api('/v1/admin/policies/attendance/daily'), ({ request }) => {
+        const url = new URL(request.url);
+        const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
+        const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
+        const items = [...dailyPolicyRows]
+            .sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))
+            .slice((page - 1) * size, page * size);
+        return ok({ items, page, size, totalElements: dailyPolicyRows.length });
+    }),
+    // AP03 — 연속 출석 단계 묶음. 적용월 내림차순(같으면 id 내림차순)
+    http.get(api('/v1/admin/policies/attendance/streak'), ({ request }) => {
+        const url = new URL(request.url);
+        const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
+        const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
+        const items = [...streakSetRows]
+            .sort(
+                (a, b) =>
+                    b.effectiveMonth.localeCompare(a.effectiveMonth) || b.id.localeCompare(a.id),
+            )
+            .slice((page - 1) * size, page * size);
+        return ok({ items, page, size, totalElements: streakSetRows.length });
     }),
 ];

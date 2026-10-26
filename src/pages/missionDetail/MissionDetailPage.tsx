@@ -50,7 +50,8 @@ export function MissionDetailPage() {
                 <p className="text-body text-fg-primary">
                     {isError ? '미션 정보를 불러오지 못했습니다.' : '미션을 찾을 수 없어요.'}
                 </p>
-                <Link to="/missions" className="text-body-sm text-fg-brand">
+                {/* 글줄(22px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다 */}
+                <Link to="/missions" className="text-body-sm text-fg-brand -my-0.5 py-0.5">
                     미션 페이지로 돌아가기
                 </Link>
             </main>
