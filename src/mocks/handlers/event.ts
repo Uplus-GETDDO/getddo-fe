@@ -8,7 +8,6 @@ import type {
     MembershipRule,
 } from '@entities/event';
 
-import { MEMBERSHIP_LABEL } from '@entities/event';
 import { env } from '@shared/config/env';
 
 import { DAY, DEMO_WINDOW_MS, MINUTE, demoTime, sessionFixedTime } from '../demoTime';
@@ -79,8 +78,6 @@ function raffleDetail(intro: string, prizeComposition: string) {
         paragraphs: [intro, DRAW_PARAGRAPH, TICKET_PARAGRAPH],
         prizeComposition,
         shippingSchedule: '당첨자 발표 후 3 영업일 이내 일괄 발송',
-        // 이벤트마다 자격 등급이 달라 응답을 만들 때 그 래플의 등급으로 채운다 (toResponse)
-        membershipNote: '',
     };
 }
 
@@ -194,7 +191,8 @@ export const mockEvents: MockEvent[] = [
         isTimeRaffle: true,
         title: '스타벅스 e카드 래플',
         description: '응모권 1장으로 참여하는 스타벅스 e카드 추첨 이벤트',
-        bannerImageUrl: '/images/events/starbucks-set.webp',
+        // 목록·상세 머리는 16:9 썸네일, 등수 카드는 배경 없는 경품 그림
+        bannerImageUrl: '/images/events/banners/starbucks-ecard.jpg',
         startsAt: UPCOMING_OPENS_AT,
         endsAt: demoTime(7 * DAY),
         status: 'upcoming',
@@ -208,7 +206,7 @@ export const mockEvents: MockEvent[] = [
                 rank: 1,
                 name: '스타벅스 e카드 세트',
                 description: null,
-                imageUrl: '/images/events/starbucks-set.webp',
+                imageUrl: '/images/events/starbucks-ecard.png',
                 winnerCount: 10,
             },
             {
@@ -230,7 +228,9 @@ export const mockEvents: MockEvent[] = [
         title: '데이터 쿠폰 무료 응모',
         description:
             '응모권 없이 누구나 참여할 수 있는 데이터 쿠폰 추첨 이벤트예요. 한 번만 응모할 수 있고, 마감 뒤 자동으로 추첨합니다. 당첨되면 쿠폰이 U+ 멤버십 앱 쿠폰함으로 바로 들어가요.',
-        bannerImageUrl: '/images/events/banners/data-coupon.svg',
+        bannerImageUrl: '/images/events/banners/data-coupon.jpg',
+        // 상세 쿠폰 자리에는 실제 이용권 그림을 둔다
+        detailImageUrl: '/images/events/data-coupon.webp',
         /* 쿠폰 한 장 꼴 캠페인 비주얼 — 경품이 한 종류라 등수를 세울 게 없다 */
         detailVisual: {
             template: 'coupon',
@@ -539,7 +539,8 @@ export const mockEvents: MockEvent[] = [
         title: '배달앱 5천원 쿠폰 응모',
         description:
             '응모권 없이 참여하는 배달 쿠폰 추첨 이벤트예요. 한 번만 응모할 수 있고, 쿠폰은 발표 후 문자로 받은 코드로 배달앱에 등록해 쓸 수 있어요. 쿠폰 유효기간은 발급일로부터 30일입니다.',
-        bannerImageUrl: '/images/events/banners/delivery-coupon.svg',
+        bannerImageUrl: '/images/events/banners/delivery-coupon.jpg',
+        detailImageUrl: '/images/events/delivery-coupon.png',
         /*
          * 금액권 티켓 꼴 캠페인 비주얼 — 경품이 금액권 하나다.
          * 추첨 인원·기간·마감 시각·참여 방법·참여 자격은 비주얼에 적지 않고 이벤트 값에서 끌어온다.
@@ -1170,11 +1171,7 @@ function toResponse(event: MockEvent, now: number) {
         // 시연 전용 표시 필드 — spec에 없어 실서버 응답에는 오지 않는다
         isTimeRaffle: event.isTimeRaffle,
         detailVisual: event.detailVisual,
-        // 멤버십 안내는 공통 문구가 아니라 이 래플의 자격 등급으로 적는다
-        raffleDetail: event.raffleDetail && {
-            ...event.raffleDetail,
-            membershipNote: `${MEMBERSHIP_LABEL[rule.membershipRule]} 등급 이상 응모할 수 있어요`,
-        },
+        raffleDetail: event.raffleDetail,
         myEntryCount: event.myEntryCount,
         myTicketCount: event.myTicketCount,
     };

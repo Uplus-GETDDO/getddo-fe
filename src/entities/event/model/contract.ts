@@ -37,7 +37,6 @@ export const eventSummaryResponseSchema = z.object({
             paragraphs: z.array(z.string()),
             prizeComposition: z.string(),
             shippingSchedule: z.string(),
-            membershipNote: z.string(),
         })
         .optional(),
     myEntryCount: z.number().int().nonnegative().nullable().optional(),

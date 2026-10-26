@@ -2,10 +2,23 @@ import type { EntryStatistics } from '@entities/entry';
 import type { Event } from '@entities/event';
 
 import { useMyEventEntries } from '@entities/entry';
-import { describeTicketUsage } from '@entities/event';
+import { describeTicketUsage, MEMBERSHIP_LABEL } from '@entities/event';
 import { useMyTickets } from '@entities/ticket';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { KST_HOUR_MINUTE, formatKst, isSameKstDate } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
+
+/**
+ * 모집 시각 — 하루 안에 열고 닫으면 시각만, 날을 넘기면 날짜를 붙인다.
+ * 시각만 적으면 며칠짜리 래플이 '17:28 시작 · 14:28 마감'처럼 마감이 시작보다 앞서 보였다
+ */
+function formatRecruitWindow(startsAt: string, endsAt: string) {
+    const at = (iso: string, withDate: boolean) =>
+        withDate
+            ? `${formatKst(iso, { month: 'long', day: 'numeric' })} ${formatKst(iso, KST_HOUR_MINUTE)}`
+            : formatKst(iso, KST_HOUR_MINUTE);
+    const withDate = !isSameKstDate(startsAt, endsAt);
+    return `${at(startsAt, withDate)} 시작 · ${at(endsAt, withDate)} 마감`;
+}
 
 export function RaffleDetailsCard({
     event,
@@ -38,11 +51,12 @@ export function RaffleDetailsCard({
                     : null,
         },
         { label: '배송 일정', value: detail?.shippingSchedule ?? null },
+        { label: '모집 시각', value: formatRecruitWindow(event.startsAt, event.endsAt) },
+        // 자격 등급은 모든 이벤트 응답에 있는 계약 필드다 — 목업 전용 안내 묶음이 없는 래플에서도 보인다
         {
-            label: '모집 시각',
-            value: `${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
+            label: '멤버십 자격',
+            value: `${MEMBERSHIP_LABEL[event.membershipRule]} 등급 이상 응모할 수 있어요`,
         },
-        { label: '멤버십 자격', value: detail?.membershipNote ?? null },
         /*
          * '1회 차감 수량'으로 두면 가중치 래플이 '1회 1장'으로 읽힌다 — 등급을 골라
          * 누적 상한까지 여러 번 나눠 낼 수 있는 래플이라 쓰는 방식 자체를 적는다 (ADR-010)

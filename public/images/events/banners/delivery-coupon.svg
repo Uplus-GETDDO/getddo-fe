@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" role="img" aria-label="">
-  <rect width="600" height="300" fill="#D9283A"/>
-  <circle cx="92" cy="54" r="100" fill="#FFE07A" opacity=".18"/>
-  <circle cx="512" cy="268" r="120" fill="#FFE07A" opacity=".12"/>
-  <!-- 이모지는 시스템 글꼴로 그려진다 — 웹폰트가 없어도 보인다 -->
-  <text x="300" y="150" font-size="132" text-anchor="middle" dominant-baseline="central">🛵</text>
-</svg>
