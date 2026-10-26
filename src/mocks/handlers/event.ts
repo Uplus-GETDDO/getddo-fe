@@ -1,6 +1,12 @@
 import { http } from 'msw';
 
-import type { AdminEventStatus, Event, EventStatus, MembershipRule } from '@entities/event';
+import type {
+    AdminEventStatus,
+    Event,
+    EventPrize,
+    EventStatus,
+    MembershipRule,
+} from '@entities/event';
 
 import { MEMBERSHIP_LABEL } from '@entities/event';
 import { env } from '@shared/config/env';
@@ -106,6 +112,11 @@ export interface MockEvent {
     membershipRule?: MembershipRule;
     prizeName: string;
     winnerCount: number;
+    /**
+     * 등수별 경품 원본 — 관리자 목업이 등록·수정분을 그대로 실어 준다.
+     * 씨앗 데이터에는 없어서, 없으면 아래 상세 응답이 prizeName·winnerCount로 한 줄을 지어낸다.
+     */
+    prizes?: EventPrize[];
     // 응모 현황 원천 — 이벤트 응답(E01/E02)에는 싣지 않고 E03 응모 통계로만 내려간다 (ADR-0007)
     participantCount: number | null;
     usedTicketCount: number | null;
@@ -190,6 +201,25 @@ export const mockEvents: MockEvent[] = [
         requiredTickets: 1,
         prizeName: '스타벅스 e카드',
         winnerCount: 50,
+        // 등수가 여럿인 래플 — 상세에서 'N종'과 등수 줄이 어떻게 보이는지 확인할 수 있다
+        prizes: [
+            {
+                id: 'evt-005-prize-1',
+                rank: 1,
+                name: '스타벅스 e카드 세트',
+                description: null,
+                imageUrl: '/images/events/starbucks-set.webp',
+                winnerCount: 10,
+            },
+            {
+                id: 'evt-005-prize-2',
+                rank: 2,
+                name: '아메리카노 기프티콘',
+                description: '발표 다음 날 문자로 보내 드립니다.',
+                imageUrl: '/images/events/americano.jpg',
+                winnerCount: 40,
+            },
+        ],
         participantCount: null,
         usedTicketCount: null,
         myEntryCount: null,
@@ -596,6 +626,17 @@ export const mockEvents: MockEvent[] = [
         requiredTickets: 1,
         prizeName: 'U+ 데이터 쿠폰 2GB',
         winnerCount: 500,
+        // 경품이 한 종인 래플 — 상세에서 등수를 숨기고 이름만 보이는 쪽을 확인할 수 있다
+        prizes: [
+            {
+                id: 'evt-204-prize-1',
+                rank: 1,
+                name: 'U+ 데이터 쿠폰 2GB',
+                description: '충전 후 30일 안에 쓰면 됩니다.',
+                imageUrl: '/images/events/data-coupon.webp',
+                winnerCount: 500,
+            },
+        ],
         participantCount: 2740,
         usedTicketCount: 3180,
         myEntryCount: 0,
@@ -1112,7 +1153,11 @@ function toResponse(event: MockEvent, now: number) {
         ],
         serverTime: new Date(now).toISOString(),
         ...rule,
-        prizes: [
+        /*
+         * 관리자에서 등록·수정한 경품이 있으면 그대로 내려준다 — 그래야 올린 경품 그림이
+         * 사용자 상세에도 보인다. 씨앗 데이터에는 경품 배열이 없어 요약으로 한 줄을 지어낸다.
+         */
+        prizes: event.prizes ?? [
             {
                 id: `${event.id}-prize-1`,
                 rank: 1,

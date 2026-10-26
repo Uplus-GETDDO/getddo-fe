@@ -2,6 +2,21 @@ import { z } from 'zod';
 
 import { eventTypeSchema, membershipRuleSchema } from './adminTypes';
 
+/**
+ * 상세(E02)에만 실리는 경품 한 줄. 목록(E01)에는 없다.
+ *
+ * 계약 원문은 model/contract.ts에 있지만, 그쪽이 이 파일을 참조하므로
+ * 화면 모델이 쓰는 모양은 여기에 두고 contract가 가져다 쓴다.
+ */
+export const eventPrizeSchema = z.object({
+    id: z.string(),
+    rank: z.number().int(),
+    name: z.string(),
+    description: z.string().nullable(),
+    imageUrl: z.string().nullable(),
+    winnerCount: z.number().int(),
+});
+
 export const eventStatusSchema = z.enum([
     'upcoming',
     'open',
@@ -192,6 +207,9 @@ export const eventSchema = z.object({
     requiredTickets: z.number().int().nonnegative(),
     // 경품 요약 — prizes는 상세(E02)에만 있어 목록만으로 만든 이벤트에는 없다 (spec EventSummary)
     prizeName: z.string().optional(),
+    // 등수별 경품 원본 — 요약(prizeName·winnerCount)만으로는 경품 그림을 보일 수 없다.
+    // 목록만으로 만든 이벤트에는 없다.
+    prizes: z.array(eventPrizeSchema).optional(),
     winnerCount: z.number().int().positive().optional(),
     // 응모 현황(응모자 수·차감 합계)은 E03 전용 조회(entities/entry의 useEntryStatistics)로 받는다 — ADR-0007
     // 아래 두 필드는 현행 계약에 없다 — 상세 화면의 '이번 래플' 카운터는 entities/entry의 useMyEventEntries가
@@ -204,3 +222,4 @@ export const eventSchema = z.object({
 
 export type EventStatus = z.infer<typeof eventStatusSchema>;
 export type Event = z.infer<typeof eventSchema>;
+export type EventPrize = z.infer<typeof eventPrizeSchema>;
