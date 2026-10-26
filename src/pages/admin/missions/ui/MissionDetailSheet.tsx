@@ -14,7 +14,13 @@ import {
     DetailSection,
     DetailSummary,
 } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { StatusDot } from '@shared/ui/status-dot';
 import { formatKstFullDot } from '@shared/utils/date';
@@ -30,16 +36,16 @@ import { SurveySummaryPanel } from './SurveySummaryPanel';
  */
 export function MissionDetailSheet({ id, onClose }: { id: string | null; onClose: () => void }) {
     return (
-        <Sheet
+        <Dialog
             open={id !== null}
             onOpenChange={(next) => {
                 if (!next) onClose();
             }}
         >
-            <SheetContent className="sm:max-w-2xl">
+            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
                 {id && <MissionDetailBody key={id} id={id} />}
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }
 
@@ -48,12 +54,14 @@ function MissionDetailBody({ id }: { id: string }) {
     const mission = query.data;
     return (
         <>
-            <SheetHeader>
-                <SheetTitle>미션 상세</SheetTitle>
-                <SheetDescription className="sr-only">
+            <DialogHeader className="border-border-default gap-1 border-b px-6 pt-6 pr-14 pb-5">
+                <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold tracking-[-0.01em]">
+                    미션 상세
+                </DialogTitle>
+                <DialogDescription className="text-fg-secondary sr-only text-sm">
                     기본 정보·문항·설문 응답을 확인합니다.
-                </SheetDescription>
-            </SheetHeader>
+                </DialogDescription>
+            </DialogHeader>
             <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                 {query.isPending && (
                     <LoadingBlock label="상세를 불러오는 중…">

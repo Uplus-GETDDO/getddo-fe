@@ -72,11 +72,12 @@ export function AdminUsersPage() {
     });
     const detailQuery = useAdminUser(validDetailId);
 
-    // 서랍 바깥을 눌러 닫으면 같은 클릭이 닫힌 뒤 아래 줄에 떨어져 서랍이 다시 열렸다 — 닫힌 직후 잠깐은 줄 클릭을 무시한다
+    // 상세 바깥을 눌러 닫으면 같은 클릭이 닫힌 뒤 아래 줄에 떨어져 상세가 다시 열렸다 — 닫힌 직후 잠깐은 줄 클릭을 무시한다.
+    // 상세를 열고 닫는 것은 같은 화면 안의 일이라 주소가 바뀌어도 스크롤을 맨 위로 올리지 않는다
     const justClosed = useRef(false);
     const openDetail = (id: string) => {
         if (justClosed.current) return;
-        setSearchParams({ detail: id });
+        setSearchParams({ detail: id }, { preventScrollReset: true });
     };
     const closeDetail = () => {
         justClosed.current = true;
@@ -85,7 +86,7 @@ export function AdminUsersPage() {
         }, CLICK_THROUGH_MS);
         const next = new URLSearchParams(searchParams);
         next.delete('detail');
-        setSearchParams(next);
+        setSearchParams(next, { preventScrollReset: true });
     };
 
     // 칩 조건은 누르는 즉시 걸고, 글자 검색만 검색 버튼으로 확정한다

@@ -124,7 +124,8 @@ export function AdminEventDetailPage() {
         pathname: '/admin/events',
         search: searchParams.toString() ? `?${searchParams.toString()}` : '',
     };
-    const close = () => void navigate(closeTo);
+    // 상세를 닫아도 목록 스크롤 자리는 그대로 둔다
+    const close = () => void navigate(closeTo, { preventScrollReset: true });
     const { data: event, isPending, isError } = useAdminEvent(eventId);
     const [action, setAction] = useState<EventActionKind | null>(null);
     const [preview, setPreview] = useState<{ src: string; label: string } | null>(null);

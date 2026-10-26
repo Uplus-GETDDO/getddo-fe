@@ -7,7 +7,13 @@ import {
     DetailSection,
     DetailSummary,
 } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { formatKst } from '@shared/utils/date';
 
 import type { AdminNotification } from '../model/types';
@@ -49,16 +55,18 @@ export function AdminNotificationDetailDrawer({
     const blockReason = notification ? deliveryRetryBlockReason(notification) : null;
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-lg">
-                <SheetHeader>
-                    <SheetTitle>{notification?.title ?? '발송 상세'}</SheetTitle>
-                    <SheetDescription>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
+                <DialogHeader className="border-border-default gap-1 border-b px-6 pt-6 pr-14 pb-5">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold tracking-[-0.01em]">
+                        {notification?.title ?? '발송 상세'}
+                    </DialogTitle>
+                    <DialogDescription className="text-fg-secondary text-sm">
                         {notification
                             ? `받는 사람 ${notification.userName ?? notification.userId}`
                             : ''}
-                    </SheetDescription>
-                </SheetHeader>
+                    </DialogDescription>
+                </DialogHeader>
                 {notification && (
                     <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                         {/* 핵심 — 발송 상태와 지금 복구할 수 있는지, 실패했다면 왜 */}
@@ -135,7 +143,7 @@ export function AdminNotificationDetailDrawer({
                         <DetailMeta>알림 ID {notification.id}</DetailMeta>
                     </div>
                 )}
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }

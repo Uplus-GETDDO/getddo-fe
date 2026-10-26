@@ -6,7 +6,13 @@ import { getErrorMessage } from '@shared/api/errorMessage';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { DetailItem, DetailList, DetailSection, DetailSummary } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { formatKstFullDot } from '@shared/utils/date';
 
@@ -31,12 +37,16 @@ export function AdminUserDetailSheet({
     const uid = user?.id ?? userId ?? '';
 
     return (
-        <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
-            <SheetContent className="w-full sm:max-w-lg">
-                <SheetHeader>
-                    <SheetTitle>{user?.name ?? '사용자 상세'}</SheetTitle>
-                    <SheetDescription className="break-all">{uid}</SheetDescription>
-                </SheetHeader>
+        <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
+                <DialogHeader className="border-border-default gap-1 border-b px-6 pt-6 pr-14 pb-5">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold tracking-[-0.01em]">
+                        {user?.name ?? '사용자 상세'}
+                    </DialogTitle>
+                    <DialogDescription className="text-fg-secondary text-sm break-all">
+                        {uid}
+                    </DialogDescription>
+                </DialogHeader>
                 <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                     {isPending && (
                         <LoadingBlock label="사용자 정보를 불러오는 중…">
@@ -90,7 +100,7 @@ export function AdminUserDetailSheet({
                         </>
                     )}
                 </div>
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }

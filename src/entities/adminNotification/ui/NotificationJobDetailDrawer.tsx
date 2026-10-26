@@ -8,7 +8,13 @@ import {
     DetailSection,
     DetailSummary,
 } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@shared/ui/dialog';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { formatKst } from '@shared/utils/date';
 
@@ -49,16 +55,18 @@ export function NotificationJobDetailDrawer({
     const detailReady = detail != null && !isError;
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-lg">
-                <SheetHeader>
-                    <SheetTitle>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
+                <DialogHeader className="border-border-default gap-1 border-b px-6 pt-6 pr-14 pb-5">
+                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold tracking-[-0.01em]">
                         {shown
                             ? `${NOTIFICATION_TYPE_LABEL[shown.notificationType]} 알림 작업`
                             : '알림 작업'}
-                    </SheetTitle>
-                    <SheetDescription>알림 작업 상세</SheetDescription>
-                </SheetHeader>
+                    </DialogTitle>
+                    <DialogDescription className="text-fg-secondary text-sm">
+                        알림 작업 상세
+                    </DialogDescription>
+                </DialogHeader>
                 {shown && (
                     <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                         {/* 핵심 — 지금 상태와 처리 횟수, 다음에 무슨 일이 있는지 */}
@@ -155,7 +163,7 @@ export function NotificationJobDetailDrawer({
                         <DetailMeta>작업 ID {shown.id}</DetailMeta>
                     </div>
                 )}
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }

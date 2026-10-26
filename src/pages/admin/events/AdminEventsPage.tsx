@@ -4,6 +4,7 @@ import { Outlet, useMatch, useNavigate, useSearchParams } from 'react-router-dom
 import type { AdminEventStatus, EventType } from '@entities/event';
 
 import { ADMIN_STATUS_META, AdminEventTable, useAdminEvents } from '@entities/event';
+import { useRevealWhenStacked } from '@shared/hooks/useRevealWhenStacked';
 import { isDateRangeOrdered } from '@shared/model/filterConstants';
 import { Button } from '@shared/ui/button';
 import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
@@ -64,13 +65,19 @@ export function AdminEventsPage() {
     const statusParam = asAdminStatus(searchParams.get('status'));
     // 오른쪽 칸에 열린 상세 — /admin/events/:eventId 하위 라우트
     const selectedId = useMatch('/admin/events/:eventId')?.params.eventId;
-    // 상세를 열고 닫아도 ?status= 같은 목록 조건은 그대로 둔다
+    const detailRef = useRevealWhenStacked<HTMLElement>(selectedId, '(min-width: 1024px)');
+    // 상세를 열고 닫아도 ?status= 같은 목록 조건은 그대로 둔다. 같은 화면 안의 일이라 스크롤도 맨 위로 올리지 않는다
     const openDetail = (eventId: string | null) => {
         const search = searchParams.toString();
-        void navigate({
-            pathname: eventId ? `/admin/events/${encodeURIComponent(eventId)}` : '/admin/events',
-            search: search ? `?${search}` : '',
-        });
+        void navigate(
+            {
+                pathname: eventId
+                    ? `/admin/events/${encodeURIComponent(eventId)}`
+                    : '/admin/events',
+                search: search ? `?${search}` : '',
+            },
+            { preventScrollReset: true },
+        );
     };
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
@@ -296,15 +303,17 @@ export function AdminEventsPage() {
             </FilterPanel>
 
             {/*
-             * 줄을 고르면 1단 → 2단 — 왼쪽은 줄인 목록, 오른쪽은 상세. 넓은 화면에서는 늘 같은 격자를 두고
-             * 오른쪽 칸 너비만 0에서 늘려 상세가 옆에서 밀고 들어오게 한다 (칸이 갑자기 생기면 표가 뚝 끊겨 보였다)
+             * 줄을 고르면 1단 → 2단 — 왼쪽은 줄인 목록, 오른쪽은 상세(인스펙터).
+             * 상세는 화면 높이에 붙어 스크롤을 따라오고 안쪽만 스크롤한다 — 아래쪽 줄을 눌러도 상세가 바로 옆에 있다.
+             * 두 칸은 화면 높이의 세로선 하나로 나눈다 — 목록과 상세의 끝이 달라도 한쪽이 중간에 끊겨 보이지 않는다.
+             * 칸 너비를 애니메이션하면 표가 매 프레임 줄을 다시 맞추며 덜컥거려, 너비는 한 번에 바꾸고 상세만 옅게 들인다
              */}
             <div
                 className={cn(
-                    'flex flex-col gap-6 lg:grid lg:items-start lg:transition-[grid-template-columns,column-gap] lg:duration-300 lg:ease-out',
+                    'flex flex-col gap-6 lg:grid lg:items-start',
                     selectedId
-                        ? 'lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-x-4'
-                        : 'lg:grid-cols-[minmax(0,1fr)_minmax(0,0fr)] lg:gap-x-0',
+                        ? 'lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-x-6'
+                        : 'lg:grid-cols-1',
                 )}
             >
                 <div className="min-w-0">
@@ -390,8 +399,9 @@ export function AdminEventsPage() {
                 </div>
                 {selectedId && (
                     <aside
+                        ref={detailRef}
                         aria-label="이벤트 상세"
-                        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-6 min-w-0 motion-safe:duration-300 lg:sticky lg:top-4 lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto"
+                        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 lg:border-border-default min-w-0 scroll-mt-4 motion-safe:duration-200 lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)] lg:overflow-y-auto lg:border-l lg:pl-6"
                     >
                         <Outlet />
                     </aside>
