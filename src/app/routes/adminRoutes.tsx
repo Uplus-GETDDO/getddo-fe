@@ -165,14 +165,6 @@ export const adminRoutes: RouteObject[] = [
                       },
                   ]
                 : []),
-            {
-                path: 'virtual-users',
-                element: lazyPage(() =>
-                    import('@pages/admin/virtualUsers/AdminVirtualUsersPage').then((m) => ({
-                        default: m.AdminVirtualUsersPage,
-                    })),
-                ),
-            },
             // 관리자 영역 안의 미매칭 경로 — 관리자 셸을 유지한 채 404를 보여준다.
             // 사용자 라우트도 같은 페이지를 정적 import하므로 lazy 대상이 되지 않아 직접 참조한다
             { path: '*', element: <NotFoundPage /> },

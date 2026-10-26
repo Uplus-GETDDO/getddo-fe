@@ -3,7 +3,6 @@ export { getVirtualUsers, virtualUserLabel, VirtualUsersConfigError } from './mo
 export { useSessionStore } from './model/session';
 export { membershipSchema, userRoleSchema, virtualUserSchema } from './model/types';
 export type { Membership, UserRole, VirtualUser } from './model/types';
-export { VirtualUserTable } from './ui/VirtualUserTable';
 export {
     ADMIN_USERS_KEY,
     adminUserListSchema,
