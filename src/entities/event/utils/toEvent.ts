@@ -64,6 +64,8 @@ export function toEvent(raw: EventSummaryResponse | EventDetailResponse): Event 
                     ? `${topPrize.name} 외 ${prizes.length - 1}종`
                     : topPrize.name
                 : undefined,
+        // 등수 순으로 정렬한 원본 — 상세 화면이 경품 그림을 보이는 데 쓴다
+        prizes,
         // 상세(prizes)가 있으면 그 합이 정확하다. 없으면 목록이 준 합계를 쓴다 — 둘 중 하나만 온다
         winnerCount:
             prizes?.reduce((sum, prize) => sum + prize.winnerCount, 0) ??

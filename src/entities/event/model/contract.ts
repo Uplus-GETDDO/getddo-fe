@@ -1,19 +1,12 @@
 import { z } from 'zod';
 
 import { adminEventStatusSchema, eventTypeSchema, membershipRuleSchema } from './adminTypes';
-import { eventSchema } from './types';
+import { eventPrizeSchema, eventSchema } from './types';
 
 // spec 05-api/event.md E01·E02의 원시 응답 모양 — 화면용 Event는 utils/toEvent.ts의 매퍼로 만든다
 
-// E02 상세의 경품 — 목록(E01)에는 실리지 않는다
-export const eventPrizeSchema = z.object({
-    id: z.string(),
-    rank: z.number().int(),
-    name: z.string(),
-    description: z.string().nullable(),
-    imageUrl: z.string().nullable(),
-    winnerCount: z.number().int(),
-});
+// E02 상세의 경품 — 목록(E01)에는 실리지 않는다. 화면 모델과 같은 모양이라 한 곳에서 정의한다
+export { eventPrizeSchema } from './types';
 
 // E01 목록 항목 — spec의 EventSummary
 export const eventSummaryResponseSchema = z.object({
@@ -62,6 +55,6 @@ export const eventDetailResponseSchema = eventSummaryResponseSchema.extend({
     prizes: z.array(eventPrizeSchema),
 });
 
-export type EventPrize = z.infer<typeof eventPrizeSchema>;
+export type { EventPrize } from './types';
 export type EventSummaryResponse = z.infer<typeof eventSummaryResponseSchema>;
 export type EventDetailResponse = z.infer<typeof eventDetailResponseSchema>;

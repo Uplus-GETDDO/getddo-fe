@@ -28,6 +28,7 @@ import { LoseBanner } from './ui/LoseBanner';
 import { MyTicketCard } from './ui/MyTicketCard';
 import { RaffleDetailHero } from './ui/RaffleDetailHero';
 import { RaffleDetailsCard } from './ui/RaffleDetailsCard';
+import { RafflePrizeCard } from './ui/RafflePrizeCard';
 import { RaffleRulesCard } from './ui/RaffleRulesCard';
 import { TicketSelectHeader } from './ui/TicketSelectHeader';
 import { WinnerBanner } from './ui/WinnerBanner';
@@ -303,6 +304,8 @@ export function TimeRaffleDetailPage() {
                     />
                 )}
                 <MyTicketCard event={event} />
+                {/* 경품 그림은 상세 안내의 '상품 구성' 한 줄보다 먼저 와야 무엇을 받는지 바로 보인다 */}
+                <RafflePrizeCard event={event} />
                 <RaffleDetailsCard event={event} statistics={statistics} />
                 <RaffleRulesCard event={event} />
             </div>
