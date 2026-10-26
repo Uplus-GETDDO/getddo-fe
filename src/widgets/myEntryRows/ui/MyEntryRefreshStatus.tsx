@@ -24,12 +24,10 @@ export function MyEntryRefreshStatus({
         if (refreshingRef.current) return;
         refreshingRef.current = true;
         setIsRefreshing(true);
-        try {
-            await query.refetch();
-        } finally {
+        await query.refetch().finally(() => {
             refreshingRef.current = false;
             setIsRefreshing(false);
-        }
+        });
     };
 
     // 429는 다시 눌러도 같은 답이라 버튼 대신 기다린다는 안내만 둔다 — 대기 시간이 지나면 폴링이 알아서 다시 받는다

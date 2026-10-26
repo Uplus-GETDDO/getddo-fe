@@ -332,6 +332,15 @@ function toUserProjection(item: MockAdminEvent) {
                 ? `${item.prizes[0]?.name ?? ''} 외 ${item.prizes.length - 1}종`
                 : (item.prizes[0]?.name ?? ''),
         winnerCount: item.prizes.reduce((sum, p) => sum + p.winnerCount, 0),
+        // 경품 원본을 그대로 넘겨야 사용자 상세에서 올린 경품 그림이 보인다 (imageKey는 관리자 전용이라 뺀다)
+        prizes: item.prizes.map(({ id, rank, name, description, imageUrl, winnerCount }) => ({
+            id,
+            rank,
+            name,
+            description,
+            imageUrl,
+            winnerCount,
+        })),
         participantCount: item.entryCount,
         usedTicketCount: item.usedTicketTotal,
         myEntryCount: 0,

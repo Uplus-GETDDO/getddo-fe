@@ -1,0 +1,194 @@
+{
+    "kind": "GD-352 백엔드 통합 잔여 — 배포본 읽기 전용 수집",
+    "checkedAt": "2026-10-25T18:44:05.984466+00:00",
+    "url": "https://getddo-fe.vercel.app",
+    "entryChunk": "index-CfMwQGNi.js",
+    "requestCount": 135,
+    "writeCount": 0,
+    "checks": [
+        {
+            "name": "ADR-028 admin entries 이름 필드",
+            "sampled": 100,
+            "userName": {
+                "present": 100,
+                "null": 0,
+                "missing": 0
+            },
+            "actorName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            },
+            "createdByName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            }
+        },
+        {
+            "name": "draws 실행 상태 분포",
+            "events": 79,
+            "executions": 72,
+            "byStatus": {
+                "CONFIRMED": 54,
+                "NO_ENTRIES": 18
+            },
+            "failedSpecimen": false
+        },
+        {
+            "name": "ADR-028 execution-audits 이름 필드",
+            "sampled": 10,
+            "actorName": {
+                "present": 4,
+                "null": 6,
+                "missing": 0
+            },
+            "createdByName": {
+                "present": 0,
+                "null": 0,
+                "missing": 10
+            }
+        },
+        {
+            "name": "ADR-028 admin notifications 이름 필드",
+            "sampled": 100,
+            "userName": {
+                "present": 100,
+                "null": 0,
+                "missing": 0
+            },
+            "actorName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            },
+            "createdByName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            }
+        },
+        {
+            "name": "ticket-histories 등급 분포 + 이름 필드",
+            "total": 100,
+            "byGrade": {
+                "BRONZE": 19,
+                "SILVER": 7,
+                "PLATINUM": 72,
+                "GOLD": 2
+            },
+            "goldOrPlatinum": true,
+            "sampled": 100,
+            "userName": {
+                "present": 100,
+                "null": 0,
+                "missing": 0
+            },
+            "actorName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            },
+            "createdByName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            }
+        },
+        {
+            "name": "ADR-028 admin missions 이름 필드",
+            "sampled": 100,
+            "createdByName": {
+                "present": 100,
+                "null": 0,
+                "missing": 0
+            },
+            "actorName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            },
+            "userName": {
+                "present": 0,
+                "null": 0,
+                "missing": 100
+            }
+        },
+        {
+            "name": "attendance 정책 표본 + 이름 필드",
+            "daily": 3,
+            "dailyFutureScheduled": 0,
+            "streak": 2,
+            "streakFutureScheduled": 1,
+            "ap05DailySpecimen": false,
+            "dailyName": {
+                "createdByName": {
+                    "present": 3,
+                    "null": 0,
+                    "missing": 0
+                },
+                "actorName": {
+                    "present": 0,
+                    "null": 0,
+                    "missing": 3
+                }
+            },
+            "streakName": {
+                "createdByName": {
+                    "present": 2,
+                    "null": 0,
+                    "missing": 0
+                },
+                "actorName": {
+                    "present": 0,
+                    "null": 0,
+                    "missing": 2
+                }
+            }
+        },
+        {
+            "name": "abuse triggerScope 분포 (AR02 상세)",
+            "total": 11,
+            "byScope": {
+                "EVENT": 1,
+                "USER": 10
+            },
+            "eventSpecimen": true
+        },
+        {
+            "name": "admin users 상태 분포",
+            "total": 100,
+            "byStatus": {
+                "ACTIVE": 100
+            },
+            "inactiveSpecimen": false
+        },
+        {
+            "name": "PLATINUM 가상 계정 보유 + 미읽음 분포",
+            "userAccounts": 4,
+            "platinumHolders": 4,
+            "t01PlatinumTotal": 3998,
+            "t02PlatinumRows": 379,
+            "unreadByAccount": {
+                "user0": 8,
+                "user1": 17,
+                "user2": 19,
+                "user3": 20
+            }
+        },
+        {
+            "name": "응모 가능 가중치 이벤트 탐색",
+            "ticketEvents": 49,
+            "openEvents": 14,
+            "eligibleForFirstUser": 4,
+            "eventStatusDist": {
+                "PUBLISHED": 14,
+                "DRAW_CONFIRMED": 4,
+                "OPEN": 14,
+                "NO_ENTRANTS": 10,
+                "CANCELED": 5,
+                "SCHEDULED": 2
+            }
+        }
+    ]
+}

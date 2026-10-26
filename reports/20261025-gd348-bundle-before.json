@@ -1,0 +1,2986 @@
+{
+    "kind": "dist 정적 그래프",
+    "compression": {
+        "gzipLevel": "기본",
+        "brotliQuality": 5
+    },
+    "initialJs": {
+        "raw": 782827,
+        "gzip": 245817,
+        "brotli": 234095
+    },
+    "initialCss": {
+        "raw": 154598,
+        "gzip": 26848,
+        "brotli": 23475
+    },
+    "total": {
+        "raw": 17950580,
+        "gzip": 15595309,
+        "brotli": 15461988
+    },
+    "routeChunks": [
+        {
+            "entry": "EventDetailPage-D3Vo0U7L.js",
+            "files": [
+                "bullet-list-BBOHlMLd.js",
+                "card-DDta48tw.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "drawResult-_w4XBm7r.js",
+                "empty-takko-DUxUlIiO.js",
+                "entry-NwbIqWDv.js",
+                "errorMessage-BftLfwoh.js",
+                "event-CoY1tlCk.js",
+                "EventDetailPage-D3Vo0U7L.js",
+                "eventEntry-ooTytITw.js",
+                "filter-panel-_2Ws7JUt.js",
+                "format-DVyL8Otv.js",
+                "idempotencyKey-jVwVd4dL.js",
+                "input-BpmYAzS9.js",
+                "loading-QQ7FrMHI.js",
+                "popover--16Qop0s.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "select-nvBYqc1n.js",
+                "status-dot-DgBa9Kdg.js",
+                "ticket-Cg2vniDE.js",
+                "use-reduced-motion-CKfaMj5A.js"
+            ],
+            "raw": 315684,
+            "gzip": 108044,
+            "brotli": 102661
+        },
+        {
+            "entry": "EventListPage-nm8wgNhL.js",
+            "files": [
+                "card-DDta48tw.js",
+                "chip-tabs-DiYN74ij.js",
+                "date-C2LvTpU7.js",
+                "empty-takko-DUxUlIiO.js",
+                "event-CoY1tlCk.js",
+                "EventListPage-nm8wgNhL.js",
+                "filter-panel-_2Ws7JUt.js",
+                "format-DVyL8Otv.js",
+                "input-BpmYAzS9.js",
+                "popover--16Qop0s.js",
+                "select-nvBYqc1n.js",
+                "status-dot-DgBa9Kdg.js"
+            ],
+            "raw": 69679,
+            "gzip": 26437,
+            "brotli": 24580
+        },
+        {
+            "entry": "GameDetailPage-C5e3QeDp.js",
+            "files": [
+                "card-DDta48tw.js",
+                "character-C6vlPldN.js",
+                "complete-CzNyD7jh.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "empty-takko-DUxUlIiO.js",
+                "errorMessage-BftLfwoh.js",
+                "format-DVyL8Otv.js",
+                "GameDetailPage-C5e3QeDp.js",
+                "gameRail-CrRIuUev.js",
+                "load-error-B4YEFScx.js",
+                "loading-QQ7FrMHI.js",
+                "MotionConfig-Z00kP2MW.js",
+                "playGame-9mWrXbeV.js",
+                "pleasing-bell-Cf1oXD3Y.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "takkoRunAssets-BgFoVZdi.js",
+                "ticket-card-D7XMU-20.js",
+                "ticket-Cg2vniDE.js",
+                "use-reduced-motion-CKfaMj5A.js",
+                "useCountUp-YF26g0Mn.js",
+                "useDragScroll-DHCr1q2R.js"
+            ],
+            "raw": 225798,
+            "gzip": 82479,
+            "brotli": 78663
+        },
+        {
+            "entry": "MissionDetailPage-CZLLNcAI.js",
+            "files": [
+                "AnimatePresence-1fb25GDp.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "errorMessage-BftLfwoh.js",
+                "format-DVyL8Otv.js",
+                "idempotencyKey-jVwVd4dL.js",
+                "index.esm-wicg5owK.js",
+                "input-BpmYAzS9.js",
+                "mission-B80Se8BT.js",
+                "MissionDetailPage-CZLLNcAI.js",
+                "MotionConfig-Z00kP2MW.js",
+                "proxy-tntFKLb0.js",
+                "radio-group-B61SWv41.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "status-dot-DgBa9Kdg.js",
+                "submitMission-DASeyQqk.js",
+                "textarea-Z229k6Iy.js",
+                "ticket-Cg2vniDE.js",
+                "use-animate-CfeixLSF.js",
+                "use-reduced-motion-CKfaMj5A.js"
+            ],
+            "raw": 252495,
+            "gzip": 90764,
+            "brotli": 87105
+        },
+        {
+            "entry": "MissionListPage-C10XGzwY.js",
+            "files": [
+                "AnimatePresence-1fb25GDp.js",
+                "attendance-BHnksilD.js",
+                "card-DDta48tw.js",
+                "chip-tabs-DiYN74ij.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "empty-takko-DUxUlIiO.js",
+                "errorMessage-BftLfwoh.js",
+                "format-DVyL8Otv.js",
+                "gameRail-CrRIuUev.js",
+                "historyPeriod-DYrbykTG.js",
+                "idempotencyKey-jVwVd4dL.js",
+                "index.esm-wicg5owK.js",
+                "input-BpmYAzS9.js",
+                "load-error-B4YEFScx.js",
+                "loading-QQ7FrMHI.js",
+                "mission-B80Se8BT.js",
+                "MissionListPage-C10XGzwY.js",
+                "MotionConfig-Z00kP2MW.js",
+                "playGame-9mWrXbeV.js",
+                "popover--16Qop0s.js",
+                "proxy-tntFKLb0.js",
+                "radio-group-B61SWv41.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "status-dot-DgBa9Kdg.js",
+                "step-mission-PrBpMKia.js",
+                "submitMission-DASeyQqk.js",
+                "textarea-Z229k6Iy.js",
+                "ticket-card-D7XMU-20.js",
+                "ticket-Cg2vniDE.js",
+                "ticketWallet-fJldl6NZ.js",
+                "use-animate-CfeixLSF.js",
+                "use-reduced-motion-CKfaMj5A.js",
+                "useCountUp-YF26g0Mn.js",
+                "useDragScroll-DHCr1q2R.js"
+            ],
+            "raw": 367578,
+            "gzip": 134932,
+            "brotli": 128832
+        },
+        {
+            "entry": "MyEntriesPage-ap0NoWnz.js",
+            "files": [
+                "card-DDta48tw.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "drawResult-_w4XBm7r.js",
+                "empty-takko-DUxUlIiO.js",
+                "entry-NwbIqWDv.js",
+                "errorMessage-BftLfwoh.js",
+                "event-CoY1tlCk.js",
+                "filter-panel-_2Ws7JUt.js",
+                "format-DVyL8Otv.js",
+                "input-BpmYAzS9.js",
+                "MyEntriesPage-ap0NoWnz.js",
+                "myEntryRows-CXTXGMfm.js",
+                "page-header-Gk7A5STe.js",
+                "pagination-BprKyaVc.js",
+                "popover--16Qop0s.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "segmented-DgL3fDJT.js",
+                "select-nvBYqc1n.js",
+                "status-dot-DgBa9Kdg.js",
+                "ticket-Cg2vniDE.js",
+                "use-reduced-motion-CKfaMj5A.js"
+            ],
+            "raw": 260022,
+            "gzip": 92476,
+            "brotli": 88015
+        },
+        {
+            "entry": "MyNotificationsPage-BCkqz7XY.js",
+            "files": [
+                "date-C2LvTpU7.js",
+                "empty-takko-DUxUlIiO.js",
+                "load-error-B4YEFScx.js",
+                "MyNotificationsPage-BCkqz7XY.js",
+                "notificationBell-C1N5qdYr.js",
+                "page-header-Gk7A5STe.js",
+                "pagination-BprKyaVc.js",
+                "segmented-DgL3fDJT.js",
+                "sheet-BvYzeHpX.js"
+            ],
+            "raw": 31949,
+            "gzip": 13813,
+            "brotli": 12739
+        },
+        {
+            "entry": "MyPage-DgiCZqVr.js",
+            "files": [
+                "card-DDta48tw.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "drawResult-_w4XBm7r.js",
+                "empty-takko-DUxUlIiO.js",
+                "entry-NwbIqWDv.js",
+                "errorMessage-BftLfwoh.js",
+                "event-CoY1tlCk.js",
+                "filter-panel-_2Ws7JUt.js",
+                "format-DVyL8Otv.js",
+                "historyPeriod-DYrbykTG.js",
+                "input-BpmYAzS9.js",
+                "load-error-B4YEFScx.js",
+                "myEntryRows-CXTXGMfm.js",
+                "MyPage-DgiCZqVr.js",
+                "notificationBell-C1N5qdYr.js",
+                "pagination-BprKyaVc.js",
+                "popover--16Qop0s.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "select-nvBYqc1n.js",
+                "sheet-BvYzeHpX.js",
+                "status-dot-DgBa9Kdg.js",
+                "switchVirtualUser-BzsvSdHP.js",
+                "ticket-card-D7XMU-20.js",
+                "ticket-Cg2vniDE.js",
+                "use-reduced-motion-CKfaMj5A.js"
+            ],
+            "raw": 298386,
+            "gzip": 106433,
+            "brotli": 100933
+        },
+        {
+            "entry": "MyTicketsPage-Dk_qI37W.js",
+            "files": [
+                "card-DDta48tw.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "empty-takko-DUxUlIiO.js",
+                "errorMessage-BftLfwoh.js",
+                "format-DVyL8Otv.js",
+                "historyPeriod-DYrbykTG.js",
+                "load-error-B4YEFScx.js",
+                "MyTicketsPage-Dk_qI37W.js",
+                "page-header-Gk7A5STe.js",
+                "pagination-BprKyaVc.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "segmented-DgL3fDJT.js",
+                "select-nvBYqc1n.js",
+                "ticket-card-D7XMU-20.js",
+                "ticket-Cg2vniDE.js",
+                "use-reduced-motion-CKfaMj5A.js"
+            ],
+            "raw": 207607,
+            "gzip": 72989,
+            "brotli": 69667
+        },
+        {
+            "entry": "TimeRaffleDetailPage-C9IQEy-i.js",
+            "files": [
+                "bullet-list-BBOHlMLd.js",
+                "card-DDta48tw.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "drawResult-_w4XBm7r.js",
+                "empty-takko-DUxUlIiO.js",
+                "entry-NwbIqWDv.js",
+                "errorMessage-BftLfwoh.js",
+                "event-CoY1tlCk.js",
+                "eventEntry-ooTytITw.js",
+                "filter-panel-_2Ws7JUt.js",
+                "format-DVyL8Otv.js",
+                "idempotencyKey-jVwVd4dL.js",
+                "input-BpmYAzS9.js",
+                "popover--16Qop0s.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "select-nvBYqc1n.js",
+                "status-dot-DgBa9Kdg.js",
+                "ticket-Cg2vniDE.js",
+                "TimeRaffleDetailPage-C9IQEy-i.js",
+                "use-animate-CfeixLSF.js",
+                "use-reduced-motion-CKfaMj5A.js"
+            ],
+            "raw": 316386,
+            "gzip": 111781,
+            "brotli": 106524
+        },
+        {
+            "entry": "TimeRafflePage-CzltAUNj.js",
+            "files": [
+                "bullet-list-BBOHlMLd.js",
+                "card-DDta48tw.js",
+                "date-C2LvTpU7.js",
+                "dialog-NVHrCh6V.js",
+                "empty-takko-DUxUlIiO.js",
+                "entry-NwbIqWDv.js",
+                "errorMessage-BftLfwoh.js",
+                "event-CoY1tlCk.js",
+                "filter-panel-_2Ws7JUt.js",
+                "format-DVyL8Otv.js",
+                "historyPeriod-DYrbykTG.js",
+                "input-BpmYAzS9.js",
+                "load-error-B4YEFScx.js",
+                "pager-D4MZzpwu.js",
+                "pagination-BprKyaVc.js",
+                "popover--16Qop0s.js",
+                "proxy-tntFKLb0.js",
+                "reduced-motion-2fDGfAC9.js",
+                "refresh-status-CQ_dZpFK.js",
+                "select-nvBYqc1n.js",
+                "status-dot-DgBa9Kdg.js",
+                "ticket-Cg2vniDE.js",
+                "ticketWallet-fJldl6NZ.js",
+                "TimeRafflePage-CzltAUNj.js",
+                "use-reduced-motion-CKfaMj5A.js",
+                "useCountUp-YF26g0Mn.js"
+            ],
+            "raw": 276113,
+            "gzip": 97957,
+            "brotli": 93144
+        }
+    ],
+    "files": [
+        {
+            "file": "AdminAbuseCasesPage-COkB3w-R.js",
+            "initial": false,
+            "raw": 13531,
+            "gzip": 5739,
+            "brotli": 5224
+        },
+        {
+            "file": "AdminAttendancePoliciesPage-CXk-Auqj.js",
+            "initial": false,
+            "raw": 18513,
+            "gzip": 6533,
+            "brotli": 6142
+        },
+        {
+            "file": "AdminBannersPage-DBL4HZhe.js",
+            "initial": false,
+            "raw": 12494,
+            "gzip": 4906,
+            "brotli": 4590
+        },
+        {
+            "file": "AdminDashboardPage-y88ED6b6.js",
+            "initial": false,
+            "raw": 402618,
+            "gzip": 117907,
+            "brotli": 108053
+        },
+        {
+            "file": "AdminDrawPage-3O4o7qwz.js",
+            "initial": false,
+            "raw": 86158,
+            "gzip": 25618,
+            "brotli": 23703
+        },
+        {
+            "file": "AdminEntriesPage-0N_QyOL-.js",
+            "initial": false,
+            "raw": 13282,
+            "gzip": 5138,
+            "brotli": 4798
+        },
+        {
+            "file": "AdminEventDetailPage-CGt3PEeW.js",
+            "initial": false,
+            "raw": 13592,
+            "gzip": 5351,
+            "brotli": 5014
+        },
+        {
+            "file": "AdminEventFormPage-b0AOoFnS.js",
+            "initial": false,
+            "raw": 27025,
+            "gzip": 9539,
+            "brotli": 9026
+        },
+        {
+            "file": "AdminEventsPage-DfdrvGSF.js",
+            "initial": false,
+            "raw": 10239,
+            "gzip": 4570,
+            "brotli": 4178
+        },
+        {
+            "file": "AdminLayout-De002HH2.js",
+            "initial": false,
+            "raw": 6915,
+            "gzip": 2613,
+            "brotli": 2417
+        },
+        {
+            "file": "AdminMissionsPage-DC3ICQZ2.js",
+            "initial": false,
+            "raw": 32674,
+            "gzip": 11603,
+            "brotli": 11068
+        },
+        {
+            "file": "adminNotification-BFatVYV_.js",
+            "initial": false,
+            "raw": 17185,
+            "gzip": 5472,
+            "brotli": 4951
+        },
+        {
+            "file": "AdminNotificationsPage-BZC7Z_W5.js",
+            "initial": false,
+            "raw": 23701,
+            "gzip": 8590,
+            "brotli": 8149
+        },
+        {
+            "file": "AdminTicketsPage-Cpks-3Ft.js",
+            "initial": false,
+            "raw": 7790,
+            "gzip": 3448,
+            "brotli": 3238
+        },
+        {
+            "file": "AdminUsersPage-CRhnoI3D.js",
+            "initial": false,
+            "raw": 12648,
+            "gzip": 5332,
+            "brotli": 4995
+        },
+        {
+            "file": "AdminVirtualClockPage-CuNTWN9H.js",
+            "initial": false,
+            "raw": 344,
+            "gzip": 277,
+            "brotli": 245
+        },
+        {
+            "file": "AdminVirtualUsersPage-DB4y_1xJ.js",
+            "initial": false,
+            "raw": 1755,
+            "gzip": 1058,
+            "brotli": 965
+        },
+        {
+            "file": "AnimatePresence-1fb25GDp.js",
+            "initial": false,
+            "raw": 4269,
+            "gzip": 1970,
+            "brotli": 1880
+        },
+        {
+            "file": "attendance-BHnksilD.js",
+            "initial": false,
+            "raw": 3390,
+            "gzip": 1399,
+            "brotli": 1307
+        },
+        {
+            "file": "attendance-thumbnail-BMM38b57.png",
+            "initial": false,
+            "raw": 205423,
+            "gzip": 204917,
+            "brotli": 205428
+        },
+        {
+            "file": "background-AJ4kX8wA.jpg",
+            "initial": false,
+            "raw": 163831,
+            "gzip": 157494,
+            "brotli": 158472
+        },
+        {
+            "file": "background-C3KWbnVG.jpg",
+            "initial": false,
+            "raw": 161390,
+            "gzip": 160677,
+            "brotli": 161395
+        },
+        {
+            "file": "badge-new-DLdtK46i.png",
+            "initial": false,
+            "raw": 14166,
+            "gzip": 14189,
+            "brotli": 14170
+        },
+        {
+            "file": "baking-sprite-LNgWPIuB.webp",
+            "initial": false,
+            "raw": 183300,
+            "gzip": 183201,
+            "brotli": 183305
+        },
+        {
+            "file": "baking-steam-BPj3C6rn.webp",
+            "initial": false,
+            "raw": 11990,
+            "gzip": 11852,
+            "brotli": 11784
+        },
+        {
+            "file": "ball-green-CqrBaAst.png",
+            "initial": false,
+            "raw": 8336,
+            "gzip": 8359,
+            "brotli": 8340
+        },
+        {
+            "file": "ball-orange-Cc9rvdI6.png",
+            "initial": false,
+            "raw": 8142,
+            "gzip": 8165,
+            "brotli": 8146
+        },
+        {
+            "file": "ball-picked-DC5zuzZ7.png",
+            "initial": false,
+            "raw": 37600,
+            "gzip": 37633,
+            "brotli": 37604
+        },
+        {
+            "file": "ball-pink-CFb0rN_R.png",
+            "initial": false,
+            "raw": 8022,
+            "gzip": 8045,
+            "brotli": 8026
+        },
+        {
+            "file": "ball-purple-uUVcg_A1.png",
+            "initial": false,
+            "raw": 8103,
+            "gzip": 8126,
+            "brotli": 8105
+        },
+        {
+            "file": "banner-BAvarKL8.js",
+            "initial": false,
+            "raw": 7947,
+            "gzip": 3560,
+            "brotli": 3318
+        },
+        {
+            "file": "banner-bg-DhwfUrNY.jpg",
+            "initial": false,
+            "raw": 107490,
+            "gzip": 106599,
+            "brotli": 106410
+        },
+        {
+            "file": "browser-B4I5RvqA.js",
+            "initial": false,
+            "raw": 135612,
+            "gzip": 37715,
+            "brotli": 33588
+        },
+        {
+            "file": "bullet-list-BBOHlMLd.js",
+            "initial": false,
+            "raw": 899,
+            "gzip": 535,
+            "brotli": 498
+        },
+        {
+            "file": "button-B2VwIVVg.png",
+            "initial": false,
+            "raw": 113037,
+            "gzip": 113026,
+            "brotli": 113042
+        },
+        {
+            "file": "button-exit-Cp5TsrgC.png",
+            "initial": false,
+            "raw": 44211,
+            "gzip": 44244,
+            "brotli": 44215
+        },
+        {
+            "file": "button-guide-B8RmO4_t.png",
+            "initial": false,
+            "raw": 54961,
+            "gzip": 54999,
+            "brotli": 54965
+        },
+        {
+            "file": "button-hover-78Cj_nhT.png",
+            "initial": false,
+            "raw": 118369,
+            "gzip": 118375,
+            "brotli": 118374
+        },
+        {
+            "file": "button-pause-CPyQVfib.png",
+            "initial": false,
+            "raw": 10487,
+            "gzip": 10510,
+            "brotli": 10491
+        },
+        {
+            "file": "button-pressed-DMQLTl2J.png",
+            "initial": false,
+            "raw": 111881,
+            "gzip": 111854,
+            "brotli": 111886
+        },
+        {
+            "file": "button-retry-B1nRN3CB.png",
+            "initial": false,
+            "raw": 47174,
+            "gzip": 47207,
+            "brotli": 47178
+        },
+        {
+            "file": "button-start-DWoPiUB2.png",
+            "initial": false,
+            "raw": 51844,
+            "gzip": 51882,
+            "brotli": 51848
+        },
+        {
+            "file": "capsule-bottom-7CGphhPs.png",
+            "initial": false,
+            "raw": 33703,
+            "gzip": 33736,
+            "brotli": 33703
+        },
+        {
+            "file": "capsule-top-Cp4U_i_F.png",
+            "initial": false,
+            "raw": 32289,
+            "gzip": 32317,
+            "brotli": 32287
+        },
+        {
+            "file": "card-DDta48tw.js",
+            "initial": false,
+            "raw": 3024,
+            "gzip": 946,
+            "brotli": 857
+        },
+        {
+            "file": "certified-DFblv3YD.png",
+            "initial": false,
+            "raw": 7322,
+            "gzip": 7183,
+            "brotli": 7146
+        },
+        {
+            "file": "character-BWoUjxlZ.png",
+            "initial": false,
+            "raw": 277811,
+            "gzip": 277370,
+            "brotli": 277816
+        },
+        {
+            "file": "character-C6vlPldN.js",
+            "initial": false,
+            "raw": 54,
+            "gzip": 74,
+            "brotli": 58
+        },
+        {
+            "file": "chip-participant-BBKLywsk.png",
+            "initial": false,
+            "raw": 14182,
+            "gzip": 14205,
+            "brotli": 14182
+        },
+        {
+            "file": "chip-tabs-DiYN74ij.js",
+            "initial": false,
+            "raw": 1744,
+            "gzip": 964,
+            "brotli": 860
+        },
+        {
+            "file": "chip-ticket-2yQY44yA.png",
+            "initial": false,
+            "raw": 15047,
+            "gzip": 15070,
+            "brotli": 15048
+        },
+        {
+            "file": "chip-winner-DmDbc9tA.png",
+            "initial": false,
+            "raw": 12168,
+            "gzip": 12191,
+            "brotli": 12167
+        },
+        {
+            "file": "clouds-BBCFX94r.png",
+            "initial": false,
+            "raw": 110922,
+            "gzip": 110787,
+            "brotli": 110927
+        },
+        {
+            "file": "color-word-guide-jTZCDamK.jpg",
+            "initial": false,
+            "raw": 197964,
+            "gzip": 193358,
+            "brotli": 193626
+        },
+        {
+            "file": "colorWordAssets-B9E-vZhK.js",
+            "initial": false,
+            "raw": 347,
+            "gzip": 258,
+            "brotli": 217
+        },
+        {
+            "file": "ColorWordGame-C_VYU0M7.js",
+            "initial": false,
+            "raw": 18924,
+            "gzip": 8005,
+            "brotli": 7436
+        },
+        {
+            "file": "complete-CzNyD7jh.js",
+            "initial": false,
+            "raw": 53,
+            "gzip": 73,
+            "brotli": 55
+        },
+        {
+            "file": "complete-DNqXWNWG.wav",
+            "initial": false,
+            "raw": 167084,
+            "gzip": 100031,
+            "brotli": 97758
+        },
+        {
+            "file": "controlVirtualClock-C-nT-GJ6.js",
+            "initial": false,
+            "raw": 9092,
+            "gzip": 4013,
+            "brotli": 3673
+        },
+        {
+            "file": "counter-DFr2Zgry.webp",
+            "initial": false,
+            "raw": 29518,
+            "gzip": 29400,
+            "brotli": 29311
+        },
+        {
+            "file": "customer-0-jLpFuHjR.webp",
+            "initial": false,
+            "raw": 22418,
+            "gzip": 22289,
+            "brotli": 22209
+        },
+        {
+            "file": "customer-1-Dz1wuWYK.webp",
+            "initial": false,
+            "raw": 18922,
+            "gzip": 18799,
+            "brotli": 18716
+        },
+        {
+            "file": "customer-2-CUtJQarM.webp",
+            "initial": false,
+            "raw": 22136,
+            "gzip": 22011,
+            "brotli": 21927
+        },
+        {
+            "file": "customer-3-CePiAZQc.webp",
+            "initial": false,
+            "raw": 23730,
+            "gzip": 23611,
+            "brotli": 23525
+        },
+        {
+            "file": "customer-4-mmlMVgS0.webp",
+            "initial": false,
+            "raw": 23466,
+            "gzip": 23342,
+            "brotli": 23265
+        },
+        {
+            "file": "customer-5-DPd5481c.webp",
+            "initial": false,
+            "raw": 21116,
+            "gzip": 20987,
+            "brotli": 20911
+        },
+        {
+            "file": "customer-6-C_bghnkX.webp",
+            "initial": false,
+            "raw": 19800,
+            "gzip": 19682,
+            "brotli": 19595
+        },
+        {
+            "file": "customer-7-jihNMsJw.webp",
+            "initial": false,
+            "raw": 20736,
+            "gzip": 20616,
+            "brotli": 20535
+        },
+        {
+            "file": "customer-8-DMQ4XTRD.webp",
+            "initial": false,
+            "raw": 24212,
+            "gzip": 24088,
+            "brotli": 24008
+        },
+        {
+            "file": "date-C2LvTpU7.js",
+            "initial": false,
+            "raw": 2919,
+            "gzip": 1151,
+            "brotli": 1086
+        },
+        {
+            "file": "decor-BRoi43Vv.webp",
+            "initial": false,
+            "raw": 115462,
+            "gzip": 115223,
+            "brotli": 115467
+        },
+        {
+            "file": "decor-Dqg3HG7n.webp",
+            "initial": false,
+            "raw": 120144,
+            "gzip": 120019,
+            "brotli": 120149
+        },
+        {
+            "file": "decor-nZvonRy0.webp",
+            "initial": false,
+            "raw": 189488,
+            "gzip": 189168,
+            "brotli": 189493
+        },
+        {
+            "file": "detail-list-C-mXWmQH.js",
+            "initial": false,
+            "raw": 2309,
+            "gzip": 863,
+            "brotli": 783
+        },
+        {
+            "file": "dialog-NVHrCh6V.js",
+            "initial": false,
+            "raw": 4382,
+            "gzip": 1549,
+            "brotli": 1401
+        },
+        {
+            "file": "dizzy-IcDQ-Br2.webp",
+            "initial": false,
+            "raw": 17028,
+            "gzip": 16905,
+            "brotli": 16815
+        },
+        {
+            "file": "drawResult-_w4XBm7r.js",
+            "initial": false,
+            "raw": 9072,
+            "gzip": 2904,
+            "brotli": 2717
+        },
+        {
+            "file": "empty-character-mf38E7bp.png",
+            "initial": false,
+            "raw": 58751,
+            "gzip": 58466,
+            "brotli": 58755
+        },
+        {
+            "file": "empty-takko-DUxUlIiO.js",
+            "initial": false,
+            "raw": 56,
+            "gzip": 76,
+            "brotli": 58
+        },
+        {
+            "file": "empty-takko-P2kHW2yB.png",
+            "initial": false,
+            "raw": 50307,
+            "gzip": 48919,
+            "brotli": 48825
+        },
+        {
+            "file": "entry-NwbIqWDv.js",
+            "initial": false,
+            "raw": 5323,
+            "gzip": 2411,
+            "brotli": 2292
+        },
+        {
+            "file": "env-Cls9N8m4.js",
+            "initial": true,
+            "raw": 1518,
+            "gzip": 842,
+            "brotli": 778
+        },
+        {
+            "file": "errorMessage-BftLfwoh.js",
+            "initial": false,
+            "raw": 5251,
+            "gzip": 1630,
+            "brotli": 1608
+        },
+        {
+            "file": "event-CoY1tlCk.js",
+            "initial": false,
+            "raw": 32133,
+            "gzip": 11128,
+            "brotli": 10503
+        },
+        {
+            "file": "EventDetailPage-D3Vo0U7L.js",
+            "initial": false,
+            "raw": 54032,
+            "gzip": 16686,
+            "brotli": 15563
+        },
+        {
+            "file": "eventEntry-ooTytITw.js",
+            "initial": false,
+            "raw": 24399,
+            "gzip": 8538,
+            "brotli": 8048
+        },
+        {
+            "file": "EventListPage-nm8wgNhL.js",
+            "initial": false,
+            "raw": 9193,
+            "gzip": 3854,
+            "brotli": 3575
+        },
+        {
+            "file": "filter-panel-_2Ws7JUt.js",
+            "initial": false,
+            "raw": 10395,
+            "gzip": 4009,
+            "brotli": 3716
+        },
+        {
+            "file": "flowerbed_fields-BlEfhCgW.m4a",
+            "initial": false,
+            "raw": 1276780,
+            "gzip": 1249079,
+            "brotli": 1255467
+        },
+        {
+            "file": "format-DVyL8Otv.js",
+            "initial": false,
+            "raw": 203,
+            "gzip": 170,
+            "brotli": 142
+        },
+        {
+            "file": "Galmuri11-Bold-QdFGsJ3v.woff2",
+            "initial": false,
+            "raw": 166632,
+            "gzip": 157851,
+            "brotli": 157789
+        },
+        {
+            "file": "GameDetailPage-C5e3QeDp.js",
+            "initial": false,
+            "raw": 11468,
+            "gzip": 5061,
+            "brotli": 4554
+        },
+        {
+            "file": "GameOverlays-B8WhqSTI.js",
+            "initial": false,
+            "raw": 5340,
+            "gzip": 2087,
+            "brotli": 1935
+        },
+        {
+            "file": "gameRail-CrRIuUev.js",
+            "initial": false,
+            "raw": 2960,
+            "gzip": 1548,
+            "brotli": 1435
+        },
+        {
+            "file": "GameRewardProgress-CEv4J9Rt.js",
+            "initial": false,
+            "raw": 1042,
+            "gzip": 690,
+            "brotli": 620
+        },
+        {
+            "file": "gameSounds-D0nMWJda.js",
+            "initial": false,
+            "raw": 157,
+            "gzip": 128,
+            "brotli": 107
+        },
+        {
+            "file": "GameSpeechBubble-oFln3xbp.js",
+            "initial": false,
+            "raw": 3660,
+            "gzip": 1799,
+            "brotli": 1680
+        },
+        {
+            "file": "gauge-pin-D4zpdwpR.png",
+            "initial": false,
+            "raw": 11163,
+            "gzip": 11186,
+            "brotli": 11167
+        },
+        {
+            "file": "gauge-sparkle-C1hQOz7y.png",
+            "initial": false,
+            "raw": 12102,
+            "gzip": 12125,
+            "brotli": 12106
+        },
+        {
+            "file": "gauge-track-CIhva5mn.png",
+            "initial": false,
+            "raw": 105925,
+            "gzip": 105949,
+            "brotli": 105930
+        },
+        {
+            "file": "gauge-zone-fJjFw74j.png",
+            "initial": false,
+            "raw": 30170,
+            "gzip": 30198,
+            "brotli": 30156
+        },
+        {
+            "file": "ground-1-CXue_g_3.webp",
+            "initial": false,
+            "raw": 63478,
+            "gzip": 63363,
+            "brotli": 63482
+        },
+        {
+            "file": "ground-2-BRoUdJgo.webp",
+            "initial": false,
+            "raw": 65204,
+            "gzip": 65094,
+            "brotli": 65208
+        },
+        {
+            "file": "ground-Cd3mMLzm.webp",
+            "initial": false,
+            "raw": 32252,
+            "gzip": 32130,
+            "brotli": 32045
+        },
+        {
+            "file": "ground-DFhM8epg.webp",
+            "initial": false,
+            "raw": 31766,
+            "gzip": 31646,
+            "brotli": 31559
+        },
+        {
+            "file": "guide-banner-B0xrHben.jpg",
+            "initial": false,
+            "raw": 138137,
+            "gzip": 137919,
+            "brotli": 138142
+        },
+        {
+            "file": "handle-C18K8fN7.png",
+            "initial": false,
+            "raw": 12163,
+            "gzip": 12186,
+            "brotli": 12166
+        },
+        {
+            "file": "headset-Ch6bzeIG.png",
+            "initial": false,
+            "raw": 4912,
+            "gzip": 4762,
+            "brotli": 4710
+        },
+        {
+            "file": "heart-empty-BO65O2o7.png",
+            "initial": false,
+            "raw": 10542,
+            "gzip": 10565,
+            "brotli": 10546
+        },
+        {
+            "file": "heart-full-B0nU9tzJ.png",
+            "initial": false,
+            "raw": 10722,
+            "gzip": 10745,
+            "brotli": 10726
+        },
+        {
+            "file": "historyPeriod-DYrbykTG.js",
+            "initial": false,
+            "raw": 245,
+            "gzip": 180,
+            "brotli": 148
+        },
+        {
+            "file": "HomePage-DIiYY-Tt.css",
+            "initial": false,
+            "raw": 2587,
+            "gzip": 686,
+            "brotli": 587
+        },
+        {
+            "file": "HomePage-DVCZKbtc.js",
+            "initial": false,
+            "raw": 39925,
+            "gzip": 13715,
+            "brotli": 13032
+        },
+        {
+            "file": "idempotencyKey-jVwVd4dL.js",
+            "initial": false,
+            "raw": 86,
+            "gzip": 102,
+            "brotli": 80
+        },
+        {
+            "file": "image-QcRim_d0.js",
+            "initial": false,
+            "raw": 9995,
+            "gzip": 4553,
+            "brotli": 4318
+        },
+        {
+            "file": "index-C7fRCNMm.css",
+            "initial": true,
+            "raw": 151556,
+            "gzip": 25874,
+            "brotli": 22644
+        },
+        {
+            "file": "index-CGaJ3RkY.js",
+            "initial": true,
+            "raw": 42754,
+            "gzip": 13488,
+            "brotli": 12689
+        },
+        {
+            "file": "index.esm-wicg5owK.js",
+            "initial": false,
+            "raw": 38507,
+            "gzip": 13341,
+            "brotli": 13092
+        },
+        {
+            "file": "input-BpmYAzS9.js",
+            "initial": false,
+            "raw": 971,
+            "gzip": 581,
+            "brotli": 529
+        },
+        {
+            "file": "item-cup-C9kZo8_U.png",
+            "initial": false,
+            "raw": 49718,
+            "gzip": 49756,
+            "brotli": 49722
+        },
+        {
+            "file": "item-flag-BIkSxJ7b.png",
+            "initial": false,
+            "raw": 40268,
+            "gzip": 40301,
+            "brotli": 40272
+        },
+        {
+            "file": "item-gift-BzSkkxya.webp",
+            "initial": false,
+            "raw": 21424,
+            "gzip": 21303,
+            "brotli": 21219
+        },
+        {
+            "file": "item-gumball-BQcU2mah.webp",
+            "initial": false,
+            "raw": 17288,
+            "gzip": 17164,
+            "brotli": 17079
+        },
+        {
+            "file": "item-jar-ClA1xirl.png",
+            "initial": false,
+            "raw": 54698,
+            "gzip": 54736,
+            "brotli": 54702
+        },
+        {
+            "file": "item-mayo-Dm2wVhwx.png",
+            "initial": false,
+            "raw": 36477,
+            "gzip": 36510,
+            "brotli": 36481
+        },
+        {
+            "file": "item-sauce-2lEtSSlB.png",
+            "initial": false,
+            "raw": 32616,
+            "gzip": 32644,
+            "brotli": 32620
+        },
+        {
+            "file": "item-skewer-GpZNz87-.png",
+            "initial": false,
+            "raw": 28566,
+            "gzip": 28594,
+            "brotli": 28570
+        },
+        {
+            "file": "item-tickets-9V2sxCxy.webp",
+            "initial": false,
+            "raw": 24820,
+            "gzip": 24695,
+            "brotli": 24614
+        },
+        {
+            "file": "lanterns-Bd7Y-q_h.png",
+            "initial": false,
+            "raw": 107444,
+            "gzip": 107497,
+            "brotli": 107449
+        },
+        {
+            "file": "load-error-B4YEFScx.js",
+            "initial": false,
+            "raw": 2278,
+            "gzip": 1116,
+            "brotli": 986
+        },
+        {
+            "file": "loading-QQ7FrMHI.js",
+            "initial": false,
+            "raw": 1083,
+            "gzip": 697,
+            "brotli": 640
+        },
+        {
+            "file": "lose-bg-2MGnaiNS.webp",
+            "initial": false,
+            "raw": 16662,
+            "gzip": 16537,
+            "brotli": 16451
+        },
+        {
+            "file": "lose-deco-right-D4BVPuYp.webp",
+            "initial": false,
+            "raw": 33092,
+            "gzip": 32970,
+            "brotli": 32883
+        },
+        {
+            "file": "lose-mascot-C1v1PCbp.webp",
+            "initial": false,
+            "raw": 21542,
+            "gzip": 21411,
+            "brotli": 21329
+        },
+        {
+            "file": "machine-CNXtFNOI.png",
+            "initial": false,
+            "raw": 135145,
+            "gzip": 135208,
+            "brotli": 135150
+        },
+        {
+            "file": "manageEvent-D6XaEuju.js",
+            "initial": false,
+            "raw": 5646,
+            "gzip": 2658,
+            "brotli": 2486
+        },
+        {
+            "file": "mascot-basic-CnQ0V42A.png",
+            "initial": false,
+            "raw": 22887,
+            "gzip": 22915,
+            "brotli": 22891
+        },
+        {
+            "file": "mascot-batter-vycAs5lY.png",
+            "initial": false,
+            "raw": 19332,
+            "gzip": 19360,
+            "brotli": 19336
+        },
+        {
+            "file": "mascot-bonus-dumpling-dzRxR9El.png",
+            "initial": false,
+            "raw": 19353,
+            "gzip": 19381,
+            "brotli": 19357
+        },
+        {
+            "file": "mascot-bonus-riceball-B-sUSPoT.png",
+            "initial": false,
+            "raw": 21625,
+            "gzip": 21653,
+            "brotli": 21629
+        },
+        {
+            "file": "mascot-bonus-vegetable-DP7Byc7A.png",
+            "initial": false,
+            "raw": 24022,
+            "gzip": 24050,
+            "brotli": 24026
+        },
+        {
+            "file": "mascot-correct-D7Hps9-s.png",
+            "initial": false,
+            "raw": 183258,
+            "gzip": 183287,
+            "brotli": 183263
+        },
+        {
+            "file": "mascot-dizzy-DFWdq5YM.png",
+            "initial": false,
+            "raw": 24219,
+            "gzip": 24247,
+            "brotli": 24223
+        },
+        {
+            "file": "mascot-idle-DjdXKFmO.png",
+            "initial": false,
+            "raw": 182689,
+            "gzip": 182756,
+            "brotli": 182694
+        },
+        {
+            "file": "mascot-wrong-DhOuCJLB.png",
+            "initial": false,
+            "raw": 172779,
+            "gzip": 172742,
+            "brotli": 172784
+        },
+        {
+            "file": "menu-cheese-57TfF_Ys.webp",
+            "initial": false,
+            "raw": 18908,
+            "gzip": 18782,
+            "brotli": 18699
+        },
+        {
+            "file": "menu-nori-26nB30gq.webp",
+            "initial": false,
+            "raw": 22100,
+            "gzip": 21977,
+            "brotli": 21893
+        },
+        {
+            "file": "menu-scallion-DoqWU92_.webp",
+            "initial": false,
+            "raw": 21194,
+            "gzip": 21066,
+            "brotli": 20978
+        },
+        {
+            "file": "menu-shrimp-BgaRW3UX.webp",
+            "initial": false,
+            "raw": 19084,
+            "gzip": 18959,
+            "brotli": 18875
+        },
+        {
+            "file": "mission-B80Se8BT.js",
+            "initial": false,
+            "raw": 12463,
+            "gzip": 4985,
+            "brotli": 4672
+        },
+        {
+            "file": "mission-ox--fkZYnV7.webp",
+            "initial": false,
+            "raw": 31582,
+            "gzip": 31399,
+            "brotli": 31337
+        },
+        {
+            "file": "mission-quiz-B8nV4QUM.webp",
+            "initial": false,
+            "raw": 31660,
+            "gzip": 31504,
+            "brotli": 31439
+        },
+        {
+            "file": "mission-survey-D-Rga-5w.webp",
+            "initial": false,
+            "raw": 28378,
+            "gzip": 28238,
+            "brotli": 28157
+        },
+        {
+            "file": "MissionDetailPage-CZLLNcAI.js",
+            "initial": false,
+            "raw": 5159,
+            "gzip": 2362,
+            "brotli": 2107
+        },
+        {
+            "file": "MissionListPage-C10XGzwY.js",
+            "initial": false,
+            "raw": 57633,
+            "gzip": 19752,
+            "brotli": 18783
+        },
+        {
+            "file": "MotionConfig-Z00kP2MW.js",
+            "initial": false,
+            "raw": 491,
+            "gzip": 330,
+            "brotli": 292
+        },
+        {
+            "file": "msw-R6C6iZef.js",
+            "initial": false,
+            "raw": 420483,
+            "gzip": 156327,
+            "brotli": 83200
+        },
+        {
+            "file": "MyEntriesPage-ap0NoWnz.js",
+            "initial": false,
+            "raw": 12501,
+            "gzip": 5134,
+            "brotli": 4819
+        },
+        {
+            "file": "myEntryRows-CXTXGMfm.js",
+            "initial": false,
+            "raw": 5560,
+            "gzip": 2510,
+            "brotli": 2348
+        },
+        {
+            "file": "MyNotificationsPage-BCkqz7XY.js",
+            "initial": false,
+            "raw": 2183,
+            "gzip": 1339,
+            "brotli": 1226
+        },
+        {
+            "file": "MyPage-DgiCZqVr.js",
+            "initial": false,
+            "raw": 25959,
+            "gzip": 8950,
+            "brotli": 8331
+        },
+        {
+            "file": "MyTicketsPage-Dk_qI37W.js",
+            "initial": false,
+            "raw": 20409,
+            "gzip": 7696,
+            "brotli": 7272
+        },
+        {
+            "file": "noren-CIYyXEKH.webp",
+            "initial": false,
+            "raw": 34804,
+            "gzip": 34669,
+            "brotli": 34563
+        },
+        {
+            "file": "notificationBell-C1N5qdYr.js",
+            "initial": false,
+            "raw": 13319,
+            "gzip": 5316,
+            "brotli": 5024
+        },
+        {
+            "file": "obstacles-BgDvEcOD.webp",
+            "initial": false,
+            "raw": 73738,
+            "gzip": 73595,
+            "brotli": 73743
+        },
+        {
+            "file": "obstacles-CAgtS-Eq.webp",
+            "initial": false,
+            "raw": 92224,
+            "gzip": 91977,
+            "brotli": 92229
+        },
+        {
+            "file": "obstacles-KC5D1VKH.webp",
+            "initial": false,
+            "raw": 191936,
+            "gzip": 191749,
+            "brotli": 191941
+        },
+        {
+            "file": "octopus-_oX8oDAH.webp",
+            "initial": false,
+            "raw": 9814,
+            "gzip": 9686,
+            "brotli": 9613
+        },
+        {
+            "file": "page-header-Gk7A5STe.js",
+            "initial": false,
+            "raw": 1335,
+            "gzip": 715,
+            "brotli": 635
+        },
+        {
+            "file": "paged-result-h-ApaeTS.js",
+            "initial": false,
+            "raw": 3789,
+            "gzip": 1793,
+            "brotli": 1627
+        },
+        {
+            "file": "pager-D4MZzpwu.js",
+            "initial": false,
+            "raw": 1941,
+            "gzip": 1069,
+            "brotli": 970
+        },
+        {
+            "file": "pagination-BprKyaVc.js",
+            "initial": false,
+            "raw": 4389,
+            "gzip": 1979,
+            "brotli": 1798
+        },
+        {
+            "file": "Peachtea - Somewhere in the Elevator-CEWKApyX.m4a",
+            "initial": false,
+            "raw": 987528,
+            "gzip": 966225,
+            "brotli": 970995
+        },
+        {
+            "file": "plate-wqGyvSbf.webp",
+            "initial": false,
+            "raw": 9224,
+            "gzip": 9096,
+            "brotli": 9026
+        },
+        {
+            "file": "playGame-9mWrXbeV.js",
+            "initial": false,
+            "raw": 31773,
+            "gzip": 12805,
+            "brotli": 12246
+        },
+        {
+            "file": "pleasing-bell-Cf1oXD3Y.js",
+            "initial": false,
+            "raw": 102,
+            "gzip": 114,
+            "brotli": 93
+        },
+        {
+            "file": "pleasing-bell-Zn0GTmAG.wav",
+            "initial": false,
+            "raw": 109392,
+            "gzip": 80484,
+            "brotli": 80516
+        },
+        {
+            "file": "popover--16Qop0s.js",
+            "initial": false,
+            "raw": 1492,
+            "gzip": 734,
+            "brotli": 671
+        },
+        {
+            "file": "pretendard-NPFyShNs.css",
+            "initial": false,
+            "raw": 48159,
+            "gzip": 13809,
+            "brotli": 12234
+        },
+        {
+            "file": "PretendardVariable.subset.0-BHUkWNFR.woff2",
+            "initial": false,
+            "raw": 34568,
+            "gzip": 34601,
+            "brotli": 34572
+        },
+        {
+            "file": "PretendardVariable.subset.1-C-__qv6_.woff2",
+            "initial": false,
+            "raw": 32044,
+            "gzip": 32072,
+            "brotli": 32048
+        },
+        {
+            "file": "PretendardVariable.subset.10-DzSWztS8.woff2",
+            "initial": false,
+            "raw": 33032,
+            "gzip": 33041,
+            "brotli": 33014
+        },
+        {
+            "file": "PretendardVariable.subset.11-CqVmlKJn.woff2",
+            "initial": false,
+            "raw": 37400,
+            "gzip": 37433,
+            "brotli": 37404
+        },
+        {
+            "file": "PretendardVariable.subset.12-BHuZSgT0.woff2",
+            "initial": false,
+            "raw": 37940,
+            "gzip": 37973,
+            "brotli": 37944
+        },
+        {
+            "file": "PretendardVariable.subset.13-C42mj_j2.woff2",
+            "initial": false,
+            "raw": 35708,
+            "gzip": 35741,
+            "brotli": 35712
+        },
+        {
+            "file": "PretendardVariable.subset.14-Bl512uUX.woff2",
+            "initial": false,
+            "raw": 36512,
+            "gzip": 36545,
+            "brotli": 36516
+        },
+        {
+            "file": "PretendardVariable.subset.15-D04iXIE3.woff2",
+            "initial": false,
+            "raw": 35668,
+            "gzip": 35701,
+            "brotli": 35672
+        },
+        {
+            "file": "PretendardVariable.subset.16-BQUnS2GX.woff2",
+            "initial": false,
+            "raw": 37916,
+            "gzip": 37949,
+            "brotli": 37920
+        },
+        {
+            "file": "PretendardVariable.subset.17-BfZSA-Xc.woff2",
+            "initial": false,
+            "raw": 34940,
+            "gzip": 34973,
+            "brotli": 34944
+        },
+        {
+            "file": "PretendardVariable.subset.18-CwAxMC3C.woff2",
+            "initial": false,
+            "raw": 41600,
+            "gzip": 41633,
+            "brotli": 41604
+        },
+        {
+            "file": "PretendardVariable.subset.19-CJu4Zcdo.woff2",
+            "initial": false,
+            "raw": 42328,
+            "gzip": 42361,
+            "brotli": 42332
+        },
+        {
+            "file": "PretendardVariable.subset.2-dCZkyKLw.woff2",
+            "initial": false,
+            "raw": 43920,
+            "gzip": 43953,
+            "brotli": 43924
+        },
+        {
+            "file": "PretendardVariable.subset.20-Ig1-z3n5.woff2",
+            "initial": false,
+            "raw": 36128,
+            "gzip": 36161,
+            "brotli": 36132
+        },
+        {
+            "file": "PretendardVariable.subset.21-yKPEdLXC.woff2",
+            "initial": false,
+            "raw": 37268,
+            "gzip": 37301,
+            "brotli": 37272
+        },
+        {
+            "file": "PretendardVariable.subset.22-CSqxKoOs.woff2",
+            "initial": false,
+            "raw": 38680,
+            "gzip": 38698,
+            "brotli": 38684
+        },
+        {
+            "file": "PretendardVariable.subset.23-DK80wi0t.woff2",
+            "initial": false,
+            "raw": 40284,
+            "gzip": 40317,
+            "brotli": 40288
+        },
+        {
+            "file": "PretendardVariable.subset.24-CmkE8Q8D.woff2",
+            "initial": false,
+            "raw": 32300,
+            "gzip": 32328,
+            "brotli": 32304
+        },
+        {
+            "file": "PretendardVariable.subset.25-CsoWBIZB.woff2",
+            "initial": false,
+            "raw": 42032,
+            "gzip": 42065,
+            "brotli": 42036
+        },
+        {
+            "file": "PretendardVariable.subset.26-Sozl8dw8.woff2",
+            "initial": false,
+            "raw": 40324,
+            "gzip": 40357,
+            "brotli": 40328
+        },
+        {
+            "file": "PretendardVariable.subset.27-CT6nuW9L.woff2",
+            "initial": false,
+            "raw": 35424,
+            "gzip": 35457,
+            "brotli": 35428
+        },
+        {
+            "file": "PretendardVariable.subset.28-CpO0Y96p.woff2",
+            "initial": false,
+            "raw": 38468,
+            "gzip": 38501,
+            "brotli": 38472
+        },
+        {
+            "file": "PretendardVariable.subset.29-D6hjrUWm.woff2",
+            "initial": false,
+            "raw": 39288,
+            "gzip": 39321,
+            "brotli": 39292
+        },
+        {
+            "file": "PretendardVariable.subset.3-Dqw33sf4.woff2",
+            "initial": false,
+            "raw": 40648,
+            "gzip": 40681,
+            "brotli": 40652
+        },
+        {
+            "file": "PretendardVariable.subset.30-CWDM1c0J.woff2",
+            "initial": false,
+            "raw": 38448,
+            "gzip": 38481,
+            "brotli": 38452
+        },
+        {
+            "file": "PretendardVariable.subset.31-CdmyZ5mm.woff2",
+            "initial": false,
+            "raw": 41892,
+            "gzip": 41925,
+            "brotli": 41896
+        },
+        {
+            "file": "PretendardVariable.subset.32-CGnFWD2i.woff2",
+            "initial": false,
+            "raw": 40216,
+            "gzip": 40249,
+            "brotli": 40220
+        },
+        {
+            "file": "PretendardVariable.subset.33--0OT__YQ.woff2",
+            "initial": false,
+            "raw": 34916,
+            "gzip": 34949,
+            "brotli": 34920
+        },
+        {
+            "file": "PretendardVariable.subset.34-CaCS33Md.woff2",
+            "initial": false,
+            "raw": 34720,
+            "gzip": 34753,
+            "brotli": 34722
+        },
+        {
+            "file": "PretendardVariable.subset.35-DWFYRGLp.woff2",
+            "initial": false,
+            "raw": 35352,
+            "gzip": 35385,
+            "brotli": 35356
+        },
+        {
+            "file": "PretendardVariable.subset.36-Dn5IBRQB.woff2",
+            "initial": false,
+            "raw": 34688,
+            "gzip": 34721,
+            "brotli": 34692
+        },
+        {
+            "file": "PretendardVariable.subset.37-BD6FyOtY.woff2",
+            "initial": false,
+            "raw": 27916,
+            "gzip": 27944,
+            "brotli": 27903
+        },
+        {
+            "file": "PretendardVariable.subset.38-D4hu443z.woff2",
+            "initial": false,
+            "raw": 34808,
+            "gzip": 34841,
+            "brotli": 34812
+        },
+        {
+            "file": "PretendardVariable.subset.39-B_7wfth9.woff2",
+            "initial": false,
+            "raw": 34256,
+            "gzip": 34289,
+            "brotli": 34260
+        },
+        {
+            "file": "PretendardVariable.subset.4-Bvh2YGoc.woff2",
+            "initial": false,
+            "raw": 35156,
+            "gzip": 35189,
+            "brotli": 35160
+        },
+        {
+            "file": "PretendardVariable.subset.40-BDaOfdUe.woff2",
+            "initial": false,
+            "raw": 29840,
+            "gzip": 29868,
+            "brotli": 29839
+        },
+        {
+            "file": "PretendardVariable.subset.41-BUACvzZC.woff2",
+            "initial": false,
+            "raw": 33188,
+            "gzip": 33218,
+            "brotli": 33192
+        },
+        {
+            "file": "PretendardVariable.subset.42-Dp-5mnyL.woff2",
+            "initial": false,
+            "raw": 34608,
+            "gzip": 34641,
+            "brotli": 34612
+        },
+        {
+            "file": "PretendardVariable.subset.43-DHdpry7N.woff2",
+            "initial": false,
+            "raw": 30384,
+            "gzip": 30412,
+            "brotli": 30388
+        },
+        {
+            "file": "PretendardVariable.subset.44-qHopVhdd.woff2",
+            "initial": false,
+            "raw": 32136,
+            "gzip": 32164,
+            "brotli": 32129
+        },
+        {
+            "file": "PretendardVariable.subset.45-BniyRFfm.woff2",
+            "initial": false,
+            "raw": 34664,
+            "gzip": 34697,
+            "brotli": 34668
+        },
+        {
+            "file": "PretendardVariable.subset.46-BMRq7xC-.woff2",
+            "initial": false,
+            "raw": 36540,
+            "gzip": 36573,
+            "brotli": 36544
+        },
+        {
+            "file": "PretendardVariable.subset.47-B-cWO2pw.woff2",
+            "initial": false,
+            "raw": 35720,
+            "gzip": 35753,
+            "brotli": 35724
+        },
+        {
+            "file": "PretendardVariable.subset.48-Ct-fWrPO.woff2",
+            "initial": false,
+            "raw": 37776,
+            "gzip": 37786,
+            "brotli": 37780
+        },
+        {
+            "file": "PretendardVariable.subset.49-BblQVys9.woff2",
+            "initial": false,
+            "raw": 36052,
+            "gzip": 36082,
+            "brotli": 36056
+        },
+        {
+            "file": "PretendardVariable.subset.5-K_MNGNCe.woff2",
+            "initial": false,
+            "raw": 33624,
+            "gzip": 33657,
+            "brotli": 33628
+        },
+        {
+            "file": "PretendardVariable.subset.50-C8IyFH7L.woff2",
+            "initial": false,
+            "raw": 33228,
+            "gzip": 33261,
+            "brotli": 33232
+        },
+        {
+            "file": "PretendardVariable.subset.51-Bxd0gTAs.woff2",
+            "initial": false,
+            "raw": 36024,
+            "gzip": 36057,
+            "brotli": 36028
+        },
+        {
+            "file": "PretendardVariable.subset.52-CNgqKOOJ.woff2",
+            "initial": false,
+            "raw": 34356,
+            "gzip": 34389,
+            "brotli": 34360
+        },
+        {
+            "file": "PretendardVariable.subset.53-BSRnyb-u.woff2",
+            "initial": false,
+            "raw": 34572,
+            "gzip": 34605,
+            "brotli": 34576
+        },
+        {
+            "file": "PretendardVariable.subset.54-Dt2-cQkx.woff2",
+            "initial": false,
+            "raw": 33344,
+            "gzip": 33377,
+            "brotli": 33348
+        },
+        {
+            "file": "PretendardVariable.subset.55-jFgflYjX.woff2",
+            "initial": false,
+            "raw": 34184,
+            "gzip": 34217,
+            "brotli": 34188
+        },
+        {
+            "file": "PretendardVariable.subset.56-BwZdvJZQ.woff2",
+            "initial": false,
+            "raw": 35184,
+            "gzip": 35217,
+            "brotli": 35188
+        },
+        {
+            "file": "PretendardVariable.subset.57-BwFDg-Fs.woff2",
+            "initial": false,
+            "raw": 35960,
+            "gzip": 35993,
+            "brotli": 35964
+        },
+        {
+            "file": "PretendardVariable.subset.58-DlucQts_.woff2",
+            "initial": false,
+            "raw": 41564,
+            "gzip": 41597,
+            "brotli": 41568
+        },
+        {
+            "file": "PretendardVariable.subset.59-CMkWjhdo.woff2",
+            "initial": false,
+            "raw": 38972,
+            "gzip": 39000,
+            "brotli": 38976
+        },
+        {
+            "file": "PretendardVariable.subset.6-Bxhohlcm.woff2",
+            "initial": false,
+            "raw": 33968,
+            "gzip": 34001,
+            "brotli": 33967
+        },
+        {
+            "file": "PretendardVariable.subset.60-CeHezjjf.woff2",
+            "initial": false,
+            "raw": 37776,
+            "gzip": 37809,
+            "brotli": 37780
+        },
+        {
+            "file": "PretendardVariable.subset.61-PUuTnod4.woff2",
+            "initial": false,
+            "raw": 35640,
+            "gzip": 35673,
+            "brotli": 35644
+        },
+        {
+            "file": "PretendardVariable.subset.62-DGSAWCfb.woff2",
+            "initial": false,
+            "raw": 34876,
+            "gzip": 34909,
+            "brotli": 34866
+        },
+        {
+            "file": "PretendardVariable.subset.63-B35xsm4O.woff2",
+            "initial": false,
+            "raw": 28816,
+            "gzip": 28842,
+            "brotli": 28820
+        },
+        {
+            "file": "PretendardVariable.subset.64-CTbrgYF9.woff2",
+            "initial": false,
+            "raw": 8264,
+            "gzip": 8283,
+            "brotli": 8268
+        },
+        {
+            "file": "PretendardVariable.subset.65-B66rjuyf.woff2",
+            "initial": false,
+            "raw": 11108,
+            "gzip": 11131,
+            "brotli": 11112
+        },
+        {
+            "file": "PretendardVariable.subset.66-C3HqaDeY.woff2",
+            "initial": false,
+            "raw": 8252,
+            "gzip": 8275,
+            "brotli": 8256
+        },
+        {
+            "file": "PretendardVariable.subset.67-BmuXdlDy.woff2",
+            "initial": false,
+            "raw": 21840,
+            "gzip": 21868,
+            "brotli": 21840
+        },
+        {
+            "file": "PretendardVariable.subset.68-DS9B48d0.woff2",
+            "initial": false,
+            "raw": 16340,
+            "gzip": 16354,
+            "brotli": 16338
+        },
+        {
+            "file": "PretendardVariable.subset.69-YT16ymcp.woff2",
+            "initial": false,
+            "raw": 34784,
+            "gzip": 34791,
+            "brotli": 34788
+        },
+        {
+            "file": "PretendardVariable.subset.7-E2HaA55t.woff2",
+            "initial": false,
+            "raw": 31912,
+            "gzip": 31940,
+            "brotli": 31916
+        },
+        {
+            "file": "PretendardVariable.subset.70-BUXiAGMT.woff2",
+            "initial": false,
+            "raw": 27548,
+            "gzip": 27576,
+            "brotli": 27547
+        },
+        {
+            "file": "PretendardVariable.subset.71-DuPZj8us.woff2",
+            "initial": false,
+            "raw": 28324,
+            "gzip": 28352,
+            "brotli": 28316
+        },
+        {
+            "file": "PretendardVariable.subset.72-pYYGrEQR.woff2",
+            "initial": false,
+            "raw": 19508,
+            "gzip": 19536,
+            "brotli": 19506
+        },
+        {
+            "file": "PretendardVariable.subset.73-DMrK970F.woff2",
+            "initial": false,
+            "raw": 18336,
+            "gzip": 18364,
+            "brotli": 18340
+        },
+        {
+            "file": "PretendardVariable.subset.74-D4tQnymK.woff2",
+            "initial": false,
+            "raw": 22392,
+            "gzip": 22420,
+            "brotli": 22394
+        },
+        {
+            "file": "PretendardVariable.subset.75-CxKdrRNf.woff2",
+            "initial": false,
+            "raw": 19996,
+            "gzip": 20024,
+            "brotli": 19995
+        },
+        {
+            "file": "PretendardVariable.subset.76-DhPm2b_q.woff2",
+            "initial": false,
+            "raw": 24924,
+            "gzip": 24952,
+            "brotli": 24923
+        },
+        {
+            "file": "PretendardVariable.subset.77-DwaxqOC8.woff2",
+            "initial": false,
+            "raw": 26044,
+            "gzip": 26072,
+            "brotli": 26047
+        },
+        {
+            "file": "PretendardVariable.subset.78-DhqRbBzT.woff2",
+            "initial": false,
+            "raw": 26548,
+            "gzip": 26576,
+            "brotli": 26547
+        },
+        {
+            "file": "PretendardVariable.subset.79-XpoyPP38.woff2",
+            "initial": false,
+            "raw": 26224,
+            "gzip": 26252,
+            "brotli": 26223
+        },
+        {
+            "file": "PretendardVariable.subset.8-CRbJhhyA.woff2",
+            "initial": false,
+            "raw": 36696,
+            "gzip": 36729,
+            "brotli": 36700
+        },
+        {
+            "file": "PretendardVariable.subset.80-DsV9Qp_h.woff2",
+            "initial": false,
+            "raw": 28796,
+            "gzip": 28824,
+            "brotli": 28795
+        },
+        {
+            "file": "PretendardVariable.subset.81-BZzF9Hb3.woff2",
+            "initial": false,
+            "raw": 26300,
+            "gzip": 26328,
+            "brotli": 26296
+        },
+        {
+            "file": "PretendardVariable.subset.82-BgAHe30u.woff2",
+            "initial": false,
+            "raw": 26500,
+            "gzip": 26528,
+            "brotli": 26499
+        },
+        {
+            "file": "PretendardVariable.subset.83-DF-zBLLe.woff2",
+            "initial": false,
+            "raw": 26964,
+            "gzip": 26992,
+            "brotli": 26963
+        },
+        {
+            "file": "PretendardVariable.subset.84-Brb8EsYQ.woff2",
+            "initial": false,
+            "raw": 24492,
+            "gzip": 24520,
+            "brotli": 24491
+        },
+        {
+            "file": "PretendardVariable.subset.85-Byo_x2hf.woff2",
+            "initial": false,
+            "raw": 25104,
+            "gzip": 25132,
+            "brotli": 25107
+        },
+        {
+            "file": "PretendardVariable.subset.86-XG7lTN_6.woff2",
+            "initial": false,
+            "raw": 25716,
+            "gzip": 25744,
+            "brotli": 25719
+        },
+        {
+            "file": "PretendardVariable.subset.87-Lzui2vbK.woff2",
+            "initial": false,
+            "raw": 24664,
+            "gzip": 24692,
+            "brotli": 24663
+        },
+        {
+            "file": "PretendardVariable.subset.88-CqX6JSgh.woff2",
+            "initial": false,
+            "raw": 25640,
+            "gzip": 25668,
+            "brotli": 25643
+        },
+        {
+            "file": "PretendardVariable.subset.89-DOzqWPpX.woff2",
+            "initial": false,
+            "raw": 21864,
+            "gzip": 21892,
+            "brotli": 21862
+        },
+        {
+            "file": "PretendardVariable.subset.9-Btb3bmS6.woff2",
+            "initial": false,
+            "raw": 34012,
+            "gzip": 34045,
+            "brotli": 34016
+        },
+        {
+            "file": "PretendardVariable.subset.90-BF7RiZjm.woff2",
+            "initial": false,
+            "raw": 20852,
+            "gzip": 20880,
+            "brotli": 20846
+        },
+        {
+            "file": "PretendardVariable.subset.91-Csm0YNoH.woff2",
+            "initial": false,
+            "raw": 37996,
+            "gzip": 38029,
+            "brotli": 38000
+        },
+        {
+            "file": "privacy-DgUMLER-.png",
+            "initial": false,
+            "raw": 6059,
+            "gzip": 5925,
+            "brotli": 5878
+        },
+        {
+            "file": "profile-avatar-BGO7k-dZ.png",
+            "initial": false,
+            "raw": 19853,
+            "gzip": 19604,
+            "brotli": 19508
+        },
+        {
+            "file": "profile-avatar-head-qvom2Jzu.png",
+            "initial": false,
+            "raw": 19309,
+            "gzip": 19337,
+            "brotli": 19300
+        },
+        {
+            "file": "prop-boxes-BIEocsoy.webp",
+            "initial": false,
+            "raw": 13336,
+            "gzip": 13204,
+            "brotli": 13128
+        },
+        {
+            "file": "prop-sauces-C9yCOKqf.webp",
+            "initial": false,
+            "raw": 17266,
+            "gzip": 17142,
+            "brotli": 17058
+        },
+        {
+            "file": "prop-sticks-BQNG5CdD.webp",
+            "initial": false,
+            "raw": 10808,
+            "gzip": 10679,
+            "brotli": 10605
+        },
+        {
+            "file": "proxy-tntFKLb0.js",
+            "initial": false,
+            "raw": 123356,
+            "gzip": 39743,
+            "brotli": 38746
+        },
+        {
+            "file": "radio-group-B61SWv41.js",
+            "initial": false,
+            "raw": 1553,
+            "gzip": 798,
+            "brotli": 716
+        },
+        {
+            "file": "react-BXQkwMDF.js",
+            "initial": true,
+            "raw": 218994,
+            "gzip": 67614,
+            "brotli": 63969
+        },
+        {
+            "file": "reduced-motion-2fDGfAC9.js",
+            "initial": false,
+            "raw": 271,
+            "gzip": 199,
+            "brotli": 160
+        },
+        {
+            "file": "refresh-status-CQ_dZpFK.js",
+            "initial": false,
+            "raw": 2120,
+            "gzip": 1281,
+            "brotli": 1178
+        },
+        {
+            "file": "reward-mascot-BBK5sZU9.png",
+            "initial": false,
+            "raw": 55292,
+            "gzip": 55330,
+            "brotli": 55296
+        },
+        {
+            "file": "router-jPQ7lcss.js",
+            "initial": true,
+            "raw": 96439,
+            "gzip": 31658,
+            "brotli": 30382
+        },
+        {
+            "file": "sauces-BS1B8u5Y.png",
+            "initial": false,
+            "raw": 180541,
+            "gzip": 180139,
+            "brotli": 180546
+        },
+        {
+            "file": "score-board-B7wjk7l3.png",
+            "initial": false,
+            "raw": 76800,
+            "gzip": 76817,
+            "brotli": 76805
+        },
+        {
+            "file": "segmented-DgL3fDJT.js",
+            "initial": false,
+            "raw": 1052,
+            "gzip": 652,
+            "brotli": 583
+        },
+        {
+            "file": "select-nvBYqc1n.js",
+            "initial": false,
+            "raw": 6543,
+            "gzip": 2203,
+            "brotli": 2002
+        },
+        {
+            "file": "sfx_coin_cluster3-CurPSiAu.wav",
+            "initial": false,
+            "raw": 41530,
+            "gzip": 38642,
+            "brotli": 37628
+        },
+        {
+            "file": "sfx_sounds_damage1-pPst-C_-.wav",
+            "initial": false,
+            "raw": 15512,
+            "gzip": 12776,
+            "brotli": 11855
+        },
+        {
+            "file": "sfx_sounds_falling7-wOfVEpRX.wav",
+            "initial": false,
+            "raw": 256942,
+            "gzip": 232947,
+            "brotli": 225845
+        },
+        {
+            "file": "sfx_sounds_pause7_in-ijD1JSQr.wav",
+            "initial": false,
+            "raw": 46004,
+            "gzip": 35468,
+            "brotli": 32957
+        },
+        {
+            "file": "sfx_sounds_pause7_out-C5qgWGkc.wav",
+            "initial": false,
+            "raw": 45548,
+            "gzip": 35334,
+            "brotli": 32953
+        },
+        {
+            "file": "sheet-BvYzeHpX.js",
+            "initial": false,
+            "raw": 4418,
+            "gzip": 1469,
+            "brotli": 1343
+        },
+        {
+            "file": "shelf-dW-jq6SO.webp",
+            "initial": false,
+            "raw": 36284,
+            "gzip": 36160,
+            "brotli": 36081
+        },
+        {
+            "file": "shop-counter-BKBxGBLl.jpg",
+            "initial": false,
+            "raw": 48330,
+            "gzip": 47085,
+            "brotli": 47443
+        },
+        {
+            "file": "shop-wall-MvqnynLN.jpg",
+            "initial": false,
+            "raw": 10156,
+            "gzip": 9661,
+            "brotli": 9618
+        },
+        {
+            "file": "skewers-CeYZTYs8.png",
+            "initial": false,
+            "raw": 180072,
+            "gzip": 180097,
+            "brotli": 180077
+        },
+        {
+            "file": "sky-BP_u7p0g.jpg",
+            "initial": false,
+            "raw": 21866,
+            "gzip": 21139,
+            "brotli": 21321
+        },
+        {
+            "file": "sky-CFKcwo6G.jpg",
+            "initial": false,
+            "raw": 12519,
+            "gzip": 11500,
+            "brotli": 11597
+        },
+        {
+            "file": "sky-Dbw7A46W.jpg",
+            "initial": false,
+            "raw": 16766,
+            "gzip": 15810,
+            "brotli": 15890
+        },
+        {
+            "file": "sky-vy7YH94-.jpg",
+            "initial": false,
+            "raw": 27517,
+            "gzip": 25470,
+            "brotli": 25718
+        },
+        {
+            "file": "slime_jump-Ckdr-zEG.wav",
+            "initial": false,
+            "raw": 7982,
+            "gzip": 8005,
+            "brotli": 7948
+        },
+        {
+            "file": "sparkle-BXwp5YWV.png",
+            "initial": false,
+            "raw": 166742,
+            "gzip": 166815,
+            "brotli": 166747
+        },
+        {
+            "file": "speaker-0-CiPxAVJq.png",
+            "initial": false,
+            "raw": 8970,
+            "gzip": 8993,
+            "brotli": 8974
+        },
+        {
+            "file": "speaker-1-Dtap23IC.png",
+            "initial": false,
+            "raw": 8012,
+            "gzip": 8035,
+            "brotli": 8016
+        },
+        {
+            "file": "speaker-3-BEZT6JmP.png",
+            "initial": false,
+            "raw": 10694,
+            "gzip": 10717,
+            "brotli": 10698
+        },
+        {
+            "file": "speaker-5-CtjVIgF1.png",
+            "initial": false,
+            "raw": 12215,
+            "gzip": 12238,
+            "brotli": 12219
+        },
+        {
+            "file": "stage-1-CcPy1VqY.png",
+            "initial": false,
+            "raw": 51231,
+            "gzip": 51269,
+            "brotli": 51235
+        },
+        {
+            "file": "stage-2-Bj_Med3p.png",
+            "initial": false,
+            "raw": 54174,
+            "gzip": 54212,
+            "brotli": 54178
+        },
+        {
+            "file": "stage-3-Ftm0JFDr.png",
+            "initial": false,
+            "raw": 55801,
+            "gzip": 55839,
+            "brotli": 55805
+        },
+        {
+            "file": "stage-4-DdNgFQDf.png",
+            "initial": false,
+            "raw": 54457,
+            "gzip": 54495,
+            "brotli": 54461
+        },
+        {
+            "file": "stars-BOwm3P4D.png",
+            "initial": false,
+            "raw": 33874,
+            "gzip": 33907,
+            "brotli": 33878
+        },
+        {
+            "file": "status-dot-DgBa9Kdg.js",
+            "initial": false,
+            "raw": 1006,
+            "gzip": 621,
+            "brotli": 581
+        },
+        {
+            "file": "steam-a-Cqs4l33G.webp",
+            "initial": false,
+            "raw": 8532,
+            "gzip": 8400,
+            "brotli": 8333
+        },
+        {
+            "file": "steam-b-DwiU0ghS.webp",
+            "initial": false,
+            "raw": 7966,
+            "gzip": 7834,
+            "brotli": 7759
+        },
+        {
+            "file": "steam-C4BfyLq5.webp",
+            "initial": false,
+            "raw": 6892,
+            "gzip": 6760,
+            "brotli": 6696
+        },
+        {
+            "file": "step-attendance-DnOh9rag.png",
+            "initial": false,
+            "raw": 60605,
+            "gzip": 60575,
+            "brotli": 60609
+        },
+        {
+            "file": "step-game-QArYI9EG.png",
+            "initial": false,
+            "raw": 29409,
+            "gzip": 29079,
+            "brotli": 29022
+        },
+        {
+            "file": "step-mission-nlwinkJj.png",
+            "initial": false,
+            "raw": 35412,
+            "gzip": 35201,
+            "brotli": 35416
+        },
+        {
+            "file": "step-mission-PrBpMKia.js",
+            "initial": false,
+            "raw": 242,
+            "gzip": 179,
+            "brotli": 160
+        },
+        {
+            "file": "submitMission-DASeyQqk.js",
+            "initial": false,
+            "raw": 9896,
+            "gzip": 4172,
+            "brotli": 3794
+        },
+        {
+            "file": "switchVirtualUser-BzsvSdHP.js",
+            "initial": false,
+            "raw": 3927,
+            "gzip": 1874,
+            "brotli": 1701
+        },
+        {
+            "file": "takko-order-guide-PsOjiEuE.jpg",
+            "initial": false,
+            "raw": 240969,
+            "gzip": 235875,
+            "brotli": 236557
+        },
+        {
+            "file": "takko-run-guide-IDM3Phn-.jpg",
+            "initial": false,
+            "raw": 166055,
+            "gzip": 165225,
+            "brotli": 166060
+        },
+        {
+            "file": "takko-timing-guide-91UXhzvL.jpg",
+            "initial": false,
+            "raw": 159194,
+            "gzip": 155991,
+            "brotli": 156459
+        },
+        {
+            "file": "TakkoFace-BdTryiq5.js",
+            "initial": false,
+            "raw": 551,
+            "gzip": 401,
+            "brotli": 359
+        },
+        {
+            "file": "TakkoOrderGame-Cd72UvjS.js",
+            "initial": false,
+            "raw": 25623,
+            "gzip": 9876,
+            "brotli": 9205
+        },
+        {
+            "file": "takkoRunAssets-BgFoVZdi.js",
+            "initial": false,
+            "raw": 1620,
+            "gzip": 833,
+            "brotli": 767
+        },
+        {
+            "file": "TakkoRunGame-BieweICP.js",
+            "initial": false,
+            "raw": 24184,
+            "gzip": 9752,
+            "brotli": 9137
+        },
+        {
+            "file": "TakkoTimingGame-Ep9gXQ3w.js",
+            "initial": false,
+            "raw": 20316,
+            "gzip": 8657,
+            "brotli": 8107
+        },
+        {
+            "file": "takoyaki-dizzy-CDJC7EXz.webp",
+            "initial": false,
+            "raw": 7990,
+            "gzip": 7853,
+            "brotli": 7777
+        },
+        {
+            "file": "tanstack-CLH9B0Xc.js",
+            "initial": true,
+            "raw": 39307,
+            "gzip": 11308,
+            "brotli": 11075
+        },
+        {
+            "file": "team-CsUfIVNN.png",
+            "initial": false,
+            "raw": 5974,
+            "gzip": 5780,
+            "brotli": 5748
+        },
+        {
+            "file": "textarea-Z229k6Iy.js",
+            "initial": false,
+            "raw": 842,
+            "gzip": 529,
+            "brotli": 472
+        },
+        {
+            "file": "ticket-bronze-BDE8zZkZ.png",
+            "initial": false,
+            "raw": 75567,
+            "gzip": 75457,
+            "brotli": 75572
+        },
+        {
+            "file": "ticket-card-D7XMU-20.js",
+            "initial": false,
+            "raw": 3106,
+            "gzip": 1553,
+            "brotli": 1422
+        },
+        {
+            "file": "ticket-Cg2vniDE.js",
+            "initial": false,
+            "raw": 26436,
+            "gzip": 9961,
+            "brotli": 9425
+        },
+        {
+            "file": "ticket-character-C-4zHowV.png",
+            "initial": false,
+            "raw": 29975,
+            "gzip": 29704,
+            "brotli": 29661
+        },
+        {
+            "file": "ticket-gold-4aKphAAr.png",
+            "initial": false,
+            "raw": 75192,
+            "gzip": 75078,
+            "brotli": 75197
+        },
+        {
+            "file": "ticket-platinum-DSVkEsc1.png",
+            "initial": false,
+            "raw": 77519,
+            "gzip": 77406,
+            "brotli": 77524
+        },
+        {
+            "file": "ticket-random-DYn3VXg6.png",
+            "initial": false,
+            "raw": 71629,
+            "gzip": 71522,
+            "brotli": 71634
+        },
+        {
+            "file": "ticket-silver-CVXTHIY-.png",
+            "initial": false,
+            "raw": 74289,
+            "gzip": 74175,
+            "brotli": 74294
+        },
+        {
+            "file": "ticketWallet-fJldl6NZ.js",
+            "initial": false,
+            "raw": 8656,
+            "gzip": 3201,
+            "brotli": 2967
+        },
+        {
+            "file": "TimeRaffleDetailPage-C9IQEy-i.js",
+            "initial": false,
+            "raw": 43735,
+            "gzip": 16020,
+            "brotli": 15082
+        },
+        {
+            "file": "TimeRafflePage-CzltAUNj.js",
+            "initial": false,
+            "raw": 30768,
+            "gzip": 10774,
+            "brotli": 10174
+        },
+        {
+            "file": "toothpick-DSmGaLf2.png",
+            "initial": false,
+            "raw": 20122,
+            "gzip": 20150,
+            "brotli": 20126
+        },
+        {
+            "file": "tourTargets-wHfQsr_F.js",
+            "initial": false,
+            "raw": 161,
+            "gzip": 139,
+            "brotli": 115
+        },
+        {
+            "file": "town-BxnHTF0x.webp",
+            "initial": false,
+            "raw": 65916,
+            "gzip": 65788,
+            "brotli": 65921
+        },
+        {
+            "file": "town-CNHtBLXU.webp",
+            "initial": false,
+            "raw": 81788,
+            "gzip": 81685,
+            "brotli": 81793
+        },
+        {
+            "file": "town-D9ojN51z.png",
+            "initial": false,
+            "raw": 357805,
+            "gzip": 356925,
+            "brotli": 357810
+        },
+        {
+            "file": "town-DH_xKdWp.webp",
+            "initial": false,
+            "raw": 86766,
+            "gzip": 86642,
+            "brotli": 86771
+        },
+        {
+            "file": "trophy-C8rLHcQj.png",
+            "initial": false,
+            "raw": 8557,
+            "gzip": 8409,
+            "brotli": 8375
+        },
+        {
+            "file": "UiGalleryPage-CGnDEbeE.js",
+            "initial": false,
+            "raw": 10369,
+            "gzip": 3902,
+            "brotli": 3616
+        },
+        {
+            "file": "use-animate-CfeixLSF.js",
+            "initial": false,
+            "raw": 12082,
+            "gzip": 5100,
+            "brotli": 4984
+        },
+        {
+            "file": "use-reduced-motion-CKfaMj5A.js",
+            "initial": false,
+            "raw": 232,
+            "gzip": 189,
+            "brotli": 160
+        },
+        {
+            "file": "useCountUp-YF26g0Mn.js",
+            "initial": false,
+            "raw": 824,
+            "gzip": 521,
+            "brotli": 488
+        },
+        {
+            "file": "useDragScroll-DHCr1q2R.js",
+            "initial": false,
+            "raw": 1736,
+            "gzip": 859,
+            "brotli": 806
+        },
+        {
+            "file": "UserLayout-SxclPYaR.js",
+            "initial": false,
+            "raw": 10891,
+            "gzip": 4428,
+            "brotli": 4097
+        },
+        {
+            "file": "vendor-CTZuBZOi.css",
+            "initial": true,
+            "raw": 3042,
+            "gzip": 974,
+            "brotli": 831
+        },
+        {
+            "file": "vendor-DFCW_b6p.js",
+            "initial": true,
+            "raw": 292217,
+            "gzip": 95260,
+            "brotli": 90758
+        },
+        {
+            "file": "verified-Ch3ZX3Uj.png",
+            "initial": false,
+            "raw": 8047,
+            "gzip": 7912,
+            "brotli": 7869
+        },
+        {
+            "file": "volume-0-6P9tM9Wp.png",
+            "initial": false,
+            "raw": 11355,
+            "gzip": 11378,
+            "brotli": 11359
+        },
+        {
+            "file": "volume-1-Dd3BSUsO.png",
+            "initial": false,
+            "raw": 11909,
+            "gzip": 11932,
+            "brotli": 11913
+        },
+        {
+            "file": "volume-3-Bf5t1KYa.png",
+            "initial": false,
+            "raw": 13007,
+            "gzip": 13030,
+            "brotli": 13011
+        },
+        {
+            "file": "volume-5-apO7WyzQ.png",
+            "initial": false,
+            "raw": 13431,
+            "gzip": 13454,
+            "brotli": 13435
+        },
+        {
+            "file": "VolumeControl-B1RQLEZ2.css",
+            "initial": false,
+            "raw": 148,
+            "gzip": 139,
+            "brotli": 109
+        },
+        {
+            "file": "VolumeControl-Cx7bTJ-W.js",
+            "initial": false,
+            "raw": 8275,
+            "gzip": 3572,
+            "brotli": 3333
+        },
+        {
+            "file": "wall-DEHubYTO.webp",
+            "initial": false,
+            "raw": 10450,
+            "gzip": 10007,
+            "brotli": 10007
+        },
+        {
+            "file": "win-bg-CFaklNGL.webp",
+            "initial": false,
+            "raw": 27596,
+            "gzip": 27475,
+            "brotli": 27391
+        },
+        {
+            "file": "win-mascot-72V6ExWq.webp",
+            "initial": false,
+            "raw": 42612,
+            "gzip": 42492,
+            "brotli": 42616
+        },
+        {
+            "file": "window-Dodtuih-.webp",
+            "initial": false,
+            "raw": 11236,
+            "gzip": 11107,
+            "brotli": 11035
+        },
+        {
+            "file": "winner-CEepA_Ax.js",
+            "initial": false,
+            "raw": 1707,
+            "gzip": 837,
+            "brotli": 771
+        },
+        {
+            "file": "word-board-CvUAd7jQ.png",
+            "initial": false,
+            "raw": 243060,
+            "gzip": 242778,
+            "brotli": 243065
+        },
+        {
+            "file": "zod-BHBKxcX8.js",
+            "initial": true,
+            "raw": 91598,
+            "gzip": 25647,
+            "brotli": 24444
+        }
+    ]
+}

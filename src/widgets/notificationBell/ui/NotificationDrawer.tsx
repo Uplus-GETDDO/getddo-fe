@@ -90,7 +90,8 @@ function DrawerBody({ onClose }: { onClose: () => void }) {
                     type="button"
                     disabled={unreadCount === 0 || isMarkingAll}
                     onClick={() => markAllRead()}
-                    className={`text-fg-primary disabled:text-fg-disabled cursor-pointer rounded-sm text-sm leading-[1.375rem] hover:underline disabled:cursor-not-allowed disabled:no-underline ${FOCUS}`}
+                    // 글줄(22px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다
+                    className={`text-fg-primary disabled:text-fg-disabled -my-0.5 cursor-pointer rounded-sm py-0.5 text-sm leading-[1.375rem] hover:underline disabled:cursor-not-allowed disabled:no-underline ${FOCUS}`}
                 >
                     모두 읽음
                 </button>

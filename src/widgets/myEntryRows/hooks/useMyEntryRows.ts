@@ -25,7 +25,10 @@ interface Options {
     selectVisibleGroups?: (groups: MyEntryGroup[]) => readonly MyEntryGroup[];
 }
 
-export function useMyEntryRows({ selectVisibleGroups = (groups) => groups }: Options = {}) {
+// 기본 필터는 받은 그룹을 그대로 둔다 — 기본값 화살표 함수를 모듈 상수로 둬 React Compiler가 적용되게 한다 (GD-347)
+const allGroups = (groups: MyEntryGroup[]) => groups;
+
+export function useMyEntryRows({ selectVisibleGroups = allGroups }: Options = {}) {
     const client = useQueryClient();
     const entriesQuery = useMyEntries();
     const { data: events } = useEventList();

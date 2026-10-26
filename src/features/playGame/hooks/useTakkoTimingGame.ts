@@ -247,9 +247,10 @@ export function useTakkoTimingGame({
                     errorLogged = true;
                     console.error('타꼬 타이밍 맞추기 프레임 처리 중 오류가 발생했어요.', error);
                 }
-            } finally {
-                frame = requestAnimationFrame(tick);
             }
+            // 한 프레임이 실패해도 다음 프레임 요청은 반드시 이어진다.
+            // finally 절은 React Compiler가 건너뛰므로 성공·실패 뒤 호출로 둔다 (GD-347)
+            frame = requestAnimationFrame(tick);
         };
         frame = requestAnimationFrame(tick);
         return () => {

@@ -25,11 +25,15 @@ interface MockQuestion extends MissionQuestion {
 }
 
 // completed·serverTime은 응답 시점에 계산하는 필드라 시드에는 두지 않는다
-interface MockMission extends Omit<MissionDetail, 'questions' | 'completed' | 'serverTime'> {
+export interface MockMission extends Omit<MissionDetail, 'questions' | 'completed' | 'serverTime'> {
     questions: MockQuestion[];
+    // AM03으로 만든 미션의 감사 시각 — 시드는 없고 adminSummaryOf가 startsAt으로 대체한다
+    createdAt?: string;
+    updatedAt?: string;
 }
 
-const mockMissions: MockMission[] = [
+// AM01/AM02 관리자 목업(adminMission.ts)도 같은 시드를 쓴다 — 사용자 화면과 관리 화면이 같은 미션을 보이게
+export const mockMissions: MockMission[] = [
     {
         id: 'msn-survey-1',
         title: '서비스 이용 경험 설문',

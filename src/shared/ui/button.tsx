@@ -45,8 +45,9 @@ const buttonVariants = cva(
                 'icon-sm': 'size-7 rounded-md',
                 'icon-xs': "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
                 'icon-lg': 'size-12',
-                // 텍스트 버튼 — 높이·여백 없이 글자 14 Regular, 아이콘 20 (피그마 홈 전체보기·더보기)
-                text: "h-auto gap-0.5 p-0 text-sm font-normal [&_svg:not([class*='size-'])]:size-5",
+                // 텍스트 버튼 — 높이·여백 없이 글자 14 Regular, 아이콘 20 (피그마 홈 전체보기·더보기).
+                // 누름 칸은 위아래 패딩으로 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 되돌려 줄높이를 지킨다
+                text: "-my-0.5 h-auto gap-0.5 px-0 py-0.5 text-sm font-normal [&_svg:not([class*='size-'])]:size-5",
             },
         },
         defaultVariants: {
