@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import { TicketHistoryRow, useTicketHistories } from '@entities/ticket';
 import { Button } from '@shared/ui/button';
-import { EmptyState } from '@shared/ui/empty-state';
 import { LoadError } from '@shared/ui/load-error';
 import { RefreshStatus } from '@shared/ui/refresh-status';
 import { SkeletonList } from '@shared/ui/skeleton';
@@ -111,13 +110,9 @@ export function TicketHistoryCard({
                             />
                         )}
                         {!isPending && !failed && history.length === 0 && (
-                            // 빈 칸에 글 한 줄만 있으면 고장 난 것처럼 허전했다 — 빈 상태 타코야끼를 카드 가운데에 둔다
-                            <div role="status" className="flex h-full items-center justify-center">
-                                <EmptyState
-                                    title="아직 응모권 내역이 없어요"
-                                    description="출석하거나 미션·게임을 하면 여기에 쌓여요."
-                                />
-                            </div>
+                            <p role="status" className="text-body-sm text-fg-tertiary p-4">
+                                아직 응모권 내역이 없어요.
+                            </p>
                         )}
                         {history && history.length > 0 && (
                             <ul>
