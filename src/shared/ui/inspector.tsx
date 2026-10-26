@@ -10,8 +10,9 @@ import { Button } from './button';
 
 /**
  * 관리자 목록 + 상세(인스펙터) — 줄을 고르면 오른쪽 칸에 상세가 열린다. 이벤트·추첨 관리와 같은 꼴로 모든 관리자 목록을 맞춘다.
- * 상세 칸은 화면 높이에 붙어 스크롤을 따라오고 안쪽만 스크롤한다. 두 칸은 간격을 두고 상세를 둥근 카드로 띄운다 —
- * 화면 끝까지 내려가는 세로선 하나로 나누면 목록이 거기서 뚝 끊긴 것처럼 보였다.
+ * 두 칸 사이에 화면 높이의 세로선을 두고, 오른쪽 칸 안에 상세를 둥근 상자(테두리만, 그림자 없음)로 담는다 — 이벤트·추첨 관리와 같은 꼴.
+ * 선만 있으면 목록이 거기서 뚝 끊겨 보였고, 상자만 있으면 두 칸이 따로 노는 느낌이라 둘을 함께 둔다.
+ * 오른쪽 칸은 화면에 붙어 스크롤을 따라오고, 상자 높이는 내용만큼이다 — 화면보다 길어질 때만 멈추고 안쪽이 스크롤한다.
  * 좁은 폭에서는 상세가 목록 아래 카드로 열리고, 새로 열 때 그 자리로 스크롤한다
  */
 function ListDetailLayout({
@@ -49,9 +50,11 @@ function ListDetailLayout({
                 <aside
                     ref={ref}
                     aria-label={label}
-                    className="border-border-default motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 min-w-0 scroll-mt-4 overflow-hidden rounded-2xl border shadow-md motion-safe:duration-200 lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)]"
+                    className="lg:border-border-default motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 min-w-0 scroll-mt-4 motion-safe:duration-200 lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)] lg:border-l lg:pl-6"
                 >
-                    {detail}
+                    <div className="border-border-default flex flex-col overflow-hidden rounded-2xl border lg:max-h-full">
+                        {detail}
+                    </div>
                 </aside>
             )}
         </div>
@@ -94,7 +97,7 @@ function InspectorPanel({
                         close();
                     }
                 }}
-                className="bg-surface-page flex h-full min-h-0 flex-col focus:outline-none"
+                className="bg-surface-page flex min-h-0 flex-1 flex-col focus:outline-none"
             >
                 {children}
             </section>
