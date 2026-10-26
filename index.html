@@ -154,6 +154,16 @@
                 </section>
             </main>
         </div>
+        <script>
+            // 이미 로그인한 방문(세션이 남아 있음)은 로그인 화면으로 가지 않는다 — 관리자·홈을 새로고침할 때
+            // 로그인 셸이 한 번 비쳤다가 바뀌어 다른 화면처럼 보였다. 이때는 셸을 비우고 빈 바탕으로 앱을 기다린다
+            try {
+                var session = JSON.parse(localStorage.getItem('getddo-session') || 'null');
+                if (session && session.state && session.state.user) {
+                    document.getElementById('root').innerHTML = '';
+                }
+            } catch (e) {}
+        </script>
         <script type="module" src="/src/app/main.tsx"></script>
     </body>
 </html>

@@ -15,6 +15,11 @@
     --color-action-neutral: #1f242b;
     --color-action-neutral-hover: #343a42;
     --color-action-neutral-pressed: #111417;
+    /* accent — 노랑 버튼(첫 방문 안내의 다음 버튼 등 보상·안내 강조 한정). 글자는 모드와 상관없이 진한 먹색 */
+    --color-action-accent: #ffc83d;
+    --color-action-accent-hover: #f5b820;
+    --color-action-accent-pressed: #e6a80f;
+    --color-action-accent-fg: #1f242b;
 
     /* Ticket — 응모권 */
     --color-ticket-primary: #ffc83d;
@@ -214,6 +219,11 @@
     --color-action-neutral: #343a42;
     --color-action-neutral-hover: #4b525c;
     --color-action-neutral-pressed: #262b33;
+    /* accent — 노랑 버튼(첫 방문 안내의 다음 버튼 등 보상·안내 강조 한정). 글자는 모드와 상관없이 진한 먹색 */
+    --color-action-accent: #ffc83d;
+    --color-action-accent-hover: #f5b820;
+    --color-action-accent-pressed: #e6a80f;
+    --color-action-accent-fg: #1f242b;
 
     /* Ticket — soft 배경만 다크용. 너무 어두우면 노란 칩이 갈색 덩어리로 묻혀 한 단계 밝고 진한 금색으로 둔다 (글자는 fg-primary) */
     --color-ticket-accent: #5c4813;
@@ -307,6 +317,11 @@
     --color-action-neutral: #1f242b;
     --color-action-neutral-hover: #343a42;
     --color-action-neutral-pressed: #111417;
+    /* accent — 노랑 버튼(첫 방문 안내의 다음 버튼 등 보상·안내 강조 한정). 글자는 모드와 상관없이 진한 먹색 */
+    --color-action-accent: #ffc83d;
+    --color-action-accent-hover: #f5b820;
+    --color-action-accent-pressed: #e6a80f;
+    --color-action-accent-fg: #1f242b;
     --color-ticket-accent: #fff4d1;
     --color-ticket-accent-pressed: #ffe9a6;
     --color-play-yellow-soft: #fff4d1;

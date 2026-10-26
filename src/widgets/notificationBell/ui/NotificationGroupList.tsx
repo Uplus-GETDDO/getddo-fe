@@ -1,21 +1,18 @@
 import type { Notification } from '@entities/notification';
 
 import { NotificationItem } from '@entities/notification';
+import { EmptyState } from '@shared/ui/empty-state';
 
 import type { NotificationGroup } from '../utils/groupNotifications';
 
-import emptyCharacter from '../assets/empty-character.png';
-
-/** 빈 상태 — 무너 캐릭터와 안내 문구 */
+/** 빈 상태 — 다른 빈 화면과 같은 공용 빈 상태(회색 선 타코야끼). 드로어에서는 남은 높이의 가운데에 선다 */
 export function NotificationEmpty() {
     return (
-        <div className="flex flex-col items-center gap-2 px-6 pt-9 pb-11 text-center">
-            <img src={emptyCharacter} alt="" className="size-32 object-contain" />
-            <p className="text-body-bold text-fg-primary">새 알림이 없어요</p>
-            <p className="text-body-sm text-fg-tertiary">
-                겟또타임이 열리거나 결과가 발표되면 알려드릴게요.
-            </p>
-        </div>
+        <EmptyState
+            title="새 알림이 없어요"
+            description="겟또타임이 열리거나 결과가 발표되면 알려드릴게요."
+            className="px-6 py-16"
+        />
     );
 }
 

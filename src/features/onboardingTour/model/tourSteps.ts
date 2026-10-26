@@ -1,6 +1,22 @@
 import type { DriveStep } from 'driver.js';
 
+import type { TourTarget } from '@shared/config/tourTargets';
+
 import { TOUR_TARGET, tourSelector } from '@shared/config/tourTargets';
+
+/** 섹션이 이보다 크면 말풍선을 놓을 자리가 위아래 어디에도 없다 — 그때는 섹션 제목 줄만 짚는다 */
+const MAX_TARGET_RATIO = 0.6;
+
+/**
+ * 짚을 자리를 단계에 들어갈 때 고른다 — 화면 높이에 맞춰 섹션 전체 또는 제목 줄(첫 자식).
+ * 섹션이 화면보다 크면 말풍선이 화면 밖이나 엉뚱한 곳에 떴다. 자리가 없으면 undefined로 그 단계를 건너뛴다
+ */
+const fitTarget = (target: TourTarget) => (): Element => {
+    const section = document.querySelector(tourSelector(target));
+    if (!section) return undefined as unknown as Element;
+    const tooTall = section.getBoundingClientRect().height > window.innerHeight * MAX_TARGET_RATIO;
+    return (tooTall && section.firstElementChild) || section;
+};
 
 /**
  * 홈 첫 방문 안내 — 응모하는 두 방법(겟또타임·이벤트) → 응모권 모으기 → 결과 알림 → 결과 확인을 5단계로 짚는다.
@@ -10,7 +26,7 @@ import { TOUR_TARGET, tourSelector } from '@shared/config/tourTargets';
  */
 export const TOUR_STEPS: DriveStep[] = [
     {
-        element: tourSelector(TOUR_TARGET.getddoTime),
+        element: fitTarget(TOUR_TARGET.getddoTime),
         popover: {
             title: '겟또타임 — 응모권으로 응모해요',
             description:
@@ -20,7 +36,7 @@ export const TOUR_STEPS: DriveStep[] = [
         },
     },
     {
-        element: tourSelector(TOUR_TARGET.events),
+        element: fitTarget(TOUR_TARGET.events),
         popover: {
             title: '이벤트 — 응모권 없이 응모해요',
             description:
@@ -30,7 +46,7 @@ export const TOUR_STEPS: DriveStep[] = [
         },
     },
     {
-        element: tourSelector(TOUR_TARGET.earnTickets),
+        element: fitTarget(TOUR_TARGET.earnTickets),
         popover: {
             title: '응모권은 매일 모아요',
             description:
@@ -49,7 +65,7 @@ export const TOUR_STEPS: DriveStep[] = [
         },
     },
     {
-        element: tourSelector(TOUR_TARGET.myResults),
+        element: fitTarget(TOUR_TARGET.myResults),
         popover: {
             title: '내 응모 결과',
             description: '응모한 이벤트의 발표 대기와 결과를 한곳에서 모아 봐요.',

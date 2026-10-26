@@ -51,6 +51,8 @@ export function OnboardingTour({ ready }: { ready: boolean }) {
             overlayClickBehavior: () => {},
             onPopoverRender: (popover) => {
                 popover.closeButton.innerHTML = CLOSE_ICON;
+                // 다음 버튼에 포커스 — 커서는 옮길 수 없어도 Enter 한 번으로 넘어가고, 포커스 테두리가 자리를 알려 준다
+                requestAnimationFrame(() => popover.nextButton.focus({ preventScroll: true }));
             },
             // 자리가 없으면(조회 실패로 섹션이 빠진 경우 등) 그 단계만 건너뛴다
             skipMissingElement: true,
