@@ -1,5 +1,6 @@
 import { http } from 'msw';
 
+import { missionWriteSchema } from '@entities/mission';
 import { env } from '@shared/config/env';
 
 import type { MockMission } from './mission';
@@ -29,9 +30,26 @@ const adminSummaryOf = (mission: MockMission) => ({
     rewardPolicyId: `rp-${mission.id}`,
     createdBy: 'admin-demo',
     createdByName: '관리자',
-    createdAt: mission.startsAt,
-    updatedAt: mission.startsAt,
+    createdAt: mission.createdAt ?? mission.startsAt,
+    updatedAt: mission.updatedAt ?? mission.createdAt ?? mission.startsAt,
 });
+
+// AM02/AM03 공통 문항 응답 — 저장형(MockQuestion)을 관리자 계약형으로 옮긴다
+const adminQuestionsOf = (mission: MockMission) =>
+    mission.questions.map((question) => ({
+        id: question.id,
+        questionType: question.questionType,
+        questionText: question.questionText,
+        required: question.required,
+        displayOrder: question.displayOrder,
+        correctAnswer: question.correctAnswer,
+        options: question.options.map((option) => ({
+            id: option.id,
+            optionText: option.optionText,
+            displayOrder: option.displayOrder,
+            isCorrect: option.id === question.correctOptionId || undefined,
+        })),
+    }));
 
 export const adminMissionHandlers = [
     // AM01 — startsAt 내림차순(같으면 id 내림차순), 필터는 유형·상태·제목 검색어·시작일 [from,to)
@@ -72,60 +90,52 @@ export const adminMissionHandlers = [
         }
         return ok({
             ...adminSummaryOf(mission),
-            questions: mission.questions.map((question) => ({
-                id: question.id,
-                questionType: question.questionType,
-                questionText: question.questionText,
-                required: question.required,
-                displayOrder: question.displayOrder,
-                correctAnswer: question.correctAnswer,
-                options: question.options.map((option) => ({
-                    id: option.id,
-                    optionText: option.optionText,
-                    displayOrder: option.displayOrder,
-                    isCorrect: option.id === question.correctOptionId || undefined,
-                })),
-            })),
+            questions: adminQuestionsOf(mission),
         });
     }),
 
-    // AM03 — 등록은 시드 배열에 바로 붙고(세션 안에서만 유지) 상태는 시작 전이어도 ACTIVE다
+    // AM03 — 등록은 시드 배열에 바로 붙고(세션 안에서만 유지) 상태는 시작 전이어도 ACTIVE다.
+    // 요청 문항에는 id가 없으므로 저장형(id 부여·isCorrect→correctOptionId)으로 정규화하고,
+    // 감사 시각은 등록 시각(mockNow)을 쓴다 — 응답은 AM02와 같은 형태다
     http.post(api('/v1/admin/missions'), async ({ request }) => {
-        const body = (await request.json().catch(() => null)) as {
-            title?: string;
-            description?: string;
-            missionType?: 'QUIZ' | 'SURVEY';
-            startsAt?: string;
-            endsAt?: string;
-            questions?: MockMission['questions'];
-        } | null;
-        if (
-            !body?.title ||
-            !body.startsAt ||
-            !body.endsAt ||
-            !body.missionType ||
-            !Array.isArray(body.questions) ||
-            body.questions.length === 0
-        ) {
+        const parsed = missionWriteSchema.safeParse(await request.json().catch(() => null));
+        if (!parsed.success) {
             return fail(400, 'COMMON-002', '필수값을 확인해 주세요');
         }
+        const body = parsed.data;
+        const createdAt = mockNow().toISOString();
         const mission: MockMission = {
             id: `msn-admin-${crypto.randomUUID()}`,
             title: body.title,
-            description: body.description ?? '',
+            description: body.description,
             missionType: body.missionType,
             startsAt: body.startsAt,
             endsAt: body.endsAt,
             rewardTicketCount: 1,
-            questions: body.questions,
+            createdAt,
+            updatedAt: createdAt,
+            questions: body.questions.map((question, qIndex) => {
+                const correctIndex = (question.options ?? []).findIndex(
+                    (option) => option.isCorrect,
+                );
+                const options = (question.options ?? []).map((option, oIndex) => ({
+                    id: `opt-new-${qIndex + 1}-${oIndex + 1}`,
+                    optionText: option.optionText,
+                    displayOrder: option.displayOrder,
+                }));
+                return {
+                    id: `q-new-${qIndex + 1}`,
+                    questionType: question.questionType,
+                    questionText: question.questionText,
+                    required: question.required ?? true,
+                    displayOrder: question.displayOrder,
+                    correctAnswer: question.correctAnswer,
+                    options,
+                    correctOptionId: correctIndex >= 0 ? options[correctIndex]?.id : undefined,
+                };
+            }),
         };
         mockMissions.push(mission);
-        return ok(
-            {
-                ...adminSummaryOf(mission),
-                questions: mission.questions,
-            },
-            201,
-        );
+        return ok({ ...adminSummaryOf(mission), questions: adminQuestionsOf(mission) }, 201);
     }),
 ];

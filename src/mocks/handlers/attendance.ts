@@ -213,6 +213,11 @@ const streakSetFixtures = () => {
     ];
 };
 
+// 예약 행의 적용 시각은 세션 동안 고정한다 — 요청마다 mockNow로 다시 계산하면
+// '다음 자정'이 계속 미뤄져 예약 전환을 볼 수 없다
+const dailyPolicyRows = dailyPolicyFixtures();
+const streakSetRows = streakSetFixtures();
+
 export const attendanceHandlers = [
     // AT01 초안 — 오늘 출석 여부·연속 일수·일일 보상량·이번 달 단계·다음 초기화 시각
     http.get(api('/v1/attendances/today'), ({ request }) => {
@@ -327,22 +332,22 @@ export const attendanceHandlers = [
         const url = new URL(request.url);
         const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
         const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
-        const items = dailyPolicyFixtures()
+        const items = [...dailyPolicyRows]
             .sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))
             .slice((page - 1) * size, page * size);
-        return ok({ items, page, size, totalElements: dailyPolicyFixtures().length });
+        return ok({ items, page, size, totalElements: dailyPolicyRows.length });
     }),
     // AP03 — 연속 출석 단계 묶음. 적용월 내림차순(같으면 id 내림차순)
     http.get(api('/v1/admin/policies/attendance/streak'), ({ request }) => {
         const url = new URL(request.url);
         const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
         const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
-        const items = streakSetFixtures()
+        const items = [...streakSetRows]
             .sort(
                 (a, b) =>
                     b.effectiveMonth.localeCompare(a.effectiveMonth) || b.id.localeCompare(a.id),
             )
             .slice((page - 1) * size, page * size);
-        return ok({ items, page, size, totalElements: streakSetFixtures().length });
+        return ok({ items, page, size, totalElements: streakSetRows.length });
     }),
 ];
