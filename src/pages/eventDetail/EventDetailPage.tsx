@@ -159,7 +159,10 @@ export function EventDetailPage() {
 
     const isFree = event.eventType === 'NO_TICKET';
     // 자격 사유를 세 갈래로 읽는 규칙은 겟또타임 상세와 같다 (E07)
-    const { completed, forbidden, lacking } = readEligibility(eligibility);
+    const { completed, forbidden, forbiddenLabel, lacking } = readEligibility(
+        eligibility,
+        event.membershipRule,
+    );
     // 요청에 실을 장수 맵 — 미사용은 빈 맵, 쓰는 이벤트는 브론즈 1장 고정
     const requestedTickets: EntryTickets = isFree ? {} : { BRONZE: 1 };
     const balance = ticket?.availableCount ?? null;
@@ -249,6 +252,7 @@ export function EventDetailPage() {
                 event={event}
                 completed={completed}
                 forbidden={forbidden}
+                forbiddenLabel={forbiddenLabel}
                 buttonRef={entryButtonRef}
                 balanceBlocked={balanceBlocked || enterEvent.isPending}
                 balanceLabel={balanceLabel}

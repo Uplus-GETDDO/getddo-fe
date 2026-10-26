@@ -129,7 +129,10 @@ export function TimeRaffleDetailPage() {
             ? null
             : Math.max(0, event.maxTicketsPerUser - alreadyUsed));
     // 자격 사유를 세 갈래로 읽는 규칙은 이벤트 상세와 같아야 하므로 한곳에 둔다 (E07)
-    const { completed, forbidden, lacking } = readEligibility(eligibility);
+    const { completed, forbidden, forbiddenLabel, lacking } = readEligibility(
+        eligibility,
+        event.membershipRule,
+    );
     const canEnter =
         isOpen &&
         !completed &&
@@ -223,7 +226,7 @@ export function TimeRaffleDetailPage() {
                                 {completed
                                     ? '응모 완료'
                                     : forbidden
-                                      ? '응모할 수 없어요'
+                                      ? (forbiddenLabel ?? '응모할 수 없어요')
                                       : balanceBlocked
                                         ? balanceLabel
                                         : invalidSelection
