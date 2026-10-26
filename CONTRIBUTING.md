@@ -1,16 +1,41 @@
 # 기여 가이드
 
-이 문서는 브랜치 전략, 커밋 컨벤션, PR 절차 등 협업 프로세스의 상세 기준입니다.
-공통 규칙의 원본은 공용 명세 저장소 `../getddo-spec/01-conventions/`이며, 충돌 시 원본을 따릅니다.
+이 문서는 개발 환경, 목업 실행, 검증 명령과 협업 프로세스의 상세 기준입니다.
+공통 규칙의 원본은 [공용 협업 규칙](https://github.com/Uplus-GETDDO/getddo-spec/tree/main/01-conventions)이며, 충돌 시 원본을 따릅니다.
 코드 작성 규칙(FSD, 상태관리, 스타일)은 [AGENTS.md](./AGENTS.md)를 참고하세요.
 
 ## 개발 환경 준비
 
-```bash
-npm install                      # 의존성 설치 (prepare 스크립트가 husky 훅을 자동 설치)
-cp .env.example .env.development # 환경변수 생성 — VITE_VIRTUAL_USERS_JSON은 필수(미설정 시 로그인 안내)
-npm run dev                      # 개발 서버 (VITE_ENABLE_MSW=true면 MSW 목업으로 시작. 배포 빌드는 목업 없음)
+Node.js 20.19 이상이 필요하며 CI와 같은 24.x를 권장합니다. 저장소를 처음 받은 경우 다음 명령을 실행합니다. 기존 `.env.development`가 있다면 복사하지 않고 필요한 키만 확인합니다.
+
+```powershell
+npm ci
+Copy-Item .env.example .env.development
 ```
+
+### 로컬 목업 계정
+
+`.env.development`에서 `VITE_API_BASE_URL=/api`, `VITE_ENABLE_MSW=true`를 확인하고 아래 **로컬 목업 전용** 계정 목록을 설정합니다. ID는 기존 MSW fixture와 일치하며 실서버 계정이 아닙니다.
+
+```dotenv
+VITE_VIRTUAL_USERS_JSON=[{"id":"vu-doyoon","name":"김도윤","role":"USER","membership":"excellent","personaLabel":"데일리 루틴러"},{"id":"vu-admin","name":"관리자","role":"ADMIN","membership":"excellent","personaLabel":null}]
+```
+
+```powershell
+npm run dev
+```
+
+로그인 화면에서 사용자를 선택합니다. 관리자 화면은 관리자 계정을 선택한 후 `/admin`에서 확인합니다. 계정 미설정·빈 배열·형식 오류는 로그인 안내로 표시되며 샘플 계정으로 자동 대체하지 않습니다.
+
+### 실서버 연결과 배포
+
+| 환경        | 설정과 주의점                                                                                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 로컬 목업   | `VITE_ENABLE_MSW=true`로 실행합니다. 로컬 계정 ID는 MSW fixture 기준입니다.                                                                                       |
+| 로컬 실서버 | `VITE_ENABLE_MSW=false`, 접근 가능한 `VITE_API_BASE_URL`, DB 등록 UUID 계정이 필요합니다. 로컬 Vite는 `vercel.json` 프록시를 실행하지 않으므로 CORS도 확인합니다. |
+| Vercel      | `vercel.json`에서 `/api` 프록시와 `VITE_ENABLE_MSW=false`를 설정합니다. 실계정 JSON은 배포 환경에 설정하고 재배포합니다.                                          |
+
+가상 시계와 `/ui-gallery`는 개발 환경 전용이며 서버 시각·추첨·발표를 변경하지 않습니다. 시연 계정 선택은 인증이 아니며 서버가 실제 권한을 판단합니다. 계정 UUID·계정 목록 JSON·환경 파일은 문서나 커밋에 복사하지 않습니다. 상세 점검·복구는 [시연 운영 안내](docs/demo-operations.md)를 따릅니다.
 
 ## 브랜치 전략
 
