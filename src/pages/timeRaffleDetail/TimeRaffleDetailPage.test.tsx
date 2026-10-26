@@ -192,12 +192,16 @@ describe('TimeRaffleDetailPage의 E07 사유별 버튼', () => {
         expect(screen.queryByText('아직 발표 전이에요')).not.toBeInTheDocument();
         client.clear();
     });
-    it('멤버십이 미달이면 버튼이 "응모할 수 없어요"로 잠긴다', async () => {
+    /*
+     * 예전에는 등급 미달·관리자 계정·미오픈이 모두 '응모할 수 없어요' 한 문장으로 뭉개져,
+     * 우수 등급 사용자가 VIP 전용 래플에서 막힌 이유를 알 수 없었다(GD-358).
+     */
+    it('멤버십이 미달이면 버튼이 어느 등급부터인지 알려 주며 잠긴다', async () => {
         const { client } = renderPage(VIP_EVENT_ID);
 
         // E07 도착 전에는 로컬 근사로 열려 있다가, 판정이 오면 잠긴다
         await settle(client);
-        const button = screen.getByRole('button', { name: '응모할 수 없어요' });
+        const button = screen.getByRole('button', { name: 'VIP 등급부터 응모할 수 있어요' });
         expect(button).toBeDisabled();
     });
 
