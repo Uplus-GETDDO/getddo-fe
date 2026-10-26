@@ -11,7 +11,6 @@ import {
     ShieldAlert,
     Ticket,
     UserSearch,
-    Users,
 } from 'lucide-react';
 
 import { env } from '@shared/config/env';
@@ -45,5 +44,4 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     ...(env.isDev
         ? [{ to: '/admin/virtual-clock', label: '가상 시계', icon: Clock, group: '도구' as const }]
         : []),
-    { to: '/admin/virtual-users', label: '가상 사용자', icon: Users, group: '도구' },
 ];

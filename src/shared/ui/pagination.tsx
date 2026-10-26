@@ -4,8 +4,9 @@ import { useState } from 'react';
 
 import { pageItems } from '@shared/utils/pagination';
 
+// 셀 폭을 고정(size-9)하면 천 단위 이상 쪽 번호가 36px 칸을 넘긴다 — 최소 폭만 지키고 자릿수만큼 넓어진다
 const CELL =
-    'text-body-sm focus-visible:ring-border-focus flex size-9 shrink-0 items-center justify-center rounded-lg tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none';
+    'text-body-sm focus-visible:ring-border-focus flex h-9 min-w-9 shrink-0 items-center justify-center rounded-lg px-2 tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none';
 
 /**
  * 관리자 표 번호형 페이지네이션 — `< 1 2 3 4 … 10 >` (ADR-0009). 사용자 화면의 원형 화살표 Pager와 다르게

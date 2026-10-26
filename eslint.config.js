@@ -84,7 +84,15 @@ const FSD_DEPENDENCY_POLICIES = [
 ];
 
 export default tseslint.config(
-    { ignores: ['dist', 'node_modules', 'coverage', 'public/mockServiceWorker.js'] },
+    {
+        ignores: [
+            'dist',
+            'node_modules',
+            'coverage',
+            'public/mockServiceWorker.js',
+            '**/.claude-worktrees/**',
+        ],
+    },
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
         files: ['**/*.{ts,tsx}'],

@@ -137,3 +137,37 @@ describe('EventDetailPage의 대표 이미지', () => {
         expect(container.querySelector(`img[src="${BANNER_SRC}"]`)).not.toBeNull();
     });
 });
+
+/*
+ * 우수 등급 사용자가 VIP 전용 이벤트에 들어가면 버튼만 잠기고 이유는 어디에도 없었다 —
+ * 등급 미달·관리자 계정·미오픈이 모두 '응모할 수 없어요' 한 문장으로 뭉개졌다(GD-358).
+ */
+describe('응모가 막힌 이유', () => {
+    it('등급이 모자라면 버튼이 어느 등급부터인지 알려 준다', async () => {
+        server.use(
+            http.get('*/v1/events/:id/eligibility', ({ params }) =>
+                HttpResponse.json({
+                    success: true,
+                    code: 'SUCCESS',
+                    message: '성공했습니다.',
+                    data: {
+                        eventId: String(params.id),
+                        canEnter: false,
+                        reasons: ['ENTRY_MEMBERSHIP_NOT_MET'],
+                        usedTicketCount: 0,
+                        remainingTicketLimit: null,
+                        availableTicketBalance: 0,
+                        serverTime: new Date().toISOString(),
+                    },
+                }),
+            ),
+        );
+
+        // 진행 중인 이벤트여야 한다 — 마감된 이벤트는 상태 문구가 버튼을 차지한다
+        const { client } = renderPage('evt-011');
+        await settle(client);
+
+        const button = await screen.findByRole('button', { name: /등급부터 응모할 수 있어요/ });
+        expect(button).toBeDisabled();
+    });
+});

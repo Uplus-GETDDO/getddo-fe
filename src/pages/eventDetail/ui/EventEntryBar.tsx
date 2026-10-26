@@ -20,6 +20,8 @@ interface EventEntryBarProps {
     completed: boolean;
     /** 장수로 해소되지 않는 자격 부재 — 눌러도 소용없다 */
     forbidden: boolean;
+    /** 막힌 이유를 적은 문구 — 등급 미달·관리자 계정·미오픈을 구분해 적는다 */
+    forbiddenLabel: string | null;
     balanceBlocked: boolean;
     balanceLabel: string;
     onEnter: () => void;
@@ -36,6 +38,7 @@ export function EventEntryBar({
     event,
     completed,
     forbidden,
+    forbiddenLabel,
     balanceBlocked,
     balanceLabel,
     onEnter,
@@ -48,7 +51,7 @@ export function EventEntryBar({
         : completed
           ? '응모 완료'
           : forbidden
-            ? '응모할 수 없어요'
+            ? (forbiddenLabel ?? '응모할 수 없어요')
             : balanceBlocked
               ? balanceLabel
               : '응모하기';

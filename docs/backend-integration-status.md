@@ -1,6 +1,30 @@
 # 백엔드 연동 현황
 
-## 확인 기준과 한계
+## 현재 상태 요약 — 2026-10-26 문서 대조
+
+로컬 FE `e4d9870`, 공용 명세 `62b0720`, 아래 날짜별 검증 기록을 대조했다. 이 요약은 기존 증거를 정리한 것이며 모든 API를 새로 검증했다는 뜻이 아니다.
+
+| 영역          | 확인된 범위                                                                                                           | 남은 확인                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 게임 4종      | 시작·원본 입력 제출·서버 점수·통계·보상 대조 기록이 있다.                                                             | 실제 서버 경합·자정 경계·장시간 연속 플레이는 기존 관측 한계를 유지한다. |
+| 배너          | B01 홈 연결, 관리자 조회·상대 순서·공개 이미지 로딩을 확인한 기록이 있다.                                             | 격리 환경의 실서버 CRUD·이미지 업로드 계약                               |
+| 관리자 사용자 | AO01/AO02 목록·필터·상세 호출을 구현했다. GD-360에서 목록 페이지네이션을 수정하고 가상 사용자 전용 페이지를 제거했다. | 이번 문서 작업에서 사용자 API를 새로 인수 검증하지 않았다.               |
+| 응모권        | 4등급 표시·이력, PLATINUM 응모 201·차감의 GD-352 실측 기록이 있다.                                                    | 추첨 가중치까지 포함한 격리 시나리오                                     |
+| 차단 조회     | GD-317에서 AR01/AR02를 실측했고 GD-352에서 EVENT 표본도 확인했다.                                                     | EVENT 표본의 eventId·eventTitle null 해석                                |
+| 결과·알림     | 최초 발표 호출과 알림 조회·개별/전체 읽음·결과 링크를 구현·측정했다.                                                  | 발표→알림 생성→결과 일치의 전체 흐름                                     |
+| 추첨·정책     | 추첨 실행·정합성·최초 발표·취소·재추첨, 출석 정책 화면의 호출 코드가 있다.                                            | C1~C6 격리 데이터, FAILED·INACTIVE·AP05 표본, 자정·월 경계               |
+
+자동 추첨은 현행 정책상 마감 +1분부터 대상이며 실제 실행·공개 시각과 구분한다. 가상 시계는 로컬 개발 전용이다. 배포 시연 계정은 환경변수로 공급하고, `/admin/virtual-users`는 현행 라우트가 아니다.
+
+### 이번 README 캡처에서 확인한 배포 상태
+
+2026-10-26 KST, `https://getddo-fe.vercel.app`의 엔트리 `index-6n9HKfEc.js`에서 홈 배너·겟또타임, 출석 현황·게임 목록, 응모권 선택, 관리자 이벤트 목록의 화면을 조회했다. [이미지와 캡처 범위](assets/readme/README.md)를 참고한다. 조회와 계정 전환만 수행했으며 서버 데이터 변경은 하지 않았다.
+
+관리자 대시보드에서는 이벤트 목록과 달리 오늘 지급·사용 집계에 `조회 실패`, 추이에 `정보를 불러오지 못했습니다`가 표시됐다. 이 관측으로 원인이나 서버 계약 변경을 단정하지 않는다. 대시보드 집계는 시연 전 API 응답과 배포 상태 재확인 대상으로 남긴다.
+
+주요 증거는 [검증 기록 색인](../reports/README.md)에서 찾는다. 아래는 날짜별 판단과 한계를 보존한 기록이며, 최신 요약과 충돌하면 해당 날짜 이후의 코드·증거를 확인한다.
+
+## 2026-10-23 확인 기준과 한계
 
 - 확인일: 2026-10-23.
 - FE: 원격 dev `52eca83`(GD-325 PR #146까지 머지). `https://getddo-fe.vercel.app` 프로덕션은 이전 확인에서 머지 후 dev 소스(청크 해시 일치)와 실계정 `VITE_VIRTUAL_USERS_JSON`으로 서빙 중이었고, 2026-10-23 재확인에서 신규 엔트리 청크 `index-CL6m5Ctq`·신규 `AdminAbuseCasesPage-BY0ZstoE`(`role=region` 시그니처 포함)로 GD-317 이후 머지분이 배포된 것을 확인했다 — `/admin/abuse-cases`·`/admin/events`의 320px 가로 넘침이 109px→0px로 해소됐고 AR01/AR02 실데이터 10행·필터·드로어 evidence·콘솔 오류 0을 배포본에서 재측정했다([증거](../reports/20261023-gd317-abuse-page.json)).
@@ -45,15 +69,15 @@ GD-255에서 사용자 B01 조회 훅·Zod 스키마와 홈 관리 이미지 슬
 
 로컬 Chromium에서 320/390px 가로 넘침 없음, 키보드 넘김·상세 이동, 44×44px 넘김 버튼과 포커스 링, 자동 재생·수동 조작 후 정지·동작 줄이기를 확인했다. 검증 명령과 최종 테스트 수는 GD-255 계획·증거 문서에 기록했다(완료 후 정리로 삭제 — Git 이력 참조).
 
-근거: `entities/banner/api/queries.ts`, `features/manageBanner/api/queries.ts`, `widgets/bannerSlider/ui/BannerSlider.tsx`, `pages/home/HomePage.tsx`, [배너 계약](../../getddo-spec/05-api/banner.md).
+근거: `entities/banner/api/queries.ts`, `features/manageBanner/api/queries.ts`, `widgets/bannerSlider/ui/BannerSlider.tsx`, `pages/home/HomePage.tsx`, [배너 계약](https://github.com/Uplus-GETDDO/getddo-spec/blob/main/05-api/banner.md).
 
 ### 관리자 사용자 조회
 
 GD-250(`feat/GD-250`)에서 AO01/AO02 호출·화면을 `/admin/users`로 구현했다. 2026-10-20 배포 실측에서 검색 결과 13명·활성 일반 사용자 12명·빈 페이지 불변을 확인했다. 로컬 실서버 연결 화면에서 목록·필터·상세 서랍·403/404를 확인했다.
 
-AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 후자는 목록 필터와 무관한 현재 ACTIVE USER 전체 수이며 AS01 참여율 분모에 사용한다. AO02에는 해당 수치를 추가하지 않는다. 개인정보 연락처·역할 변경·정지/해제 기능은 만들지 않았다. 가상 사용자 페이지(`/admin/virtual-users`)는 별도로 유지한다.
+AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 후자는 목록 필터와 무관한 현재 ACTIVE USER 전체 수이며 AS01 참여율 분모에 사용한다. AO02에는 해당 수치를 추가하지 않는다. 개인정보 연락처·역할 변경·정지/해제 기능은 만들지 않았다. 가상 사용자 페이지(`/admin/virtual-users`)는 GD-360에서 제거했다 — 시연 계정 선택은 로그인 화면과 헤더 전환 팝오버가 담당한다.
 
-근거: `entities/user/api/admin.ts`, `pages/admin/users/AdminUsersPage.tsx`, `pages/admin/virtualUsers/AdminVirtualUsersPage.tsx`, `app/routes/adminRoutes.tsx`, [사용자 계약](../../getddo-spec/05-api/user.md).
+근거: `entities/user/api/admin.ts`, `pages/admin/users/AdminUsersPage.tsx`, `app/routes/adminRoutes.tsx`, [사용자 계약](https://github.com/Uplus-GETDDO/getddo-spec/blob/main/05-api/user.md).
 
 ## 나머지 완성 범위
 
@@ -82,8 +106,8 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - 홈 배너 위치: GD-255 사용자 승인으로 최상단 B01·아래 겟또타임 섹션 통합을 확정했다. 별도 화면 담당자의 회신을 받은 것으로 표기하지 않는다.
 - 최초 발표: GD-199는 PR #108로 병합·배포됐고 GD-253에서 단일 호출로 연결했다. 실제 응답(`isPublished`·revision·동일 재요청) 표본과 최초 공개→알림 통합 검증은 격리 이벤트(C1)를 받는 대로 확인한다.
 - 추첨 실서버 기능 검증: BE에 관리자 컨텍스트와 시나리오 이벤트 C1~C6(미공개 확정·취소 가능 당첨·FAILED 2형태·취소·응모자 없음·응모자 소유 계정)를 요청한다.
-- 차단 조회: AR01/AR02는 2026-10-21 경로·필드·조회 기준이 채택됐다(GD-141, [abuse 계약](../../getddo-spec/05-api/abuse.md)) — 기존 확인 요청 중 필드·`sourceType`/`detectionType` 값·닉네임/이벤트 제목·필터/정렬은 계약으로 해소했다. FE 스키마·화면·목업은 GD-286(PR #126)으로 채택 계약에 정렬했다. 2026-10-22 석종수 답변으로 잔여 4건 중 3건이 해소됐다 — 배포는 당일 오후 수동 또는 익일 오전 CD 예정, evidence 필드·`triggerScope` 규칙 확정(위 나머지 완성 범위 절 참조), 기존 데이터는 리셋 예정으로 호환 불필요. 업무 오류 번호도 확정됐다(403 `ABUSE-001`·404 `ABUSE-002` 신설, 나머지 기존 `USER-*`·`COMMON-*` 재사용). 2026-10-23 GD-317 실측 완료 — AR01·AR02 200+Zod, 기본 정렬·필터·빈 결과, `ABUSE-001`(USER)·`ABUSE-002`(없는 이력, 공개 메시지 일치)·`COMMON-002`(size·sourceType)·`COMMON-005`(UUID)·`USER-003` 전부 대조 통과. 관리자 화면 실데이터 렌더·상세 드로어 evidence·userId 필터도 배포본에서 확인([화면 증거](../reports/20261023-gd317-abuse-page.json)). ~~잔여 관측 제한: `triggerScope=EVENT`·이벤트 연결 표본은 현재 데이터에 없다.~~ → 2026-10-26 GD-352 재확인에서 `triggerScope=EVENT` 표본 1건을 확인했다 — evidence 계약 필드는 모두 존재하나 `eventId`·`eventTitle`이 null이라 이벤트 연결 여부는 담당자 질의로 남긴다(아래 GD-352 절·요청 R7).
-- `PUBLICATION-002` 문구와 `DrawExecutionAudit` 표시는 2026-10-23 BE 회신·GD-314로 확정됐다 — 문구는 "추첨 결과가 아직 발표 가능한 상태가 아닙니다."로 FE 매핑·목업을 정렬했고, 감사 `action`은 `DRAW_EXECUTE`(추첨 실행)·`DRAW_RESUME`(추첨 재개) 두 값만 오며 처리자 UUID와 `beforeData`/`afterData`는 화면에서 숨긴다(`05-api/drawing.md` 실행 감사 표시 계약). 같은 GD-314에서 실패 복구 기준도 확정됐다 — 재시도 가능 분류(`TRANSIENT_STORAGE`·`INTERRUPTED`)는 최대 3회 자동 재시도를 10·30·60초 간격으로 예약하고, 그 구간의 네 번째 실패부터 다음 예약 없이 관리자 확인을 기다린다. 정합성·실행 불가·미분류 오류는 자동 재시도하지 않으며, 장애·재시도 소진만으로 이벤트·당첨을 자동 취소하지 않는다([실패 복구 기준](../../getddo-spec/02-domain/drawing.md#실패-복구와-관리자-판단)). FE는 서버 응답의 `retryAt`·`waitingForOperator`를 그대로 소비하며 재시도를 스스로 예약하지 않는다.
+- 차단 조회: AR01/AR02는 2026-10-21 경로·필드·조회 기준이 채택됐다(GD-141, [abuse 계약](https://github.com/Uplus-GETDDO/getddo-spec/blob/main/05-api/abuse.md)) — 기존 확인 요청 중 필드·`sourceType`/`detectionType` 값·닉네임/이벤트 제목·필터/정렬은 계약으로 해소했다. FE 스키마·화면·목업은 GD-286(PR #126)으로 채택 계약에 정렬했다. 2026-10-22 석종수 답변으로 잔여 4건 중 3건이 해소됐다 — 배포는 당일 오후 수동 또는 익일 오전 CD 예정, evidence 필드·`triggerScope` 규칙 확정(위 나머지 완성 범위 절 참조), 기존 데이터는 리셋 예정으로 호환 불필요. 업무 오류 번호도 확정됐다(403 `ABUSE-001`·404 `ABUSE-002` 신설, 나머지 기존 `USER-*`·`COMMON-*` 재사용). 2026-10-23 GD-317 실측 완료 — AR01·AR02 200+Zod, 기본 정렬·필터·빈 결과, `ABUSE-001`(USER)·`ABUSE-002`(없는 이력, 공개 메시지 일치)·`COMMON-002`(size·sourceType)·`COMMON-005`(UUID)·`USER-003` 전부 대조 통과. 관리자 화면 실데이터 렌더·상세 드로어 evidence·userId 필터도 배포본에서 확인([화면 증거](../reports/20261023-gd317-abuse-page.json)). ~~잔여 관측 제한: `triggerScope=EVENT`·이벤트 연결 표본은 현재 데이터에 없다.~~ → 2026-10-26 GD-352 재확인에서 `triggerScope=EVENT` 표본 1건을 확인했다 — evidence 계약 필드는 모두 존재하나 `eventId`·`eventTitle`이 null이라 이벤트 연결 여부는 담당자 질의로 남긴다(아래 GD-352 절·요청 R7).
+- `PUBLICATION-002` 문구와 `DrawExecutionAudit` 표시는 2026-10-23 BE 회신·GD-314로 확정됐다 — 문구는 "추첨 결과가 아직 발표 가능한 상태가 아닙니다."로 FE 매핑·목업을 정렬했고, 감사 `action`은 `DRAW_EXECUTE`(추첨 실행)·`DRAW_RESUME`(추첨 재개) 두 값만 오며 처리자 UUID와 `beforeData`/`afterData`는 화면에서 숨긴다(`05-api/drawing.md` 실행 감사 표시 계약). 같은 GD-314에서 실패 복구 기준도 확정됐다 — 재시도 가능 분류(`TRANSIENT_STORAGE`·`INTERRUPTED`)는 최대 3회 자동 재시도를 10·30·60초 간격으로 예약하고, 그 구간의 네 번째 실패부터 다음 예약 없이 관리자 확인을 기다린다. 정합성·실행 불가·미분류 오류는 자동 재시도하지 않으며, 장애·재시도 소진만으로 이벤트·당첨을 자동 취소하지 않는다([실패 복구 기준](https://github.com/Uplus-GETDDO/getddo-spec/blob/main/02-domain/drawing.md#실패-복구와-관리자-판단)). FE는 서버 응답의 `retryAt`·`waitingForOperator`를 그대로 소비하며 재시도를 스스로 예약하지 않는다.
 - AS01: 배포·집계 의미는 확인했고 GD-250에서 연결했다. 공용 명세의 “담당자 확인 전” 표시는 남아 있으므로 BE 담당자 확정 시 화면 문구를 대조한다. AM04 실측용 데이터는 2026-10-22 윤태형 답변으로 확보됐다 — 선택형 집계는 `[DEMO-20261016] 08 설문`(미션 `01a143a8-b6df-7cbd-a070-7a196e668677`, 응답 5건), 서술 답변(AM05)은 `[DEMO-20261016] 09 설문`(미션 `01a143a8-b6df-7557-b040-1b65deb194cb`·questionId `01a143a8-b6df-78eb-947e-2cccf4bcb83c`, 응답 3건; 대체 07 설문 미션 `01a143a8-b6df-73fa-9ec8-5e3d4f3fb668`·questionId `01a143a8-b6df-7c59-bc7f-409949111210`, 응답 2건). 조회 기간은 from=2026-10-16·to=2026-10-22(31일 제한 이내)이고 AM05는 questionId·from·to가 필수다. GD-296에서 실측 완료했다 — AM04 선택형 집계 일별·선택지 합계 각 5건(커피 쿠폰 5), AM05 주 3건·대체 2건 모두 BE 대조값과 일치(응답 200·Zod 통과, [증거](../reports/20261022-GD-296-remaining-reads.json)).
 - 최초 자동 추첨 마감+1분(GD-268·ADR-026): 정책은 확정됐고 BE의 `fix/GD-268` PR #145는 머지·배포됐다. 아래 통합 인수 잔여 실측의 "마감+5분 자동 추첨"은 변경 전 관측이다 — GD-296 실측(2026-10-22)으로 관리자 이벤트 15건 전부 `drawScheduledAt - endsAt` = 60초를 확인해 신기준 배포 반영을 확인했다. FE는 서버 `drawScheduledAt`을 그대로 표시한다. 2026-10-23 재측정도 15건 전부 `delta=60초`였다(엔트리 청크 `index-Cv47TR7p.js`, [최초 증거](../reports/20261023-gd268-drawscheduledat.json), [정렬·배포 식별 재검증](../reports/20261023-gd268-drawscheduledat-review.json)).
 - GD-269~271 → GD-282(PR #121)에서 예약 정책 수정 AP05·AP06, 설문 자유 서술 답변 AM05, 미션 `ENDED` 상태 표시를 FE에 연결했다. 배포 후 실측(GD-296, 2026-10-22): AM05 응답 200·대조값 일치, 종료 시각 경과 미션이 `ENDED`로 반영됨(필터 8건·잔여 ACTIVE 0, 서버 주기 처리 최대 약 1분 안내 문구 노출), AP05·AP06은 적용 중 정책 대상 동일값 PUT 각 1회로 409 `ATTENDANCE-007` 거절·무결성 확인. 미측정 잔여였던 AP06 200은 2026-10-24 GD-331에서 미래 `effectiveMonth` 예약 표본으로 실측했다 — AP05는 일일 예약 표본 부재로 미측정 유지다(아래 GD-331 절).
@@ -124,7 +148,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 ## 관리자 화면 피드백 티켓 처리 결과 (2026-10-22 BE 피드백)
 
-윤태형 피드백의 세 Jira 작업은 모두 dev에 머지됐다. Jira 양식과 실행 프롬프트는 [관리자 화면 피드백 티켓](superpowers/plans/2026-10-22-admin-feedback-tickets.md)에 있다.
+윤태형 피드백의 세 Jira 작업은 모두 dev에 머지됐다. 당시 관리자 화면 피드백 티켓·실행 프롬프트 파일은 현재 작업 트리에 없으므로 Git 이력에서 확인한다. 아래는 당시 반영 결과다.
 
 - 티켓 A — 응모권 이력 화면 단일화: GD-293(PR #133)으로 완료. 정합성·지급·반환 탭을 제거하고 전체 이력(AO05)만 남겼으며, `?tab=` 기존 링크는 전체 이력으로 연다. AO03·AO04·AO08·AO09 전용 훅·테이블·목업은 화면 미사용으로 정리했다(계약 폐기 아님).
 - 티켓 B — 출석 정책 현재/예약 재편: GD-294(PR #135)로 완료. 최신순 목록 대신 현재 정책 카드 + 예약 영역으로 재편했고, AP05·AP06 수정 다이얼로그는 GD-282 연결분을 유지한다.
@@ -180,7 +204,7 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 - **abuse `triggerScope=EVENT` 표본 신규 확인**: AR02 상세 11건 중 EVENT 1건 — evidence 필드(ruleVersion·triggerScope·windowStartedAt/EndsAt·requestLimit·rejectedCount·rejectionThreshold) 전부 존재. 단 `eventId`·`eventTitle`이 null이라 이벤트 연결 계약 충족 여부는 담당자 질의로 남긴다(요청 R7).
 - **N02·N03 실측 완료**: 미읽음 최소 계정(user0, 8건)에서 개별 읽음 PUT 200·`isRead:true`·미읽음 8→7, 전체 읽음 PUT 200·`updatedCount:7`·미읽음 7→0을 대조했다.
 - **미관측 유지**: INACTIVE 사용자(100명 전원 ACTIVE), 추첨 FAILED 실행(72건 전부 CONFIRMED 54·NO_ENTRIES 18), AP05 대상 일일 미래 예약 표본(AP01 3건 전부 적용 중·과거 — 연속 정책의 미래 `effectiveMonth` 1건은 AP06 측정 대상으로 이미 소비됨).
-- **잔여 이관**: 추첨 시나리오 C1~C6·발표→알림 트리거·503 `COMMON-007` 장애 시험·배너 실서버 CRUD+업로드 계약·`[TEST-GD261]` 정리·INACTIVE/FAILED 표본·배송 정보 계약(product-context 범위 제외 표기와 WinnerBanner TODO의 충돌 — FE 버튼·TODO는 GD-353에서 제거, 계약 확정 자체는 R8 대기 유지)·자정/월 경계 관측·결과 성능 측정·AP05 일일 예약 표본은 [BE 요청 문구](superpowers/plans/2026-10-26-gd352-be-requests.md)로 정리했다. Speed Insights 누적은 사용자가 Vercel 대시보드에서 확인한다.
+- **잔여 이관**: 추첨 시나리오 C1~C6·발표→알림 트리거·503 `COMMON-007` 장애 시험·배너 실서버 CRUD+업로드 계약·`[TEST-GD261]` 정리·INACTIVE/FAILED 표본·배송 정보 계약(product-context 범위 제외 표기와 WinnerBanner TODO의 충돌 — FE 버튼·TODO는 GD-353에서 제거, 계약 확정 자체는 R8 대기 유지)·자정/월 경계 관측·결과 성능 측정·AP05 일일 예약 표본은 BE 요청 항목으로 정리했다(추첨·발표·배너 등 잔여는 이 문서 상단 요약 참조). 원 요청 파일의 기존 삭제 상태는 유지한다. Speed Insights 누적은 사용자가 Vercel 대시보드에서 확인한다.
 
 ## GD-353 FE 잔여 해소 — 배송 버튼·터치 대상·GAME 문구·관리자 목업 (2026-10-26)
 
