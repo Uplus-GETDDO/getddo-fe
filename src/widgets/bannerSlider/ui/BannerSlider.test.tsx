@@ -229,7 +229,7 @@ describe('배너 목록 실패', () => {
         get.mockRejectedValue(new Error('network'));
         mount();
         const fallback = await screen.findByRole('link', {
-            name: /지금 열린 래플을 확인해 보세요/,
+            name: /지금 열린 겟또타임을 확인해 보세요/,
         });
         expect(fallback).toHaveAttribute('href', '/time-raffle');
         expect(

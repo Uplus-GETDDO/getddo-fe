@@ -4,7 +4,7 @@ describe('getTicketHistoryLink', () => {
     it('응모·반환에 연결된 래플이 있으면 그 래플 상세로 보낸다', () => {
         expect(getTicketHistoryLink({ operationType: 'USE', eventId: 'evt-1' })).toEqual({
             to: '/time-raffle/evt-1',
-            label: '응모한 래플 보기',
+            label: '응모한 겟또타임 보기',
         });
         expect(getTicketHistoryLink({ operationType: 'REFUND', eventId: 'evt-2' })?.to).toBe(
             '/time-raffle/evt-2',

@@ -109,8 +109,8 @@ export function LoseBanner({ event }: { event: Event }) {
                         아쉽지만 이번엔 당첨되지 않았어요
                     </h3>
                     <p className="text-body text-fg-secondary">
-                        {userName ? `${maskName(userName)}님, ` : ''}다음 래플에서 꼭 다시 만나요.
-                        응모권은 출석·게임·미션으로 다시 모을 수 있어요.
+                        {userName ? `${maskName(userName)}님, ` : ''}다음 겟또타임에서 꼭 다시
+                        만나요. 응모권은 출석·게임·미션으로 다시 모을 수 있어요.
                     </p>
 
                     <div className="flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export function LoseBanner({ event }: { event: Event }) {
                             />
                         )}
                         {nextRaffle && (
-                            <Pill label="다음 타임래플" value={nextRaffleLabel(nextRaffle)} />
+                            <Pill label="다음 겟또타임" value={nextRaffleLabel(nextRaffle)} />
                         )}
                     </div>
                 </div>
@@ -130,7 +130,7 @@ export function LoseBanner({ event }: { event: Event }) {
                 <div className="flex shrink-0 flex-col items-stretch gap-2 lg:w-50">
                     <Button asChild>
                         <Link to={nextRaffle ? `/time-raffle/${nextRaffle.id}` : '/time-raffle'}>
-                            다음 타임래플 보기
+                            다음 겟또타임 보기
                         </Link>
                     </Button>
                 </div>

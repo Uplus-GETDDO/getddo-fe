@@ -13,7 +13,7 @@ export function NotificationEmpty() {
             <img src={emptyCharacter} alt="" className="size-32 object-contain" />
             <p className="text-body-bold text-fg-primary">새 알림이 없어요</p>
             <p className="text-body-sm text-fg-tertiary">
-                래플이 열리거나 결과가 발표되면 알려드릴게요.
+                겟또타임이 열리거나 결과가 발표되면 알려드릴게요.
             </p>
         </div>
     );

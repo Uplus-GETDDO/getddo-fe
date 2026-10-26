@@ -87,8 +87,8 @@ export function TimeRaffleDetailPage() {
         <div role="status" className="text-body-sm text-fg-secondary">
             <p>
                 {event
-                    ? '래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'
-                    : '래플을 불러오지 못했습니다.'}
+                    ? '겟또타임 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'
+                    : '겟또타임을 불러오지 못했습니다.'}
             </p>
             <p>{getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')}</p>
             <Button
@@ -97,7 +97,7 @@ export function TimeRaffleDetailPage() {
                 disabled={eventQuery.isFetching}
                 onClick={() => void eventQuery.refetch()}
             >
-                래플 정보 다시 시도
+                겟또타임 정보 다시 시도
             </Button>
         </div>
     );
