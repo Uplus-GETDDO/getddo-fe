@@ -127,13 +127,16 @@ describe('홈 관리 배너', () => {
         expect(screen.getByRole('button', { name: '자동 재생 시작' })).toBeInTheDocument();
     });
 
-    it('빈 목록은 영역을 숨긴다', async () => {
+    it('등록된 배너가 없으면 자리를 비우지 않고 기본 배너를 보인다', async () => {
         get.mockResolvedValue(envelope([]));
         mount();
         await waitFor(() =>
             expect(screen.queryByText('배너를 불러오는 중입니다.')).not.toBeInTheDocument(),
         );
-        expect(screen.queryByRole('region', { name: '관리 배너' })).not.toBeInTheDocument();
+        const region = screen.getByRole('region', { name: '관리 배너' });
+        expect(
+            within(region).getByRole('link', { name: /지금 열린 겟또타임을 확인해 보세요/ }),
+        ).toHaveAttribute('href', '/time-raffle');
     });
 
     it('목록 조회 실패를 알리고 재시도로 복구한다', async () => {

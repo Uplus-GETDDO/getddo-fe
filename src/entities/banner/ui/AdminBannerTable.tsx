@@ -3,7 +3,10 @@ import { motion } from 'framer-motion';
 import { GripVertical } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 
+import type { ImagePreview } from '@shared/ui/image-preview-dialog';
+
 import { Button } from '@shared/ui/button';
+import { ImagePreviewDialog } from '@shared/ui/image-preview-dialog';
 import { Table, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
@@ -17,7 +20,16 @@ import { moveItem, rowIndexAt, sameOrder } from '../utils/dropOrder';
 const features = tableFeatures({});
 const helper = createColumnHelper<typeof features, AdminBanner>();
 
-function BannerThumbnail({ src, label }: { src: string; label: string }) {
+/** 작은 그림 — 누르면 크게 보기. 줄 끌기는 버튼 위에서 시작하지 않으므로 그림을 눌러도 순서가 바뀌지 않는다 */
+function BannerThumbnail({
+    src,
+    label,
+    onPreview,
+}: {
+    src: string;
+    label: string;
+    onPreview: () => void;
+}) {
     // 이미지 변환 계약 전이라 imageUrl이 열리지 않을 수 있다 — 깨진 이미지 대신 자리표시자를 보인다
     const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
@@ -29,12 +41,19 @@ function BannerThumbnail({ src, label }: { src: string; label: string }) {
         );
     }
     return (
-        <img
-            src={src}
-            alt={`${label} 배너 이미지`}
-            onError={() => setFailedSrc(src)}
-            className="bg-surface-sunken h-12 w-24 rounded-md object-cover"
-        />
+        <button
+            type="button"
+            onClick={onPreview}
+            aria-label={`${label} 배너 이미지 크게 보기`}
+            className="focus-visible:ring-border-focus block cursor-zoom-in rounded-md focus-visible:ring-2 focus-visible:outline-none"
+        >
+            <img
+                src={src}
+                alt=""
+                onError={() => setFailedSrc(src)}
+                className="bg-surface-sunken h-12 w-24 rounded-md object-cover transition-opacity hover:opacity-80"
+            />
+        </button>
     );
 }
 
@@ -74,6 +93,7 @@ export function AdminBannerTable({
     }
 
     const [heldId, setHeldId] = useState<string | null>(null);
+    const [preview, setPreview] = useState<ImagePreview | null>(null);
     const bodyRef = useRef<HTMLTableSectionElement>(null);
 
     const columns = useMemo(
@@ -124,6 +144,12 @@ export function AdminBannerTable({
                         <BannerThumbnail
                             src={row.original.imageUrl}
                             label={eventTitleOf(row.original.eventId)}
+                            onPreview={() =>
+                                setPreview({
+                                    src: row.original.imageUrl,
+                                    label: `${eventTitleOf(row.original.eventId)} 배너`,
+                                })
+                            }
                         />
                     ),
                 }),
@@ -323,6 +349,7 @@ export function AdminBannerTable({
                     })}
                 </tbody>
             </Table>
+            <ImagePreviewDialog preview={preview} onClose={() => setPreview(null)} wide />
         </div>
     );
 }
