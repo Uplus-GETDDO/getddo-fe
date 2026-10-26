@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 
 import { useAdminParticipants } from '@entities/entry';
 import { AdminEventPicker, AdminEventTitle } from '@entities/event';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { PAGE_SIZE } from '@shared/model/filterConstants';
+import { readReturnTo } from '@shared/model/returnTo';
 import { Button } from '@shared/ui/button';
 import { PagedResult } from '@shared/ui/paged-result';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -19,6 +20,8 @@ const asUuid = (value: string | null) => (value && z.uuid().safeParse(value).suc
 // 삭제된 이벤트도 계약대로 직접 조회할 수 있게 이벤트 상세 조회 성공에 의존하지 않는다.
 export function ParticipantsPanel() {
     const [searchParams] = useSearchParams();
+    // 다른 화면에서 건너왔으면 머리의 '← 돌아가기'가 길을 맡는다 — 여기 링크까지 두면 두 개가 겹친다
+    const cameWithReturn = readReturnTo(useLocation().state as unknown) !== null;
     const urlEventId = asUuid(searchParams.get('eventId'));
     const [eventId, setEventId] = useState(urlEventId);
     const [page, setPage] = useState(1);
@@ -41,11 +44,13 @@ export function ParticipantsPanel() {
         <div className="flex flex-col gap-6">
             {/* 탭 없이 링크로만 들어오는 보기라, 어디서 왔는지와 무엇의 참여자인지를 맨 위에 둔다 */}
             <div className="flex flex-col gap-2">
-                <Button variant="link" size="text" className="w-fit" asChild>
-                    <Link to={eventId ? `/admin/events/${eventId}` : '/admin/entries'}>
-                        {eventId ? '이벤트 상세로' : '응모 이력으로'}
-                    </Link>
-                </Button>
+                {!cameWithReturn && (
+                    <Button variant="link" size="text" className="w-fit" asChild>
+                        <Link to={eventId ? `/admin/events/${eventId}` : '/admin/entries'}>
+                            {eventId ? '이벤트 상세로' : '응모 이력으로'}
+                        </Link>
+                    </Button>
+                )}
                 <h2 className="text-title-2 text-fg-primary">
                     {eventId ? <AdminEventTitle eventId={eventId} /> : '이벤트'} 참여자
                 </h2>

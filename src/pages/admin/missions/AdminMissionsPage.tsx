@@ -16,6 +16,7 @@ import {
     FilterRow,
     rangeValue,
 } from '@shared/ui/filter-panel';
+import { ListDetailLayout } from '@shared/ui/inspector';
 import { PagedResult } from '@shared/ui/paged-result';
 import { StatusDot } from '@shared/ui/status-dot';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -42,14 +43,14 @@ type Filters = typeof EMPTY;
 const HEAD = 'text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap';
 const CELL = 'px-4 py-3 align-middle';
 
-// AM01 — 미션 목록. 다른 관리자 목록과 같은 필터 알약·표·오른쪽 드로어 상세
+// AM01 — 미션 목록. 다른 관리자 목록과 같은 필터 알약·표·옆 칸 상세
 export function AdminMissionsPage() {
     const [page, setPage] = useState(1);
     const [draft, setDraft] = useState<Filters>(EMPTY);
     const [applied, setApplied] = useState<Filters>(EMPTY);
     const [rangeError, setRangeError] = useState(false);
     const [selected, setSelected] = useState<string | null>(null);
-    // 드로어는 트리거 없이 열려 Radix가 복귀 대상을 모른다 — 닫힘 후 누른 제목으로 포커스를 돌려준다
+    // 상세 칸은 열릴 때 포커스를 가져간다 — 닫힘 후 누른 제목으로 포커스를 돌려준다
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
     const [formOpen, setFormOpen] = useState(false);
 
@@ -157,111 +158,127 @@ export function AdminMissionsPage() {
                 </FilterRow>
             </FilterPanel>
 
-            <PagedResult
-                data={query.data}
-                isPending={query.isPending}
-                isError={query.isError}
-                isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
-                page={page}
-                onPageChange={(next) => {
-                    setSelected(null);
-                    setPage(next);
-                }}
-                emptyText={
-                    activeCount > 0 ? '조건에 맞는 미션이 없습니다.' : '등록된 미션이 없습니다.'
-                }
-                errorText={getErrorMessage(query.error, '미션을 조회하지 못했습니다.')}
-                onRetry={() => void query.refetch()}
-                emptyAction={
-                    activeCount > 0 ? (
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="self-start"
-                            onClick={resetFilters}
-                        >
-                            검색 조건 초기화
-                        </Button>
-                    ) : undefined
-                }
-            >
-                {(items) => (
-                    <div className="bg-surface-page border-border-default overflow-hidden border-y">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="hover:bg-transparent">
-                                    <TableHead className={HEAD}>상태</TableHead>
-                                    <TableHead className={HEAD}>미션</TableHead>
-                                    <TableHead className={HEAD}>운영 기간</TableHead>
-                                    <TableHead className={HEAD}>작성자</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {items.map((m) => (
-                                    <TableRow
-                                        key={m.id}
-                                        aria-selected={m.id === selected}
-                                        onClick={(e) =>
-                                            openDetail(
-                                                m.id,
-                                                e.currentTarget.querySelector('button'),
-                                            )
-                                        }
-                                        className="hover:bg-surface-sunken aria-selected:bg-surface-sunken cursor-pointer"
-                                    >
-                                        <TableCell className={CELL}>
-                                            <StatusDot
-                                                tone={m.status === 'ACTIVE' ? 'brand' : 'muted'}
+            {/* 줄을 고르면 오른쪽 칸에 상세 — 이벤트·추첨 관리와 같은 목록 + 상세 꼴 */}
+            <ListDetailLayout
+                open={selected !== null}
+                detailKey={selected}
+                label="미션 상세"
+                detailSize="wide"
+                list={
+                    <PagedResult
+                        data={query.data}
+                        isPending={query.isPending}
+                        isError={query.isError}
+                        isFetching={query.isFetching}
+                        updatedAt={query.dataUpdatedAt}
+                        page={page}
+                        onPageChange={(next) => {
+                            setSelected(null);
+                            setPage(next);
+                        }}
+                        emptyText={
+                            activeCount > 0
+                                ? '조건에 맞는 미션이 없습니다.'
+                                : '등록된 미션이 없습니다.'
+                        }
+                        errorText={getErrorMessage(query.error, '미션을 조회하지 못했습니다.')}
+                        onRetry={() => void query.refetch()}
+                        emptyAction={
+                            activeCount > 0 ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="self-start"
+                                    onClick={resetFilters}
+                                >
+                                    검색 조건 초기화
+                                </Button>
+                            ) : undefined
+                        }
+                    >
+                        {(items) => (
+                            <div className="bg-surface-page border-border-default overflow-hidden border-y">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="hover:bg-transparent">
+                                            <TableHead className={HEAD}>상태</TableHead>
+                                            <TableHead className={HEAD}>미션</TableHead>
+                                            <TableHead className={HEAD}>운영 기간</TableHead>
+                                            <TableHead className={HEAD}>작성자</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {items.map((m) => (
+                                            <TableRow
+                                                key={m.id}
+                                                aria-selected={m.id === selected}
+                                                onClick={(e) =>
+                                                    openDetail(
+                                                        m.id,
+                                                        e.currentTarget.querySelector('button'),
+                                                    )
+                                                }
+                                                className="hover:bg-surface-sunken aria-selected:bg-surface-sunken cursor-pointer"
                                             >
-                                                {MISSION_STATUS_LABEL[m.status]}
-                                            </StatusDot>
-                                        </TableCell>
-                                        {/* 제목이 곧 상세 열기 — 유형은 제목 앞 작은 배지로 */}
-                                        <TableCell className={`${CELL} max-w-96`}>
-                                            <span className="flex min-w-0 items-center gap-2">
-                                                <Badge variant="outline" size="sm">
-                                                    {MISSION_TYPE_LABEL[m.missionType]}
-                                                </Badge>
-                                                <button
-                                                    type="button"
-                                                    aria-label={`${m.title} 상세`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        openDetail(m.id, e.currentTarget);
-                                                    }}
-                                                    className="text-body-sm-bold text-fg-primary focus-visible:ring-border-focus min-w-0 cursor-pointer truncate rounded-sm text-left hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                                                <TableCell className={CELL}>
+                                                    <StatusDot
+                                                        tone={
+                                                            m.status === 'ACTIVE'
+                                                                ? 'brand'
+                                                                : 'muted'
+                                                        }
+                                                    >
+                                                        {MISSION_STATUS_LABEL[m.status]}
+                                                    </StatusDot>
+                                                </TableCell>
+                                                {/* 제목이 곧 상세 열기 — 유형은 제목 앞 작은 배지로 */}
+                                                <TableCell className={`${CELL} max-w-96`}>
+                                                    <span className="flex min-w-0 items-center gap-2">
+                                                        <Badge variant="outline" size="sm">
+                                                            {MISSION_TYPE_LABEL[m.missionType]}
+                                                        </Badge>
+                                                        <button
+                                                            type="button"
+                                                            aria-label={`${m.title} 상세`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                openDetail(m.id, e.currentTarget);
+                                                            }}
+                                                            className="text-body-sm-bold text-fg-primary focus-visible:ring-border-focus min-w-0 cursor-pointer truncate rounded-sm text-left hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                                                        >
+                                                            {m.title}
+                                                        </button>
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${CELL} text-body-sm text-fg-secondary whitespace-nowrap tabular-nums`}
                                                 >
-                                                    {m.title}
-                                                </button>
-                                            </span>
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${CELL} text-body-sm text-fg-secondary whitespace-nowrap tabular-nums`}
-                                        >
-                                            {formatKstFullDot(m.startsAt, true)} ~{' '}
-                                            {formatKstFullDot(m.endsAt, true)}
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${CELL} text-body-sm text-fg-secondary`}
-                                        >
-                                            {m.createdByName ?? m.createdBy}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                )}
-            </PagedResult>
-
-            <MissionDetailSheet
-                id={selected}
-                onClose={() => {
-                    setSelected(null);
-                    const trigger = detailTriggerRef.current;
-                    requestAnimationFrame(() => trigger?.focus());
-                }}
+                                                    {formatKstFullDot(m.startsAt, true)} ~{' '}
+                                                    {formatKstFullDot(m.endsAt, true)}
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${CELL} text-body-sm text-fg-secondary`}
+                                                >
+                                                    {m.createdByName ?? m.createdBy}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
+                    </PagedResult>
+                }
+                detail={
+                    <MissionDetailSheet
+                        id={selected}
+                        onClose={() => {
+                            setSelected(null);
+                            const trigger = detailTriggerRef.current;
+                            requestAnimationFrame(() => trigger?.focus());
+                        }}
+                    />
+                }
             />
             {formOpen && <MissionFormDialog open={formOpen} onOpenChange={setFormOpen} />}
         </div>

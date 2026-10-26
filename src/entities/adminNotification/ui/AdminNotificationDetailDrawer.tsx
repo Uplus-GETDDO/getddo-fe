@@ -8,12 +8,12 @@ import {
     DetailSummary,
 } from '@shared/ui/detail-list';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@shared/ui/dialog';
+    InspectorBody,
+    InspectorDescription,
+    InspectorHeader,
+    InspectorPanel,
+    InspectorTitle,
+} from '@shared/ui/inspector';
 import { formatKst } from '@shared/utils/date';
 
 import type { AdminNotification } from '../model/types';
@@ -36,7 +36,7 @@ export function ErrorBox({ message }: { message: string }) {
 const kstOrDash = (iso: string | null) => (iso ? formatKst(iso) : '-');
 
 /**
- * 개별 알림 모의 발송 진단 드로어 — AN04 목록 응답 필드만으로 구성한다.
+ * 개별 알림 모의 발송 진단 상세(목록 옆 칸) — AN04 목록 응답 필드만으로 구성한다.
  * 별도의 발송 상세 API가 없어 마지막 오류·다음 재시도·발송 차수·내용을 여기서 확인한다.
  * 복구 재시도 같은 사용자 행동은 페이지가 action 슬롯으로 주입한다.
  */
@@ -55,18 +55,16 @@ export function AdminNotificationDetailDrawer({
     const blockReason = notification ? deliveryRetryBlockReason(notification) : null;
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
-                <DialogHeader className="border-border-default gap-1 border-b px-6 pt-6 pr-14 pb-5">
-                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold tracking-[-0.01em]">
-                        {notification?.title ?? '발송 상세'}
-                    </DialogTitle>
-                    <DialogDescription className="text-fg-secondary text-sm">
+        <InspectorPanel open={open} onOpenChange={onOpenChange}>
+            <InspectorBody>
+                <InspectorHeader>
+                    <InspectorTitle>{notification?.title ?? '발송 상세'}</InspectorTitle>
+                    <InspectorDescription>
                         {notification
                             ? `받는 사람 ${notification.userName ?? notification.userId}`
                             : ''}
-                    </DialogDescription>
-                </DialogHeader>
+                    </InspectorDescription>
+                </InspectorHeader>
                 {notification && (
                     <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                         {/* 핵심 — 발송 상태와 지금 복구할 수 있는지, 실패했다면 왜 */}
@@ -143,7 +141,7 @@ export function AdminNotificationDetailDrawer({
                         <DetailMeta>알림 ID {notification.id}</DetailMeta>
                     </div>
                 )}
-            </DialogContent>
-        </Dialog>
+            </InspectorBody>
+        </InspectorPanel>
     );
 }

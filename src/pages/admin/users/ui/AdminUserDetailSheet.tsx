@@ -3,23 +3,24 @@ import { Link } from 'react-router-dom';
 import type { AdminUser } from '@entities/user';
 
 import { getErrorMessage } from '@shared/api/errorMessage';
+import { useReturnState } from '@shared/model/returnTo';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { DetailItem, DetailList, DetailSection, DetailSummary } from '@shared/ui/detail-list';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@shared/ui/dialog';
+    InspectorBody,
+    InspectorDescription,
+    InspectorHeader,
+    InspectorPanel,
+    InspectorTitle,
+} from '@shared/ui/inspector';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { formatKstFullDot } from '@shared/utils/date';
 
 import { USER_ROLE_LABEL } from '../model/labels';
 import { MembershipBadge, UserStatus } from './UserBadges';
 
-// AO02 상세 서랍 — 조회 전용. 연락처·정지/해제·역할 변경 등 스펙에 없는 수정 동작은 두지 않는다
+// AO02 상세(목록 옆 칸) — 조회 전용. 연락처·정지/해제·역할 변경 등 스펙에 없는 수정 동작은 두지 않는다
 export function AdminUserDetailSheet({
     userId,
     user,
@@ -35,18 +36,16 @@ export function AdminUserDetailSheet({
 }) {
     const open = userId !== null;
     const uid = user?.id ?? userId ?? '';
+    // 응모·응모권 화면으로 건너가면 머리에 '← 사용자 조회로 돌아가기'가 떠 이 사용자 상세로 돌아온다
+    const back = useReturnState(`사용자 조회 · ${user?.name ?? '사용자'}`);
 
     return (
-        <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-            <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
-                <DialogHeader className="border-border-default gap-1 border-b px-6 pt-6 pr-14 pb-5">
-                    <DialogTitle className="text-fg-primary text-xl leading-7 font-semibold tracking-[-0.01em]">
-                        {user?.name ?? '사용자 상세'}
-                    </DialogTitle>
-                    <DialogDescription className="text-fg-secondary text-sm break-all">
-                        {uid}
-                    </DialogDescription>
-                </DialogHeader>
+        <InspectorPanel open={open} onOpenChange={(next) => !next && onClose()}>
+            <InspectorBody>
+                <InspectorHeader>
+                    <InspectorTitle>{user?.name ?? '사용자 상세'}</InspectorTitle>
+                    <InspectorDescription className="break-all">{uid}</InspectorDescription>
+                </InspectorHeader>
                 <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                     {isPending && (
                         <LoadingBlock label="사용자 정보를 불러오는 중…">
@@ -86,12 +85,12 @@ export function AdminUserDetailSheet({
                                     className="grid grid-cols-2 gap-2"
                                 >
                                     <Button variant="secondary" asChild>
-                                        <Link to={`/admin/entries?userId=${uid}`}>
+                                        <Link to={`/admin/entries?userId=${uid}`} state={back}>
                                             응모 이력 조회
                                         </Link>
                                     </Button>
                                     <Button variant="secondary" asChild>
-                                        <Link to={`/admin/tickets?userId=${uid}`}>
+                                        <Link to={`/admin/tickets?userId=${uid}`} state={back}>
                                             응모권 이력 조회
                                         </Link>
                                     </Button>
@@ -100,7 +99,7 @@ export function AdminUserDetailSheet({
                         </>
                     )}
                 </div>
-            </DialogContent>
-        </Dialog>
+            </InspectorBody>
+        </InspectorPanel>
     );
 }

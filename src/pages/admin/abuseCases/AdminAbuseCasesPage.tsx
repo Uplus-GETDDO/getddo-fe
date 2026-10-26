@@ -15,6 +15,7 @@ import {
     FilterRow,
     rangeValue,
 } from '@shared/ui/filter-panel';
+import { ListDetailLayout } from '@shared/ui/inspector';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso, parseYmd } from '@shared/utils/date';
 
@@ -186,39 +187,48 @@ export function AdminAbuseCasesPage() {
                 </FilterRow>
             </FilterPanel>
 
-            <PagedResult
-                data={data}
-                isPending={isPending}
-                isError={isError}
-                isFetching={isFetching}
-                updatedAt={dataUpdatedAt}
-                page={page}
-                onPageChange={setPage}
-                emptyText="해당하는 차단 내역이 없습니다."
-                errorText="차단 내역을 불러오지 못했습니다."
-                onRetry={() => void refetch()}
-                emptyAction={
-                    hasAppliedFilters ? (
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="self-start"
-                            onClick={resetFilters}
-                        >
-                            검색 조건 초기화
-                        </Button>
-                    ) : undefined
-                }
-            >
-                {(items) => <AbuseCaseTable cases={items} onRowClick={setSelected} />}
-            </PagedResult>
-
-            <AbuseCaseDetailDrawer
-                abuseCase={selected}
+            {/* 줄을 고르면 오른쪽 칸에 상세 — 이벤트·추첨 관리와 같은 목록 + 상세 꼴 */}
+            <ListDetailLayout
                 open={selected !== null}
-                onOpenChange={(open) => {
-                    if (!open) setSelected(null);
-                }}
+                detailKey={selected?.id}
+                label="차단 내역 상세"
+                list={
+                    <PagedResult
+                        data={data}
+                        isPending={isPending}
+                        isError={isError}
+                        isFetching={isFetching}
+                        updatedAt={dataUpdatedAt}
+                        page={page}
+                        onPageChange={setPage}
+                        emptyText="해당하는 차단 내역이 없습니다."
+                        errorText="차단 내역을 불러오지 못했습니다."
+                        onRetry={() => void refetch()}
+                        emptyAction={
+                            hasAppliedFilters ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="self-start"
+                                    onClick={resetFilters}
+                                >
+                                    검색 조건 초기화
+                                </Button>
+                            ) : undefined
+                        }
+                    >
+                        {(items) => <AbuseCaseTable cases={items} onRowClick={setSelected} />}
+                    </PagedResult>
+                }
+                detail={
+                    <AbuseCaseDetailDrawer
+                        abuseCase={selected}
+                        open={selected !== null}
+                        onOpenChange={(open) => {
+                            if (!open) setSelected(null);
+                        }}
+                    />
+                }
             />
         </div>
     );
