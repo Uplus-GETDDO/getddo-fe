@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import type { EntryTickets, TicketsByGrade } from '@entities/entry';
@@ -10,6 +10,7 @@ import { useEntryEligibility, useEntryStatistics, useMyEventEntries } from '@ent
 import { useEvent } from '@entities/event';
 import { TicketBalanceStatus, ticketGradeSchema, useMyTickets } from '@entities/ticket';
 import { useEnterEvent } from '@features/enterEvent';
+import { ApiError } from '@shared/api/client';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { getPollingRetryDelay } from '@shared/api/queryPresets';
 import { Button } from '@shared/ui/button';
@@ -21,6 +22,7 @@ import {
     InsufficientTicketsDialog,
     readEligibility,
 } from '@widgets/eventEntry';
+import { PageStatus } from '@widgets/pageStatus';
 
 import { BronzeOnlyTicket } from './ui/BronzeOnlyTicket';
 import { GradeTicketSteppers } from './ui/GradeTicketSteppers';
@@ -84,13 +86,10 @@ export function TimeRaffleDetailPage() {
     const [lastRemaining, setLastRemaining] = useState<number | null>(0);
     // 모달을 닫으면 방금 누른 응모 버튼으로 포커스를 되돌린다
     const entryButtonRef = useRef<HTMLButtonElement>(null);
+    // 받아 둔 화면 위에 다는 갱신 실패 안내 — 처음부터 못 받은 경우는 아래 PageStatus가 맡는다
     const eventFailureNotice = isError && (
         <div role="status" className="text-body-sm text-fg-secondary">
-            <p>
-                {event
-                    ? '겟또타임 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'
-                    : '겟또타임을 불러오지 못했습니다.'}
-            </p>
+            <p>겟또타임 정보를 갱신하지 못했어요. 이전 정보를 표시해요.</p>
             <p>{getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')}</p>
             <Button
                 type="button"
@@ -112,7 +111,37 @@ export function TimeRaffleDetailPage() {
     }
 
     if (isError && !event) {
-        return <main className={CONTAINER}>{eventFailureNotice}</main>;
+        // 없는 겟또타임(404)이면 다시 시도해도 같다 — 목록으로 가는 길만 둔다 (이벤트 상세와 같은 규칙)
+        const notFound = eventQuery.error instanceof ApiError && eventQuery.error.status === 404;
+        return (
+            <main className={CONTAINER}>
+                <PageStatus
+                    variant={notFound ? 'notFound' : 'error'}
+                    title={notFound ? '겟또타임을 찾을 수 없어요' : '겟또타임을 불러오지 못했어요'}
+                    description={
+                        notFound
+                            ? '끝났거나 취소된 겟또타임일 수 있어요. 목록에서 다른 겟또타임을 확인해 보세요.'
+                            : getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')
+                    }
+                    actions={
+                        <>
+                            {!notFound && (
+                                <Button
+                                    type="button"
+                                    disabled={eventQuery.isFetching}
+                                    onClick={() => void eventQuery.refetch()}
+                                >
+                                    {eventQuery.isFetching ? '불러오는 중…' : '다시 시도'}
+                                </Button>
+                            )}
+                            <Button variant={notFound ? 'primary' : 'secondary'} asChild>
+                                <Link to="/time-raffle">겟또타임 목록으로</Link>
+                            </Button>
+                        </>
+                    }
+                />
+            </main>
+        );
     }
 
     const isOpen = event.status === 'open';

@@ -13,7 +13,8 @@ import itemTickets from '../assets/item-tickets.webp';
 import { kstDateHeadline } from '../utils/raffleFormat';
 
 interface TimeRaffleHeroProps {
-    live: Event[];
+    /** 진행 중 겟또타임 — null이면 아직 목록을 못 받은 상태라 개수 대신 이름만 둔다 */
+    live: Event[] | null;
     now: Date;
     /** 제목 줄 옆 갱신 표시 — 폴링 중·실패를 알린다 */
     refresh?: ReactNode;
@@ -53,7 +54,9 @@ export function TimeRaffleHero({ live, now, refresh }: TimeRaffleHeroProps) {
                         {refresh}
                     </div>
                     <h1 id="time-raffle-title" className="text-title-2 text-fg-primary break-keep">
-                        {live.length > 0 ? (
+                        {live === null ? (
+                            '겟또타임'
+                        ) : live.length > 0 ? (
                             <>
                                 지금 응모할 수 있는 겟또타임{' '}
                                 {/* 숫자는 마젠타 대신 제목과 같은 잉크색 — 미션 배너의 큰 숫자와 같은 규칙 */}

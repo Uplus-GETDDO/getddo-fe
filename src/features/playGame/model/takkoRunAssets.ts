@@ -98,3 +98,36 @@ export function preloadTakkoRun() {
     // 음악은 브라우저 캐시에 받아만 두고, 재생할 때 다시 요청하면 캐시에서 바로 온다
     fetch(TAKKO_RUN_BGM.url).catch(() => undefined);
 }
+
+/** 404 미니 달리기에 쓰는 그림 — 배경 없이 캐릭터와 장애물 시트만 */
+export type TakkoRunSpriteKey =
+    'character' | 'sauces' | 'skewers' | 'stage2Obstacles' | 'stage3Obstacles' | 'stage4Obstacles';
+export type TakkoRunSprites = Record<TakkoRunSpriteKey, HTMLImageElement>;
+
+let spritesPromise: Promise<TakkoRunSprites> | null = null;
+
+/** 캐릭터·장애물 그림만 받는다 — 배경 그림(하늘·마을)은 받지 않아 가볍다 (실패하면 다음에 다시 시도) */
+export function loadTakkoRunSprites(): Promise<TakkoRunSprites> {
+    const keys: TakkoRunSpriteKey[] = [
+        'character',
+        'sauces',
+        'skewers',
+        'stage2Obstacles',
+        'stage3Obstacles',
+        'stage4Obstacles',
+    ];
+    spritesPromise ??= Promise.all(
+        keys.map(async (key) => {
+            const image = new Image();
+            image.src = IMAGE_SOURCES[key];
+            await image.decode();
+            return [key, image] as const;
+        }),
+    )
+        .then((entries) => Object.fromEntries(entries) as TakkoRunSprites)
+        .catch((error: unknown) => {
+            spritesPromise = null;
+            throw error;
+        });
+    return spritesPromise;
+}

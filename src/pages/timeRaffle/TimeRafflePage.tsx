@@ -82,22 +82,7 @@ export function TimeRafflePage() {
         );
     }
 
-    // 처음부터 못 받았을 때만 실패 칸 — 받아 둔 목록이 있으면 다시 받기에 실패해도 그대로 두고 머리의 갱신 표시로만 알린다
-    if (!events) {
-        return (
-            <main className={CONTAINER}>
-                <LoadError
-                    size="md"
-                    title="겟또타임을 불러오지 못했어요"
-                    onRetry={() => void eventsQuery.refetch()}
-                    retrying={eventsQuery.isFetching}
-                    className="border-border-default bg-surface-page min-h-96 rounded-2xl border shadow-md"
-                />
-            </main>
-        );
-    }
-
-    const raffles = events.filter((event) => event.isTimeRaffle);
+    const raffles = (events ?? []).filter((event) => event.isTimeRaffle);
     const liveRaffles = raffles.filter((event) => event.status === 'open');
     const upcomingRaffles = raffles.filter((event) => event.status === 'upcoming');
     // 마감 이후는 한 목록에 두되 줄마다 발표 대기·발표 완료를 적는다 (시안 '마감한 래플')
@@ -123,16 +108,19 @@ export function TimeRafflePage() {
             {/* 머리 배너와 첫 섹션 사이는 미션 페이지(오늘의 적립 → 출석체크)와 같은 56 */}
             <div className="flex flex-col gap-14">
                 <TimeRaffleHero
-                    live={byEndsAtAsc}
+                    live={events ? byEndsAtAsc : null}
                     now={now}
                     refresh={
-                        // 30초 폴링 중임을 알리고, 실패하면 받아 둔 목록을 둔 채 다시 시도를 연다 (홈 겟또타임과 같은 표시)
-                        <RefreshStatus
-                            fetching={eventsQuery.isFetching}
-                            updatedAt={eventsQuery.dataUpdatedAt}
-                            error={eventsQuery.isError}
-                            onRefresh={() => void eventsQuery.refetch()}
-                        />
+                        // 30초 폴링 중임을 알리고, 실패하면 받아 둔 목록을 둔 채 다시 시도를 연다 (홈 겟또타임과 같은 표시).
+                        // 받아 둔 목록이 없으면 아래 실패 칸이 다시 시도를 맡으니 두지 않는다
+                        events && (
+                            <RefreshStatus
+                                fetching={eventsQuery.isFetching}
+                                updatedAt={eventsQuery.dataUpdatedAt}
+                                error={eventsQuery.isError}
+                                onRefresh={() => void eventsQuery.refetch()}
+                            />
+                        )
                     }
                 />
 
@@ -150,7 +138,19 @@ export function TimeRafflePage() {
                     // 섹션 사이는 홈·미션과 같은 80 (머리와 첫 섹션은 미션처럼 56)
                     className="flex flex-col gap-20"
                 >
-                    {view === 'closed' ? (
+                    {/*
+                     * 처음부터 못 받았을 때는 머리·안내 같은 틀은 두고 목록 자리에만 실패 칸을 둔다.
+                     * 받아 둔 목록이 있으면 다시 받기에 실패해도 그대로 두고 머리의 갱신 표시로만 알린다
+                     */}
+                    {!events ? (
+                        <LoadError
+                            size="md"
+                            title="겟또타임을 불러오지 못했어요"
+                            onRetry={() => void eventsQuery.refetch()}
+                            retrying={eventsQuery.isFetching}
+                            className="border-border-default min-h-80 rounded-2xl border"
+                        />
+                    ) : view === 'closed' ? (
                         <ClosedRaffleList
                             id={RAFFLE_SECTION_IDS.closed}
                             events={byEndsAtDesc}
