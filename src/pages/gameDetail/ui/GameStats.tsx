@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
-import { formatNumber } from '@shared/lib/format';
-import { useCountUp } from '@shared/lib/useCountUp';
+import { useCountUp } from '@shared/hooks/useCountUp';
+import { formatNumber } from '@shared/utils/format';
 
 /** 게임 보상은 게임별 하루 1회 응모권 1장 (getddo-spec 게임 규칙) */
 const DAILY_GAME_REWARD = 1;
@@ -36,14 +36,16 @@ function StatCard({
     );
 }
 
-/** 최고점 · 오늘 플레이 · 오늘 받은 응모권 — 화면에 들어올 때 차례로 올라온다 */
+/** 최고점 · 누적 유효 플레이 · 오늘 받은 응모권 — 화면에 들어올 때 차례로 올라온다 */
 export function GameStats({
     bestScore,
-    todayPlayCount,
+    totalScore,
+    validPlayCount,
     rewardedToday,
 }: {
     bestScore?: number;
-    todayPlayCount?: number;
+    totalScore?: number;
+    validPlayCount?: number;
     rewardedToday?: boolean;
 }) {
     const bestScoreDisplay = useCountUp(bestScore, { fromZero: true, durationMs: 900 });
@@ -54,11 +56,14 @@ export function GameStats({
             <StatCard label="최고점" order={0}>
                 {bestScoreDisplay == null ? '-' : `${formatNumber(bestScoreDisplay)}점`}
             </StatCard>
-            <StatCard label="오늘 플레이" order={1}>
-                {`${formatNumber(todayPlayCount ?? 0)}회`}
+            <StatCard label="누적 유효 플레이" order={1}>
+                {validPlayCount === undefined ? '-' : `${formatNumber(validPlayCount)}회`}
             </StatCard>
-            <StatCard label="오늘 받은 응모권" order={2}>
-                {rewardedToday ? DAILY_GAME_REWARD : 0}{' '}
+            <StatCard label="누적 점수" order={2}>
+                {totalScore === undefined ? '-' : `${formatNumber(totalScore)}점`}
+            </StatCard>
+            <StatCard label="오늘 받은 응모권" order={3}>
+                {rewardedToday === undefined ? '-' : rewardedToday ? DAILY_GAME_REWARD : 0}{' '}
                 <span className="text-border-strong">/ {DAILY_GAME_REWARD}장</span>
             </StatCard>
         </div>

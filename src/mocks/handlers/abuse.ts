@@ -4,122 +4,167 @@ import type { AbuseCaseDetail } from '@entities/abuseCase';
 
 import { env } from '@shared/config/env';
 
+import { DAY, MINUTE, demoTime } from '../demoTime';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
 
-// 목업 세션 동안 유지되는 차단 기록 — 지급 전 서버 검증에서 차단된 요청만 남는다.
-// 차단되지 않고 지급된 요청은 이 기록에 나타나지 않는다 (spec AR01·AR02)
+/*
+ * 목업 세션 동안 유지되는 차단 기록 — 실제 자동 일시 차단이 시작된 이력만 남는다.
+ * 단순 탐지·검토 기록이나 차단되지 않고 지급된 요청은 이 기록에 나타나지 않는다 (spec AR01·AR02).
+ * blockedUntil은 차단 종료 예정 시각이며 지금도 차단 중인지의 보장 값이 아니다
+ */
 const abuseCases: AbuseCaseDetail[] = [
     {
-        id: 'ab-1',
-        target: 'entry',
-        userId: 'vu-1042',
+        id: 'a0000000-0000-4000-8000-000000000001',
+        userId: '10000000-0000-4000-8000-000000001042',
         userNickname: '빠른손김철수',
-        eventId: 'evt-201',
+        eventId: '20000000-0000-4000-8000-000000000201',
         eventTitle: '닌텐도 스위치 2 래플',
-        rewardSource: null,
-        reason: '허용 횟수 초과 반복 응모',
-        requestSummary: 'POST /events/evt-201/entries — 10분 내 6회 (멱등키 상이)',
-        detectedAt: '2026-09-27T14:32:00Z',
-        evidence: [
-            '10분 윈도 내 동일 사용자 응모 요청 6회',
-            '멱등키가 서로 다른 신규 요청으로 판정',
-            '요청 원본 IP·디바이스 지문 동일',
-        ],
+        sourceType: 'ENTRY',
+        detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
+        detectionReason: '1분 내 응모 요청 거절 10회 누적 — 10분 일시 차단',
+        blockedAt: demoTime(-5 * DAY),
+        blockedUntil: demoTime(-5 * DAY + 10 * MINUTE),
+        evidence: {
+            ruleVersion: 'v1',
+            triggerScope: 'EVENT',
+            windowStartedAt: demoTime(-5 * DAY - MINUTE),
+            windowEndsAt: demoTime(-5 * DAY),
+            requestLimit: 10,
+            rejectedCount: 10,
+            rejectionThreshold: 10,
+        },
     },
     {
-        id: 'ab-2',
-        target: 'entry',
-        userId: 'vu-2017',
+        id: 'a0000000-0000-4000-8000-000000000002',
+        userId: '10000000-0000-4000-8000-000000002017',
         userNickname: '자동화테스트',
-        eventId: 'evt-187',
+        eventId: '20000000-0000-4000-8000-000000000187',
         eventTitle: '스타벅스 e카드 래플',
-        rewardSource: null,
-        reason: '마감 후 응모 요청',
-        requestSummary: 'POST /events/evt-187/entries — 마감 23:59 이후 3회',
-        detectedAt: '2026-09-27T01:15:00Z',
-        evidence: [
-            '이벤트 마감 시각(2026-09-26 23:59 KST) 이후 수신된 요청 3건',
-            '서버 수신 시각 기준 초과 판정',
-        ],
+        sourceType: 'ENTRY',
+        detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
+        detectionReason: '1분 내 응모 요청 거절 12회 누적 — 10분 일시 차단',
+        blockedAt: demoTime(-6 * DAY),
+        blockedUntil: demoTime(-6 * DAY + 10 * MINUTE),
+        evidence: {
+            ruleVersion: 'v1',
+            triggerScope: 'EVENT',
+            windowStartedAt: demoTime(-6 * DAY - MINUTE),
+            windowEndsAt: demoTime(-6 * DAY),
+            requestLimit: 10,
+            rejectedCount: 12,
+            rejectionThreshold: 10,
+        },
     },
     {
-        id: 'ab-3',
-        target: 'ticket-reward',
-        userId: 'vu-0874',
-        userNickname: '보상헌터',
-        eventId: null,
-        eventTitle: null,
-        rewardSource: 'attendance',
-        reason: '출석 지급 요청 빈도 제한 초과',
-        requestSummary: 'POST /attendances — 1초 간격 12회 연속',
-        detectedAt: '2026-09-26T22:58:00Z',
-        evidence: ['1초 간격 연속 호출 12회', '요청 간격 편차 50ms 미만 — 비정상 호출 패턴'],
-    },
-    {
-        id: 'ab-4',
-        target: 'ticket-reward',
-        userId: 'vu-1330',
-        userNickname: '게임러너',
-        eventId: null,
-        eventTitle: null,
-        rewardSource: 'game',
-        reason: '게임 결과 비정상 제출',
-        requestSummary: 'POST /games/dino/results — 동일 점수 30회 연속 제출',
-        detectedAt: '2026-09-26T09:40:00Z',
-        evidence: ['동일 점수 30회 연속 제출', '플레이 시간 대비 획득 점수 상한 초과'],
-    },
-    {
-        id: 'ab-6',
-        target: 'entry',
-        userId: 'vu-0455',
+        id: 'a0000000-0000-4000-8000-000000000003',
+        userId: '10000000-0000-4000-8000-000000000455',
         userNickname: '다계정의심',
-        eventId: 'evt-099',
+        eventId: null,
+        eventTitle: null,
+        sourceType: 'ENTRY',
+        detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
+        detectionReason: '사용자 기준 1분 내 응모 요청 거절 25회 누적 — 30분 일시 차단',
+        blockedAt: demoTime(-7 * DAY),
+        blockedUntil: demoTime(-7 * DAY + 30 * MINUTE),
+        evidence: {
+            ruleVersion: 'v1',
+            triggerScope: 'USER',
+            windowStartedAt: demoTime(-7 * DAY - MINUTE),
+            windowEndsAt: demoTime(-7 * DAY),
+            requestLimit: 20,
+            rejectedCount: 25,
+            rejectionThreshold: 20,
+        },
+    },
+    {
+        id: 'a0000000-0000-4000-8000-000000000004',
+        userId: '10000000-0000-4000-8000-000000001042',
+        userNickname: '빠른손김철수',
+        eventId: '20000000-0000-4000-8000-000000000099',
         eventTitle: 'VVIP 데이터 쿠폰 래플',
-        rewardSource: null,
-        reason: '비정상 반복 응모',
-        requestSummary: 'POST /events/evt-099/entries — 1시간 내 42회',
-        detectedAt: '2026-09-24T16:47:00Z',
-        evidence: ['1시간 내 동일 계정 응모 요청 42회', '동일 IP 대역의 다계정 패턴 탐지'],
+        sourceType: 'ENTRY',
+        detectionType: 'REPEATED_RATE_LIMIT_EXCEEDED',
+        detectionReason: '1분 내 응모 요청 거절 10회 누적 — 10분 일시 차단',
+        blockedAt: demoTime(-10 * DAY),
+        blockedUntil: demoTime(-10 * DAY + 10 * MINUTE),
+        evidence: {
+            ruleVersion: 'v1',
+            triggerScope: 'EVENT',
+            windowStartedAt: demoTime(-10 * DAY - MINUTE),
+            windowEndsAt: demoTime(-10 * DAY),
+            requestLimit: 10,
+            rejectedCount: 10,
+            rejectionThreshold: 10,
+        },
     },
 ];
 
+const badQuery = () => fail(400, 'COMMON-002', '조회 조건이 올바르지 않습니다.');
+const TZ_SUFFIX = /(Z|[+-]\d{2}:?\d{2})$/;
+
+// 날짜 필터는 blockedAt 기준 [from, to) — 시간대 없는 값은 받지 않는다 (spec 공통 계약)
+// 오프셋 표기(+09:00)도 같은 순간으로 비교해야 하므로 문자열이 아닌 밀리초로 내린다
+function parseRange(params: URLSearchParams): { from: number | null; to: number | null } | null {
+    const from = params.get('from');
+    const to = params.get('to');
+    const fromMs = from === null ? null : Date.parse(from);
+    const toMs = to === null ? null : Date.parse(to);
+    for (const [value, milliseconds] of [
+        [from, fromMs],
+        [to, toMs],
+    ] as const) {
+        if (value !== null && (!TZ_SUFFIX.test(value) || Number.isNaN(milliseconds))) {
+            return null;
+        }
+    }
+    if (fromMs !== null && toMs !== null && fromMs >= toMs) return null;
+    return { from: fromMs, to: toMs };
+}
+
+// 페이지는 1부터, size는 1~100(기본 20) — 공통 계약의 Page 제안을 따른다
+function paginate(rows: AbuseCaseDetail[], params: URLSearchParams) {
+    const page = Number(params.get('page') ?? 1);
+    const size = Number(params.get('size') ?? 20);
+    if (!Number.isInteger(page) || page < 1 || !Number.isInteger(size) || size < 1 || size > 100) {
+        return null;
+    }
+    return {
+        items: rows.slice((page - 1) * size, page * size),
+        page,
+        size,
+        totalElements: rows.length,
+    };
+}
+
 export const abuseHandlers = [
-    // AR01 초안 — Page 봉투. spec의 요약 필드(sourceType·detectionType 등)와 목업 표시 필드가 달라
-    // 시연 필드를 그대로 싣고, 경로·봉투·필터 파라미터만 계약을 따른다. 최신 차단 순으로 내린다
+    // AR01 — Page 봉투. 기본 정렬은 blockedAt DESC, id DESC다
     http.get(api('/v1/admin/abuse-cases'), ({ request }) => {
         const url = new URL(request.url);
-        const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
-        const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
-        const userId = url.searchParams.get('userId');
-        const eventId = url.searchParams.get('eventId');
-        const sourceType = url.searchParams.get('sourceType');
-        const from = url.searchParams.get('from');
-        const to = url.searchParams.get('to');
+        const params = url.searchParams;
+        const range = parseRange(params);
+        if (!range) return badQuery();
+        const userId = params.get('userId');
+        const eventId = params.get('eventId');
+        const sourceType = params.get('sourceType');
 
         const filtered = abuseCases
             .filter((item) => {
                 if (userId && item.userId !== userId) return false;
                 if (eventId && item.eventId !== eventId) return false;
-                if (from && item.detectedAt < from) return false;
-                if (to && item.detectedAt >= to) return false;
-                if (sourceType) {
-                    if (sourceType === 'ENTRY') return item.target === 'entry';
-                    if (item.target !== 'ticket-reward') return false;
-                    if (item.rewardSource !== sourceType.toLowerCase()) return false;
-                }
+                if (sourceType && item.sourceType !== sourceType) return false;
+                const blockedMs = Date.parse(item.blockedAt);
+                if (range.from !== null && blockedMs < range.from) return false;
+                if (range.to !== null && blockedMs >= range.to) return false;
                 return true;
             })
-            .sort((a, b) => b.detectedAt.localeCompare(a.detectedAt));
-        return ok({
-            items: filtered.slice((page - 1) * size, page * size),
-            page,
-            size,
-            totalElements: filtered.length,
-        });
+            .sort((a, b) => b.blockedAt.localeCompare(a.blockedAt) || b.id.localeCompare(a.id));
+        const page = paginate(filtered, params);
+        if (!page) return badQuery();
+        return ok(page);
     }),
-    // AR02 초안 — AbuseCaseDetail: 차단 사유·관련 요청·검증 근거를 관리자 전용으로 내린다
+    // AR02 — AbuseCaseDetail: 요약 필드에 차단 판정 근거(evidence)를 관리자 전용으로 내린다
     http.get(api('/v1/admin/abuse-cases/:caseId'), ({ params }) => {
         const target = abuseCases.find((c) => c.id === params.caseId);
         if (!target) {

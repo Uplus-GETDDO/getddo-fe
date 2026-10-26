@@ -1,0 +1,16 @@
+controlled2-before 1/3 1/1 home cold: 6277
+controlled2-before 1/3 1/1 home transition: 1292
+controlled2-before 1/3 1/1 home revisit5: 2143
+controlled2-before 1/3 1/1 home revisit35: 2142
+controlled2-before 1/3 1/1 events cold: page.waitForFunction: Timeout 45000ms exceeded.
+controlled2-before 1/3 1/1 events transition: page.waitForFunction: Timeout 45000ms exceeded.
+controlled2-before 1/3 1/1 events revisit5: page.waitForFunction: Timeout 45000ms exceeded.
+controlled2-before 1/3 1/1 events revisit35: page.waitForFunction: Timeout 45000ms exceeded.
+controlled2-before 1/3 1/1 raffles cold: 5184
+controlled2-before 1/3 1/1 raffles transition: 87
+controlled2-before 1/3 1/1 raffles revisit5: 73
+controlled2-before 1/3 1/1 raffles revisit35: 89
+controlled2-before 1/3 1/1 eventDetail cold: page.waitForFunction: Timeout 45000ms exceeded.
+controlled2-before 1/3 1/1 eventDetail transition: 대상 링크 없음
+controlled2-before 1/3 1/1 eventDetail revisit5: 대상 링크 없음
+controlled2-before 1/3 1/1 eventDetail revisit35: 대상 링크 없음

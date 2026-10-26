@@ -1,13 +1,15 @@
 import { http, HttpResponse } from 'msw';
 
-import type { Entry, TicketsByGrade } from '@entities/entry';
+import type { Entry, EntryStatus, TicketsByGrade } from '@entities/entry';
 import type { MembershipRule } from '@entities/event';
 import type { TicketGrade } from '@entities/ticket';
 
+import { entryStatusSchema } from '@entities/entry';
 import { ticketGradeSchema } from '@entities/ticket';
 import { env } from '@shared/config/env';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
+import { DAY, demoTime } from '../demoTime';
 import { mockNow } from '../now';
 import {
     entryRuleOf,
@@ -28,10 +30,10 @@ type EntryReceipt = Entry;
 // 멤버십 규칙 비교 — 우수 < VIP < VVIP (getddo-spec 02-domain/event.md)
 const MEMBERSHIP_RANK: Record<MembershipRule, number> = { excellent: 0, vip: 1, vvip: 2 };
 
-const ZERO_TICKETS: TicketsByGrade = { BRONZE: 0, SILVER: 0, GOLD: 0 };
+const ZERO_TICKETS: TicketsByGrade = { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 };
 
 /**
- * E04 요청 본문의 tickets 맵을 세 등급이 채워진 모양으로 정규화한다 — 생략된 등급은 0이다.
+ * E04 요청 본문의 tickets 맵을 네 등급이 채워진 모양으로 정규화한다 — 생략된 등급은 0이다.
  * 등급 외 키·정수가 아닌 값·음수가 있으면 형식 오류(null)다 (spec EntryRequest)
  */
 function parseTickets(raw: unknown): TicketsByGrade | null {
@@ -46,7 +48,8 @@ function parseTickets(raw: unknown): TicketsByGrade | null {
     return tickets;
 }
 
-const totalOf = (tickets: TicketsByGrade) => tickets.BRONZE + tickets.SILVER + tickets.GOLD;
+const totalOf = (tickets: TicketsByGrade) =>
+    tickets.BRONZE + tickets.SILVER + tickets.GOLD + tickets.PLATINUM;
 
 const sameTickets = (a: TicketsByGrade, b: TicketsByGrade) =>
     ticketGradeSchema.options.every((grade) => a[grade] === b[grade]);
@@ -101,12 +104,12 @@ const seedEntry = (): EntryReceipt => ({
     eventId: 'evt-001',
     eventTitle: '갤럭시 버즈 위클리 래플',
     requestedTicketCount: 1,
-    requestedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0 },
+    requestedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
     deductedTicketCount: 1,
-    deductedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0 },
+    deductedTicketsByGrade: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
     status: 'ACCEPTED',
-    requestedAt: '2026-09-15T08:00:00Z',
-    acceptedAt: '2026-09-15T08:00:00Z',
+    requestedAt: demoTime(-40 * DAY),
+    acceptedAt: demoTime(-40 * DAY),
     rejectionCode: null,
     rejectionReason: null,
 });
@@ -119,22 +122,58 @@ const HOUR_MS = 60 * 60 * 1000;
  * evt-107은 E09 테스트가 "응모하지 않은 사람"을 확인하는 래플이라 시드를 두지 않는다
  */
 const DEMO_ENTRY_SEEDS: { eventId: string; tickets: TicketsByGrade; hoursBeforeEnd: number }[] = [
-    { eventId: 'evt-106', tickets: { BRONZE: 0, SILVER: 2, GOLD: 1 }, hoursBeforeEnd: 2 },
-    { eventId: 'evt-108', tickets: { BRONZE: 1, SILVER: 0, GOLD: 0 }, hoursBeforeEnd: 3 },
-    { eventId: 'evt-110', tickets: { BRONZE: 0, SILVER: 1, GOLD: 0 }, hoursBeforeEnd: 4 },
-    { eventId: 'evt-109', tickets: { BRONZE: 3, SILVER: 0, GOLD: 0 }, hoursBeforeEnd: 5 },
-    { eventId: 'evt-111', tickets: { BRONZE: 0, SILVER: 2, GOLD: 0 }, hoursBeforeEnd: 1 },
+    {
+        eventId: 'evt-106',
+        tickets: { BRONZE: 0, SILVER: 2, GOLD: 1, PLATINUM: 0 },
+        hoursBeforeEnd: 2,
+    },
+    {
+        eventId: 'evt-108',
+        tickets: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 3,
+    },
+    {
+        eventId: 'evt-110',
+        tickets: { BRONZE: 0, SILVER: 1, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 4,
+    },
+    {
+        eventId: 'evt-109',
+        tickets: { BRONZE: 3, SILVER: 0, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 5,
+    },
+    {
+        eventId: 'evt-111',
+        tickets: { BRONZE: 0, SILVER: 2, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 1,
+    },
     { eventId: 'evt-006', tickets: { ...ZERO_TICKETS }, hoursBeforeEnd: 24 * 20 },
+    // 진행 중 래플에도 하나씩 — 홈 겟또타임 카드·겟또타임 카드의 '참여 중' 칩을 응모하지 않아도 보이게 한다.
+    // 시드라 E04 제한에는 세지 않아 그대로 더 응모해 볼 수 있다
+    {
+        eventId: 'evt-101',
+        tickets: { BRONZE: 1, SILVER: 0, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 0.5,
+    },
+    {
+        eventId: 'evt-102',
+        tickets: { BRONZE: 0, SILVER: 1, GOLD: 0, PLATINUM: 0 },
+        hoursBeforeEnd: 0.5,
+    },
 ];
 
 const demoSeedEntries = (): EntryReceipt[] =>
     DEMO_ENTRY_SEEDS.flatMap(({ eventId, tickets, hoursBeforeEnd }) => {
         const event = findMockEvent(eventId);
         if (!event) return [];
+        // 열리기 전 시각으로 잡히지 않게 시작 시각 아래로는 내리지 않는다 (진행 중 래플은 연 지 1시간이 안 됐다)
         const at = new Date(
-            Math.min(
-                new Date(event.endsAt).getTime() - hoursBeforeEnd * HOUR_MS,
-                mockNow().getTime() - HOUR_MS,
+            Math.max(
+                new Date(event.startsAt).getTime(),
+                Math.min(
+                    new Date(event.endsAt).getTime() - hoursBeforeEnd * HOUR_MS,
+                    mockNow().getTime() - HOUR_MS,
+                ),
             ),
         ).toISOString();
         return [
@@ -196,6 +235,10 @@ const myAcceptedFor = (userId: string, eventId: string) =>
         (entry) => entry.eventId === eventId && entry.status === 'ACCEPTED',
     );
 
+/** E01은 시드를 포함한 정상 접수 기록을 기준으로 판단한다. */
+export const mockUserHasAcceptedEntry = (userId: string, eventId: string): boolean =>
+    myAcceptedFor(userId, eventId).length > 0;
+
 /** 실제로 접수된 응모만 센다 — E04의 1회 제한·누적 상한과 E07의 참여 판정 근거 */
 const myRealAcceptedFor = (userId: string, eventId: string) =>
     myAcceptedFor(userId, eventId).filter((entry) => !seededEntries.has(entry));
@@ -240,10 +283,20 @@ export function mockEventEntrantIds(eventId: string): string[] {
 }
 
 export const entryHandlers = [
-    // E06 초안 — Page<EntryReceipt> 봉투, page·size 파라미터를 적용한다 (페이지는 1부터)
+    // E06 — Page<EntryReceipt> 봉투, page·size·eventId·status 파라미터를 적용한다 (페이지는 1부터)
     http.get(api('/v1/users/me/entries'), ({ request }) => {
-        const all = myEntriesFor(userIdOf(request));
         const url = new URL(request.url);
+        const eventId = url.searchParams.get('eventId');
+        const status = url.searchParams.get('status');
+        // 알 수 없는 status는 형식 오류라 400이다 — 업무 거절 영수증으로 남기지 않는다 (spec COMMON-005)
+        if (status !== null && !entryStatusSchema.options.includes(status as EntryStatus)) {
+            return fail(400, 'COMMON-005', 'status 값이 올바르지 않습니다');
+        }
+        const all = myEntriesFor(userIdOf(request)).filter(
+            (entry) =>
+                (eventId === null || entry.eventId === eventId) &&
+                (status === null || entry.status === status),
+        );
         const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
         const size = Math.max(1, Number(url.searchParams.get('size')) || 20);
         return ok({
@@ -440,7 +493,7 @@ export const entryHandlers = [
         if (user && requestedMembership && requestedMembership !== user.membership) {
             // 멤버십 불일치는 응모 시도 전의 사용자 문맥 오류라 거절 이력으로 저장하지 않는다 —
             // 저장하면 헤더를 고친 재시도까지 옛 거절로 막힌다
-            return fail(409, 'USER_MEMBERSHIP_MISMATCH', '사용자 멤버십 정보가 일치하지 않습니다');
+            return fail(409, 'USER-006', '사용자 멤버십 정보가 일치하지 않습니다');
         }
         if (user?.role === 'ADMIN') {
             return reject(403, 'ENTRY-002', '관리자는 이벤트에 응모할 수 없습니다');
@@ -470,7 +523,11 @@ export const entryHandlers = [
             }
         } else if (!rule.weightingEnabled) {
             // 브론즈 1장 고정 — 다른 등급·장수나 브론즈 부족은 모두 BRONZE_REQUIRED로 구분 안내한다
-            const bronzeOnly = tickets.BRONZE === 1 && tickets.SILVER === 0 && tickets.GOLD === 0;
+            const bronzeOnly =
+                tickets.BRONZE === 1 &&
+                tickets.SILVER === 0 &&
+                tickets.GOLD === 0 &&
+                tickets.PLATINUM === 0;
             if (!bronzeOnly || getMockAvailableTicketCountByGrade(userId).BRONZE < 1) {
                 return reject(
                     409,

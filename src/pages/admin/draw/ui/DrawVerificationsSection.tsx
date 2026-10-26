@@ -4,19 +4,21 @@ import { toast } from 'sonner';
 import { useDrawVerifications } from '@entities/drawResult';
 import { useVerifyDraw } from '@features/runDraw';
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { formatKst } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
+import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
-import { PagedFooter } from './PagedFooter';
+import { PagedCount, PagedFooter } from './PagedFooter';
 
 const PAGE_SIZE = 5;
-const CHIP = 'text-caption rounded-md px-2 py-0.5 font-medium whitespace-nowrap';
+// 상태·분류 칩 — 사용자 화면과 같은 공용 배지 모양(둥근 알약, 높이 26·글자 12)에 색만 칩마다 입힌다
+const CHIP = badgeVariants({ variant: null });
 
 interface DrawVerificationsSectionProps {
     drawId: string;
-    /** 확정된 실행만 검증할 수 있다 (AD04 409 미확정 실행) */
+    /** 선정이 완료된 실행만 검증할 수 있다 (AD04 409 미확정 실행) */
     canVerify: boolean;
 }
 
@@ -63,7 +65,7 @@ export function DrawVerificationsSection({ drawId, canVerify }: DrawVerification
 
             {!canVerify && (
                 <p className="text-caption text-fg-tertiary">
-                    확정되지 않은 실행은 검증할 수 없습니다.
+                    선정이 완료되지 않은 실행은 검증할 수 없습니다.
                 </p>
             )}
             {verify.isError && (
@@ -92,6 +94,7 @@ export function DrawVerificationsSection({ drawId, canVerify }: DrawVerification
             )}
             {data && data.items.length > 0 && (
                 <>
+                    <PagedCount total={data.totalElements} />
                     <ul className="flex flex-col gap-3">
                         {data.items.map((verification) => (
                             <li
@@ -111,7 +114,7 @@ export function DrawVerificationsSection({ drawId, canVerify }: DrawVerification
                                     </span>
                                     <span className="text-body-sm text-fg-secondary">
                                         {formatKst(verification.verifiedAt)} ·{' '}
-                                        {verification.verifiedBy}
+                                        {verification.verifiedByName ?? verification.verifiedBy}
                                     </span>
                                 </div>
                                 <ul className="text-body-sm flex flex-col gap-1">

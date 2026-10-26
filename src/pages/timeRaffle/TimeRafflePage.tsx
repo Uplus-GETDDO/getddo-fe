@@ -3,16 +3,17 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useEventList } from '@entities/event';
-import { useVirtualClock } from '@shared/lib/virtualClock';
-import { Badge } from '@shared/ui/badge';
-import { Loading } from '@shared/ui/loading';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { LoadError } from '@shared/ui/load-error';
+import { RefreshStatus } from '@shared/ui/refresh-status';
+import { LoadingBlock, Skeleton, SkeletonCard, SkeletonHeading } from '@shared/ui/skeleton';
 
 import { RAFFLE_SECTION_IDS } from './model/sectionIds';
 import { ClosedRaffleList } from './ui/ClosedRaffleList';
 import { LiveRaffleSection } from './ui/LiveRaffleSection';
 import { TimeRaffleHero } from './ui/TimeRaffleHero';
 import { TimeRaffleTrustNotice } from './ui/TimeRaffleTrustNotice';
-import { UpcomingRaffleCard } from './ui/UpcomingRaffleCard';
+import { UpcomingRaffleSection } from './ui/UpcomingRaffleSection';
 
 const CONTAINER = 'mx-auto w-full max-w-312 px-6 pb-28';
 
@@ -25,7 +26,8 @@ type RaffleView = 'now' | 'closed';
 const VIEW_PARAM = 'view';
 
 export function TimeRafflePage() {
-    const { data: events, isPending, isError } = useEventList();
+    const eventsQuery = useEventList();
+    const { data: events, isPending } = eventsQuery;
     const clock = useVirtualClock();
     // 날짜 머리말('오늘/어제') 표기 전용이라 마운트 시각으로 충분하다 — 마감 판정에는 쓰지 않는다
     const [now] = useState(() => clock.now());
@@ -59,23 +61,38 @@ export function TimeRafflePage() {
         setSearchParams(next === 'closed' ? { [VIEW_PARAM]: 'closed' } : {});
     };
 
-    // 머리의 진행 칸 — 진행 중·오픈 예정은 기본 화면에만 있어 마감 화면이면 먼저 칸을 바꾼다.
-    // 발표 대기 칸은 개수가 미리보기에 없는 오래된 대기 건을 가리킬 수 있어 항상 전체 목록으로 연다
-    const selectSection = (targetId: string) =>
-        changeView(targetId === RAFFLE_SECTION_IDS.closed ? 'closed' : 'now', targetId);
-
     if (isPending) {
         return (
+            // 페이지 모양을 아는 화면이라 스켈레톤 — 머리 배너, 지금 진행 중 제목·대표 카드·작은 카드
             <main className={CONTAINER}>
-                <Loading size="lg" />
+                <LoadingBlock>
+                    <div aria-hidden className="flex flex-col gap-14">
+                        <Skeleton className="h-72 w-full rounded-3xl" />
+                        <div className="flex flex-col gap-6">
+                            <SkeletonHeading caption />
+                            <SkeletonCard className="h-64" />
+                            <div className="grid gap-6 md:grid-cols-2">
+                                <SkeletonCard className="h-40" />
+                                <SkeletonCard className="h-40" />
+                            </div>
+                        </div>
+                    </div>
+                </LoadingBlock>
             </main>
         );
     }
 
-    if (isError) {
+    // 처음부터 못 받았을 때만 실패 칸 — 받아 둔 목록이 있으면 다시 받기에 실패해도 그대로 두고 머리의 갱신 표시로만 알린다
+    if (!events) {
         return (
             <main className={CONTAINER}>
-                <p className="text-destructive text-body-sm">래플을 불러오지 못했습니다.</p>
+                <LoadError
+                    size="md"
+                    title="겟또타임을 불러오지 못했어요"
+                    onRetry={() => void eventsQuery.refetch()}
+                    retrying={eventsQuery.isFetching}
+                    className="border-border-default bg-surface-page min-h-96 rounded-2xl border shadow-md"
+                />
             </main>
         );
     }
@@ -84,8 +101,8 @@ export function TimeRafflePage() {
     const liveRaffles = raffles.filter((event) => event.status === 'open');
     const upcomingRaffles = raffles.filter((event) => event.status === 'upcoming');
     // 마감 이후는 한 목록에 두되 줄마다 발표 대기·발표 완료를 적는다 (시안 '마감한 래플')
-    const closedRaffles = raffles.filter(
-        (event) => event.status === 'closed' || event.status === 'drawn',
+    const closedRaffles = raffles.filter((event) =>
+        ['closed', 'drawn', 'canceled', 'ended'].includes(event.status),
     );
 
     // 마감이 임박한 래플을 먼저 보여 준다.
@@ -103,13 +120,20 @@ export function TimeRafflePage() {
 
     return (
         <main className={CONTAINER}>
+            {/* 머리 배너와 첫 섹션 사이는 미션 페이지(오늘의 적립 → 출석체크)와 같은 56 */}
             <div className="flex flex-col gap-14">
                 <TimeRaffleHero
                     live={byEndsAtAsc}
-                    upcoming={byOpensAtAsc}
-                    closed={byEndsAtDesc}
                     now={now}
-                    onSelectSection={selectSection}
+                    refresh={
+                        // 30초 폴링 중임을 알리고, 실패하면 받아 둔 목록을 둔 채 다시 시도를 연다 (홈 겟또타임과 같은 표시)
+                        <RefreshStatus
+                            fetching={eventsQuery.isFetching}
+                            updatedAt={eventsQuery.dataUpdatedAt}
+                            error={eventsQuery.isError}
+                            onRefresh={() => void eventsQuery.refetch()}
+                        />
+                    }
                 />
 
                 {/*
@@ -136,37 +160,19 @@ export function TimeRafflePage() {
                         />
                     ) : (
                         <>
-                            <LiveRaffleSection id={RAFFLE_SECTION_IDS.live} events={byEndsAtAsc} />
+                            <LiveRaffleSection
+                                id={RAFFLE_SECTION_IDS.live}
+                                events={byEndsAtAsc}
+                                now={now}
+                                ticketLimit={ENTRY_TICKET_LIMIT}
+                            />
 
-                            <section
+                            <UpcomingRaffleSection
                                 id={RAFFLE_SECTION_IDS.upcoming}
-                                className="flex scroll-mt-24 flex-col gap-6"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <h2 className="text-title-3 text-fg-primary">오픈 예정</h2>
-                                    {byOpensAtAsc.length > 0 && (
-                                        <Badge variant="neutral" size="sm">
-                                            {byOpensAtAsc.length}
-                                        </Badge>
-                                    )}
-                                </div>
-                                {byOpensAtAsc.length === 0 ? (
-                                    <p className="text-body-sm text-fg-tertiary">
-                                        오픈 예정인 래플이 없어요.
-                                    </p>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                        {byOpensAtAsc.map((event) => (
-                                            <UpcomingRaffleCard
-                                                key={event.id}
-                                                event={event}
-                                                now={now}
-                                                ticketLimit={ENTRY_TICKET_LIMIT}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
+                                events={byOpensAtAsc}
+                                now={now}
+                                ticketLimit={ENTRY_TICKET_LIMIT}
+                            />
 
                             <ClosedRaffleList
                                 id={RAFFLE_SECTION_IDS.closed}

@@ -4,6 +4,7 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
+import { env } from '@shared/config/env';
 import { RouteErrorFallback } from '@shared/ui/route-error-boundary';
 
 import { AdminGuard } from './AdminGuard';
@@ -51,20 +52,23 @@ export const adminRoutes: RouteObject[] = [
                         default: m.AdminEventsPage,
                     })),
                 ),
+                // 상세는 목록 오른쪽 칸(Outlet)에 열린다 — 목록·검색 조건이 그대로 남는다
+                children: [
+                    {
+                        path: ':eventId',
+                        element: lazyPage(() =>
+                            import('@pages/admin/eventDetail/AdminEventDetailPage').then((m) => ({
+                                default: m.AdminEventDetailPage,
+                            })),
+                        ),
+                    },
+                ],
             },
             {
                 path: 'events/new',
                 element: lazyPage(() =>
                     import('@pages/admin/eventForm/AdminEventFormPage').then((m) => ({
                         default: m.AdminEventFormPage,
-                    })),
-                ),
-            },
-            {
-                path: 'events/:eventId',
-                element: lazyPage(() =>
-                    import('@pages/admin/eventDetail/AdminEventDetailPage').then((m) => ({
-                        default: m.AdminEventDetailPage,
                     })),
                 ),
             },
@@ -93,18 +97,26 @@ export const adminRoutes: RouteObject[] = [
                 ),
             },
             {
-                path: 'tickets',
+                path: 'users',
                 element: lazyPage(() =>
-                    import('@pages/admin/tickets/AdminTicketsPage').then((m) => ({
-                        default: m.AdminTicketsPage,
+                    import('@pages/admin/users/AdminUsersPage').then((m) => ({
+                        default: m.AdminUsersPage,
                     })),
                 ),
             },
             {
-                path: 'audit',
+                path: 'entries',
                 element: lazyPage(() =>
-                    import('@pages/admin/audit/AdminAuditPage').then((m) => ({
-                        default: m.AdminAuditPage,
+                    import('@pages/admin/entries/AdminEntriesPage').then((m) => ({
+                        default: m.AdminEntriesPage,
+                    })),
+                ),
+            },
+            {
+                path: 'tickets',
+                element: lazyPage(() =>
+                    import('@pages/admin/tickets/AdminTicketsPage').then((m) => ({
+                        default: m.AdminTicketsPage,
                     })),
                 ),
             },
@@ -125,21 +137,34 @@ export const adminRoutes: RouteObject[] = [
                 ),
             },
             {
-                path: 'virtual-clock',
+                path: 'attendance-policies',
                 element: lazyPage(() =>
-                    import('@pages/admin/virtualClock/AdminVirtualClockPage').then((m) => ({
-                        default: m.AdminVirtualClockPage,
-                    })),
+                    import('@pages/admin/attendancePolicies/AdminAttendancePoliciesPage').then(
+                        (m) => ({ default: m.AdminAttendancePoliciesPage }),
+                    ),
                 ),
             },
             {
-                path: 'virtual-users',
+                path: 'missions',
                 element: lazyPage(() =>
-                    import('@pages/admin/virtualUsers/AdminVirtualUsersPage').then((m) => ({
-                        default: m.AdminVirtualUsersPage,
+                    import('@pages/admin/missions/AdminMissionsPage').then((m) => ({
+                        default: m.AdminMissionsPage,
                     })),
                 ),
             },
+            // 가상 시계는 로컬 개발 전용 표시 도구 — 배포 라우트에는 등록하지 않는다
+            ...(env.isDev
+                ? [
+                      {
+                          path: 'virtual-clock',
+                          element: lazyPage(() =>
+                              import('@pages/admin/virtualClock/AdminVirtualClockPage').then(
+                                  (m) => ({ default: m.AdminVirtualClockPage }),
+                              ),
+                          ),
+                      },
+                  ]
+                : []),
             // 관리자 영역 안의 미매칭 경로 — 관리자 셸을 유지한 채 404를 보여준다.
             // 사용자 라우트도 같은 페이지를 정적 import하므로 lazy 대상이 되지 않아 직접 참조한다
             { path: '*', element: <NotFoundPage /> },

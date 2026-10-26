@@ -44,6 +44,8 @@ export const adminNotificationSchema = z.object({
     id: z.string(),
     jobId: z.string(),
     userId: z.string(),
+    // ADR-028 표시용 수신자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    userName: z.string().nullish(),
     eventId: z.string().nullable(),
     title: z.string(),
     body: z.string(),

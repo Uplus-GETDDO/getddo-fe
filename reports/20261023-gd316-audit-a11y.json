@@ -1,0 +1,970 @@
+{
+    "timestamp": "2026-10-23T00:09:35.618569+00:00",
+    "base": "http://localhost:5199",
+    "eventId": "20000000-0000-4000-8000-000000000904",
+    "mode": "local-dev-msw",
+    "fixture": "합성 감사 12행: null·긴 사유·긴 요청 ID·페이지 이동. 서버 실측 아님.",
+    "zoomMethod": "임시 Chromium 확장의 chrome.tabs.setZoom(tabId, 2)로 네이티브 페이지 확대 200%. CSS zoom·DPR 에뮬레이션 아님.",
+    "baseline": "reports\\20261023-gd316-audit-a11y-before.json",
+    "checks": {
+        "desktop": {
+            "keyboard": {
+                "tabSequence": [
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "후보 명단",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "운영 이력",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "운영 이력",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "후보 명단",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    }
+                ],
+                "scroll": {
+                    "left": 3,
+                    "width": 798,
+                    "total": 972
+                },
+                "pages": [10, 2, 10],
+                "focusReturned": true
+            },
+            "layout": {
+                "viewport": 1280,
+                "documentWidth": 1280,
+                "pageOverflow": false,
+                "dialogOverflow": false,
+                "bodyOverflow": false,
+                "auditSectionClipped": false,
+                "clippedCells": 0,
+                "overlappingRows": 0,
+                "rowCount": 10,
+                "wrappedReasons": 5,
+                "scrollWidth": 972,
+                "clientWidth": 798,
+                "zoom": "1"
+            },
+            "pageErrors": []
+        },
+        "w320": {
+            "keyboard": {
+                "tabSequence": [
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "등수\t슬롯\t당첨자\t구분\t공개 이력\n1등\t1\t사용자004\nuser-004\n",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "후보 명단",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "운영 이력",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "실패 코드\t안내\t실패 시각\t추적 ID\nTRANSIENT_STORAGE\t추",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실패 코드\t안내\t실패 시각\t추적 ID\nTRANSIENT_STORAGE\t추",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "운영 이력",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "후보 명단",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "등수\t슬롯\t당첨자\t구분\t공개 이력\n1등\t1\t사용자004\nuser-004\n",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    }
+                ],
+                "scroll": {
+                    "left": 3,
+                    "width": 190,
+                    "total": 972
+                },
+                "pages": [10, 2, 10],
+                "focusReturned": true
+            },
+            "layout": {
+                "viewport": 320,
+                "documentWidth": 320,
+                "pageOverflow": false,
+                "dialogOverflow": false,
+                "bodyOverflow": true,
+                "auditSectionClipped": false,
+                "clippedCells": 0,
+                "overlappingRows": 0,
+                "rowCount": 10,
+                "wrappedReasons": 5,
+                "scrollWidth": 972,
+                "clientWidth": 190,
+                "zoom": "1"
+            },
+            "pageErrors": []
+        },
+        "zoom200": {
+            "nativeZoom": 2,
+            "viewport": {
+                "width": 632,
+                "height": 402,
+                "dpr": 2
+            },
+            "keyboard": {
+                "tabSequence": [
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "후보 명단",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "운영 이력",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "실패 코드\t안내\t실패 시각\t추적 ID\nTRANSIENT_STORAGE\t추",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실패 코드\t안내\t실패 시각\t추적 ID\nTRANSIENT_STORAGE\t추",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "운영 이력",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "후보 명단",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "정합성 검증",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "추첨 결과",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "재추첨 시작·재개",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "Close",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "다음 페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "2페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "1페이지",
+                        "tag": "BUTTON",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    },
+                    {
+                        "key": "Shift+Tab",
+                        "name": "실행 감사 표 가로 스크롤",
+                        "tag": "DIV",
+                        "insideDialog": true,
+                        "visible": true,
+                        "ring": true
+                    }
+                ],
+                "scroll": {
+                    "left": 7,
+                    "width": 502,
+                    "total": 972
+                },
+                "pages": [10, 2, 10],
+                "focusReturned": true
+            },
+            "layout": {
+                "viewport": 632,
+                "documentWidth": 632,
+                "pageOverflow": false,
+                "dialogOverflow": false,
+                "bodyOverflow": false,
+                "auditSectionClipped": false,
+                "clippedCells": 0,
+                "overlappingRows": 0,
+                "rowCount": 10,
+                "wrappedReasons": 5,
+                "scrollWidth": 972,
+                "clientWidth": 502,
+                "zoom": "1"
+            },
+            "pageErrors": []
+        }
+    },
+    "browser": "149.0.7827.55",
+    "verdict": "pass"
+}

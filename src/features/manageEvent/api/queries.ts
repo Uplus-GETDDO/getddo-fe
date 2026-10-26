@@ -3,13 +3,17 @@ import { z } from 'zod';
 
 import type { EventWriteRequest } from '@entities/event';
 
+import { BANNERS_KEY } from '@entities/banner';
+import { ENTRIES_KEY } from '@entities/entry';
 import {
     ADMIN_EVENTS_API_PATH,
     ADMIN_EVENTS_KEY,
     adminEventApiPath,
     adminEventSchema,
     eventOperationResultSchema,
+    EVENTS_KEY,
 } from '@entities/event';
+import { TICKETS_KEY } from '@entities/ticket';
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
 
@@ -77,7 +81,11 @@ export function useEventAction(action: EventAction) {
             return envelopeSchema(eventOperationResultSchema).parse(data).data;
         },
         onSuccess: () => {
-            void queryClient.invalidateQueries({ queryKey: ADMIN_EVENTS_KEY });
+            return Promise.all(
+                [ADMIN_EVENTS_KEY, EVENTS_KEY, ENTRIES_KEY, TICKETS_KEY, BANNERS_KEY].map(
+                    (queryKey) => queryClient.invalidateQueries({ queryKey }),
+                ),
+            );
         },
     });
 }

@@ -1,14 +1,12 @@
-import { List } from 'lucide-react';
+import { Bell, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useNotificationList } from '@entities/notification';
 import {
     useMarkAllNotificationsRead,
     useMarkNotificationRead,
 } from '@features/markNotificationRead';
-import { useVirtualClock } from '@shared/lib/virtualClock';
-import { Button } from '@shared/ui/button';
 import {
     Sheet,
     SheetContent,
@@ -17,30 +15,40 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@shared/ui/sheet';
-import { SkeletonList } from '@shared/ui/skeleton';
 
-import { groupNotifications } from '../lib/groupNotifications';
-import { toInternalPath } from '../lib/toInternalPath';
-import { NotificationEmpty, NotificationGroupList } from './NotificationGroupList';
+import { toInternalPath } from '../utils/toInternalPath';
+import { NotificationPagedList } from './NotificationPagedList';
 
 const FOCUS =
     'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-page focus-visible:outline-none';
 
+/** 마이페이지의 알림 전체 페이지 — 드로어 아래 '모든 알림 보기'가 연다 */
+export const NOTIFICATIONS_PAGE_PATH = '/my-notifications';
+
 /**
- * 알림 전체 보기 드로어 — 벨 옆 버튼으로 연다. 목록은 팝오버와 같은 쿼리 훅·항목 UI를 쓰고,
- * "더보기" 커서 페이지네이션이다 (ADR-0009). 알림 삭제·관리는 계약이 없어 제공하지 않는다.
+ * 헤더 알림 — 종 버튼 하나가 오른쪽 드로어를 연다. 팝오버와 전체 보기 버튼이 따로 있어 헷갈려 드로어 하나로 합쳤다.
+ * 목록은 번호 페이지로 넘긴다 — 서버 커서(ADR-0009)를 차례로 따라가 쪽을 만든다. 알림 삭제·관리는 계약이 없어 제공하지 않는다.
  * 갱신 정책(미확정): 열 때마다 재조회한다 — 본문은 열려 있을 때만 마운트된다
  */
 export function NotificationDrawer() {
     const [open, setOpen] = useState(false);
+    // 미읽음 전체 수는 로드된 페이지와 무관하게 표시해야 하므로 isRead 필터의 totalElements를 별도 조회한다
+    const { data: unreadData } = useNotificationList({ isRead: false, size: 1 });
+    const unreadCount = unreadData?.pages[0]?.totalElements ?? 0;
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
-                aria-label="알림 전체 보기"
-                className={`text-fg-primary flex size-6 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
+                aria-label={unreadCount > 0 ? `알림, 읽지 않음 ${unreadCount}개` : '알림'}
+                className={`text-fg-primary flex min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full ${FOCUS}`}
             >
-                <List className="size-6" />
+                {/* 점은 44px 누름 칸이 아니라 종 그림 어깨에 걸친다 — 칸 모서리에 두면 종과 멀어 보였다 */}
+                <span className="relative">
+                    <Bell className="size-6" />
+                    {unreadCount > 0 && (
+                        <span className="bg-brand-primary border-surface-page absolute -top-px right-0.5 size-2.5 rounded-full border-2" />
+                    )}
+                </span>
             </SheetTrigger>
             <SheetContent className="bg-surface-elevated w-full gap-0 sm:max-w-md">
                 <SheetHeader className="pt-4 pr-12 pb-3.5 pl-5">
@@ -48,51 +56,29 @@ export function NotificationDrawer() {
                     <SheetDescription className="sr-only">받은 알림 전체 목록</SheetDescription>
                 </SheetHeader>
                 <DrawerBody onClose={() => setOpen(false)} />
+                {/* 지난 알림까지 넓게 보는 곳은 마이페이지 — 목록을 못 불러와도 갈 수 있게 본문 밖 바닥에 둔다. 드로어는 닫고 넘어간다 */}
+                <Link
+                    to={NOTIFICATIONS_PAGE_PATH}
+                    onClick={() => setOpen(false)}
+                    className={`border-border-default text-body-sm-bold text-fg-primary hover:bg-surface-sunken mt-auto flex shrink-0 items-center justify-center gap-0.5 border-t py-4 ${FOCUS}`}
+                >
+                    모든 알림 보기
+                    <ChevronRight aria-hidden className="size-4" />
+                </Link>
             </SheetContent>
         </Sheet>
     );
 }
 
+/** 드로어 한 쪽에 담는 알림 수 — 좁은 칸이라 페이지보다 적게 */
+const DRAWER_PAGE_SIZE = 10;
+
 function DrawerBody({ onClose }: { onClose: () => void }) {
-    const {
-        data,
-        isPending,
-        isError,
-        isFetchNextPageError,
-        refetch,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-    } = useNotificationList({ refetchOnMount: 'always' });
     const { data: unreadData } = useNotificationList({ isRead: false, size: 1 });
     const { mutate: markRead } = useMarkNotificationRead();
     const { mutate: markAllRead, isPending: isMarkingAll } = useMarkAllNotificationsRead();
     const navigate = useNavigate();
-    const now = useVirtualClock().now();
-
-    const notifications = data?.pages.flatMap((page) => page.items) ?? [];
     const unreadCount = unreadData?.pages[0]?.totalElements ?? 0;
-    const groups = groupNotifications(notifications, now);
-
-    if (isPending) {
-        return (
-            <div role="status" className="px-5 py-4">
-                <span className="sr-only">알림을 불러오는 중이에요</span>
-                <SkeletonList count={4} rowClassName="h-16" />
-            </div>
-        );
-    }
-    // 첫 페이지 실패만 전체 오류로 본다 — 이미 받은 목록은 더보기 실패에도 유지한다
-    if (isError && !data) {
-        return (
-            <div role="alert" className="flex flex-col items-center gap-3 px-6 py-10 text-center">
-                <p className="text-body-sm text-fg-secondary">알림을 불러오지 못했어요.</p>
-                <Button variant="secondary" size="sm" onClick={() => void refetch()}>
-                    다시 시도
-                </Button>
-            </div>
-        );
-    }
 
     return (
         <>
@@ -104,45 +90,25 @@ function DrawerBody({ onClose }: { onClose: () => void }) {
                     type="button"
                     disabled={unreadCount === 0 || isMarkingAll}
                     onClick={() => markAllRead()}
-                    className={`text-fg-primary disabled:text-fg-disabled cursor-pointer rounded-sm text-sm leading-[1.375rem] hover:underline disabled:cursor-not-allowed disabled:no-underline ${FOCUS}`}
+                    // 글줄(22px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다
+                    className={`text-fg-primary disabled:text-fg-disabled -my-0.5 cursor-pointer rounded-sm py-0.5 text-sm leading-[1.375rem] hover:underline disabled:cursor-not-allowed disabled:no-underline ${FOCUS}`}
                 >
                     모두 읽음
                 </button>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
-                {groups.length === 0 ? (
-                    <NotificationEmpty />
-                ) : (
-                    <NotificationGroupList
-                        groups={groups}
-                        now={now}
-                        onRead={({ id, linkUrl }) => {
-                            markRead(id);
-                            const path = toInternalPath(linkUrl);
-                            if (path) {
-                                onClose();
-                                void navigate(path);
-                            }
-                        }}
-                    />
-                )}
-                {hasNextPage && (
-                    <div className="flex flex-col items-center gap-2 py-4">
-                        {isFetchNextPageError && (
-                            <p role="alert" className="text-body-sm text-fg-secondary">
-                                알림을 더 불러오지 못했어요.
-                            </p>
-                        )}
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            disabled={isFetchingNextPage}
-                            onClick={() => void fetchNextPage()}
-                        >
-                            {isFetchingNextPage ? '불러오는 중…' : '알림 더 보기'}
-                        </Button>
-                    </div>
-                )}
+                <NotificationPagedList
+                    size={DRAWER_PAGE_SIZE}
+                    refetchOnMount="always"
+                    onRead={({ id, linkUrl }) => {
+                        markRead(id);
+                        const path = toInternalPath(linkUrl);
+                        if (path) {
+                            onClose();
+                            void navigate(path);
+                        }
+                    }}
+                />
             </div>
         </>
     );

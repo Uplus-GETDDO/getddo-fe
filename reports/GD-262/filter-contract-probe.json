@@ -1,0 +1,53 @@
+{
+    "checkedAt": "2026-10-21T01:09:19.893Z",
+    "user": "USER_A",
+    "allCount": 28,
+    "allRequests": [
+        {
+            "path": "/v1/events?page=1&size=20",
+            "status": 200,
+            "durationMs": 123.49660000000002,
+            "decodedBytes": 7258
+        },
+        {
+            "path": "/v1/events?page=2&size=20",
+            "status": 200,
+            "durationMs": 30.29650000000001,
+            "decodedBytes": 2786
+        }
+    ],
+    "filters": [
+        {
+            "eventType": "NO_TICKET",
+            "expected": 9,
+            "actual": 9,
+            "expectedIdsHash": "92db8698f1c3852171b5e9400fa9cac2e414aa87ce9c3aa7ce8b30a188e3b021",
+            "actualIdsHash": "92db8698f1c3852171b5e9400fa9cac2e414aa87ce9c3aa7ce8b30a188e3b021",
+            "sameIds": true,
+            "requests": [
+                {
+                    "path": "/v1/events?page=1&size=20&eventType=NO_TICKET",
+                    "status": 200,
+                    "durationMs": 32.19409999999999,
+                    "decodedBytes": 3290
+                }
+            ]
+        },
+        {
+            "eventType": "TICKET",
+            "expected": 19,
+            "actual": 19,
+            "expectedIdsHash": "f54f53c86f09d5777f5c451467eadebd515d5fd9375305041afa42df04c8ecc8",
+            "actualIdsHash": "f54f53c86f09d5777f5c451467eadebd515d5fd9375305041afa42df04c8ecc8",
+            "sameIds": true,
+            "requests": [
+                {
+                    "path": "/v1/events?page=1&size=20&eventType=TICKET",
+                    "status": 200,
+                    "durationMs": 29.904200000000003,
+                    "decodedBytes": 6753
+                }
+            ]
+        }
+    ]
+}

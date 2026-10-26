@@ -1,46 +1,70 @@
-import { Gamepad2, Ticket } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@shared/ui/button';
-import { TicketCard } from '@shared/ui/ticket-card';
+import { TicketCard, TicketCardMedia } from '@shared/ui/ticket-card';
 
 import type { Game } from '../model/types';
+
+import { getGameContent } from '../model/gameContent';
 
 /** 게임 보상은 게임별 하루 1회 응모권 1장 (getddo-spec 게임 규칙) */
 const DAILY_GAME_REWARD = 1;
 
 /**
  * 게임 티켓 카드 — 썸네일, 설명, 오늘 받을 응모권, 플레이 버튼 (공용 TicketCard, 피그마 Group 633903).
- * 카드 어디를 눌러도 게임 화면으로 들어간다. 카드에 마우스를 올려도 움직이지 않는다 (다른 카드와 통일).
+ * 카드 어디를 눌러도 게임 화면으로 들어간다. 카드는 움직이지 않고(다른 카드와 통일), 마우스를 올리면 썸네일만 살짝 확대된다 (공용 TicketCardMedia).
  * 게임은 횟수 제한 없이 플레이할 수 있어서, 오늘 보상을 받은 뒤에도 버튼은 계속 누를 수 있다
  */
 export function GameTicketCard({
     game,
     href,
     ready = true,
+    fluid = false,
     className,
+    rewardedToday,
+    rewardImage,
 }: {
     game: Game;
+    rewardedToday?: boolean;
+    /**
+     * 보상 응모권 그림 — 게임 보상은 받을 때 등급을 뽑아 '?' 응모권을 쓴다.
+     * 응모권 그림은 entities/ticket에 있어 같은 레이어끼리 참조할 수 없으므로 부르는 위젯이 넘긴다
+     */
+    rewardImage: string;
     href: string;
     /** 플레이 화면이 준비됐는지 — false면 버튼을 '준비 중'으로 막는다 */
     ready?: boolean;
+    /** 고정 폭(265) 대신 놓인 칸을 꽉 채운다 — 미션 페이지처럼 카드 수가 적어 줄이 비어 보일 때 */
+    fluid?: boolean;
     className?: string;
 }) {
-    const rewarded = game.rewardedToday ?? false;
+    const rewarded = rewardedToday;
+    const content = getGameContent(game);
 
     return (
         <TicketCard
             className={className}
-            cardClassName="relative h-90 w-66.25"
+            cardClassName={`relative h-90 ${fluid ? 'w-full' : 'w-66.25'}`}
             stub={
                 <>
                     <div className="mt-3.75 flex h-4.5 items-center justify-between gap-2">
                         <span className="text-caption text-fg-tertiary">응모권</span>
-                        {rewarded ? (
+                        {rewarded === undefined ? (
+                            <span className="text-caption text-fg-tertiary">
+                                보상은 상세에서 확인
+                            </span>
+                        ) : rewarded ? (
                             <span className="text-caption text-fg-tertiary">오늘 받음</span>
                         ) : (
                             <span className="text-body-sm-bold text-fg-primary flex items-center gap-1">
-                                <Ticket aria-hidden className="size-4.5" />+{DAILY_GAME_REWARD}
+                                <img
+                                    src={rewardImage}
+                                    alt=""
+                                    aria-hidden
+                                    className="h-4.5 w-auto object-contain"
+                                />
+                                +{DAILY_GAME_REWARD}
                             </span>
                         )}
                     </div>
@@ -74,21 +98,20 @@ export function GameTicketCard({
                     className="absolute inset-0 z-1 rounded-2xl"
                 />
             )}
-            <div className="bg-surface-canvas flex h-30 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                {game.thumbnailUrl ? (
-                    <img src={game.thumbnailUrl} alt="" className="size-full object-cover" />
-                ) : (
-                    <Gamepad2 aria-hidden className="text-fg-disabled size-8" />
-                )}
-            </div>
+            <TicketCardMedia
+                src={content.heroImage}
+                position={content.cardImagePosition}
+                fallback={<Gamepad2 aria-hidden className="text-fg-disabled size-8" />}
+            />
 
             <div className="mt-3 flex flex-col gap-2">
                 <div className="flex flex-col">
                     <span className="text-caption text-fg-tertiary">GAME</span>
-                    <h3 className="text-body-bold text-fg-primary truncate">{game.title}</h3>
+                    <h3 className="text-body-bold text-fg-primary truncate">{game.name}</h3>
                 </div>
-                {game.description && (
-                    <p className="text-body-sm text-fg-tertiary line-clamp-2">{game.description}</p>
+                {/* 한 줄 소개는 게임별 고정 문구(tagline)를 쓴다 — 서버 description은 비어 있을 때가 많아 제목만 남았다 */}
+                {content.tagline && (
+                    <p className="text-body-sm text-fg-tertiary line-clamp-2">{content.tagline}</p>
                 )}
             </div>
         </TicketCard>

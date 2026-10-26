@@ -1,0 +1,122 @@
+{
+    "kind": "기존 전체 E06에서 eventId·ACCEPTED 필터 응답을 재구성한 통제 데이터",
+    "sourceHash": "da9986c6bf75414e81616d66d984036688c54a45462196fd2b1eb996fcec570b",
+    "fixtureHash": "258ec61b8bce024c1b0e06554f646b01c9dc694376217aa4f6d9f4c273b1f528",
+    "sourceEntries": 16,
+    "added": [
+        {
+            "eventHash": "614c7a7545222475f4dc1b04dc59e55c8d75ea69558e8440db2b74dd1029dd56",
+            "items": 0
+        },
+        {
+            "eventHash": "7cb101b095f2b3305f9c8ccf03a138960fec2e2e32b9a53939a8b505a40c9a09",
+            "items": 1
+        },
+        {
+            "eventHash": "39f2356cd90810fac2159a18b430ed57f5c866bf6c55e93e71d6e55fe46f9b9e",
+            "items": 1
+        },
+        {
+            "eventHash": "65b36c2792ddcdebc422a064889ce59431a56d1aa881a559feeb89d9c4cf701b",
+            "items": 1
+        },
+        {
+            "eventHash": "a6e385d0a6df17b76e0d1de77ead5ffa511ce20c0d9d2e2580754770fd3ee82f",
+            "items": 1
+        },
+        {
+            "eventHash": "4adf0ef98695f9ed467ddbba2e18f40a9a426d477451f49d5b082e418ee63d17",
+            "items": 0
+        },
+        {
+            "eventHash": "5808ea171fe80bb948e3e0e2643e1f8846815614fc0933535a2d5834caa1dc4e",
+            "items": 0
+        },
+        {
+            "eventHash": "889b6715270689a12def31ee38c739336a71a47975a23de968109aca19324e7e",
+            "items": 0
+        },
+        {
+            "eventHash": "5d241ee28069f4a3d057ef7c77b64b506faa86f8788043888e43cc9a01c03a3d",
+            "items": 0
+        },
+        {
+            "eventHash": "aab4f80ced873a15dfe2ac8ff4fa62eb42d47307b0728b2448dcadecc4a2132a",
+            "items": 0
+        },
+        {
+            "eventHash": "00f2d3702e288d1f2b8818214859e1342db32f548f6900a38e22ec1a9b36e6ca",
+            "items": 5
+        },
+        {
+            "eventHash": "94f9298f53f990890fa915ee1c683b22c7e93637a91e35ff78b81d4fc339ac4a",
+            "items": 0
+        },
+        {
+            "eventHash": "b0219288788f470f460dd40e8ae8e33b4baec84ae6c9af413098fe61044da3a1",
+            "items": 0
+        },
+        {
+            "eventHash": "7fe5d40a46824ae714d8892fae6dad91520aedc871d068ac5db431e284a8991f",
+            "items": 0
+        },
+        {
+            "eventHash": "e21ddbdcf371335dd7608213ede476e56af9baf73e4a393c211157077c4c50d8",
+            "items": 0
+        },
+        {
+            "eventHash": "88cc681ad26c21aaa91b65b61773fb1e7a31d30428157e42ebc175ec960eea1c",
+            "items": 1
+        },
+        {
+            "eventHash": "a94dfbc04d09a6cc269ea86ea911aade275a2964b671a5eeb92513fbb7e920fc",
+            "items": 1
+        },
+        {
+            "eventHash": "2967cebdc27a5a2e57a537d562f947dc5319f0358ad88307fc5cb4115be4a53b",
+            "items": 0
+        },
+        {
+            "eventHash": "d4dafe683f707f300c1aab91041d1d1fb0a582b896924f5cad694dd97fcf5ae4",
+            "items": 0
+        },
+        {
+            "eventHash": "9f1f5faa2d6900a7d3a039d58e7183bb60fbf56a097ca9731e4e1a0de63ccbc5",
+            "items": 0
+        },
+        {
+            "eventHash": "7fbdf6402b0ad0e28c2b509f74f2a5eea4376ac3b3c90478d6ea911cb49a1cc6",
+            "items": 0
+        },
+        {
+            "eventHash": "08461107aaf676946b76d7fa866061d355f3b2206966e728b01be2cbfab944b0",
+            "items": 0
+        },
+        {
+            "eventHash": "ae4f132e3e30c6c00209f749af30897bc5df3b106f944ef64b3cf19208b32aad",
+            "items": 0
+        },
+        {
+            "eventHash": "1a016b2b5041af265e454c2d3e8881b6b95492d1d36b7729cbb35c252aad5c70",
+            "items": 0
+        },
+        {
+            "eventHash": "f13d2caa146e7e8fe5dc900591979f1ea764dc9092b3cdcad364feac53cb49b8",
+            "items": 0
+        },
+        {
+            "eventHash": "2462e20d6e9fe02069a883b123e4fe618fa60763538326963b3d1eceaab249b4",
+            "items": 0
+        },
+        {
+            "eventHash": "47839adbc8ab5e7d33a969019f76646f4937a52bdd9c9e5f374aad7d8278de13",
+            "items": 0
+        },
+        {
+            "eventHash": "b98118ef86f51c755229fe20689b4e1754c2f9af421331c230ff1e48ce98fe74",
+            "items": 0
+        }
+    ],
+    "liveRequests": 0,
+    "limitation": "새 실서버 표본이 아니며 필터 API의 서버 구현 정확성을 검증하지 않습니다."
+}

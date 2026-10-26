@@ -39,7 +39,8 @@ export function AdminBannersPage() {
     );
     // 조회 중·실패는 실제 미확인(삭제)과 구분한다 — 조회 실패는 이벤트 ID를 그대로 보여준다
     const eventTitleOf = useCallback(
-        (eventId: string) => {
+        (eventId: string | null) => {
+            if (eventId === null) return '(미연결 배너)';
             const title = events.find((event) => event.id === eventId)?.title;
             if (title) return title;
             if (eventsPending) return '이벤트 확인 중…';
@@ -60,23 +61,29 @@ export function AdminBannersPage() {
         },
         [banners, reorder],
     );
+    // 끌어 놓기는 표가 정한 전체 순서를 그대로 보낸다 — 한 칸 이동과 달리 계산할 게 없다
+    const handleReorder = useCallback(
+        (bannerIds: string[]) => reorder.mutate(bannerIds),
+        [reorder],
+    );
     const handleEdit = useCallback((banner: AdminBanner) => setFormTarget(banner), []);
     const handleDelete = useCallback((banner: AdminBanner) => setDeleteTarget(banner), []);
 
     const count = banners?.length ?? 0;
     const full = count >= BANNER_MAX_COUNT;
     const editing = formTarget !== null && formTarget !== 'new' ? formTarget : null;
-    const nextDisplayOrder = banners?.length
-        ? Math.max(...banners.map((banner) => banner.displayOrder)) + 1
-        : 0;
+    // 쓰기 순서는 보존된 이전 값이 아닌 현재 목록의 1기반 위치다.
+    const displayOrder = editing
+        ? (banners ?? []).findIndex((banner) => banner.id === editing.id) + 1
+        : count + 1;
 
     return (
-        <div className="flex max-w-280 flex-col gap-6 pr-10 pb-10">
+        <div className="flex flex-col gap-6 pr-10 pb-10">
             <div className="flex flex-wrap items-center gap-3">
-                <p className="text-body-sm text-fg-secondary">
-                    홈 화면 상단에 노출됩니다. 위쪽 배너가 먼저 보이며 최대 {BANNER_MAX_COUNT}개까지
-                    등록할 수 있습니다{banners ? ` (현재 ${count}개)` : ''}.
-                </p>
+                {/* 소개 문구 대신 몇 개를 더 올릴 수 있는지만 */}
+                <span className="text-body-sm text-fg-secondary tabular-nums">
+                    {banners ? `${count} / ${BANNER_MAX_COUNT}개` : ''}
+                </span>
                 <Button
                     ref={addButtonRef}
                     className="ml-auto"
@@ -127,6 +134,7 @@ export function AdminBannersPage() {
             {banners && banners.length > 0 && (
                 <AdminBannerTable
                     banners={banners}
+                    onReorder={handleReorder}
                     eventTitleOf={eventTitleOf}
                     onMove={handleMove}
                     onEdit={handleEdit}
@@ -141,11 +149,7 @@ export function AdminBannersPage() {
                     if (!open) setFormTarget(null);
                 }}
                 banner={editing}
-                events={events}
-                eventsPending={eventsPending}
-                eventsError={eventsError}
-                onEventsRetry={() => void refetchEvents()}
-                nextDisplayOrder={nextDisplayOrder}
+                displayOrder={displayOrder}
             />
             <DeleteBannerDialog
                 banner={deleteTarget}

@@ -37,13 +37,15 @@
     --color-game-yellow: #f59f00;
     --color-game-green: #37b24d;
 
-    /* Grade — 응모권 등급 (브론즈·실버·골드). 밝기·채도를 고르게 맞춘 차분한 색. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕 · 다크 모드에도 그대로 */
+    /* Grade — 응모권 등급 (브론즈·실버·골드·플래티넘). 밝기·채도를 고르게 맞춘 차분한 색. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕 · 다크 모드에도 그대로 */
     --color-grade-bronze: #c27c55;
     --color-grade-bronze-soft: #f6e9e1;
     --color-grade-silver: #8e9bad;
     --color-grade-silver-soft: #eceff4;
     --color-grade-gold: #d9a92e;
     --color-grade-gold-soft: #faf0d2;
+    --color-grade-platinum: #5f7196;
+    --color-grade-platinum-soft: #dbe6f8;
 
     /* Surface — 배경 레이어 */
     --color-surface-page: #ffffff;
@@ -67,6 +69,16 @@
     --color-border-strong: #cdd2d8;
     --color-border-brand: #e6007e;
     --color-border-brand-subtle: #f5a3cb;
+    /*
+     * 입력칸 테두리 — 카드 테두리(border/default)보다 진하다.
+     *
+     * 카드는 회색 바탕(surface/canvas) 위 흰 칸이라 테두리가 연해도 경계가 읽히지만,
+     * 입력칸은 흰 카드 위 흰 칸이라 테두리만이 유일한 경계다. default(#e4e7ea)는 흰 바탕과
+     * 1.24:1이라 칸이 있는지조차 보이지 않았다 — WCAG 1.4.11은 컨트롤 경계에 3:1을 요구한다.
+     * 이 값은 3.19:1, hover는 4.86:1이다.
+     */
+    --color-border-input: #8a9199;
+    --color-border-input-hover: #6b727c;
     /* 키보드 포커스 링 — 잉크(fg/primary). 마젠타는 브랜드·강조와 겹쳐 잉크로 바꿨고, 2px 띄워 검정 버튼·노랑 배너 위에서도 보이게 한다 */
     --color-border-focus: var(--color-fg-primary);
 
@@ -87,15 +99,15 @@
 
     /* Status — 관리자 전용 뱃지 */
     --color-status-pending: #f1f3f5;
-    --color-status-active: #e7f0fe;
-    --color-status-revision: #fbf0d9;
-    --color-status-approved: #e6f5ee;
-    --color-status-rejected: #fbebee;
+    --color-status-active: #eaf1ff;
+    --color-status-revision: #fff0e6;
+    --color-status-approved: #e3f6f1;
+    --color-status-rejected: #fdecf0;
     --color-status-pending-text: #4b525c;
-    --color-status-active-text: #1d4ed8;
-    --color-status-revision-text: #92400e;
-    --color-status-approved-text: #0b6549;
-    --color-status-rejected-text: #b42318;
+    --color-status-active-text: #2450d6;
+    --color-status-revision-text: #c2410c;
+    --color-status-approved-text: #0a7a5c;
+    --color-status-rejected-text: #d61f45;
 
     /* Chart — 관리자 전용 */
     --color-chart-line: #e6007e;
@@ -104,6 +116,12 @@
     --color-chart-grid: #f1f3f5;
     --color-chart-axis: #9aa1ab;
     --color-chart-highlight: #f59e0b;
+    /* 분포 그래프(도넛) 계열색 — 브랜드 마젠타 한 계열, 1이 가장 진하다. 올린 칸만 brand-primary로 바꾼다 */
+    --color-chart-series-1: #9e0057;
+    --color-chart-series-2: #d1338c;
+    --color-chart-series-3: #ec85b8;
+    --color-chart-series-4: #f8c6de;
+    --color-chart-series-5: #e4e7ea;
     --background-image-chart-area: linear-gradient(
         180deg,
         rgb(230 0 126 / 0) 0%,
@@ -221,6 +239,9 @@
     --color-border-default: #343a42;
     --color-border-strong: #4b525c;
     --color-border-brand-subtle: #7a1550;
+    /* 어두운 입력칸 바탕(surface/page #1f242b) 기준 3.21:1 · hover 5.99:1 */
+    --color-border-input: #6b727c;
+    --color-border-input-hover: #9aa1ab;
 
     /* Foreground — fg-brand는 다크 배경 대비를 위해 밝은 핑크로 */
     --color-fg-primary: #f4f5f7;
@@ -250,6 +271,11 @@
 
     /* Chart */
     --color-chart-compare: #4b525c;
+    --color-chart-series-1: #ff8cc4;
+    --color-chart-series-2: #e2559f;
+    --color-chart-series-3: #a83a76;
+    --color-chart-series-4: #5e2747;
+    --color-chart-series-5: #343a42;
     --color-chart-grid: #2b323c;
     --color-chart-axis: #6b727c;
     --background-image-chart-area: linear-gradient(
@@ -297,6 +323,8 @@
     --color-border-default: #e4e7ea;
     --color-border-strong: #cdd2d8;
     --color-border-brand-subtle: #f5a3cb;
+    --color-border-input: #8a9199;
+    --color-border-input-hover: #6b727c;
     --color-fg-primary: #1f242b;
     --color-fg-secondary: #4b525c;
     --color-fg-tertiary: #6b727c;
@@ -307,18 +335,23 @@
     --color-semantic-error: #f04438;
     --color-semantic-error-strong: #d92d20;
     --color-status-pending: #f1f3f5;
-    --color-status-active: #e7f0fe;
-    --color-status-revision: #fbf0d9;
-    --color-status-approved: #e6f5ee;
-    --color-status-rejected: #fbebee;
+    --color-status-active: #eaf1ff;
+    --color-status-revision: #fff0e6;
+    --color-status-approved: #e3f6f1;
+    --color-status-rejected: #fdecf0;
     --color-status-pending-text: #4b525c;
-    --color-status-active-text: #1d4ed8;
-    --color-status-revision-text: #b45309;
-    --color-status-approved-text: #0b6549;
-    --color-status-rejected-text: #d92d20;
+    --color-status-active-text: #2450d6;
+    --color-status-revision-text: #c2410c;
+    --color-status-approved-text: #0a7a5c;
+    --color-status-rejected-text: #d61f45;
     --color-chart-compare: #cdd2d8;
     --color-chart-grid: #f1f3f5;
     --color-chart-axis: #9aa1ab;
+    --color-chart-series-1: #9e0057;
+    --color-chart-series-2: #d1338c;
+    --color-chart-series-3: #ec85b8;
+    --color-chart-series-4: #f8c6de;
+    --color-chart-series-5: #e4e7ea;
     --background-image-chart-area: linear-gradient(
         180deg,
         rgb(230 0 126 / 0) 0%,

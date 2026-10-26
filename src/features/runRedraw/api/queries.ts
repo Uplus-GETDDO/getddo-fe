@@ -33,21 +33,15 @@ export function useStartRedraw() {
     });
 }
 
-interface PublishRedrawInput {
-    drawId: string;
-    reason: string;
-}
-
-// AD06 — 최초 발표 이후 확정된 재추첨 결과를 공개 명단에 반영한다.
+// AD06 — 당첨자 공개 이후 확정된 재추첨 결과로 공개 명단을 갱신한다.
+// 요청 본문이 없는 계약이라 갱신 사유는 서버가 연결된 취소의 사유를 쓴다 (05-api/drawing.md AD06).
 // 최초 공개 전 재추첨의 확인 API는 후속 계약이라 이 훅을 최초 공개 전에 호출하지 않는다 (호출부가 막는다)
 export function usePublishRedraw() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ drawId, reason }: PublishRedrawInput) => {
-            const { data } = await apiClient.post<unknown>(drawPublicationApiPath(drawId), {
-                reason,
-            });
+        mutationFn: async (drawId: string) => {
+            const { data } = await apiClient.post<unknown>(drawPublicationApiPath(drawId));
             return envelopeSchema(publicationUpdateResultSchema).parse(data).data;
         },
         onSuccess: () => {

@@ -1,0 +1,461 @@
+{
+    "sha256": "c283678400e98457a3434a86bd9a0db0628a4d6731fdb6a8be058145d52b731a",
+    "responses": [
+        {
+            "path": "USER_A:/api/v1/events?page=1&size=20",
+            "status": 200,
+            "decodedBytes": 7266,
+            "items": 20,
+            "totalElements": 28,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/games",
+            "status": 200,
+            "decodedBytes": 593,
+            "items": 4,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions?page=1&size=50",
+            "status": 200,
+            "decodedBytes": 3375,
+            "items": 11,
+            "totalElements": 11,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/notifications/me?size=1&isRead=false",
+            "status": 200,
+            "decodedBytes": 121,
+            "items": 0,
+            "totalElements": 0,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/attendances/today",
+            "status": 200,
+            "decodedBytes": 492,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/banners",
+            "status": 200,
+            "decodedBytes": 1059,
+            "items": 5,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/games/id-b09c94da4bfb/statistics/me",
+            "status": 200,
+            "decodedBytes": 307,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/games/id-6c5c04144d9c/statistics/me",
+            "status": 200,
+            "decodedBytes": 307,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/games/id-427d37bc9eb5/statistics/me",
+            "status": 200,
+            "decodedBytes": 309,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/games/id-62958123dfb5/statistics/me",
+            "status": 200,
+            "decodedBytes": 307,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-88cc681ad26c",
+            "status": 200,
+            "decodedBytes": 681,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-b0219288788f",
+            "status": 200,
+            "decodedBytes": 865,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-e21ddbdcf371",
+            "status": 200,
+            "decodedBytes": 840,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-94f9298f53f9",
+            "status": 200,
+            "decodedBytes": 677,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-7fe5d40a4682",
+            "status": 200,
+            "decodedBytes": 686,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events?page=2&size=20",
+            "status": 200,
+            "decodedBytes": 2786,
+            "items": 8,
+            "totalElements": 28,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-b0219288788f/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-614c7a754522/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-614c7a754522",
+            "status": 200,
+            "decodedBytes": 670,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/me",
+            "status": 200,
+            "decodedBytes": 277,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/histories/me?operationType=GRANT&from=2026-09-30T15:00:00.000Z&to=2026-10-31T15:00:00.000Z&size=1",
+            "status": 200,
+            "decodedBytes": 666,
+            "items": 1,
+            "totalElements": 9,
+            "nextCursorPresent": true
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/histories/me?operationType=REFUND&from=2026-09-30T15:00:00.000Z&to=2026-10-31T15:00:00.000Z&size=1",
+            "status": 200,
+            "decodedBytes": 705,
+            "items": 1,
+            "totalElements": 2,
+            "nextCursorPresent": true
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/histories/me?operationType=USE&from=2026-09-30T15:00:00.000Z&to=2026-10-31T15:00:00.000Z&size=1",
+            "status": 200,
+            "decodedBytes": 680,
+            "items": 1,
+            "totalElements": 10,
+            "nextCursorPresent": true
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/histories/me?operationType=EXPIRE&from=2026-09-30T15:00:00.000Z&to=2026-10-31T15:00:00.000Z&size=1",
+            "status": 200,
+            "decodedBytes": 121,
+            "items": 0,
+            "totalElements": 0,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/attendances?month=2026-10",
+            "status": 200,
+            "decodedBytes": 426,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/histories/me?size=10",
+            "status": 200,
+            "decodedBytes": 5147,
+            "items": 10,
+            "totalElements": 21,
+            "nextCursorPresent": true
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-dc132cc1d3f5",
+            "status": 200,
+            "decodedBytes": 673,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-ece9617399b2",
+            "status": 200,
+            "decodedBytes": 953,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-bba01875007c",
+            "status": 200,
+            "decodedBytes": 673,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-92777604f66c",
+            "status": 200,
+            "decodedBytes": 932,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-fa914b97e8a6",
+            "status": 200,
+            "decodedBytes": 953,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-63b946a2e472",
+            "status": 200,
+            "decodedBytes": 827,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-bc4c69013bf1",
+            "status": 200,
+            "decodedBytes": 827,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-45b5c25f6edf",
+            "status": 200,
+            "decodedBytes": 952,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-d63bc8c719b4",
+            "status": 200,
+            "decodedBytes": 676,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-738dda0f95e7",
+            "status": 200,
+            "decodedBytes": 931,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-a94dfbc04d09/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-2967cebdc27a/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-d4dafe683f70/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-00f2d3702e28/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-889b67152706/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-7cb101b095f2/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-a6e385d0a6df/statistics",
+            "status": 200,
+            "decodedBytes": 239,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-94f9298f53f9/eligibility",
+            "status": 200,
+            "decodedBytes": 297,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-614c7a754522/eligibility",
+            "status": 200,
+            "decodedBytes": 270,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/missions/id-226735dd79ed",
+            "status": 200,
+            "decodedBytes": 734,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/games/id-b09c94da4bfb",
+            "status": 200,
+            "decodedBytes": 458,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/tickets/histories/me?size=20&from=%EA%B3%A0%EC%A0%95-30%EC%9D%BC-%EC%8B%9C%EC%9E%91&to=%EA%B3%A0%EC%A0%95-30%EC%9D%BC-%EB%81%9D",
+            "status": 200,
+            "decodedBytes": 9689,
+            "items": 20,
+            "totalElements": 21,
+            "nextCursorPresent": true
+        },
+        {
+            "path": "USER_A:/api/v1/users/me/entries?page=1&size=50",
+            "status": 200,
+            "decodedBytes": 8040,
+            "items": 16,
+            "totalElements": 16,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-a94dfbc04d09/my-result",
+            "status": 200,
+            "decodedBytes": 237,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-7cb101b095f2/my-result",
+            "status": 200,
+            "decodedBytes": 237,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-39f2356cd908/my-result",
+            "status": 200,
+            "decodedBytes": 238,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-65b36c2792dd/my-result",
+            "status": 200,
+            "decodedBytes": 359,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-00f2d3702e28/my-result",
+            "status": 200,
+            "decodedBytes": 237,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-88cc681ad26c/my-result",
+            "status": 200,
+            "decodedBytes": 237,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/events/id-a6e385d0a6df/my-result",
+            "status": 200,
+            "decodedBytes": 238,
+            "items": null,
+            "totalElements": null,
+            "nextCursorPresent": false
+        },
+        {
+            "path": "USER_A:/api/v1/notifications/me?size=20",
+            "status": 200,
+            "decodedBytes": 2564,
+            "items": 8,
+            "totalElements": 8,
+            "nextCursorPresent": false
+        }
+    ]
+}

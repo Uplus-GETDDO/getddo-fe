@@ -1,5 +1,5 @@
-import { formatKst } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
 import type { TicketHistory, TicketOperationType } from '../model/history';
 

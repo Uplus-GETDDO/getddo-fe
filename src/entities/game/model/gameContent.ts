@@ -1,11 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
 
-import { Gamepad2, Target, Ticket } from 'lucide-react';
+import { Delete, Gamepad2, Target, Ticket } from 'lucide-react';
 
 import colorWordGuide from '../assets/color-word-guide.jpg';
 import guideBanner from '../assets/guide-banner.jpg';
+import takkoOrderGuide from '../assets/takko-order-guide.jpg';
 import takkoRunGuide from '../assets/takko-run-guide.jpg';
-import takoyakiHero from '../assets/takoyaki-hero.jpg';
+import takkoTimingGuide from '../assets/takko-timing-guide.jpg';
 
 export interface GameGuideStep {
     icon: LucideIcon;
@@ -21,6 +22,8 @@ export interface GameContent {
     heroImage: string | null;
     /** 대표 이미지가 대표 영역(840:546)보다 넓어 좌우가 잘릴 때 보여줄 기준점 — 기본은 가운데 */
     heroImagePosition?: string;
+    /** 카드 썸네일(약 2:1)에서 위아래가 잘릴 때 보여줄 기준점 — 기본은 가운데 */
+    cardImagePosition?: string;
     guide: {
         title: string;
         subtitle: string;
@@ -32,12 +35,12 @@ export interface GameContent {
 // 모든 게임 공통 — 게임별 하루 1회 응모권 1장 (getddo-spec 게임 규칙)
 const REWARD_STEP: GameGuideStep = {
     icon: Ticket,
-    text: '하루 한 번, 플레이하면 응모권 1장을 받아요.',
+    text: '게임별 최소 점수로 완료하면 하루 한 번 응모권 1장을 받아요.',
 };
 
 // 게임 종류·규칙은 게임 담당자 확정 전 임시 콘텐츠. 타꼬런 대표 이미지(image 183)와 타코야끼 대표 이미지(image 75)는 피그마 기준
 const CONTENTS: Record<string, GameContent> = {
-    'game-dino': {
+    TAKKO_RUN: {
         tagline: '소스병과 꼬치를 뛰어넘으며 멀리 달리세요.',
         heroImage: '/images/games/takoyaki-run.jpg',
         // 16:9 이미지라 좌우 약 7%씩 잘린다. 제목(타꼬런)이 오른쪽 끝에 붙어 있어 기준을 오른쪽으로 옮긴다
@@ -58,12 +61,14 @@ const CONTENTS: Record<string, GameContent> = {
             image: takkoRunGuide,
         },
     },
-    'game-color': {
+    COLOR_WORD: {
         tagline: '글자 뜻에 속지 말고 글자 색깔을 고르세요.',
         // 대표 이미지 — 피그마 image 189 (16:9라 대표 영역 840:546에서 좌우 합쳐 약 13%가 잘린다)
         heroImage: '/images/games/color-word.jpg',
         // 왼쪽 빨강 버튼(9.8%)과 오른쪽 물음표(96%)가 모두 남도록 기준을 조금 오른쪽으로 옮긴다
         heroImagePosition: '71% 50%',
+        // 카드 썸네일은 위아래가 잘린다 — 맨 위 '글자색깔' 제목이 잘리지 않게 기준을 위쪽으로 올린다 (아래 버튼 줄은 조금 덜 보임)
+        cardImagePosition: '50% 20%',
         guide: {
             title: '게임 방법',
             subtitle: '글자 뜻이 아니라 글자 색이 정답!',
@@ -80,7 +85,7 @@ const CONTENTS: Record<string, GameContent> = {
             image: colorWordGuide,
         },
     },
-    'game-timing': {
+    TAKKO_TIMING: {
         tagline: '왔다 갔다 하는 이쑤시개를 타꼬 위에서 딱 맞춰 콕 꽂으세요.',
         // 대표 이미지 — 피그마 image 184 (16:9라 대표 영역 840:546에서 좌우가 조금 잘린다)
         heroImage: '/images/games/takko-timing.jpg',
@@ -99,30 +104,68 @@ const CONTENTS: Record<string, GameContent> = {
                 },
                 REWARD_STEP,
             ],
-            // 게임 방법 모달 이미지 — 전용 장면 이미지가 나오기 전까지 대표 이미지(image 184)를 같이 쓴다
-            image: '/images/games/takko-timing.jpg',
+            // 게임 방법 모달 이미지 — 피그마 image 256 (게임 장면)
+            image: takkoTimingGuide,
         },
     },
-    'game-takoyaki': {
-        tagline: '60초 안에 타코야끼를 구워내세요.',
-        heroImage: takoyakiHero,
+    TAKKO_ORDER: {
+        tagline: '손님 주문을 잘 외웠다가 순서대로 내주세요.',
+        // 대표 이미지 — 피그마 image 255
+        heroImage: '/images/games/takko-order.jpg',
         guide: {
             title: '게임 방법',
-            subtitle: '타이밍 맞춰 누르기만 하면 돼요',
+            subtitle: '보고, 외우고, 순서대로!',
             steps: [
-                { icon: Gamepad2, text: '노릇하게 익었을 때 눌러서 뒤집어요.' },
-                { icon: Target, text: '많이 구울수록 점수가 올라가요.' },
+                {
+                    icon: Gamepad2,
+                    keys: ['1', '2', '3', '4'],
+                    text: '또는 메뉴 버튼을 눌러 주문한 순서대로 내줘요.',
+                },
+                {
+                    // 판정은 주문 개수만큼 다 낸 뒤에 한다 — 그 전에는 잘못 낸 메뉴를 하나씩 되돌릴 수 있다
+                    icon: Delete,
+                    keys: ['Backspace'],
+                    text: '또는 지우기 버튼으로 마지막에 낸 메뉴를 하나씩 되돌려요.\n주문 개수만큼 다 내면 맞았는지 알려 줘요.',
+                },
+                {
+                    icon: Target,
+                    text: '목숨은 3개, 맞힐수록 주문이 하나씩 길어져요.\n시간 제한은 없어요.',
+                },
                 REWARD_STEP,
             ],
-            image: guideBanner,
+            // 게임 방법 모달 이미지 — 피그마 image 257 (게임 장면)
+            image: takkoOrderGuide,
         },
     },
 };
 
 /** 콘텐츠가 등록되지 않은 게임은 게임 설명과 공통 안내로 채운다 */
-export function getGameContent(game: { id: string; description?: string }): GameContent {
+export function getGameContent(game: { code: string; description: string | null }): GameContent {
+    const minimums: Record<string, number> = {
+        COLOR_WORD: 50,
+        TAKKO_RUN: 400,
+        TAKKO_TIMING: 50,
+        TAKKO_ORDER: 18,
+    };
+    const content = CONTENTS[game.code];
+    const minimum = minimums[game.code];
+    if (content && minimum !== undefined)
+        return {
+            ...content,
+            guide: {
+                ...content.guide,
+                steps: content.guide.steps.map((step) =>
+                    step === REWARD_STEP
+                        ? {
+                              ...step,
+                              text: `한 판 ${minimum}점 이상으로 완료하면 하루 한 번 응모권 1장을 받아요.`,
+                          }
+                        : step,
+                ),
+            },
+        };
     return (
-        CONTENTS[game.id] ?? {
+        content ?? {
             tagline: game.description ?? '',
             heroImage: null,
             guide: {

@@ -1,0 +1,724 @@
+{
+    "label": "controlled2-before",
+    "checkedAt": "2026-10-22T02:15:46.170Z",
+    "environment": {
+        "platform": "win32",
+        "release": "10.0.26200",
+        "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+        "cores": 8,
+        "totalMemory": 25443966976,
+        "freeMemory": 10141966336,
+        "node": "v24.14.1",
+        "commit": "47d2b5460483a9f56b1890d4c14990c7249c5b7e",
+        "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "api": "https://dzc8oneey9mmx.cloudfront.net/api",
+        "responseMode": "고정 응답 재생",
+        "replayDelayMs": 50,
+        "fixtureHash": "c283678400e98457a3434a86bd9a0db0628a4d6731fdb6a8be058145d52b731a",
+        "profile": "mobile",
+        "viewport": {
+            "width": 390,
+            "height": 844
+        },
+        "cpuSlowdown": 4,
+        "downloadBps": 200000,
+        "uploadBps": 93750,
+        "latencyMs": 150,
+        "headless": true,
+        "concurrency": 1,
+        "user": "USER_A",
+        "serverInternalTime": "미측정",
+        "browser": "155.0.8059.85"
+    },
+    "requested": {
+        "count": 1,
+        "batches": 3,
+        "warmups": 0,
+        "modes": ["cold", "transition", "revisit5", "revisit35"]
+    },
+    "discovery": {
+        "eventCount": 28,
+        "gameCount": 4,
+        "missionCount": 11,
+        "eventState": "OPEN",
+        "raffleState": "OPEN",
+        "idsHash": "998e43b0124a24317b363e75cc31b81c3d5dd9cf788fe3ec1e3d99212e3c9fba"
+    },
+    "samples": [
+        {
+            "screen": "home",
+            "mode": "cold",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 6276.800000011921,
+            "fcpMs": 4112,
+            "lcpMs": 5228,
+            "assetBytes": 490433,
+            "browserApi": []
+        },
+        {
+            "screen": "home",
+            "mode": "transition",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 1291.800000011921,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 394334,
+            "browserApi": []
+        },
+        {
+            "screen": "home",
+            "mode": "revisit5",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 2142.5,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 438583,
+            "browserApi": []
+        },
+        {
+            "screen": "home",
+            "mode": "revisit35",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 2141.600000023842,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 331093,
+            "browserApi": []
+        },
+        {
+            "screen": "events",
+            "mode": "cold",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "page.waitForFunction: Timeout 45000ms exceeded."
+        },
+        {
+            "screen": "events",
+            "mode": "transition",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "page.waitForFunction: Timeout 45000ms exceeded."
+        },
+        {
+            "screen": "events",
+            "mode": "revisit5",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "page.waitForFunction: Timeout 45000ms exceeded."
+        },
+        {
+            "screen": "events",
+            "mode": "revisit35",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "page.waitForFunction: Timeout 45000ms exceeded."
+        },
+        {
+            "screen": "raffles",
+            "mode": "cold",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 5184,
+            "fcpMs": 4100,
+            "lcpMs": 4100,
+            "assetBytes": 479171,
+            "browserApi": []
+        },
+        {
+            "screen": "raffles",
+            "mode": "transition",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 86.70000004768372,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 34316,
+            "browserApi": []
+        },
+        {
+            "screen": "raffles",
+            "mode": "revisit5",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 73.30000001192093,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 91231,
+            "browserApi": []
+        },
+        {
+            "screen": "raffles",
+            "mode": "revisit35",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": true,
+            "displayMs": 88.89999997615814,
+            "fcpMs": null,
+            "lcpMs": null,
+            "assetBytes": 329603,
+            "browserApi": []
+        },
+        {
+            "screen": "eventDetail",
+            "mode": "cold",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "page.waitForFunction: Timeout 45000ms exceeded."
+        },
+        {
+            "screen": "eventDetail",
+            "mode": "transition",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "대상 링크 없음"
+        },
+        {
+            "screen": "eventDetail",
+            "mode": "revisit5",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "대상 링크 없음"
+        },
+        {
+            "screen": "eventDetail",
+            "mode": "revisit35",
+            "batch": 1,
+            "trial": 0,
+            "requests": [],
+            "ok": false,
+            "error": "대상 링크 없음"
+        }
+    ],
+    "errors": [],
+    "groups": {
+        "home:cold": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 6276.800000011921,
+                    "p95": 6276.800000011921,
+                    "min": 6276.800000011921,
+                    "max": 6276.800000011921
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 6276.800000011921,
+                "p95": 6276.800000011921,
+                "min": 6276.800000011921,
+                "max": 6276.800000011921
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "home:transition": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 1291.800000011921,
+                    "p95": 1291.800000011921,
+                    "min": 1291.800000011921,
+                    "max": 1291.800000011921
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 1291.800000011921,
+                "p95": 1291.800000011921,
+                "min": 1291.800000011921,
+                "max": 1291.800000011921
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "home:revisit5": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 2142.5,
+                    "p95": 2142.5,
+                    "min": 2142.5,
+                    "max": 2142.5
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 2142.5,
+                "p95": 2142.5,
+                "min": 2142.5,
+                "max": 2142.5
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "home:revisit35": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 2141.600000023842,
+                    "p95": 2141.600000023842,
+                    "min": 2141.600000023842,
+                    "max": 2141.600000023842
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 2141.600000023842,
+                "p95": 2141.600000023842,
+                "min": 2141.600000023842,
+                "max": 2141.600000023842
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "events:cold": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "events:transition": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "events:revisit5": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "events:revisit35": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "raffles:cold": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 5184,
+                    "p95": 5184,
+                    "min": 5184,
+                    "max": 5184
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 5184,
+                "p95": 5184,
+                "min": 5184,
+                "max": 5184
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "raffles:transition": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 86.70000004768372,
+                    "p95": 86.70000004768372,
+                    "min": 86.70000004768372,
+                    "max": 86.70000004768372
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 86.70000004768372,
+                "p95": 86.70000004768372,
+                "min": 86.70000004768372,
+                "max": 86.70000004768372
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "raffles:revisit5": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 73.30000001192093,
+                    "p95": 73.30000001192093,
+                    "min": 73.30000001192093,
+                    "max": 73.30000001192093
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 73.30000001192093,
+                "p95": 73.30000001192093,
+                "min": 73.30000001192093,
+                "max": 73.30000001192093
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "raffles:revisit35": {
+            "failures": 0,
+            "batches": {
+                "1": {
+                    "n": 1,
+                    "p50": 88.89999997615814,
+                    "p95": 88.89999997615814,
+                    "min": 88.89999997615814,
+                    "max": 88.89999997615814
+                }
+            },
+            "display": {
+                "n": 1,
+                "p50": 88.89999997615814,
+                "p95": 88.89999997615814,
+                "min": 88.89999997615814,
+                "max": 88.89999997615814
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "eventDetail:cold": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "eventDetail:transition": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "eventDetail:revisit5": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        },
+        "eventDetail:revisit35": {
+            "failures": 1,
+            "batches": {},
+            "display": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "proxyApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "browserApi": {
+                "n": 0,
+                "p50": null,
+                "p95": null,
+                "min": null,
+                "max": null
+            },
+            "requestCount": 0,
+            "concurrentDuplicates": 0
+        }
+    }
+}

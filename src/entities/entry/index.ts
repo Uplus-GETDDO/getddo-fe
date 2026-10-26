@@ -22,6 +22,17 @@ export {
     entryStatisticsApiPath,
     useEntryEligibility,
     useEntryStatistics,
+    useEntryStatisticsList,
     useMyEntries,
+    useMyEventEntries,
 } from './api/queries';
 export { MyEntryItem } from './ui/MyEntryItem';
+export {
+    ADMIN_ENTRIES_KEY,
+    adminEntriesParamsSchema,
+    useAdminEntries,
+    useAdminParticipants,
+} from './api/admin';
+export type { AdminEntriesParams } from './api/admin';
+export { adminEntrySchema, adminParticipantSchema } from './model/types';
+export type { AdminEntry, AdminParticipant } from './model/types';

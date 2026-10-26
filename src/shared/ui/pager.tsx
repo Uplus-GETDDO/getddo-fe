@@ -13,6 +13,9 @@ const SIZES = {
     md: 'size-5',
 } as const;
 
+// 그림 크기와 별개로 누름 칸은 WCAG 2.5.8 최소 24px를 지킨다 — md는 아이콘 20에 칸을 24로 잡는다
+const HIT_SIZES = { lg: '', md: 'size-6' } as const;
+
 /**
  * 페이지 넘김 화살표. size로 위계를 나눈다 — lg는 메인 배너, md는 섹션 안 목록(오픈 예정 등).
  * current는 0부터. 끝에서 멈추는 목록은 prev/nextDisabled로 화살표를 흐리게 막는다.
@@ -44,6 +47,7 @@ function Pager({
     children?: React.ReactNode;
 }) {
     const icon = SIZES[size];
+    const hit = HIT_SIZES[size];
     const pad = (n: number) => String(n).padStart(2, '0');
     return (
         <div data-slot="pager" className={cn('flex items-center gap-2', className)}>
@@ -52,7 +56,7 @@ function Pager({
                 aria-label={prevLabel}
                 disabled={prevDisabled}
                 onClick={onPrev}
-                className={ARROW}
+                className={cn(ARROW, hit)}
             >
                 <CircleArrowLeft className={icon} strokeWidth={1.5} />
             </button>
@@ -65,7 +69,7 @@ function Pager({
                 aria-label={nextLabel}
                 disabled={nextDisabled}
                 onClick={onNext}
-                className={ARROW}
+                className={cn(ARROW, hit)}
             >
                 <CircleArrowRight className={icon} strokeWidth={1.5} />
             </button>

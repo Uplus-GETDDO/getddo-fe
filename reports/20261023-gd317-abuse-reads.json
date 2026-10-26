@@ -1,0 +1,293 @@
+{
+    "at": "2026-10-23T01:58:19.700Z",
+    "kind": "GD-317 AR01/AR02 배포 후 실측 — 읽기 전용",
+    "target": "https://getddo-fe.vercel.app",
+    "checks": [
+        {
+            "name": "배포 식별(엔트리 청크)",
+            "method": "GET",
+            "path": "/",
+            "status": 200,
+            "at": "2026-10-23T01:58:19.772Z",
+            "entryChunk": "assets/index-B14a6R09.js"
+        },
+        {
+            "method": "GET",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:58:19.929Z",
+            "ms": 155,
+            "path": "/admin/abuse-cases?page=1&size=20",
+            "name": "AR01 차단 이력 목록",
+            "zod": "pass",
+            "totalElements": 10,
+            "page": 1,
+            "size": 20,
+            "sortCheck": {
+                "pass": true,
+                "compared": 9
+            },
+            "items": [
+                {
+                    "id": "30100000-0000-4000-8000-000000000001",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T12:10:38.084714Z",
+                    "blockedUntil": "2026-10-21T12:20:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000002",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T11:55:38.084714Z",
+                    "blockedUntil": "2026-10-21T12:05:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000003",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T11:40:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:50:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000004",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T11:25:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:35:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000005",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T11:10:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:20:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000006",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T10:55:38.084714Z",
+                    "blockedUntil": "2026-10-21T11:05:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000007",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T10:40:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:50:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000008",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T10:25:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:35:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000009",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T10:10:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:20:38.084714Z",
+                    "hasUserNickname": true
+                },
+                {
+                    "id": "30100000-0000-4000-8000-000000000010",
+                    "userId": "[REDACTED]",
+                    "eventId": null,
+                    "eventTitle": null,
+                    "sourceType": "ENTRY",
+                    "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                    "detectionReason": "[REDACTED]",
+                    "blockedAt": "2026-10-21T09:55:38.084714Z",
+                    "blockedUntil": "2026-10-21T10:05:38.084714Z",
+                    "hasUserNickname": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:58:19.984Z",
+            "ms": 51,
+            "path": "/admin/abuse-cases?page=1&size=20&userId=%5BREDACTED%5D",
+            "name": "AR01 userId 필터",
+            "zod": "pass",
+            "filteredUserId": "[REDACTED]",
+            "totalElements": 1,
+            "allMatchUser": true
+        },
+        {
+            "method": "GET",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:58:20.067Z",
+            "ms": 81,
+            "path": "/admin/abuse-cases?page=1&size=20&sourceType=ENTRY",
+            "name": "AR01 sourceType=ENTRY 필터",
+            "zod": "pass",
+            "totalElements": 10,
+            "allEntry": true
+        },
+        {
+            "method": "GET",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:58:20.125Z",
+            "ms": 57,
+            "path": "/admin/abuse-cases?page=1&size=20&from=2026-10-21T12%3A09%3A38.084Z&to=2026-10-21T12%3A11%3A38.084Z",
+            "name": "AR01 from/to 기간 필터 (blockedAt [from,to))",
+            "zod": "pass",
+            "windowContains": true,
+            "excludedStatus": 200,
+            "excludedContains": false,
+            "excludedEmpty": true
+        },
+        {
+            "method": "GET",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:58:20.209Z",
+            "ms": 41,
+            "path": "/admin/abuse-cases?page=1&size=20&userId=%5BREDACTED%5D",
+            "name": "AR01 결과 없음 → 200 빈 items",
+            "zod": "pass",
+            "totalElements": 0,
+            "itemCount": 0
+        },
+        {
+            "name": "AR01 입력 오류 대조",
+            "pass": true,
+            "size0": {
+                "status": 400,
+                "code": "COMMON-002"
+            },
+            "sourceTypeGame": {
+                "status": 400,
+                "code": "COMMON-002"
+            },
+            "userIdMalformed": {
+                "status": 400,
+                "code": "COMMON-005"
+            },
+            "expected": "400 COMMON-002 (size·sourceType) / 400 COMMON-005 (UUID 형식)"
+        },
+        {
+            "method": "GET",
+            "status": 200,
+            "envelopeCode": "SUCCESS",
+            "message": "성공했습니다.",
+            "at": "2026-10-23T01:58:20.359Z",
+            "ms": 47,
+            "path": "/admin/abuse-cases/30100000-0000-4000-8000-000000000001",
+            "name": "AR02 차단 이력 상세 + evidence",
+            "zod": "pass",
+            "caseId": "30100000-0000-4000-8000-000000000001",
+            "summary": {
+                "id": "30100000-0000-4000-8000-000000000001",
+                "userId": "[REDACTED]",
+                "eventId": null,
+                "eventTitle": null,
+                "sourceType": "ENTRY",
+                "detectionType": "REPEATED_RATE_LIMIT_EXCEEDED",
+                "detectionReason": "[REDACTED]",
+                "blockedAt": "2026-10-21T12:10:38.084714Z",
+                "blockedUntil": "2026-10-21T12:20:38.084714Z",
+                "hasUserNickname": true
+            },
+            "evidence": {
+                "ruleVersion": "v1",
+                "triggerScope": "USER",
+                "windowStartedAt": "2026-10-21T12:10:08.084714Z",
+                "windowEndsAt": "2026-10-21T12:11:08.084714Z",
+                "requestLimit": 20,
+                "rejectedCount": 20,
+                "rejectionThreshold": 20,
+                "thresholdReached": null,
+                "derivedThresholdReached": true
+            }
+        },
+        {
+            "name": "AR02 오류 대조",
+            "pass": true,
+            "missing": {
+                "status": 404,
+                "code": "ABUSE-002",
+                "message": "차단 이력을 찾을 수 없습니다."
+            },
+            "malformed": {
+                "status": 400,
+                "code": "COMMON-005"
+            },
+            "expected": "404 ABUSE-002 / 400 COMMON-005"
+        },
+        {
+            "name": "권한 대조 — ABUSE-001·USER-003",
+            "pass": true,
+            "userList": {
+                "status": 403,
+                "code": "ABUSE-001"
+            },
+            "userDetail": {
+                "status": 403,
+                "code": "ABUSE-001"
+            },
+            "noHeader": {
+                "status": 401,
+                "code": "USER-003"
+            },
+            "expected": "USER → 403 ABUSE-001 / 헤더 없음 → 401 USER-003"
+        }
+    ]
+}

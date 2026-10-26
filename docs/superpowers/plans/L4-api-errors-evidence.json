@@ -1,0 +1,133 @@
+{
+    "at": "2026-10-20T10:02:30.219Z",
+    "base": "https://dzc8oneey9mmx.cloudfront.net/api/v1",
+    "kind": "실제 API 직접 호출",
+    "checks": [
+        {
+            "name": "G01",
+            "status": 200,
+            "codes": ["COLOR_WORD", "TAKKO_ORDER", "TAKKO_RUN", "TAKKO_TIMING"]
+        },
+        {
+            "name": "COLOR_WORD 기준 미달",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-383a-7a3a-92c0-7a3d486a6cec",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:02:31.439991Z",
+                "reward": null
+            },
+            "expectedScore": 0,
+            "scoreMatches": true
+        },
+        {
+            "name": "COLOR_WORD 미완료 INVALID",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-38ba-7d65-9b2d-c9c361d1b7bd",
+                "status": "INVALID",
+                "score": null,
+                "completedAt": "2026-10-20T10:02:31.555165Z",
+                "reward": null
+            },
+            "statisticsUnchanged": true
+        },
+        {
+            "name": "404·409·413 실제 오류",
+            "conflict": {
+                "status": 409,
+                "code": "GAME-006"
+            },
+            "hidden": {
+                "status": 404,
+                "code": "GAME-005"
+            },
+            "over": {
+                "status": 413,
+                "code": "GAME-008"
+            }
+        },
+        {
+            "name": "TAKKO_ORDER 기준 미달",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-39fb-7d7b-9cb4-77c13a106f12",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:02:31.851814Z",
+                "reward": null
+            },
+            "expectedScore": 0,
+            "scoreMatches": true
+        },
+        {
+            "name": "TAKKO_ORDER 미완료 INVALID",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-3a56-75ac-a207-0caab1ae4bf0",
+                "status": "INVALID",
+                "score": null,
+                "completedAt": "2026-10-20T10:02:31.962312Z",
+                "reward": null
+            },
+            "statisticsUnchanged": true
+        },
+        {
+            "name": "TAKKO_RUN 기준 미달",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-3ae0-7e08-965d-c3fd3389ba0c",
+                "status": "VALID",
+                "score": 121,
+                "completedAt": "2026-10-20T10:02:32.160645Z",
+                "reward": null
+            },
+            "expectedScore": 121,
+            "scoreMatches": true
+        },
+        {
+            "name": "TAKKO_RUN 미완료 INVALID",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-3b86-7672-b358-01a387c05f31",
+                "status": "INVALID",
+                "score": null,
+                "completedAt": "2026-10-20T10:02:32.279696Z",
+                "reward": null
+            },
+            "statisticsUnchanged": true
+        },
+        {
+            "name": "TAKKO_TIMING 기준 미달",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-3c37-72a5-a0df-e87e3cf044e3",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:02:32.418351Z",
+                "reward": null
+            },
+            "expectedScore": 0,
+            "scoreMatches": true
+        },
+        {
+            "name": "429 실제 빈도 제한",
+            "status": 429,
+            "code": "COMMON-006",
+            "retryAfter": "59"
+        },
+        {
+            "name": "TAKKO_TIMING 미완료 INVALID",
+            "status": 200,
+            "result": {
+                "playId": "01a158c3-3c86-75b6-9315-ce25e63d7ca6",
+                "status": "INVALID",
+                "score": null,
+                "completedAt": "2026-10-20T10:03:31.690858Z",
+                "reward": null
+            },
+            "statisticsUnchanged": true
+        }
+    ]
+}

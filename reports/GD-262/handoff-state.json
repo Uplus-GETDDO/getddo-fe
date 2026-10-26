@@ -1,0 +1,18 @@
+{
+    "status": "사용자 요청으로 측정 중단·인계",
+    "checkedAt": "2026-10-21T01:42:25.365Z",
+    "plannedAttempts": 132,
+    "attempts": 111,
+    "valid": 105,
+    "na": 6,
+    "last": "missions:revisit5",
+    "apiErrors": 0,
+    "perBatch": {
+        "1": 44,
+        "2": 44,
+        "3": 23
+    },
+    "afterControlled": false,
+    "home30": false,
+    "fixtureHash": "c283678400e98457a3434a86bd9a0db0628a4d6731fdb6a8be058145d52b731a"
+}

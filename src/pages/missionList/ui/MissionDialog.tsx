@@ -7,8 +7,7 @@ import type { TicketGrade } from '@entities/ticket';
 
 import { useMissionDetail } from '@entities/mission';
 import { QuizForm, SurveyForm } from '@features/submitMission';
-import { formatKst } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import {
@@ -18,9 +17,11 @@ import {
     DialogDescription,
     DialogTitle,
 } from '@shared/ui/dialog';
-import { Loading } from '@shared/ui/loading';
+import { Skeleton, SkeletonText } from '@shared/ui/skeleton';
+import { StatusDot } from '@shared/ui/status-dot';
+import { formatKst } from '@shared/utils/date';
 
-import { MISSION_KIND_LABEL, missionUrgentDeadline } from '../lib/missionBoard';
+import { MISSION_KIND_LABEL, missionUrgentDeadline } from '../utils/missionBoard';
 import { MissionReward } from './MissionReward';
 
 const PERIOD_FORMAT: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
@@ -89,7 +90,7 @@ function MissionDialogBody({
     onClose: () => void;
     onRewarded: (tickets: number, grade: TicketGrade | null) => void;
 }) {
-    const { data: mission, isPending, isError } = useMissionDetail(missionId);
+    const { data: mission, isPending } = useMissionDetail(missionId);
     // 기간 판정은 서버 몫 — 여기의 now 비교는 표시용 안내에만 쓴다 (시간 규칙)
     const now = useVirtualClock().now();
     const headerRef = useRef<HTMLElement>(null);
@@ -110,15 +111,24 @@ function MissionDialogBody({
     if (isPending) {
         return (
             <div className="bg-surface-elevated rounded-2xl p-6">
-                {/* 모달 제목은 화면 낭독기용으로만 남기고, 화면에는 도는 타코야키를 둔다 */}
+                {/* 모달 제목은 화면 낭독기용으로만 남기고, 화면에는 모달 꼴 스켈레톤(머리 글줄 + 문항 두 덩이)을 둔다 */}
                 <DialogTitle className="sr-only">미션을 불러오는 중이에요</DialogTitle>
                 <DialogDescription className="sr-only">잠시만 기다려 주세요.</DialogDescription>
-                <Loading label="미션을 불러오는 중이에요" />
+                <div aria-hidden className="flex flex-col gap-3">
+                    <SkeletonText className="h-6 w-14" />
+                    <SkeletonText className="h-7 w-3/5" />
+                    <SkeletonText className="h-5 w-4/5" />
+                    <SkeletonText className="w-1/2" />
+                    <div className="border-border-strong my-3 border-t border-dashed" />
+                    <Skeleton className="h-24 w-full rounded-xl" />
+                    <Skeleton className="h-24 w-full rounded-xl" />
+                    <Skeleton className="mt-2 h-12 w-full rounded-xl" />
+                </div>
             </div>
         );
     }
 
-    if (isError || !mission) {
+    if (!mission) {
         return (
             <div className="bg-surface-elevated flex flex-col gap-2 rounded-2xl p-6">
                 <DialogTitle>미션을 불러오지 못했어요</DialogTitle>
@@ -158,14 +168,21 @@ function MissionDialogBody({
                 ref={headerRef}
                 className="border-border-strong flex shrink-0 flex-col gap-2 border-b border-dashed px-6 pt-6 pr-12 pb-5"
             >
-                <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="neutral">{MISSION_KIND_LABEL[mission.missionType]}</Badge>
-                    {!mission.completed && !notYetOpen && !ended && deadline && (
-                        // 오늘 마감은 겟또타임 D-day처럼 검정 알약, 7일 이내는 흰 바탕+테두리 (카드와 같은 규칙)
-                        <Badge variant={deadline === '오늘 마감' ? 'inverse' : 'outline'}>
-                            {deadline}
-                        </Badge>
-                    )}
+                <div className="flex min-h-5.5 flex-wrap items-center gap-2">
+                    {/* 종류는 카드처럼 작은 라벨, 칩은 급한 마감만 */}
+                    <span className="text-caption text-fg-tertiary">
+                        {MISSION_KIND_LABEL[mission.missionType]}
+                    </span>
+                    {!mission.completed &&
+                        !notYetOpen &&
+                        !ended &&
+                        deadline &&
+                        // 오늘 마감은 '지금' 신호(마젠타 점+글자), 7일 이내는 흰 바탕+테두리 (카드와 같은 규칙)
+                        (deadline === '오늘 마감' ? (
+                            <StatusDot>{deadline}</StatusDot>
+                        ) : (
+                            <Badge variant="outline">{deadline}</Badge>
+                        ))}
                 </div>
                 {/* 글자 크기는 text-xl로 — 커스텀 타이포 토큰은 공용 cn이 글자색과 같은 묶음으로 보고 지운다 */}
                 <DialogTitle className="text-xl leading-7 font-semibold">
@@ -183,7 +200,7 @@ function MissionDialogBody({
                     <MissionReward
                         count={mission.rewardTicketCount}
                         received={mission.completed}
-                        muted={mission.completed}
+                        muted={mission.completed || ended}
                         small
                     />
                 </p>

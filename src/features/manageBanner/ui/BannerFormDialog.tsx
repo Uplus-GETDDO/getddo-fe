@@ -5,7 +5,9 @@ import { z } from 'zod';
 
 import type { AdminBanner } from '@entities/banner';
 
-import { BANNER_IMAGE_KEY_MAX_LENGTH, BANNER_IMAGE_TEMP_POLICY } from '@entities/banner';
+import { BANNER_IMAGE_KEY_MAX_LENGTH } from '@entities/banner';
+import { AdminEventPicker } from '@entities/event';
+import { ImageUploadField } from '@entities/image';
 import { getErrorMessage } from '@shared/api/errorMessage';
 import { Button } from '@shared/ui/button';
 import {
@@ -16,8 +18,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@shared/ui/dialog';
-import { Input } from '@shared/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 
 import { useCreateBanner, useUpdateBanner } from '../api/queries';
 
@@ -26,7 +26,7 @@ const bannerFormSchema = z.object({
     imageKey: z
         .string()
         .trim()
-        .min(1, '이미지 키를 입력하세요')
+        .min(1, '배너 이미지를 올려주세요')
         .max(
             BANNER_IMAGE_KEY_MAX_LENGTH,
             `이미지 키는 ${BANNER_IMAGE_KEY_MAX_LENGTH}자 이하입니다`,
@@ -45,22 +45,13 @@ interface BannerFormDialogProps {
     onOpenChange: (open: boolean) => void;
     /** 수정 대상 — 없으면 등록이다 */
     banner: AdminBanner | null;
-    events: BannerEventOption[];
-    /** 연결 이벤트 선택지 조회 상태 — 실패·로딩은 빈 목록과 구분해 안내한다 */
-    eventsPending?: boolean;
-    eventsError?: boolean;
-    onEventsRetry?: () => void;
-    /** 등록 시 보낼 노출 순서 — 목록 맨 뒤에 붙이고, 이후 순서는 목록에서 바꾼다 */
-    nextDisplayOrder: number;
+    /** 현재 전체 목록 기준 1기반 위치 — 등록은 맨 뒤, 수정은 현재 위치다 */
+    displayOrder: number;
 }
 
 function BannerForm({
     banner,
-    events,
-    eventsPending,
-    eventsError,
-    onEventsRetry,
-    nextDisplayOrder,
+    displayOrder,
     onDone,
 }: Omit<BannerFormDialogProps, 'open' | 'onOpenChange'> & { onDone: () => void }) {
     const isEdit = banner !== null;
@@ -69,7 +60,6 @@ function BannerForm({
     const mutation = isEdit ? updateBanner : createBanner;
 
     const {
-        register,
         control,
         handleSubmit,
         formState: { errors },
@@ -82,7 +72,7 @@ function BannerForm({
         const body = {
             eventId: values.eventId,
             imageKey: values.imageKey,
-            displayOrder: banner?.displayOrder ?? nextDisplayOrder,
+            displayOrder,
         };
         const options = {
             onSuccess: () => {
@@ -94,91 +84,51 @@ function BannerForm({
         else createBanner.mutate(body, options);
     });
 
-    const { formats, maxMegabytes } = BANNER_IMAGE_TEMP_POLICY;
-    const showEventStatus =
-        eventsPending || eventsError || (!eventsPending && !eventsError && events.length === 0);
-    const eventDescribedBy = errors.eventId
-        ? 'banner-event-error'
-        : showEventStatus
-          ? 'banner-event-status'
-          : undefined;
-
     return (
         <form onSubmit={(e) => void onSubmit(e)} className="flex flex-col gap-6" noValidate>
             <div className="flex flex-col gap-2">
-                <label htmlFor="banner-event" className="text-body-bold text-fg-primary">
-                    연결 이벤트
-                </label>
+                <span className="text-body-bold text-fg-primary">연결 이벤트</span>
+                {/*
+                 * 이벤트가 수천 건이 되면 셀렉트 하나에 다 늘어놓을 수 없다 — 최근 등록한 이벤트를 먼저 보이고,
+                 * 이름을 치면 서버에서 찾는다(AE01 keyword). 다른 화면에서 복사한 이벤트 ID를 붙여 넣어도 된다
+                 */}
                 <Controller
                     control={control}
                     name="eventId"
                     render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger
-                                ref={field.ref}
-                                onBlur={field.onBlur}
-                                id="banner-event"
-                                className="w-full"
-                                aria-invalid={Boolean(errors.eventId)}
-                                aria-describedby={eventDescribedBy}
-                            >
-                                <SelectValue placeholder="이벤트를 선택하세요" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {events.map((event) => (
-                                    <SelectItem key={event.id} value={event.id}>
-                                        {event.title}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <AdminEventPicker
+                            eventId={field.value}
+                            onChange={field.onChange}
+                            label="연결 이벤트"
+                            suggest
+                        />
                     )}
                 />
                 {errors.eventId && (
-                    <p id="banner-event-error" className="text-semantic-error-strong text-caption">
+                    <p role="alert" className="text-semantic-error-strong text-caption">
                         {errors.eventId.message}
-                    </p>
-                )}
-                {eventsPending && (
-                    <p id="banner-event-status" className="text-fg-tertiary text-caption">
-                        이벤트 목록을 불러오는 중…
-                    </p>
-                )}
-                {eventsError && (
-                    <p
-                        id="banner-event-status"
-                        role="alert"
-                        className="text-semantic-error-strong text-caption"
-                    >
-                        이벤트 목록을 불러오지 못했습니다.
-                        {onEventsRetry && (
-                            <button
-                                type="button"
-                                className="text-fg-primary ml-2 underline"
-                                onClick={onEventsRetry}
-                            >
-                                다시 시도
-                            </button>
-                        )}
-                    </p>
-                )}
-                {!eventsPending && !eventsError && events.length === 0 && (
-                    <p id="banner-event-status" className="text-fg-tertiary text-caption">
-                        연결할 수 있는 이벤트가 없습니다. 이벤트를 먼저 등록하세요.
                     </p>
                 )}
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="banner-image-key" className="text-body-bold text-fg-primary">
-                    이미지 키
-                </label>
-                <Input
-                    id="banner-image-key"
-                    placeholder="이미지 업로드 계약 확정 전까지 키를 직접 입력"
-                    aria-invalid={Boolean(errors.imageKey)}
-                    aria-describedby={errors.imageKey ? 'banner-image-key-error' : undefined}
-                    {...register('imageKey')}
+                {/*
+                 * 배너 전용 업로드 경로가 없어 이벤트 쪽으로 올린다 — 실서버 target은 EVENT·PRIZE뿐이다.
+                 * 받은 키는 어디에 쓰든 통한다. 서버가 키 앞에 /images/만 붙이기 때문이다.
+                 */}
+                <Controller
+                    control={control}
+                    name="imageKey"
+                    render={({ field }) => (
+                        <ImageUploadField
+                            label="배너 이미지"
+                            slot="BANNER"
+                            layout="stacked"
+                            value={field.value}
+                            onChange={field.onChange}
+                            initialPreviewUrl={banner?.imageUrl}
+                        />
+                    )}
                 />
                 {errors.imageKey && (
                     <p
@@ -188,11 +138,6 @@ function BannerForm({
                         {errors.imageKey.message}
                     </p>
                 )}
-                {/* 확정된 정책처럼 보이지 않도록 임시 기준임을 함께 밝힌다 */}
-                <p className="text-fg-tertiary text-caption">
-                    허용 형식·용량 기준은 담당자 확정 전입니다. 임시 안내: {formats.join('·')},
-                    파일당 {maxMegabytes}MB 이하
-                </p>
             </div>
 
             {mutation.isError && (
@@ -223,11 +168,7 @@ export function BannerFormDialog({
     open,
     onOpenChange,
     banner,
-    events,
-    eventsPending,
-    eventsError,
-    onEventsRetry,
-    nextDisplayOrder,
+    displayOrder,
 }: BannerFormDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -245,11 +186,7 @@ export function BannerFormDialog({
                 </DialogHeader>
                 <BannerForm
                     banner={banner}
-                    events={events}
-                    eventsPending={eventsPending}
-                    eventsError={eventsError}
-                    onEventsRetry={onEventsRetry}
-                    nextDisplayOrder={nextDisplayOrder}
+                    displayOrder={displayOrder}
                     onDone={() => onOpenChange(false)}
                 />
             </DialogContent>

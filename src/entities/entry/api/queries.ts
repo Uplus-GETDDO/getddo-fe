@@ -1,9 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
-import { queryPresets } from '@shared/api/queryPresets';
+import {
+    pollingReadInterval,
+    pollingReadPolicy,
+    queryPresets,
+    withPollingReadGuard,
+} from '@shared/api/queryPresets';
+
+import type { EntryStatistics } from '../model/types';
 
 import { entryEligibilitySchema, entrySchema, entryStatisticsSchema } from '../model/types';
 
@@ -21,37 +28,78 @@ export const MY_ENTRIES_API_PATH = '/v1/users/me/entries';
 
 const ENTRIES_PAGE_SIZE = 50;
 
+// Page<Entry>는 기본 20건씩이라 totalElements까지 전부 모아야 합계·목록이 정확하다 (페이지는 1부터)
+const fetchAllMyEntries = async (
+    signal: AbortSignal,
+    filter: { eventId?: string; status?: 'ACCEPTED' | 'REJECTED' } = {},
+) => {
+    const entries = [];
+    for (let page = 1; ; page += 1) {
+        const { data } = await apiClient.get<unknown>(MY_ENTRIES_API_PATH, {
+            params: { page, size: ENTRIES_PAGE_SIZE, ...filter },
+            signal,
+        });
+        const parsed = envelopeSchema(myEntryPageSchema).parse(data).data;
+        entries.push(...parsed.items);
+        if (entries.length >= parsed.totalElements) break;
+        if (parsed.items.length === 0)
+            throw new Error('응모 전체 내역을 받지 못했습니다. 다시 조회해 주세요.');
+    }
+    return entries;
+};
+
 /**
  * 내가 응모한 내역 — 응모가 접수되면 features/enter-event가 이 쿼리를 무효화한다.
  * Page<T>는 기본 20건씩이라 totalElements까지 전부 모아야 합계·목록이 정확하다
  */
 export function useMyEntries() {
     return useQuery({
+        ...pollingReadPolicy,
         queryKey: [...ENTRIES_KEY, 'me'],
-        queryFn: async () => {
-            const entries = [];
-            // 페이지는 1부터 시작한다 (spec 공통 계약)
-            for (let page = 1; ; page += 1) {
-                const { data } = await apiClient.get<unknown>(MY_ENTRIES_API_PATH, {
-                    params: { page, size: ENTRIES_PAGE_SIZE },
-                });
-                const parsed = envelopeSchema(myEntryPageSchema).parse(data).data;
-                entries.push(...parsed.items);
-                if (entries.length >= parsed.totalElements || parsed.items.length === 0) break;
-            }
-            return entries;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, () => fetchAllMyEntries(context.signal)),
+    });
+}
+
+/**
+ * 이 이벤트에 접수된 내 응모 내역 (E06, status=ACCEPTED).
+ * 이벤트 상세의 '이번 래플' 카운터가 쓴다 — 이벤트 상세 응답에는 myEntryCount·myTicketCount가
+ * 없어(백엔드 미합의) 여기서 직접 계산한다. 응모 접수 시 ENTRIES_KEY 무효화로 함께 갱신된다.
+ */
+export function useMyEventEntries(eventId: string) {
+    return useQuery({
+        ...pollingReadPolicy,
+        queryKey: [...ENTRIES_KEY, 'me', 'event', eventId],
+        queryFn: (context) =>
+            withPollingReadGuard(context, () =>
+                fetchAllMyEntries(context.signal, { eventId, status: 'ACCEPTED' }),
+            ),
+        enabled: eventId !== '',
     });
 }
 
 export const entryStatisticsApiPath = (eventId: string) => `/v1/events/${eventId}/statistics`;
 export const entryEligibilityApiPath = (eventId: string) => `/v1/events/${eventId}/eligibility`;
 
+// 응모 현황 조회·키 — 단건 훅과 여러 건 훅이 같은 키로 캐시를 나눠 쓴다
+const entryStatisticsKey = (eventId: string) => [...ENTRIES_KEY, 'statistics', eventId] as const;
+const fetchEntryStatistics = async (eventId: string, signal: AbortSignal) => {
+    const { data } = await apiClient.get<unknown>(entryStatisticsApiPath(eventId), { signal });
+    return envelopeSchema(entryStatisticsSchema).parse(data).data;
+};
+
 interface EntryStatisticsOptions {
     /** 응모 진행 중(open) 이벤트인가 — true일 때만 30초 폴링한다 (ADR-0007) */
     isOpen?: boolean;
     /** 홈 배너처럼 여러 이벤트가 겹쳐 보이는 곳에서 현재 보이는 항목만 켠다 */
     enabled?: boolean;
+    /** 활성 토글이 잦은 소비자는 폴링 주기를 넘긴다 — 같은 주기 안의 재활성화는 받아 둔 값을 쓴다 */
+    staleTime?: number;
+    /**
+     * 같은 키를 폴링하는 observer가 이미 있을 때 켠다 — 이 observer는 자체 폴링과 마운트 재조회를
+     * 걸지 않고 소유자의 갱신·무효화만 받는다. 수동 refetch()는 그대로 동작한다
+     */
+    passive?: boolean;
 }
 
 /**
@@ -60,17 +108,41 @@ interface EntryStatisticsOptions {
  */
 export function useEntryStatistics(
     eventId: string,
-    { isOpen = false, enabled = true }: EntryStatisticsOptions = {},
+    { isOpen = false, enabled = true, staleTime, passive = false }: EntryStatisticsOptions = {},
 ) {
     return useQuery({
         ...queryPresets.realtime,
-        queryKey: [...ENTRIES_KEY, 'statistics', eventId],
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(entryStatisticsApiPath(eventId));
-            return envelopeSchema(entryStatisticsSchema).parse(data).data;
-        },
+        ...(staleTime !== undefined || passive
+            ? { staleTime: staleTime ?? queryPresets.realtime.refetchInterval }
+            : {}),
+        ...pollingReadPolicy,
+        queryKey: entryStatisticsKey(eventId),
+        queryFn: (context) =>
+            withPollingReadGuard(context, () => fetchEntryStatistics(eventId, context.signal)),
         enabled,
-        refetchInterval: isOpen ? queryPresets.realtime.refetchInterval : false,
+        refetchInterval: passive ? false : (query) => pollingReadInterval(query, isOpen),
+    });
+}
+
+/**
+ * 여러 이벤트의 응모 현황(E03)을 한 번에 — 관리자 대시보드처럼 진행 중 이벤트들을 나란히 비교할 때 쓴다.
+ * 진행 중 이벤트만 넘기므로 realtime 프리셋대로 폴링한다. 결과 순서는 넘긴 eventIds 순서와 같고,
+ * 조회에 실패한 이벤트는 null(그 줄만 '현황 없음'), 아직 받는 중이면 undefined
+ */
+export function useEntryStatisticsList(
+    eventIds: readonly string[],
+): (EntryStatistics | null | undefined)[] {
+    return useQueries({
+        queries: eventIds.map((eventId) => ({
+            ...queryPresets.realtime,
+            ...pollingReadPolicy,
+            queryKey: entryStatisticsKey(eventId),
+            queryFn: (context) =>
+                withPollingReadGuard(context, () => fetchEntryStatistics(eventId, context.signal)),
+            refetchInterval: (query: { state: { error: unknown } }) => pollingReadInterval(query),
+        })),
+        combine: (results) =>
+            results.map((result) => result.data ?? (result.isError ? null : undefined)),
     });
 }
 

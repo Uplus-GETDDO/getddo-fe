@@ -1,33 +1,34 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import type { MyEntryRow } from '@widgets/myEntryRows';
+import type { MyEntryGroup } from '@widgets/myEntryRows';
 
-import { formatKst, formatKstDot } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
-import { Button } from '@shared/ui/button';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { PageHeader } from '@shared/ui/page-header';
+import { Pagination } from '@shared/ui/pagination';
 import { Segmented } from '@shared/ui/segmented';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { SkeletonList } from '@shared/ui/skeleton';
-import { latestWonAt, useMyEntryRows } from '@widgets/myEntryRows';
+import { formatKst, formatKstDot } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
+import { pageSlice } from '@shared/utils/pagination';
+import { latestWonAt, MyEntryRefreshStatus, useMyEntryRows } from '@widgets/myEntryRows';
 
 import type { StatusTile } from './ui/EntryStatusTiles';
 
+import { EntryStatusTiles } from './ui/EntryStatusTiles';
+import { ENTRY_GRID, EntryTableRow } from './ui/EntryTableRow';
 import {
-    filterEntryRows,
+    filterEntryGroups,
     readEntryFilters,
-    scopeEntryRows,
+    scopeEntryGroups,
     type EntryKindFilter,
     type EntryPeriod,
     type EntrySort,
     type EntryStatusFilter,
-} from './lib/filterEntries';
-import { EntryStatusTiles } from './ui/EntryStatusTiles';
-import { ENTRY_GRID, EntryTableRow } from './ui/EntryTableRow';
+} from './utils/filterEntries';
 
-/** "더 보기" 한 번에 늘리는 줄 수 */
+/** 한 쪽에 담는 줄 수 */
 const PAGE_SIZE = 20;
 
 const KIND_OPTIONS = [
@@ -45,11 +46,11 @@ const PERIOD_LABEL: Record<EntryPeriod, string> = {
 const SORT_LABEL: Record<EntrySort, string> = { NEWEST: '최신순', OLDEST: '오래된순' };
 
 /** 월(KST)별로 묶는다 — 들어온 순서를 유지한다 */
-function byMonth(rows: MyEntryRow[]) {
-    const months = new Map<string, MyEntryRow[]>();
-    for (const row of rows) {
-        const label = formatKst(row.entry.requestedAt, { year: 'numeric', month: 'long' });
-        months.set(label, [...(months.get(label) ?? []), row]);
+function byMonth(groups: MyEntryGroup[]) {
+    const months = new Map<string, MyEntryGroup[]>();
+    for (const group of groups) {
+        const label = formatKst(group.latestRequestedAt, { year: 'numeric', month: 'long' });
+        months.set(label, [...(months.get(label) ?? []), group]);
     }
     return [...months.entries()];
 }
@@ -64,8 +65,21 @@ export function MyEntriesPage() {
     const filters = readEntryFilters(params);
     const clock = useVirtualClock();
     const now = clock.now();
-    const { rows, isPending, isError, isResultError } = useMyEntryRows();
-    const [visible, setVisible] = useState(PAGE_SIZE);
+    const [page, setPage] = useState(1);
+    const entriesQuery = useMyEntryRows({
+        // 화면 목록과 같은 pageSlice로 자른다 — 줄이 줄어 쪽 수가 당겨져도 보이는 쪽의 발표 대기를 계속 폴링한다
+        selectVisibleGroups: (groups) =>
+            pageSlice(
+                filterEntryGroups(
+                    scopeEntryGroups(groups, filters.kind, filters.period, now),
+                    filters.status,
+                    filters.sort,
+                ),
+                page,
+                PAGE_SIZE,
+            ).items,
+    });
+    const { groups, isPending, isError, isResultPending } = entriesQuery;
 
     const setFilter = (key: string, value: string, fallback: string) => {
         setParams(
@@ -77,16 +91,17 @@ export function MyEntriesPage() {
             },
             { replace: true },
         );
-        setVisible(PAGE_SIZE);
+        setPage(1);
     };
 
-    const scoped = scopeEntryRows(rows, filters.kind, filters.period, now);
-    const shown = filterEntryRows(scoped, filters.status, filters.sort);
-    const pending = scoped.filter((row) => row.result === 'PENDING');
-    const won = scoped.filter((row) => row.result === 'WON');
-    const lost = scoped.filter((row) => row.result === 'LOST');
+    const scoped = scopeEntryGroups(groups, filters.kind, filters.period, now);
+    const shown = filterEntryGroups(scoped, filters.status, filters.sort);
+    const paged = pageSlice(shown, page, PAGE_SIZE);
+    const pending = scoped.filter((group) => group.result === 'PENDING');
+    const won = scoped.filter((group) => group.result === 'WON');
+    const lost = scoped.filter((group) => group.result === 'LOST');
     const lastWonAt = latestWonAt(won);
-    const lostTickets = lost.reduce((sum, row) => sum + row.entry.deductedTicketCount, 0);
+    const lostTickets = lost.reduce((sum, group) => sum + group.usedTicketCount, 0);
 
     const tiles: StatusTile[] = [
         { value: 'ALL', label: '전체', count: scoped.length, note: PERIOD_LABEL[filters.period] },
@@ -123,23 +138,22 @@ export function MyEntriesPage() {
                 backLabel="마이페이지"
                 title="내 응모 내역"
                 description="이벤트·겟또타임에 응모한 기록과 결과를 모두 볼 수 있어요."
+                action={<MyEntryRefreshStatus query={entriesQuery} />}
             />
 
-            {isResultError && (
-                <p role="status" className="text-body-sm text-destructive">
-                    일부 응모의 결과를 불러오지 못했어요. 결과 칸 개수에서 빠졌을 수 있어요.
-                </p>
-            )}
-
             <EntryStatusTiles
+                isPending={isPending || isResultPending}
+                isEntriesError={entriesQuery.isError}
+                isUnavailable={entriesQuery.isResultInitialError}
                 tiles={tiles}
                 value={filters.status}
                 onChange={(value: EntryStatusFilter) => setFilter('status', value, 'ALL')}
             />
 
             <section
+                id="entry-list"
                 aria-label="응모 기록"
-                className="bg-surface-page border-border-default flex flex-col gap-2 rounded-2xl border p-6 shadow-md"
+                className="bg-surface-page border-border-default flex scroll-mt-24 flex-col gap-2 rounded-2xl border p-6 shadow-md"
             >
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
                     <Segmented
@@ -186,9 +200,9 @@ export function MyEntriesPage() {
                     aria-hidden
                     className={`bg-surface-sunken text-caption text-fg-tertiary hidden gap-x-4 rounded-lg px-3 py-2 md:grid ${ENTRY_GRID}`}
                 >
-                    <span>응모</span>
+                    {/* 줄의 1열은 썸네일(size-13) + gap-3 뒤에 제목이 오므로 머리글도 그만큼 들여쓴다 */}
+                    <span className="pl-16">응모</span>
                     <span>사용 응모권</span>
-                    <span>발표</span>
                     <span className="text-right">결과</span>
                     <span />
                 </div>
@@ -199,36 +213,43 @@ export function MyEntriesPage() {
                         응모 내역을 불러오지 못했습니다.
                     </p>
                 )}
-                {!isPending && !isError && shown.length === 0 && (
-                    <p className="text-body-sm text-fg-tertiary py-10 text-center">
-                        {rows.length === 0
-                            ? '아직 응모한 내역이 없어요.'
-                            : '조건에 맞는 응모 내역이 없어요.'}
-                    </p>
-                )}
-                {byMonth(shown.slice(0, visible)).map(([month, monthRows]) => (
+                {!isPending &&
+                    !isResultPending &&
+                    !isError &&
+                    !(entriesQuery.isResultInitialError && filters.status !== 'ALL') &&
+                    shown.length === 0 && (
+                        <p className="text-body-sm text-fg-tertiary py-10 text-center">
+                            {groups.length === 0
+                                ? '아직 응모한 내역이 없어요.'
+                                : '조건에 맞는 응모 내역이 없어요.'}
+                        </p>
+                    )}
+                {byMonth(paged.items).map(([month, monthRows]) => (
                     <div key={month} className="flex flex-col">
                         <h2 className="text-body-sm-bold text-fg-primary px-3 pt-3 pb-1">
                             {month}
                         </h2>
                         <ul className="divide-border-default divide-y">
-                            {monthRows.map((row) => (
-                                <EntryTableRow key={row.entry.id} row={row} />
+                            {monthRows.map((group) => (
+                                <EntryTableRow key={group.key} group={group} />
                             ))}
                         </ul>
                     </div>
                 ))}
-                {shown.length > visible && (
-                    <Button
-                        variant="secondary"
-                        className="mt-2 w-full"
-                        onClick={() => setVisible((count) => count + PAGE_SIZE)}
-                    >
-                        더 보기
-                        <span className="text-fg-tertiary text-xs font-normal">
-                            {formatNumber(visible)} / {formatNumber(shown.length)}건
-                        </span>
-                    </Button>
+                {paged.totalPages > 1 && (
+                    <Pagination
+                        page={paged.current}
+                        totalPages={paged.totalPages}
+                        onPageChange={(next) => {
+                            setPage(next);
+                            // 새 쪽은 목록 머리부터 읽게 올린다
+                            document
+                                .getElementById('entry-list')
+                                ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+                        }}
+                        label="응모 기록 페이지"
+                        className="justify-center pt-4"
+                    />
                 )}
             </section>
         </main>

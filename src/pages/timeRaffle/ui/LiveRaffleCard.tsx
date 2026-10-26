@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom';
 import type { Event } from '@entities/event';
 
 import { useEntryStatistics } from '@entities/entry';
+import { RaffleEntryChip } from '@entities/event';
 import { queryPresets } from '@shared/api/queryPresets';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
-import { formatRunningRange } from '../lib/raffleFormat';
+import { formatRunningRange } from '../utils/raffleFormat';
 import { CloseCountdownChip } from './CloseCountdownChip';
 import { RaffleThumbnail } from './RaffleThumbnail';
 
@@ -33,7 +34,11 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
 
     // 가운데 소개 칸 아래 현황 — 이름 위·값 아래 큰 숫자로 둬 한눈에 들어오게 한다
     const stats = [
-        { label: '당첨 인원', value: `${formatNumber(event.winnerCount)}명` },
+        // 경품 요약은 상세(E02)에만 있다 — 목록만으로 만든 이벤트는 당첨 인원이 없다 (spec EventSummary)
+        {
+            label: '당첨 인원',
+            value: event.winnerCount != null ? `${formatNumber(event.winnerCount)}명` : '-',
+        },
         {
             label: '참여 중',
             value: statistics ? `${formatNumber(statistics.participantCount)}명` : '-',
@@ -49,10 +54,17 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
          * 그림 · 소개 · 응모 칸 세 덩어리. 소개 칸은 위에 래플 소개, 아래에 현황 숫자를 둬 빈 곳 없이 채우고,
          * 응모 칸은 남은 시간·응모 조건·버튼만 둔다 — 버튼은 맨 아래에 붙인다
          */
-        <article className="bg-surface-elevated border-border-default grid gap-6 rounded-2xl border p-6 shadow-md lg:grid-cols-[16rem_minmax(0,1fr)_17rem] lg:gap-8">
+        <article className="bg-surface-elevated border-border-default group relative grid gap-6 rounded-2xl border p-6 shadow-md lg:grid-cols-[16rem_minmax(0,1fr)_17rem] lg:gap-8">
+            {/* 카드 어디를 눌러도 상세로 — 버튼과 같은 곳이라 낭독기·키보드에서는 감추고 버튼 하나로만 읽힌다 (게임 카드와 같은 방식) */}
+            <Link
+                to={`/time-raffle/${event.id}`}
+                aria-hidden
+                tabIndex={-1}
+                className="absolute inset-0 z-1 rounded-2xl"
+            />
             <RaffleThumbnail
                 src={event.bannerImageUrl}
-                className="w-full max-w-64 self-center justify-self-center rounded-xl lg:self-start"
+                className="w-full max-w-64 self-center justify-self-center rounded-xl lg:self-start [&_img]:transition-transform [&_img]:duration-300 motion-safe:group-hover:[&_img]:scale-105"
             />
 
             <div className="flex min-w-0 flex-col gap-3 lg:py-1">
@@ -65,6 +77,11 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
                         <Clock className="size-3.5" />
                         {formatRunningRange(event)}
                     </span>
+                    {/* 한도가 남았으면 '쓴 장수 + 응모 중', 다 썼으면 '응모 완료' */}
+                    <RaffleEntryChip
+                        event={event}
+                        mySpentTicketCount={statistics?.mySpentTicketCount}
+                    />
                 </div>
                 <h3 className="text-title-2 text-fg-primary">{event.title}</h3>
                 <p className="text-body text-fg-secondary line-clamp-2">{event.description}</p>
@@ -98,7 +115,7 @@ export function LiveRaffleCard({ event }: LiveRaffleCardProps) {
                     event={event}
                     mySpentTicketCount={statistics?.mySpentTicketCount}
                 />
-                <Button asChild size="lg" className="mt-auto w-full">
+                <Button asChild variant="accent" size="lg" className="relative z-2 mt-auto w-full">
                     <Link to={`/time-raffle/${event.id}`}>응모하러 가기</Link>
                 </Button>
             </div>
@@ -117,13 +134,15 @@ function EntryConditions({
 }) {
     const rows = [
         { label: '응모 방식', value: entryMethodLabel(event) },
-        event.eventType === 'TICKET' && {
-            label: '1인 최대',
-            value:
-                event.maxTicketsPerUser === null
-                    ? '제한 없음'
-                    : `${formatNumber(event.maxTicketsPerUser)}장`,
-        },
+        // 상한 실값은 상세(E02)에만 있다 — 목록만으로 만든 가중치 이벤트는 undefined라 행을 뺀다
+        event.eventType === 'TICKET' &&
+            event.maxTicketsPerUser !== undefined && {
+                label: '1인 최대',
+                value:
+                    event.maxTicketsPerUser === null
+                        ? '제한 없음'
+                        : `${formatNumber(event.maxTicketsPerUser)}장`,
+            },
         mySpentTicketCount != null &&
             mySpentTicketCount > 0 && {
                 label: '내 응모',

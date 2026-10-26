@@ -1,11 +1,13 @@
-import { cn } from '@shared/lib/utils';
+import { badgeVariants } from '@shared/ui/badge';
+import { cn } from '@shared/utils/cn';
 
 /** 화면에 "정책 미확정"을 표시하는 칩 — 임의로 확정한 동작이 아니라 계약 대기 항목이라는 뜻이다 */
 export function PolicyPendingChip({ className }: { className?: string }) {
     return (
         <span
             className={cn(
-                'text-caption bg-status-pending text-status-pending-text rounded-md px-2 py-0.5 font-medium whitespace-nowrap',
+                badgeVariants({ variant: null }),
+                'bg-status-pending text-status-pending-text',
                 className,
             )}
         >
@@ -14,12 +16,11 @@ export function PolicyPendingChip({ className }: { className?: string }) {
     );
 }
 
-// getddo-spec 00-requirements/pending-decisions.md "추첨과 결과 발표"에서 남은 항목 — 확정 전에는 동작을 만들지 않는다
+// getddo-spec 00-requirements/pending-decisions.md "추첨과 결과 발표"에서 남은 항목 — 확정 전에는 동작을 만들지 않는다.
+// 최초 발표(GD-199)와 실행 감사(GD-137)는 계약이 잡혀 화면에 연결됐으므로 목록에서 뺐다
 const PENDING_ITEMS = [
-    '최초 공개 전 재추첨의 관리자 확인 API (AD06은 최초 발표 이후 전용이라 최초 공개 전에는 호출하지 않습니다)',
     '최초 발표 지연 안내 문구와 새 발표 예정 시각의 제공 여부',
     '최초 발표 후 취소부터 공개 명단 갱신 전까지의 취소자 표시와 본인 중간 결과',
-    '추첨 시작·재개의 감사 처리자·시각 계약',
     '시스템 장애·정합성 오류의 복구·재시도·취소 전환 기준',
 ];
 

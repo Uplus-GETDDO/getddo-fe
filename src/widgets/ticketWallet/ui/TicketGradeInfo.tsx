@@ -19,7 +19,8 @@ export function TicketGradeInfo() {
         <Popover>
             <PopoverTrigger
                 aria-label="응모권 등급 안내"
-                className="text-fg-tertiary hover:text-fg-primary focus-visible:ring-border-focus inline-flex cursor-pointer rounded-full focus-visible:ring-2 focus-visible:outline-none"
+                // 아이콘(16px)은 그대로 두고 패딩으로 누름 칸을 24px(WCAG 2.5.8)까지 넓힌다 — 음수 마진이 줄간격을 지킨다
+                className="text-fg-tertiary hover:text-fg-primary focus-visible:ring-border-focus -m-1 inline-flex cursor-pointer rounded-full p-1 focus-visible:ring-2 focus-visible:outline-none"
             >
                 <CircleHelp className="size-4" />
             </PopoverTrigger>

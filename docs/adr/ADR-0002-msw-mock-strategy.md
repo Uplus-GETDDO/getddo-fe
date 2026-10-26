@@ -5,19 +5,29 @@
 
 ## 맥락
 
-백엔드는 별도 레포에서 개발 중이고 API 계약이 확정되지 않았다. 프론트 개발을 백엔드 완료까지 미룰 수 없고, 목업 없이 개발하면 연동 시점에 대량 수정이 발생한다.
+백엔드는 별도 레포에서 개발 중이고 API 계약이 확정되지 않았던 시점에 목업 전략을 채택했다. 현재는 `../getddo-spec/05-api/`의 개별 채택 계약·현행 구현과 검토 대기 초안이 함께 존재한다. 프론트 개발을 백엔드 완료까지 미룰 수 없고, 목업 없이 개발하면 연동 시점에 대량 수정이 발생한다.
 
 ## 결정
 
-MSW로 모든 API를 목업한다.
+백엔드 미준비 기간에는 MSW로 API를 목업하고, 실제 연동 단계에서는 미배포 도메인만 목업하는 하이브리드로 전환한다. 현재 등록 범위는 [CONTEXT.md](../CONTEXT.md)의 실연동 하이브리드 항목을 따른다. 계약 채택을 배포 완료로 해석하지 않는다.
 
 - `VITE_ENABLE_MSW=true`일 때만 활성화 (`shared/config/env.ts`의 `env.enableMsw`)
-- 핸들러는 `shared/api/mocks/handlers/`에 도메인별 파일로 분리 (`entry.ts`, `draw.ts`, `ticket.ts` …)
-- 목업 응답은 공용 명세(`../getddo-spec/`의 기능 요구사항·도메인 규칙)의 계약 초안을 따르고, 미합의 항목(`../getddo-spec/00-requirements/pending-decisions.md`)은 임의로 확정하지 않는다
-- 실제 응답 검증은 `entities/*/model/`의 Zod 스키마가 담당 — 목업이 아니라 스키마가 계약의 기준이다
+- 핸들러는 `src/mocks/handlers/`에 도메인별 파일로 분리 (`entry.ts`, `draw.ts`, `ticket.ts` …)
+- 목업 응답은 공용 명세의 확정 요구사항·도메인 정책과 `05-api/`의 개별 채택·현행 구현 범위를 우선한다. 미합의 항목(`../getddo-spec/00-requirements/pending-decisions.md`)과 나머지 검토 대기 초안은 임의로 확정하지 않는다
+- 실제 응답 검증은 `entities/*/model/`의 Zod 스키마가 담당한다. 스키마·목업이 공용 확정 계약과 충돌하면 공용 계약에 맞춰 조정하며, 스키마가 정책 원본을 대체하지 않는다
 
 ## 결과
 
 - 백엔드 없이 전 화면 개발·시연이 가능하다
 - 목업은 "계약의 임시 구현"일 뿐 진실이 아니다 — 계약 확정 시 핸들러를 수정하며 드리프트를 해소한다
-- MSW 환경에서만 세션이 `admin`으로 시작하는 등 목업 전용 분기가 존재한다 (`entities/user/model/session.ts`)
+- 현재 세션의 초기 사용자는 `null`이며 로그인 화면에서 선택한다(`entities/user/model/session.ts`, 2026-10-20 확인). 과거 ADMIN 자동 시작 설명은 현행 동작이 아니다. 실제 업무 요청은 `05-api/common.md`의 `X-User-ID`·`X-User-Role` 필수 및 조건부 `X-User-Membership` 검증을 따른다.
+
+## 2026-10-20 현황과 종료 계획
+
+현재 배포 하이브리드는 관리자 추첨·게임·차단 조회·가상 사용자 네 영역이다. 공통 감사 조회는 GD-244에서 제거했다. 정확한 코드 근거는 [연동 현황](../backend-integration-status.md)을 따른다.
+
+배포 목업 종료는 [통합 로드맵](../superpowers/plans/2026-10-20-backend-integration-roadmap.md)의 계획이며 아직 구현된 결정으로 표시하지 않는다. 각 업무 실연동 검증 뒤 배포 핸들러를 해제하고, 마지막에 `/virtual-users` 의존과 브라우저 Worker 부팅을 정리한다. 테스트용 MSW·fixture는 유지한다. 인증·환경 설정 변경은 구현 전 승인한다.
+
+## 2026-10-21 배포 종료 (GD-260)
+
+사용자 승인으로 배포 런타임 목업을 종료했다. `vercel.json` build.env `VITE_ENABLE_MSW=false`로 배포 빌드는 브라우저 목업을 시작하지 않고, `app/config/serviceWorkerCleanup.ts`가 과거에 등록된 우리 앱의 `mockServiceWorker.js`만 해제한다. `hybridHandlers`를 제거하고 `mocks/browser.ts`는 로컬 개발 전용 전체 `handlers`만 등록한다. `/virtual-users` 호출도 제거해 시연 계정은 `VITE_VIRTUAL_USERS_JSON` 설정이 공급한다(`entities/user/model/virtualUsers.ts`, 샘플 자동 대체 없음). 테스트용 MSW·fixture·로컬 개발 목업은 유지하며, 이 결정의 상태는 유효 — 목업이 사라진 것은 배포 런타임뿐이다.

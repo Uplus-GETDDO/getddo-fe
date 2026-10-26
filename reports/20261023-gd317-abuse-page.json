@@ -1,0 +1,388 @@
+{
+    "kind": "GD-317 AR01/AR02 배포 화면 검증 — 실제 배포 관측",
+    "checkedAt": "2026-10-23T10:49:13.012734+00:00",
+    "verifierCommit": "52eca834eeb8305edfd181f3419ea2dc8d04357c",
+    "url": "https://getddo-fe.vercel.app",
+    "requests": [
+        {
+            "method": "GET",
+            "path": "/v1/banners",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/attendances/today",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a143aa-bc77-7d6c-8b7a-193ee64569d2/statistics",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/events/01a14319-24d9-7c42-97f5-052db010e6bf/statistics",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/missions",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/abuse-cases",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/abuse-cases/30100000-0000-4000-8000-000000000001",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/abuse-cases",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/events",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        },
+        {
+            "method": "GET",
+            "path": "/v1/admin/abuse-cases",
+            "status": 200,
+            "x-user-role": "ADMIN"
+        }
+    ],
+    "checks": [
+        {
+            "name": "AR01 목록 API 실측",
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/abuse-cases",
+                    "status": 200,
+                    "x-user-role": "ADMIN"
+                }
+            ],
+            "all200": true
+        },
+        {
+            "name": "실데이터 행 렌더",
+            "rows": 10,
+            "hasRows": true
+        },
+        {
+            "name": "첫 행 표시 필드",
+            "text": "첫 행 표시됨",
+            "hasReason": true
+        },
+        {
+            "name": "AR02 드로어 evidence 필드",
+            "fields": {
+                "규칙 버전": true,
+                "기준 범위": true,
+                "집계 구간": true,
+                "요청 허용 한도": true,
+                "관측 거절 횟수": true,
+                "차단 기준 횟수": true
+            }
+        },
+        {
+            "name": "AR02 상세 API 실측",
+            "requests": [
+                {
+                    "method": "GET",
+                    "path": "/v1/admin/abuse-cases/30100000-0000-4000-8000-000000000001",
+                    "status": 200,
+                    "x-user-role": "ADMIN"
+                }
+            ]
+        },
+        {
+            "name": "userId 필터 적용",
+            "before": 10,
+            "after": 1,
+            "narrowed": true,
+            "user_ids_match": true,
+            "row_count_match": true
+        },
+        {
+            "name": "필터 초기화 복귀",
+            "rows": 10
+        },
+        {
+            "name": "320px 가로 넘침 /admin/events",
+            "overflowPx": 0,
+            "ok": true
+        },
+        {
+            "name": "320px 가로 넘침 /admin/abuse-cases",
+            "overflowPx": 0,
+            "ok": true
+        },
+        {
+            "name": "콘솔 오류",
+            "count": 0,
+            "errors": []
+        }
+    ],
+    "errors": []
+}

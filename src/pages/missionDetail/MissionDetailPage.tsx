@@ -4,13 +4,14 @@ import { Link, useParams } from 'react-router-dom';
 
 import type { MissionSubmissionResult } from '@entities/mission';
 
-import { MissionResultPanel, MissionRewardDialog, useMissionDetail } from '@entities/mission';
+import { MissionResultPanel, useMissionDetail } from '@entities/mission';
+import { TicketRewardDialog } from '@entities/ticket';
 import { QuizForm, SurveyForm } from '@features/submitMission';
-import { formatKst } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
-import { Loading } from '@shared/ui/loading';
+import { SkeletonDetail } from '@shared/ui/skeleton';
 import { StatusDot } from '@shared/ui/status-dot';
+import { formatKst } from '@shared/utils/date';
 
 const CONTAINER = 'mx-auto w-full max-w-312 px-6';
 
@@ -22,7 +23,8 @@ const PERIOD_FORMAT: Intl.DateTimeFormatOptions = {
 /** 미션 상세 — 문항을 풀어 제출하는 화면. 완료·기간 외 상태는 폼 대신 안내를 보여준다 */
 export function MissionDetailPage() {
     const { missionId } = useParams<{ missionId: string }>();
-    const { data: mission, isPending, isError } = useMissionDetail(missionId ?? '');
+    const missionQuery = useMissionDetail(missionId ?? '');
+    const { data: mission, isPending, isError } = missionQuery;
     // 방금 제출로 완료된 결과 — 상세 쿼리 무효화로 폼이 언마운트돼도 결과 화면이 살아있게 페이지가 들고 있는다.
     // 결과는 낸 미션 id와 함께 보관한다 — 다른 미션 상세로 바뀌어도 이전 미션의 결과가 뜨지 않게
     const [submission, setSubmission] = useState<{
@@ -38,17 +40,18 @@ export function MissionDetailPage() {
     if (isPending) {
         return (
             <main className={`${CONTAINER} pb-20`}>
-                <Loading size="lg" />
+                <SkeletonDetail media={null} />
             </main>
         );
     }
-    if (isError || !mission) {
+    if (!mission) {
         return (
             <main className={`${CONTAINER} flex flex-col items-start gap-3 pb-20`}>
                 <p className="text-body text-fg-primary">
                     {isError ? '미션 정보를 불러오지 못했습니다.' : '미션을 찾을 수 없어요.'}
                 </p>
-                <Link to="/missions" className="text-body-sm text-fg-brand">
+                {/* 글줄(22px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다 */}
+                <Link to="/missions" className="text-body-sm text-fg-brand -my-0.5 py-0.5">
                     미션 페이지로 돌아가기
                 </Link>
             </main>
@@ -71,6 +74,9 @@ export function MissionDetailPage() {
     return (
         <main className={`${CONTAINER} flex flex-col gap-8 pb-28`}>
             <header className="flex flex-col gap-3">
+                {isError && (
+                    <p role="alert">미션 정보를 갱신하지 못했습니다. 마지막 성공값을 표시합니다.</p>
+                )}
                 <StatusDot tone={mission.completed ? 'muted' : 'brand'}>
                     {mission.completed ? '참여 완료' : '참여 가능'}
                 </StatusDot>
@@ -134,12 +140,15 @@ export function MissionDetailPage() {
                 </AnimatePresence>
             </MotionConfig>
 
-            <MissionRewardDialog
+            {/* 설문·퀴즈도 등급 응모권(브론즈~플래티넘)이 나와 게임과 같은 캡슐 뽑기 모달을 쓴다 */}
+            <TicketRewardDialog
                 open={rewardMissionId === (missionId ?? '')}
                 onOpenChange={(open) => {
                     if (!open) setRewardMissionId(null);
                 }}
                 tickets={rewardTickets}
+                grade={submitted?.reward?.grade}
+                source="미션"
             />
         </main>
     );

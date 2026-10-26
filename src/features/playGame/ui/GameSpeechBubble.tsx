@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 import { motion } from 'framer-motion';
 
-import { PIXEL_FONT } from '../lib/pixelFont';
+import { PIXEL_FONT } from '../model/pixelFont';
 
 /**
  * 결과 말풍선 — 캐릭터 머리 위에 뜨는 도트 말풍선 (타꼬 타이밍·글자색깔 맞추기 공용).
@@ -28,7 +28,7 @@ export function GameSpeechBubble({
             style={style}
         >
             <span
-                className={`border-fg-primary bg-ticket-accent text-fg-primary relative block rounded-md border-[3px] px-3 py-1.5 text-sm whitespace-nowrap shadow-[3px_3px_0_0_var(--color-fg-primary)] sm:text-base ${PIXEL_FONT}`}
+                className={`border-fg-primary bg-ticket-accent text-fg-primary relative block rounded-md border-[3px] px-3 py-1.5 text-sm whitespace-nowrap shadow-[3px_3px_0_0_var(--color-fg-primary)] @md:text-base @lg:px-4 @lg:py-2 @lg:text-xl ${PIXEL_FONT}`}
             >
                 {text}
                 {/* 꼬리 — 테두리색 삼각형 위에 바탕색 삼각형을 겹쳐 도트 테두리처럼 */}

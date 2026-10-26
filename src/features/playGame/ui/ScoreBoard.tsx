@@ -1,7 +1,7 @@
 import type { Ref } from 'react';
 
 import scoreBoard from '../assets/ui/score-board.png';
-import { PIXEL_FONT } from '../lib/pixelFont';
+import { PIXEL_FONT } from '../model/pixelFont';
 
 /**
  * 점수판 (피그마 image 112) — 게임 중에는 높이 40(좁은 화면 28), 결과 화면에서는 48.

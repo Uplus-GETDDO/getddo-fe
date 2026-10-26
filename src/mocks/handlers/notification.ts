@@ -4,6 +4,7 @@ import type { Notification } from '@entities/notification';
 
 import { env } from '@shared/config/env';
 
+import { DAY, HOUR, demoTime } from '../demoTime';
 import { fail, ok } from './response';
 
 const api = (path: string) => `${env.apiBaseUrl}${path}`;
@@ -17,7 +18,7 @@ const initialNotifications: Notification[] = [
         title: '무너 한정 굿즈 타임 래플 오픈 예정',
         body: '15:00에 무너 한정 굿즈 타임 래플이 오픈될 예정이에요.',
         isRead: false,
-        createdAt: '2026-09-30T06:00:00Z',
+        createdAt: demoTime(-DAY + 6 * HOUR),
         eventId: 'evt-004',
         linkUrl: '/time-raffle',
     },
@@ -27,7 +28,7 @@ const initialNotifications: Notification[] = [
         // 결과 발표 알림은 당첨·낙첨을 담지 않고 결과 화면으로 안내한다 (getddo-spec 02-domain/notification.md). 드로어 테스트가 이동 없이 읽음 처리만 보도록 링크는 비워 둔다
         body: '무너 한정 굿즈 타임 래플 결과가 발표됐어요. 결과 화면에서 당첨 여부를 확인해 보세요.',
         isRead: false,
-        createdAt: '2026-09-29T02:00:00Z',
+        createdAt: demoTime(-2 * DAY + 2 * HOUR),
         eventId: null,
         linkUrl: null,
     },
@@ -36,7 +37,7 @@ const initialNotifications: Notification[] = [
         title: '응모권 지급 안내',
         body: '출석 체크로 응모권 1장이 지급되었습니다.',
         isRead: true,
-        createdAt: '2026-09-28T00:10:00Z',
+        createdAt: demoTime(-3 * DAY),
         eventId: null,
         linkUrl: null,
     },
@@ -45,7 +46,7 @@ const initialNotifications: Notification[] = [
         title: '이벤트 시작 알림',
         body: '아이폰 17 프로 타임 래플 응모가 시작되었습니다.',
         isRead: false,
-        createdAt: '2026-09-27T09:00:00Z',
+        createdAt: demoTime(-4 * DAY),
         eventId: 'evt-001',
         linkUrl: '/events/evt-001',
     },
@@ -65,7 +66,7 @@ const getNotificationsForUser = (userId: string): Notification[] => {
 export const notificationHandlers = [
     http.get(api('/v1/notifications/me'), ({ request }) => {
         const userId = request.headers.get('X-User-ID');
-        if (!userId) return fail(401, 'USER_CONTEXT_REQUIRED', '사용자 문맥이 필요합니다.');
+        if (!userId) return fail(401, 'USER-003', '사용자 문맥이 필요합니다.');
         const notifications = getNotificationsForUser(userId);
 
         const url = new URL(request.url);
@@ -90,7 +91,7 @@ export const notificationHandlers = [
 
     http.put(api('/v1/notifications/:notificationId/read'), ({ request, params }) => {
         const userId = request.headers.get('X-User-ID');
-        if (!userId) return fail(401, 'USER_CONTEXT_REQUIRED', '사용자 문맥이 필요합니다.');
+        if (!userId) return fail(401, 'USER-003', '사용자 문맥이 필요합니다.');
         const notifications = getNotificationsForUser(userId);
 
         const target = notifications.find((n) => n.id === params.notificationId);
@@ -102,7 +103,7 @@ export const notificationHandlers = [
 
     http.put(api('/v1/notifications/me/read-all'), ({ request }) => {
         const userId = request.headers.get('X-User-ID');
-        if (!userId) return fail(401, 'USER_CONTEXT_REQUIRED', '사용자 문맥이 필요합니다.');
+        if (!userId) return fail(401, 'USER-003', '사용자 문맥이 필요합니다.');
         const notifications = getNotificationsForUser(userId);
 
         const updatedCount = notifications.filter((n) => !n.isRead).length;

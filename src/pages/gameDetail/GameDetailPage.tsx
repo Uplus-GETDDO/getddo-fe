@@ -1,16 +1,18 @@
 import { MotionConfig } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
 
-import { GameGuideDialog, getGameContent, useGameList } from '@entities/game';
+import { GameGuideDialog, getGameContent, useGameDetail, useGameStatistics } from '@entities/game';
+import { useSessionStore } from '@entities/user';
 import {
     GamePlayer,
     hasGamePlayer,
     preloadGamePlayer,
-    useSubmitGamePlay,
+    useGamePlaySession,
 } from '@features/playGame';
-import { Loading } from '@shared/ui/loading';
+import { Badge } from '@shared/ui/badge';
+import { Button } from '@shared/ui/button';
+import { SkeletonDetail } from '@shared/ui/skeleton';
 import { GameRail } from '@widgets/gameRail';
 
 import { GameHero } from './ui/GameHero';
@@ -27,31 +29,43 @@ const STAGE_WIDTH = 'w-[min(100%,60rem,max(30rem,calc((100svh-16.5rem)*840/546))
 
 /** 게임 상세 — 대표 영역(게임 시작·게임 방법), 내 기록, 다른 게임 */
 export function GameDetailPage() {
-    const { gameId } = useParams<{ gameId: string }>();
-    const { data: games, isPending, isError } = useGameList();
+    const { gameId = '' } = useParams<{ gameId: string }>();
+    const user = useSessionStore((state) => state.user);
+    return (
+        <GameDetailContent
+            key={`${user?.id}:${gameId}`}
+            gameId={gameId}
+            userId={user?.id ?? ''}
+            isUser={user?.role === 'USER'}
+        />
+    );
+}
+function GameDetailContent({
+    gameId,
+    userId,
+    isUser,
+}: {
+    gameId: string;
+    userId: string;
+    isUser: boolean;
+}) {
+    const { data: game, isPending, isError, error } = useGameDetail(gameId);
+    const statistics = useGameStatistics(gameId, isUser);
+    const play = useGamePlaySession(gameId, userId, isUser, game?.code);
     const [guideOpen, setGuideOpen] = useState(false);
-    // 플레이 중인 게임 — 다른 게임 상세로 옮기면 자연히 플레이 화면이 닫힌다
-    const [playingGameId, setPlayingGameId] = useState<string | null>(null);
-    const submitPlay = useSubmitGamePlay();
-
-    const game = games?.find((item) => item.id === gameId);
-    // 썸네일 화면에 있는 동안 게임 그림·음악을 미리 받아 두어 게임 시작을 누르면 바로 뜨게 한다
-    const playableGameId = game && hasGamePlayer(game.id) ? game.id : null;
+    const playableCode = game && hasGamePlayer(game.code) ? game.code : null;
     useEffect(() => {
-        if (playableGameId) preloadGamePlayer(playableGameId);
-    }, [playableGameId]);
-
-    // 플레이 화면이 있는 게임은 대표 영역 자리에서 바로 시작한다
+        if (playableCode) preloadGamePlayer(playableCode);
+    }, [playableCode]);
     const startGame = () => {
         setGuideOpen(false);
-        if (game && hasGamePlayer(game.id)) setPlayingGameId(game.id);
-        else toast.info('게임 화면은 준비 중이에요.');
+        if (playableCode && !play.busy) void play.begin();
     };
 
     if (isPending) {
         return (
             <main className={`${CONTAINER} py-20`}>
-                <Loading size="lg" />
+                <SkeletonDetail media="video" />
             </main>
         );
     }
@@ -59,7 +73,9 @@ export function GameDetailPage() {
         return (
             <main className={`${CONTAINER} flex flex-col items-start gap-3 py-20`}>
                 <p className="text-body text-fg-primary">
-                    {isError ? '게임 정보를 불러오지 못했습니다.' : '게임을 찾을 수 없어요.'}
+                    {isError
+                        ? (error?.message ?? '게임 정보를 불러오지 못했습니다.')
+                        : '게임을 찾을 수 없어요.'}
                 </p>
                 <Link to="/missions" className="text-body-sm text-fg-brand">
                     미션 페이지로 돌아가기
@@ -82,38 +98,115 @@ export function GameDetailPage() {
                     <div className={`mx-auto flex flex-col gap-2.5 ${STAGE_WIDTH}`}>
                         {/* 게임 이름과 한 줄 소개 — 미션 페이지 '출석체크' 섹션 제목처럼 한 줄로 */}
                         <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-1">
-                            <h1 className="text-subhead text-fg-on-brand">{game.title}</h1>
+                            <h1 className="text-subhead text-fg-on-brand">{game.name}</h1>
                             {content.tagline && (
                                 <p className="text-body-sm text-border-strong">{content.tagline}</p>
                             )}
+                            {/* 관리자 체험 안내는 작은 알약으로 — 넓은 화면은 제목 줄 오른쪽 끝, 좁아서 줄이 넘어가면 소개 아래 왼쪽(오른쪽 끝에 혼자 뜨면 어색했다) */}
+                            {!isUser && (
+                                <Badge className="bg-surface-inverse-muted text-fg-inverse lg:ml-auto">
+                                    관리자 체험 · 점수·보상 저장 안 함
+                                </Badge>
+                            )}
                         </div>
-                        {playingGameId === game.id ? (
-                            // 끝날 때마다 점수를 제출하면 아래 기록 카드(최고점·오늘 플레이·오늘 받은 응모권)가 새로 받아와진다
-                            <GamePlayer
-                                gameId={game.id}
-                                bestScore={game.bestScore}
-                                onExit={() => setPlayingGameId(null)}
-                                onGameOver={(score) =>
-                                    submitPlay.mutateAsync({ gameId: game.id, score }).catch(() => {
-                                        toast.error('점수를 저장하지 못했어요.');
-                                    })
-                                }
-                            />
-                        ) : (
-                            <GameHero
-                                title={game.title}
-                                tagline={content.tagline}
-                                image={content.heroImage}
-                                imagePosition={content.heroImagePosition}
-                                onStart={startGame}
-                                onGuide={() => setGuideOpen(true)}
-                            />
+                        {/* 관리자 체험은 기록·보상이 없어 서버 확정 안내가 맞지 않는다 — 제목 줄 관리자 칩이 대신 알린다 */}
+                        {play.visible && isUser && (
+                            <p className="text-body-sm text-fg-on-brand">
+                                플레이 화면의 점수는 잠정 점수이며, 기록과 보상은 서버 확정 결과를
+                                따릅니다.
+                            </p>
                         )}
-                        <GameStats
-                            bestScore={game.bestScore}
-                            todayPlayCount={game.todayPlayCount}
-                            rewardedToday={game.rewardedToday}
-                        />
+                        {/*
+                          휴대폰(640px 미만)은 판을 화면 끝까지 붙여 조금이라도 크게 보여 준다.
+                          화면 끝에 닿으니 둥근 모서리·좌우 테두리는 없앤다 — 남겨 두면 잘린 것처럼 보인다
+                        */}
+                        <div className="max-sm:-mx-6 max-sm:*:rounded-none max-sm:*:border-x-0">
+                            {play.visible && play.session ? (
+                                <GamePlayer
+                                    key={play.session.playId}
+                                    code={game.code}
+                                    session={play.session}
+                                    bestScore={statistics.data?.bestScore}
+                                    onExit={play.exit}
+                                    onRestart={startGame}
+                                    onRecordingError={play.recordingError}
+                                    onGameOver={play.complete}
+                                />
+                            ) : (
+                                <GameHero
+                                    title={game.name}
+                                    tagline={content.tagline}
+                                    image={content.heroImage}
+                                    imagePosition={content.heroImagePosition}
+                                    onStart={startGame}
+                                    onGuide={() => setGuideOpen(true)}
+                                />
+                            )}
+                        </div>
+                        <div
+                            role="status"
+                            aria-live="polite"
+                            className="text-body-sm text-fg-on-brand"
+                        >
+                            {play.busy && <p>서버 응답을 확인하고 있습니다.</p>}
+                            {play.error && <p>{play.error}</p>}
+                            {play.result?.status === 'PROCESSING' && (
+                                <p>
+                                    결과를 처리하고 있습니다. 같은 기록으로 자동 확인하며 잠시만
+                                    기다려 주세요.
+                                </p>
+                            )}
+                            {play.result?.status === 'INVALID' && (
+                                <p>
+                                    입력 기록이 게임 규칙과 일치하지 않아 점수·보상에 반영하지
+                                    않았습니다.
+                                </p>
+                            )}
+                            {play.result?.status === 'VALID' && (
+                                <p>
+                                    서버 확정 점수: {play.result.score}점.{' '}
+                                    {play.result.reward
+                                        ? `${play.result.reward.grade} 응모권 1장을 받았습니다.`
+                                        : '이번 플레이의 보상은 없습니다. 최소 점수 또는 당일 보상 여부를 확인해 주세요.'}
+                                </p>
+                            )}
+                            {play.pending && (
+                                <Button
+                                    variant="secondary"
+                                    disabled={play.busy || !play.retryReady}
+                                    onClick={() => void play.retry()}
+                                >
+                                    {play.retryReady
+                                        ? '원본 기록으로 결과 다시 확인'
+                                        : `${play.retryAfter}초 후 다시 확인 가능`}
+                                </Button>
+                            )}
+                            {play.pending && (
+                                <p>
+                                    결과 확인 전에는 새 판을 시작할 수 없습니다. 원본 기록은 이 탭에
+                                    보존되어 새로고침해도 유지되며 탭을 닫으면 지워집니다.
+                                </p>
+                            )}
+                            {!playableCode && <p>아직 지원하지 않는 게임입니다.</p>}
+                        </div>
+                        {isUser && (
+                            <>
+                                {statistics.isError && (
+                                    <p role="alert" className="text-fg-on-brand">
+                                        기록 조회에 실패했습니다.{' '}
+                                        <button onClick={() => void statistics.refetch()}>
+                                            다시 조회
+                                        </button>
+                                    </p>
+                                )}
+                                <GameStats
+                                    bestScore={statistics.data?.bestScore}
+                                    totalScore={statistics.data?.totalScore}
+                                    validPlayCount={statistics.data?.validPlayCount}
+                                    rewardedToday={statistics.data?.rewardClaimedToday}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
 

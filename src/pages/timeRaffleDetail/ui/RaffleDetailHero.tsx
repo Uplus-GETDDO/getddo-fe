@@ -2,12 +2,14 @@ import type { ReactNode } from 'react';
 
 import { Clock } from 'lucide-react';
 
+import type { EntryStatistics } from '@entities/entry';
 import type { Event } from '@entities/event';
 
-import { useEntryStatistics } from '@entities/entry';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
-import { formatNumber } from '@shared/lib/format';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useImageFallback } from '@shared/hooks/useImageFallback';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { ImagePlaceholder } from '@shared/ui/image-placeholder';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { formatNumber } from '@shared/utils/format';
 
 const CHIP = 'text-caption bg-surface-sunken flex items-center gap-2.5 rounded-full px-3 py-1';
 
@@ -22,23 +24,35 @@ const STATUS_CHIP: Record<Event['status'], { label: string; emphasized: boolean 
     upcoming: { label: '오픈 예정', emphasized: false },
     closed: { label: '발표 대기', emphasized: false },
     drawn: { label: '발표 완료', emphasized: false },
+    canceled: { label: '이벤트 취소', emphasized: false },
+    ended: { label: '추첨 없이 종료', emphasized: false },
 };
 
 interface RaffleDetailHeroProps {
     event: Event;
+    /** 응모 현황(E03) — 페이지가 같은 키를 한 번만 구독해 나눠 준다 */
+    statistics?: EntryStatistics;
+    /** 현황 조회 시각 — 'HH:MM 기준' 표시에 쓴다 */
+    statisticsUpdatedAt?: number;
     /** 응모 수량 스테퍼 — 진행 중일 때만 노출한다 */
     quantityControl?: ReactNode;
     cta: ReactNode;
 }
 
 /** 상세 화면 대표 카드 — 목록 히어로와 달리 이미지가 카드에 꽉 차고, 현황은 칩으로 줄어든다 */
-export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHeroProps) {
-    // 응모 현황은 E03 전용 조회로 받는다 — 진행 중일 때만 30초 폴링 (ADR-0007)
+export function RaffleDetailHero({
+    event,
+    statistics,
+    statisticsUpdatedAt,
+    quantityControl,
+    cta,
+}: RaffleDetailHeroProps) {
     const isOpen = event.status === 'open';
-    const { data: statistics, dataUpdatedAt } = useEntryStatistics(event.id, { isOpen });
+    const banner = useImageFallback(event.bannerImageUrl);
     const { override } = useVirtualClock();
     // 진행 중에는 30초마다 바뀌는 값이라 언제 기준인지 같이 적는다 — 가상 시계로 멈춰 두면 그 시각으로 맞춘다
-    const fetchedAt = isOpen && dataUpdatedAt ? (override ?? new Date(dataUpdatedAt)) : null;
+    const fetchedAt =
+        isOpen && statisticsUpdatedAt ? (override ?? new Date(statisticsUpdatedAt)) : null;
 
     return (
         <article className="bg-surface-page flex flex-col overflow-hidden rounded-2xl lg:flex-row lg:gap-5">
@@ -46,15 +60,16 @@ export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHe
              * 상품 이미지는 래플마다 같은 크기의 정사각형(440)으로 위에 맞춘다. 오른쪽 높이를 따라 늘이면
              * 응모권 선택이 긴 래플만 이미지가 세로로 길어져 상품이 작아 보였다
              */}
-            <div className="bg-surface-canvas relative aspect-square w-full max-w-110 shrink-0 self-center overflow-hidden rounded-2xl lg:size-110 lg:self-start">
-                {event.bannerImageUrl ? (
+            <div className="bg-surface-sunken relative aspect-square w-full max-w-110 shrink-0 self-center overflow-hidden rounded-2xl lg:size-110 lg:self-start">
+                {banner.shown ? (
                     <img
-                        src={event.bannerImageUrl}
+                        src={event.bannerImageUrl!}
                         alt=""
-                        className="absolute inset-0 size-full object-contain p-6 mix-blend-multiply dark:mix-blend-normal"
+                        onError={banner.onError}
+                        className="absolute inset-0 size-full object-cover"
                     />
                 ) : (
-                    <div className="size-full" />
+                    <ImagePlaceholder className="size-full" />
                 )}
             </div>
 
@@ -80,7 +95,8 @@ export function RaffleDetailHero({ event, quantityControl, cta }: RaffleDetailHe
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <h2 className="text-title-1 text-fg-primary">{event.title}</h2>
+                        {/* 이 화면의 최상위 제목 — 아래 카드 제목들이 h2라 여기가 h1이어야 단계가 맞는다 */}
+                        <h1 className="text-title-1 text-fg-primary">{event.title}</h1>
                         {/* 전문은 아래 '이벤트 상세 안내'에 있다 — 위에서는 세 줄로 잘라 응모 칸을 밀어내지 않게 한다 */}
                         <p className="text-body text-fg-primary line-clamp-3">
                             {event.description}

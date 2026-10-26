@@ -9,8 +9,9 @@ import type {
 } from '@entities/mission';
 
 import { env } from '@shared/config/env';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
+import { DAY, demoTime } from '../demoTime';
 import { mockNow } from '../now';
 import { fail, failBody, ok, okBody } from './response';
 import { drawMockTicketGrade, recordMockTicketGrant } from './ticket';
@@ -24,19 +25,23 @@ interface MockQuestion extends MissionQuestion {
 }
 
 // completed·serverTime은 응답 시점에 계산하는 필드라 시드에는 두지 않는다
-interface MockMission extends Omit<MissionDetail, 'questions' | 'completed' | 'serverTime'> {
+export interface MockMission extends Omit<MissionDetail, 'questions' | 'completed' | 'serverTime'> {
     questions: MockQuestion[];
+    // AM03으로 만든 미션의 감사 시각 — 시드는 없고 adminSummaryOf가 startsAt으로 대체한다
+    createdAt?: string;
+    updatedAt?: string;
 }
 
-const mockMissions: MockMission[] = [
+// AM01/AM02 관리자 목업(adminMission.ts)도 같은 시드를 쓴다 — 사용자 화면과 관리 화면이 같은 미션을 보이게
+export const mockMissions: MockMission[] = [
     {
         id: 'msn-survey-1',
         title: '서비스 이용 경험 설문',
         description:
             '응모 이벤트 서비스 이용 경험을 묻는 설문입니다. 필수 문항에 모두 답하면 완료됩니다.',
         missionType: 'SURVEY',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -66,8 +71,8 @@ const mockMissions: MockMission[] = [
         title: '5G 상식 OX 퀴즈',
         description: '5G 관련 상식을 확인하는 OX 퀴즈입니다. 정답을 맞혀야 완료됩니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -89,9 +94,9 @@ const mockMissions: MockMission[] = [
         title: '유플러스 브랜드 퀴즈',
         description: '브랜드를 얼마나 알고 있는지 묻는 단답 퀴즈입니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
-        rewardTicketCount: 2,
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
+        rewardTicketCount: 1,
         questions: [
             {
                 id: 'q-quiz-2-1',
@@ -111,9 +116,9 @@ const mockMissions: MockMission[] = [
         title: 'U+ 생활 상식 퀴즈',
         description: '통신·멤버십 상식을 묻는 5문항 퀴즈입니다. 모든 문항을 맞혀야 완료됩니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
-        rewardTicketCount: 3,
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
+        rewardTicketCount: 1,
         questions: [
             {
                 id: 'q-multi-1',
@@ -184,9 +189,9 @@ const mockMissions: MockMission[] = [
         description:
             '응모 이벤트 이용 경험을 묻는 5문항 설문입니다. 필수 문항에 모두 답하면 완료됩니다.',
         missionType: 'SURVEY',
-        startsAt: '2026-10-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
-        rewardTicketCount: 2,
+        startsAt: demoTime(-30 * DAY),
+        endsAt: demoTime(60 * DAY),
+        rewardTicketCount: 1,
         questions: [
             {
                 id: 'q-smulti-1',
@@ -247,8 +252,8 @@ const mockMissions: MockMission[] = [
         title: '9월 신규고객 웰컴 선물 설문',
         description: '이미 완료된 미션의 화면 상태를 보여주는 시드입니다.',
         missionType: 'SURVEY',
-        startsAt: '2026-09-01T00:00:00Z',
-        endsAt: '2026-12-31T14:59:59Z',
+        startsAt: demoTime(-55 * DAY),
+        endsAt: demoTime(60 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -266,8 +271,8 @@ const mockMissions: MockMission[] = [
         title: '지난 시즌 퀴즈',
         description: '운영 기간이 끝난 미션입니다. 제출하면 서버가 거절합니다.',
         missionType: 'QUIZ',
-        startsAt: '2026-09-01T00:00:00Z',
-        endsAt: '2026-09-30T14:59:59Z',
+        startsAt: demoTime(-55 * DAY),
+        endsAt: demoTime(-25 * DAY),
         rewardTicketCount: 1,
         questions: [
             {
@@ -294,6 +299,7 @@ interface StoredAttempt {
     status: number;
     body: unknown;
 }
+const solvedByUserMission = new Map<string, Set<string>>();
 const attempts = new Map<string, StoredAttempt>();
 
 /** 사용자별 제출 기록 — 완료 여부(completed)와 재제출 시 기존 결과 반환에 쓴다 */
@@ -304,15 +310,15 @@ const userIdOf = (request: Request) => request.headers.get('X-User-ID') ?? 'anon
 const seedCompletedSubmission = (): MissionSubmissionResult => ({
     submissionId: 'sub-seed-survey-done',
     missionId: 'msn-survey-done',
-    receivedAt: '2026-09-15T02:00:00Z',
+    receivedAt: demoTime(-40 * DAY),
     isCompleted: true,
     reward: {
         claimId: 'claim-seed-survey-done',
         ticketCount: 1,
-        grantedAt: '2026-09-15T02:00:00Z',
+        grantedAt: demoTime(-40 * DAY),
         expiresAt: null,
     },
-    createdAt: '2026-09-15T02:00:00Z',
+    createdAt: demoTime(-40 * DAY),
 });
 
 const submissionsFor = (userId: string) => {
@@ -381,7 +387,12 @@ const isCorrect = (question: MockQuestion, answer: MissionAnswer) => {
         return answer.selectedOptionId === question.correctOptionId;
     }
     if (question.correctAnswer !== undefined) {
-        return answer.answerText?.trim() === question.correctAnswer;
+        const normalize = (text: string) =>
+            text.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
+        return (
+            answer.answerText !== undefined &&
+            normalize(answer.answerText) === normalize(question.correctAnswer)
+        );
     }
     // 정답이 없는 문항(설문 서술형)은 채점 대상이 아니다
     return true;
@@ -421,7 +432,13 @@ export const missionHandlers = [
         const body = (await request.json().catch(() => null)) as {
             answers?: unknown;
         } | null;
-        const answersJson = JSON.stringify(body?.answers ?? null);
+        const answersJson = JSON.stringify(
+            Array.isArray(body?.answers)
+                ? [...(body.answers as MissionAnswer[])].sort((a, b) =>
+                      a.questionId.localeCompare(b.questionId),
+                  )
+                : null,
+        );
 
         const attempt = attempts.get(idempotencyKey);
         if (attempt) {
@@ -431,11 +448,7 @@ export const missionHandlers = [
                 attempt.missionId !== missionId ||
                 attempt.answersJson !== answersJson
             ) {
-                return fail(
-                    409,
-                    'IDEMPOTENCY_CONFLICT',
-                    '같은 멱등키로 다른 제출을 보낼 수 없습니다',
-                );
+                return fail(409, 'MISSION-005', '같은 멱등키로 다른 제출을 보낼 수 없습니다');
             }
             const status = attempt.status === 201 ? 200 : attempt.status;
             return HttpResponse.json(attempt.body as object, { status });
@@ -479,38 +492,42 @@ export const missionHandlers = [
         const missingRequired = mission.questions.some(
             (q) => q.required && !answers.some((a) => a.questionId === q.id),
         );
-        if (missingRequired) {
+        if (mission.missionType === 'SURVEY' && missingRequired) {
             return remember(400, failBody('COMMON-002', '필수 문항에 모두 답해야 합니다'));
         }
 
-        // 제출 인정 시각은 서버(가상 시계) 기준 — [startsAt, endsAt) 밖은 거절한다
+        // 이미 완료한 제출은 운영 기간 이후에도 기존 결과를 돌려준다.
+        const existing = submissionsFor(userId).find(
+            (entry) => entry.missionId === missionId && entry.isCompleted,
+        );
+        if (existing) return remember(200, okBody(existing));
         const now = mockNow();
         if (now < new Date(mission.startsAt) || now >= new Date(mission.endsAt)) {
-            return remember(409, failBody('MISSION_NOT_ACTIVE', '미션 운영 기간이 아닙니다'));
+            return remember(409, failBody('MISSION-004', '미션 운영 기간이 아닙니다'));
         }
-
-        // 완료 후 재제출은 기존 완료 결과를 반환한다 — 답변을 덮어쓰거나 보상을 중복 지급하지 않는다
-        const existing = submissionsFor(userId).find(
-            (s) => s.missionId === missionId && s.isCompleted,
-        );
-        if (existing) {
-            return remember(200, okBody(existing));
+        const solvedKey = `${userId}:${missionId}`;
+        const solved = solvedByUserMission.get(solvedKey) ?? new Set<string>();
+        if (mission.missionType === 'QUIZ') {
+            const pendingAnswers = answers.filter((answer) => !solved.has(answer.questionId));
+            if (!pendingAnswers.length)
+                return remember(
+                    400,
+                    failBody('MISSION-002', '아직 완료하지 않은 문항에 답해 주세요.'),
+                );
+            for (const answer of pendingAnswers) {
+                const question = mission.questions.find((q) => q.id === answer.questionId)!;
+                if (isCorrect(question, answer)) solved.add(question.id);
+            }
+            solvedByUserMission.set(solvedKey, solved);
         }
-
-        // 다문항 완료·채점 방식은 세부 계약 미정 — 목업은 모든 문항이 정답일 때만 완료로 둔다
         const isCompleted =
-            mission.missionType === 'SURVEY'
-                ? true
-                : mission.questions.every((q) => {
-                      const answer = answers.find((a) => a.questionId === q.id);
-                      return answer !== undefined && isCorrect(q, answer);
-                  });
+            mission.missionType === 'SURVEY' || mission.questions.every((q) => solved.has(q.id));
 
         const receivedAt = now.toISOString();
         // 미션 보상은 등급 응모권 — 보상 건의 등급을 확률로 추첨해 응답과 지급 이력에 같은 등급을 쓴다
         const grade = isCompleted ? drawMockTicketGrade() : null;
         const result: MissionSubmissionResult = {
-            submissionId: crypto.randomUUID(),
+            submissionId: idempotencyKey,
             missionId,
             receivedAt,
             isCompleted,
@@ -527,7 +544,7 @@ export const missionHandlers = [
         };
 
         if (isCompleted && grade) {
-            // 지급 장수는 미션 계약 재검토 후 정합한다
+            // 완료 보상은 사용자·미션당 등급 응모권 한 장이다.
             recordMockTicketGrant(userId, mission.rewardTicketCount, `${mission.title} 보상`, {
                 grade,
                 missionId,

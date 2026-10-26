@@ -246,6 +246,9 @@ describe('AN04 발송 이력 목록', () => {
         expect(data.totalElements).toBe(16);
         const times = data.items.map((n) => n.createdAt);
         expect(times).toEqual([...times].sort().reverse());
+        // ADR-028 — 수신자 현재 이름을 싣고, 이름이 없는 건은 null이다
+        expect(data.items.find((n) => n.userId === 'vu-doyoon')?.userName).toBe('김도윤');
+        expect(data.items.find((n) => n.userId === 'vu-yuna')?.userName).toBeNull();
     });
 
     it('userId·jobId·mockDeliveryStatus로 거른다', async () => {
@@ -284,18 +287,26 @@ describe('AN04 발송 이력 목록', () => {
         );
         expect(event.items.every((n) => n.eventId === 'evt-201')).toBe(true);
 
+        // fixture는 기준 시각 대비 상대 시각이라 하드코딩 날짜 대신 가장 최근 createdAt의 날짜 창을 잡는다
+        const latest = event.items
+            .map((n) => n.createdAt)
+            .sort()
+            .at(-1);
+        if (!latest) throw new Error('fixture missing');
+        const from = new Date(new Date(latest).setUTCHours(0, 0, 0, 0));
+        const to = new Date(from.getTime() + 24 * 60 * 60 * 1000);
         const ranged = page(
             adminNotificationSchema,
             (
                 await get('/v1/admin/notifications', {
                     size: 100,
-                    from: '2026-10-08T00:00:00Z',
-                    to: '2026-10-09T00:00:00Z',
+                    from: from.toISOString(),
+                    to: to.toISOString(),
                 })
             ).data,
         );
         expect(ranged.items.length).toBeGreaterThan(0);
-        expect(ranged.items.every((n) => n.createdAt >= '2026-10-08T00:00:00Z')).toBe(true);
+        expect(ranged.items.every((n) => n.createdAt >= from.toISOString())).toBe(true);
 
         const second = page(
             adminNotificationSchema,

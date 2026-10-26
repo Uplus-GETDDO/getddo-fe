@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 
 import { useAttendanceToday } from '@entities/attendance';
-import { useGameList } from '@entities/game';
-import { useMissionList } from '@entities/mission';
+import { useGameList, useGameStatisticsList } from '@entities/game';
+import { isMissionOpenByServerTime, useLatestMissions } from '@entities/mission';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
 import shopCounter from '@shared/assets/shop/shop-counter.jpg';
 import shopWall from '@shared/assets/shop/shop-wall.jpg';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import stepAttendance from '@shared/assets/step/step-attendance.png';
+import stepGame from '@shared/assets/step/step-game.png';
+import stepMission from '@shared/assets/step/step-mission.png';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { SkeletonText } from '@shared/ui/skeleton';
 import { StepTile } from '@shared/ui/step-tile';
 import { TicketWallet } from '@widgets/ticketWallet';
 
@@ -16,12 +21,9 @@ import itemJar from '../assets/item-jar.png';
 import itemMayo from '../assets/item-mayo.png';
 import itemSauce from '../assets/item-sauce.png';
 import itemSkewer from '../assets/item-skewer.png';
-import stepAttendance from '../assets/step-attendance.png';
-import stepGame from '../assets/step-game.png';
-import stepMission from '../assets/step-mission.png';
-import { isMissionOpen, summarizeTodayRewards } from '../lib/todayRewards';
-import { useSlotNumber } from '../lib/useSlotNumber';
+import { useSlotNumber } from '../hooks/useSlotNumber';
 import { MISSION_SECTION_IDS } from '../model/sectionIds';
+import { summarizeTodayRewards } from '../utils/todayRewards';
 
 /** 기준 시각을 다시 읽는 간격 */
 const NOW_REFRESH_MS = 60_000;
@@ -62,10 +64,25 @@ function ProgressDots({
  * 왼쪽: 오늘 날짜와 오늘 더 받을 수 있는 응모권 수, 출석·게임·설문퀴즈 진행 세 칸(누르면 해당 섹션으로)
  * 오른쪽: 내 응모권 지갑(widgets/ticketWallet) — 바로가기는 응모권 내역
  */
+/** 칸 값을 불러오기 전 자리 — '-' 대신 다른 화면과 같은 둥근 글줄 */
+const VALUE_PLACEHOLDER = <SkeletonText className="h-4 w-14" />;
+
 export function TodayRewardsBanner() {
     const { data: today } = useAttendanceToday();
-    const { data: games } = useGameList();
-    const { data: missions } = useMissionList();
+    const { data: games, isError: gamesError } = useGameList();
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const playableGames = games?.filter((game) => hasGamePlayer(game.code));
+    const statistics = useGameStatisticsList(
+        (playableGames ?? []).map((game) => game.id),
+        isUser,
+    );
+    const gameRewardsError = isUser && (gamesError || statistics.some((item) => item.isError));
+    const gameRewards = !isUser
+        ? []
+        : playableGames && statistics.every((item) => item.isSuccess)
+          ? statistics.map((item) => ({ rewardedToday: item.data?.rewardClaimedToday }))
+          : undefined;
+    const { data: missions } = useLatestMissions();
     // 날짜·이번 달·진행 중 미션 판정 기준 시각 — 페이지를 열어 둔 채 기준일이 바뀌어도
     // 출석 상태(주기적으로 다시 받는다)와 같은 날을 보도록 1분마다 다시 읽는다
     const clock = useVirtualClock();
@@ -78,11 +95,11 @@ export function TodayRewardsBanner() {
     const progress = summarizeTodayRewards({
         attended: today?.attended,
         // 준비 중인 게임은 보상을 받을 수 없어 세지 않는다
-        games: games?.filter((game) => hasGamePlayer(game.id)),
-        // 지금 참여할 수 있는 미션만 센다 — 목록 카드는 기간이 지난 미션도 그대로 보여 준다
-        missions: missions?.filter((mission) => isMissionOpen(mission, now)),
+        games: gameRewards,
+        // 지금 참여할 수 있는 미션만 센다 — 판정은 응답의 serverTime 기준이다 (완료 여부는 그대로 반영)
+        missions: missions?.filter((mission) => isMissionOpenByServerTime(mission)),
     });
-    // 출석·게임·미션을 다 불러오기 전에는 남은 장수가 0으로 잡혀 틀린 숫자가 보이니 '-'로 둔다
+    // 출석·게임·미션을 다 불러오기 전에는 남은 장수가 0으로 잡혀 틀린 숫자가 보이니 글줄 스켈레톤으로 둔다
     const ready =
         progress.attendance !== undefined &&
         progress.games !== undefined &&
@@ -147,13 +164,20 @@ export function TodayRewardsBanner() {
                         id="today-rewards-title"
                         className="text-title-1 text-fg-primary mt-2 break-keep"
                     >
-                        {allDone ? (
+                        {gameRewardsError ? (
+                            <span role="status">오늘의 게임 보상을 불러오지 못했어요</span>
+                        ) : allDone ? (
                             '오늘 받을 응모권을 다 모았어요!'
                         ) : (
                             <>
                                 오늘 응모권{' '}
                                 <span className="text-display text-fg-primary tabular-nums">
-                                    {ready ? remaining : '-'}장
+                                    {ready ? (
+                                        remaining
+                                    ) : (
+                                        <SkeletonText className="h-[0.8em] w-12" />
+                                    )}
+                                    장
                                 </span>{' '}
                                 더 받을 수 있어요
                             </>
@@ -177,7 +201,7 @@ export function TodayRewardsBanner() {
                                     ? progress.attendance.done
                                         ? '완료'
                                         : '출석하기'
-                                    : '-'
+                                    : VALUE_PLACEHOLDER
                             }
                             done={attendanceDone}
                             targetId={MISSION_SECTION_IDS.attendance}
@@ -186,9 +210,11 @@ export function TodayRewardsBanner() {
                             icon={stepGame}
                             label="게임 보상"
                             value={
-                                progress.games
-                                    ? `${progress.games.done} / ${progress.games.total}`
-                                    : '-'
+                                gameRewardsError
+                                    ? '조회 실패'
+                                    : progress.games
+                                      ? `${progress.games.done} / ${progress.games.total}`
+                                      : VALUE_PLACEHOLDER
                             }
                             valueSuffix={<ProgressDots count={progress.games} done={gamesDone} />}
                             done={gamesDone}
@@ -200,7 +226,7 @@ export function TodayRewardsBanner() {
                             value={
                                 progress.missions
                                     ? `${progress.missions.done} / ${progress.missions.total}`
-                                    : '-'
+                                    : VALUE_PLACEHOLDER
                             }
                             valueSuffix={
                                 <ProgressDots count={progress.missions} done={missionsDone} />

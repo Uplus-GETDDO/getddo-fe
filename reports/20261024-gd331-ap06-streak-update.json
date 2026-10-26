@@ -1,0 +1,153 @@
+{
+    "kind": "GD-331 AP06 예약 연속 출석 정책 수정 200 실측 — 배포본 UI 경유",
+    "checkedAt": "2026-10-23T17:50:40.118173+00:00",
+    "verifierCommit": "0ae5a0d25dfb6d03bd73c393014b02e8e57014e1",
+    "url": "https://getddo-fe.vercel.app",
+    "puts": [
+        {
+            "status": 200,
+            "envelope": {
+                "success": true,
+                "code": "SUCCESS",
+                "message": "성공했습니다."
+            },
+            "data": {
+                "effectiveMonth": "2026-11",
+                "milestones": [
+                    {
+                        "milestoneDays": 7,
+                        "rewardTicketCount": 1
+                    },
+                    {
+                        "milestoneDays": 14,
+                        "rewardTicketCount": 3
+                    },
+                    {
+                        "milestoneDays": 28,
+                        "rewardTicketCount": 8
+                    }
+                ],
+                "hasId": true,
+                "hasCreatedByName": true,
+                "hasCreatedAt": true
+            }
+        },
+        {
+            "status": 200,
+            "envelope": {
+                "success": true,
+                "code": "SUCCESS",
+                "message": "성공했습니다."
+            },
+            "data": {
+                "effectiveMonth": "2026-11",
+                "milestones": [
+                    {
+                        "milestoneDays": 7,
+                        "rewardTicketCount": 1
+                    },
+                    {
+                        "milestoneDays": 14,
+                        "rewardTicketCount": 3
+                    },
+                    {
+                        "milestoneDays": 28,
+                        "rewardTicketCount": 7
+                    }
+                ],
+                "hasId": true,
+                "hasCreatedByName": true,
+                "hasCreatedAt": true
+            }
+        }
+    ],
+    "checks": [
+        {
+            "name": "예약 카드 사전 확인",
+            "has202611": true,
+            "has28x7": true
+        },
+        {
+            "name": "AP06 변경 PUT 응답",
+            "status": 200,
+            "envelope": {
+                "success": true,
+                "code": "SUCCESS",
+                "message": "성공했습니다."
+            },
+            "data": {
+                "effectiveMonth": "2026-11",
+                "milestones": [
+                    {
+                        "milestoneDays": 7,
+                        "rewardTicketCount": 1
+                    },
+                    {
+                        "milestoneDays": 14,
+                        "rewardTicketCount": 3
+                    },
+                    {
+                        "milestoneDays": 28,
+                        "rewardTicketCount": 8
+                    }
+                ],
+                "hasId": true,
+                "hasCreatedByName": true,
+                "hasCreatedAt": true
+            }
+        },
+        {
+            "name": "예약 카드 변경 반영",
+            "has28x8": true
+        },
+        {
+            "name": "AP06 원복 PUT 응답",
+            "status": 200,
+            "envelope": {
+                "success": true,
+                "code": "SUCCESS",
+                "message": "성공했습니다."
+            },
+            "data": {
+                "effectiveMonth": "2026-11",
+                "milestones": [
+                    {
+                        "milestoneDays": 7,
+                        "rewardTicketCount": 1
+                    },
+                    {
+                        "milestoneDays": 14,
+                        "rewardTicketCount": 3
+                    },
+                    {
+                        "milestoneDays": 28,
+                        "rewardTicketCount": 7
+                    }
+                ],
+                "hasId": true,
+                "hasCreatedByName": true,
+                "hasCreatedAt": true
+            }
+        },
+        {
+            "name": "예약 카드 원복 반영",
+            "has28x7": true
+        },
+        {
+            "name": "원복 최종 GET 대조",
+            "milestones": [
+                [7, 1],
+                [14, 3],
+                [28, 7]
+            ],
+            "restored": true
+        },
+        {
+            "name": "콘솔 오류",
+            "count": 0,
+            "errors": []
+        }
+    ],
+    "errors": [],
+    "entryChunk": "index-DRCSlZyx.js"
+}

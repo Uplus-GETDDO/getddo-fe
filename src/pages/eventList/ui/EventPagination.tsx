@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
 export function EventPagination({
     page,

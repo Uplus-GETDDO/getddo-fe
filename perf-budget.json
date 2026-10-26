@@ -1,0 +1,5 @@
+{
+    "comment": "GD-340 — 초기 로드 정적 그래프 버짓. 수치·근거는 docs/performance-budget.md. 기준선(2026-10-24): JS gzip 237,816B / CSS gzip 25,178B.",
+    "initialJsGzipBytes": 262144,
+    "initialCssGzipBytes": 30720
+}

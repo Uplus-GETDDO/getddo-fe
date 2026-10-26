@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" role="img" aria-label="">
+  <defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#2FA98B"/><stop offset="1" stop-color="#11604E"/>
+  </linearGradient></defs>
+  <rect width="600" height="300" fill="url(#a)"/>
+  <circle cx="104" cy="60" r="104" fill="#A9F0DC" opacity=".16"/>
+  <!-- 리유저블 컵 -->
+  <path d="M244 96h112l-10 150a16 16 0 0 1-16 14h-60a16 16 0 0 1-16-14z" fill="#fff"/>
+  <rect x="234" y="76" width="132" height="26" rx="10" fill="#A9F0DC"/>
+  <rect x="286" y="58" width="28" height="22" rx="8" fill="#A9F0DC"/>
+  <path d="M258 162h84" stroke="#2FA98B" stroke-width="8" stroke-linecap="round"/>
+  <!-- 재사용 화살표 -->
+  <g fill="none" stroke="#11604E" stroke-width="7" stroke-linecap="round">
+    <path d="M276 206a24 24 0 0 1 48 0"/><path d="M324 206l-10-10M324 206l10-10"/>
+  </g>
+</svg>

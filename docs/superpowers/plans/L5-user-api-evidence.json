@@ -1,0 +1,200 @@
+{
+    "at": "2026-10-20T14:31:25.381Z",
+    "kind": "실제 API 시연 계정 출석·미션 쓰기",
+    "checks": [
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/attendances",
+            "status": 201,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/attendances",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "name": "AT02 동일 기준일",
+            "firstStatus": 201,
+            "repeatedStatus": 200,
+            "sameReceipt": true,
+            "firstBalanceDelta": 1,
+            "repeatedBalanceDelta": 0,
+            "attendanceDate": "2026-10-20",
+            "confirmedRewardCount": 1
+        },
+        {
+            "method": "GET",
+            "path": "/admin/missions?page=1&size=100",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/missions/01a143a8-b6df-7933-98fa-7e9acf17c455",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/admin/missions/01a143a8-b6df-7933-98fa-7e9acf17c455",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/missions/01a143a8-b6df-7933-98fa-7e9acf17c455/submissions",
+            "status": 201,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/missions/01a143a8-b6df-7933-98fa-7e9acf17c455/submissions",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/missions/01a143a8-b6df-7933-98fa-7e9acf17c455/submissions",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "name": "QUIZ 완료·재시도",
+            "questionCount": 1,
+            "firstStatus": 201,
+            "firstCompleted": true,
+            "identicalKeyStatus": 200,
+            "sameResult": true,
+            "completed": true,
+            "rewardCount": 1,
+            "rewardGrade": "BRONZE",
+            "balanceDelta": 1,
+            "newKeyStatus": 200,
+            "sameCompletedSubmission": true,
+            "repeatedRewardDelta": 0
+        },
+        {
+            "method": "GET",
+            "path": "/missions/01a143a8-b6df-7cbd-a070-7a196e668677",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/admin/missions/01a143a8-b6df-7cbd-a070-7a196e668677",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/missions/01a143a8-b6df-7cbd-a070-7a196e668677/submissions",
+            "status": 201,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/missions/01a143a8-b6df-7cbd-a070-7a196e668677/submissions",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "POST",
+            "path": "/missions/01a143a8-b6df-7cbd-a070-7a196e668677/submissions",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "method": "GET",
+            "path": "/tickets/me",
+            "status": 200,
+            "code": "SUCCESS",
+            "retryAfter": null
+        },
+        {
+            "name": "SURVEY 완료·재시도",
+            "questionCount": 1,
+            "firstStatus": 201,
+            "firstCompleted": true,
+            "identicalKeyStatus": 200,
+            "sameResult": true,
+            "completed": true,
+            "rewardCount": 1,
+            "rewardGrade": "BRONZE",
+            "balanceDelta": 1,
+            "newKeyStatus": 200,
+            "sameCompletedSubmission": true,
+            "repeatedRewardDelta": 0
+        }
+    ]
+}

@@ -1,9 +1,10 @@
 import { Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
+import { Badge } from '@shared/ui/badge';
 
-import { formatCloseCountdown } from '../lib/raffleFormat';
+import { formatCloseCountdown } from '../utils/raffleFormat';
 
 /** 이 시간보다 적게 남으면 칩을 검게 채운다 — 곧 끝난다는 신호를 색으로 준다 */
 const URGENT_MS = 10 * 60 * 1000;
@@ -51,20 +52,35 @@ export function CloseCountdownChip({ endsAt, size = 'md' }: CloseCountdownChipPr
         );
     }
 
-    const text = size === 'md' ? 'text-body-sm' : 'text-caption';
+    const label = (
+        <>
+            <Timer className={size === 'md' ? 'size-3.5' : 'size-3'} />
+            {formatCloseCountdown(remainingMs)} 남음
+        </>
+    );
 
+    // 1초마다 바뀌는 값이라 읽어 주면 화면 낭독을 끊는다 — 남은 시간은 상세에서 다시 안내한다
+    if (urgent) {
+        // 검은 알약은 공용 Badge(inverse) — 같은 줄의 응모 칩(Badge sm)과 높이·여백이 같아야 크기가 달라 보이지 않는다
+        return (
+            <Badge
+                aria-hidden
+                variant="inverse"
+                size={size === 'md' ? 'md' : 'sm'}
+                className={`gap-1 font-semibold tabular-nums ${size === 'md' ? 'text-sm' : ''}`}
+            >
+                {label}
+            </Badge>
+        );
+    }
+
+    const text = size === 'md' ? 'text-body-sm' : 'text-caption';
     return (
         <span
-            // 1초마다 바뀌는 값이라 읽어 주면 화면 낭독을 끊는다 — 남은 시간은 상세에서 다시 안내한다
             aria-hidden
-            className={
-                urgent
-                    ? `bg-action-neutral text-fg-on-brand ${text} flex items-center gap-1 rounded-full px-2.5 py-1 tabular-nums`
-                    : `${text} text-fg-secondary flex items-center gap-1 tabular-nums`
-            }
+            className={`${text} text-fg-secondary flex items-center gap-1 tabular-nums`}
         >
-            <Timer className="size-3.5" />
-            {formatCloseCountdown(remainingMs)} 남음
+            {label}
         </span>
     );
 }

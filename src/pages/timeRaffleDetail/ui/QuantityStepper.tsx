@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
 const STEP_BUTTON =
     'border-border-strong text-body-bold flex size-8 items-center justify-center rounded-lg border disabled:cursor-not-allowed';

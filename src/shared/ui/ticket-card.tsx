@@ -74,7 +74,11 @@ function TicketCard({
             <div className="h-full" style={{ filter: CARD_OUTLINE }}>
                 <Card
                     ref={cardRef}
-                    className={cn('h-full gap-0 border-0 p-4 shadow-none', cardClassName)}
+                    // group/ticket — 카드에 마우스를 올리면 TicketCardMedia 그림이 확대된다
+                    className={cn(
+                        'group/ticket h-full gap-0 border-0 p-4 shadow-none',
+                        cardClassName,
+                    )}
                     style={{ maskImage: mask, maskComposite: 'intersect' }}
                 >
                     {children}
@@ -93,4 +97,50 @@ function TicketCard({
     );
 }
 
-export { CARD_OUTLINE as TICKET_OUTLINE_FILTER, CARD_SHADOW as TICKET_SHADOW_FILTER, TicketCard };
+/**
+ * 티켓 카드 위쪽 그림 칸(높이 120) — 카드에 마우스를 올리거나 카드 안 버튼에 초점이 가면 그림이 칸 안에서 살짝 확대된다.
+ * 카드는 움직이지 않고 그림만 움직인다. 동작 줄이기 설정이면 확대하지 않는다. 그림이 없으면 회색 칸에 fallback(아이콘 등)을 둔다
+ */
+function TicketCardMedia({
+    src,
+    fallback,
+    fit = 'cover',
+    position,
+}: {
+    src?: string | null;
+    fallback: React.ReactNode;
+    /** cover: 칸을 꽉 채운다(게임 썸네일), contain: 그림 전체를 보인다(바탕 투명한 미션 그림) */
+    fit?: 'cover' | 'contain';
+    /** cover로 잘릴 때 남길 기준점(object-position) — 예: '50% 20%' */
+    position?: string;
+}) {
+    return (
+        <div
+            className={cn(
+                'flex h-30 shrink-0 items-center justify-center overflow-hidden rounded-lg',
+                !src && 'bg-surface-canvas',
+            )}
+        >
+            {src ? (
+                <img
+                    src={src}
+                    alt=""
+                    style={position ? { objectPosition: position } : undefined}
+                    className={cn(
+                        'size-full transition-transform duration-300 ease-out group-focus-within/ticket:scale-105 group-hover/ticket:scale-105 motion-reduce:transition-none motion-reduce:group-focus-within/ticket:scale-100 motion-reduce:group-hover/ticket:scale-100',
+                        fit === 'cover' ? 'object-cover' : 'object-contain',
+                    )}
+                />
+            ) : (
+                fallback
+            )}
+        </div>
+    );
+}
+
+export {
+    CARD_OUTLINE as TICKET_OUTLINE_FILTER,
+    CARD_SHADOW as TICKET_SHADOW_FILTER,
+    TicketCard,
+    TicketCardMedia,
+};

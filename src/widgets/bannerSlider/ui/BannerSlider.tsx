@@ -1,208 +1,289 @@
 import type { ReactNode } from 'react';
 
-import { useReducedMotion } from 'framer-motion';
-import { Clock, Flame } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Pause, Play } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import type { Event } from '@entities/event';
 
-import { eventDetailPath, useEventList } from '@entities/event';
-import { formatRemaining } from '@shared/lib/date';
-import { useVirtualClock } from '@shared/lib/virtualClock';
-import { Badge } from '@shared/ui/badge';
+import { useBanners } from '@entities/banner';
+import { useEvent } from '@entities/event';
+import { queryPresets } from '@shared/api/queryPresets';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
 import { Pager } from '@shared/ui/pager';
+import { RefreshStatus } from '@shared/ui/refresh-status';
 import { Skeleton } from '@shared/ui/skeleton';
 
-import bannerBackground from '../assets/banner-bg.jpg';
-import bannerMascot from '../assets/banner-mascot.webp';
+import { BannerSlide, FallbackBanner } from './BannerSlide';
 
 const AUTO_SLIDE_MS = 5000;
-const MAX_SLIDES = 5;
-/** 피그마 홈 배너의 무너 캐릭터(image 28) — 배너 이미지 대신 고정 장식으로 보여준다 */
-const SHOW_MASCOT = true;
 
+/** 지금 보이는 배너의 연결 이벤트로 갱신 표시를 그린다 — 상세(E02)는 BannerSlide와 같은 캐시를 쓴다 */
+function ActiveRefresh({
+    eventId,
+    summaryEvent,
+    render,
+}: {
+    eventId: string;
+    summaryEvent?: Event;
+    render: (event: Event, isActive: boolean) => ReactNode;
+}) {
+    // 슬라이드가 바뀔 때마다 마운트되므로 폴링 주기 안의 재마운트는 받아 둔 값을 쓴다
+    // 목록 이벤트가 있으면 그 값으로 충분해 상세를 따로 묻지 않는다 — 슬라이드의 상세 조회가 채운다
+    const { data: detail } = useEvent(eventId, {
+        staleTime: queryPresets.realtime.refetchInterval,
+        enabled: !summaryEvent,
+    });
+    const event = detail ?? summaryEvent;
+    return event && event.status === 'open' ? render(event, true) : null;
+}
+
+/**
+ * 배너 수만큼의 점 — 지금 배너의 점만 알약으로 늘어나고, 자동 재생 중에는 그 안이 다음 배너까지 남은 시간만큼 찬다.
+ * 채움도 알약 모양(점 크기에서 시작해 폭만 늘린다)이라 끝이 잘려 보이지 않는다. 멈추면 꽉 찬 알약으로 둔다.
+ * 점을 누르면 그 배너로 바로 간다 — 점은 6px라 누르는 자리는 24px 높이로 넓힌다
+ */
+function SlideDots({
+    total,
+    index,
+    playing,
+    onSelect,
+}: {
+    total: number;
+    index: number;
+    playing: boolean;
+    onSelect: (index: number) => void;
+}) {
+    return (
+        <div className="flex items-center">
+            {Array.from({ length: total }, (_, dot) => (
+                <button
+                    key={dot}
+                    type="button"
+                    aria-label={`${dot + 1}번째 배너`}
+                    aria-current={dot === index ? 'true' : undefined}
+                    onClick={() => onSelect(dot)}
+                    className="group focus-visible:ring-border-focus flex h-6 cursor-pointer items-center rounded-full px-0.5 focus-visible:ring-2 focus-visible:outline-none"
+                >
+                    {dot === index ? (
+                        <span className="bg-border-strong relative h-1.5 w-6 overflow-hidden rounded-full">
+                            <motion.span
+                                key={playing ? `play-${index}` : 'still'}
+                                className="bg-fg-primary absolute inset-y-0 left-0 min-w-1.5 rounded-full"
+                                initial={{ width: playing ? '0%' : '100%' }}
+                                animate={{ width: '100%' }}
+                                transition={
+                                    playing
+                                        ? { duration: AUTO_SLIDE_MS / 1000, ease: 'linear' }
+                                        : { duration: 0 }
+                                }
+                            />
+                        </span>
+                    ) : (
+                        <span className="bg-border-strong group-hover:bg-fg-tertiary size-1.5 rounded-full transition-colors" />
+                    )}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+/**
+ * 홈 관리 배너 —관리자가 등록한 배너(B01)를 순서대로 넘긴다.
+ * 자동 재생은 계속 돌고, 마우스·포커스가 안에 있거나 정지 버튼을 누르면 멈춘다. 동작 줄이기 설정이면 켜지 않는다.
+ * 자동 재생 중에는 넘김 컨트롤 옆 알약 점이 다음 배너까지 남은 시간을 채워 보여 준다 (SlideDots).
+ * 배너 아래 한 줄 — 왼쪽은 페이지가 넣는 내용(바로가기), 오른쪽은 갱신 표시·정지·넘김 화살표.
+ * 바로가기를 따로 한 줄로 떼면 배너와 아래 섹션 사이에 홀로 떠 보여, 배너에서 16px 띄운 한 줄로 묶는다
+ */
 export function BannerSlider({
     renderStatus,
+    renderRefresh,
+    footer,
+    events,
 }: {
+    /** 배너 아래 줄 왼쪽에 둘 내용 — 넘김 화살표와 같은 줄에 붙여 배너와 한 덩어리로 보이게 한다 (예: 홈 바로가기) */
+    footer?: ReactNode;
     /**
-     * 배너 이벤트의 실시간 현황 pill을 배너 안에 렌더링한다 — 위젯 간 참조를 피하기 위해 페이지가 슬롯으로 주입한다.
-     * isActive는 지금 보이는 슬라이드인지 여부라, 보이지 않는 슬라이드의 현황 조회를 멈추는 데 쓴다
+     * 페이지가 이미 받은 이벤트 목록(E01) — 주면 비활성 슬라이드는 목록 이벤트로 그리고
+     * 상세(E02) 조회는 활성 슬라이드만 한다. 안 주면 배너마다 상세를 받던 종전 동작을 유지한다
+     */
+    events?: Event[];
+    /**
+     * 연결 이벤트의 실시간 현황 pill을 배너 안에 그린다 — 위젯 간 참조를 피하려고 페이지가 슬롯으로 주입한다.
+     * isActive는 지금 보이는 배너인지라, 보이지 않는 배너의 현황 조회를 멈추는 데 쓴다
      */
     renderStatus?: (event: Event, isActive: boolean) => ReactNode;
+    /** 넘김 화살표 옆 갱신 표시 — 지금 보이는 배너의 실시간 현황 폴링과 실패를 한 줄로 알린다 */
+    renderRefresh?: (event: Event, isActive: boolean) => ReactNode;
 }) {
-    const { data: events, isPending, isError } = useEventList();
+    const { data: banners, isPending, isError, refetch, isFetching } = useBanners();
     const [index, setIndex] = useState(0);
-    // 정지 조건을 축별로 분리한다 — 포커스가 안에 있는데 마우스만 빠져나가도 재생이 재개되지 않게
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
-    // 자동 넘김은 한 바퀴(모든 배너를 한 번씩 보여주고 첫 배너로 돌아오기)만 하고 멈춘다.
-    // 사용자가 화살표로 직접 넘기면 그때부터는 자동 넘김을 끈다
-    const [autoSteps, setAutoSteps] = useState(0);
-    const [userControlled, setUserControlled] = useState(false);
-    // 동작 줄이기 설정 사용자에게는 자동 슬라이드를 켜지 않는다
+    const [paused, setPaused] = useState(false);
     const reduceMotion = useReducedMotion();
-    // 마감 판정이 아닌 화면 표시 전용 카운트다운이므로 가상 시계의 시각을 쓴다
+    const total = banners?.length ?? 0;
+    const safeIndex = Math.min(index, Math.max(total - 1, 0));
+    const stopped = paused;
+    const playing = total > 1 && !hovered && !focused && !stopped && !reduceMotion;
+
+    // 남은 시간 표시 전용 — 마감 판정이 아니라 가상 시계의 시각으로 1초마다 다시 센다
     const clock = useVirtualClock();
     const [now, setNow] = useState(() => clock.now());
-    // 가상 시계 오버라이드가 바뀌면 렌더 단계에서 즉시 갱신한다 (effect setState는 lint 금지)
     const [lastClock, setLastClock] = useState(clock);
     if (lastClock !== clock) {
         setLastClock(clock);
         setNow(clock.now());
     }
-
     useEffect(() => {
         const timer = setInterval(() => setNow(clock.now()), 1000);
         return () => clearInterval(timer);
     }, [clock]);
 
-    const slides = useMemo(
-        () =>
-            (events ?? [])
-                // '오늘의 겟또타임' 배너라 진행 중인 겟또타임만 싣는다
-                .filter((event) => event.status === 'open' && event.isTimeRaffle)
-                .sort((a, b) => new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime())
-                .slice(0, MAX_SLIDES),
-        [events],
-    );
-
-    const autoplayStopped =
-        slides.length <= 1 ||
-        hovered ||
-        focused ||
-        userControlled ||
-        autoSteps >= slides.length ||
-        reduceMotion === true;
-
     useEffect(() => {
-        if (autoplayStopped) {
-            return;
-        }
+        if (!playing) return;
         const timer = setInterval(() => {
-            setIndex((i) => (i + 1) % slides.length);
-            setAutoSteps((n) => n + 1);
+            setIndex((value) => (value + 1) % total);
         }, AUTO_SLIDE_MS);
         return () => clearInterval(timer);
-    }, [slides.length, autoplayStopped]);
-
-    const safeIndex = Math.min(index, Math.max(slides.length - 1, 0));
-    // 화살표로 직접 넘기면 그때부터 자동 넘김을 끈다
-    const goPrev = () => {
-        setUserControlled(true);
-        setIndex((safeIndex - 1 + slides.length) % slides.length);
-    };
-    const goNext = () => {
-        setUserControlled(true);
-        setIndex((safeIndex + 1) % slides.length);
-    };
+    }, [playing, total]);
 
     if (isPending) {
-        return <Skeleton className="min-h-91.25 w-full rounded-2xl" />;
+        // 배너 자리를 통으로 잡는다 — 아래 줄(바로가기)은 먼저 보인다
+        return (
+            <div className="flex flex-col gap-2">
+                <div role="status">
+                    <span className="sr-only">배너를 불러오는 중입니다.</span>
+                    <Skeleton className="min-h-91.25 w-full rounded-2xl" />
+                </div>
+                {footer}
+            </div>
+        );
     }
+    // 등록된 배너가 없으면 자리를 비운다 — 아래 줄 내용(바로가기)은 남긴다
+    if (!isError && total === 0) return footer ?? null;
 
-    if (isError || slides.length === 0) {
-        return null;
-    }
+    const move = (offset: number) => {
+        setPaused(true);
+        setIndex((safeIndex + offset + total) % total);
+    };
+    const active = banners?.[safeIndex];
+    // 페이지가 목록을 넘겼다는 사실 자체가 lazy 신호다 — 로딩 중(빈 배열)이어도 비활성 슬라이드는 상세를 묻지 않는다
+    const lazyDetail = events !== undefined;
+    const summaryOf = (eventId: string) => events?.find((event) => event.id === eventId);
 
     return (
         <section
-            className="relative flex flex-col gap-2"
+            aria-label="관리 배너"
+            aria-roledescription="캐러셀"
+            className="flex min-w-0 flex-col gap-4"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onFocusCapture={() => setFocused(true)}
-            onBlurCapture={(e) => {
+            onBlurCapture={(event) => {
                 // 포커스가 섹션 안의 다른 요소로 옮겨갈 때는 유지한다
-                if (!e.currentTarget.contains(e.relatedTarget)) {
-                    setFocused(false);
-                }
+                if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
             }}
         >
-            {/* 모든 슬라이드를 한 줄로 나열 — 트랙 높이가 가장 큰 슬라이드로 고정돼 전환 중 크기 변환이 없고 transform만 애니메이션된다 */}
-            {/* 노란 그림 배너라 다크 모드에서도 라이트 색을 쓴다 (tokens.css force-light) — 아래 넘김 화살표는 페이지 색을 따른다 */}
-            <div className="force-light overflow-hidden rounded-2xl">
-                <div
-                    className="flex ease-out motion-safe:transition-transform motion-safe:duration-500"
-                    style={{ transform: `translateX(-${safeIndex * 100}%)` }}
-                >
-                    {slides.map((event, slideIndex) => {
-                        const remainingMs = new Date(event.endsAt).getTime() - now.getTime();
-                        return (
-                            // 피그마 홈 배너 — 1200×365, 노란 배경 그림, 본문은 왼쪽 50·위 84에서 시작
-                            <div
-                                key={event.id}
-                                // 화면 밖 배너는 Tab 포커스·보조 기술에서 빼 실시간 현황 알림도 보이는 배너만 읽힌다
-                                inert={slideIndex !== safeIndex}
-                                className="bg-play-yellow relative flex min-h-91.25 w-full shrink-0 flex-col bg-cover bg-right-bottom"
-                                style={{ backgroundImage: `url(${bannerBackground})` }}
-                            >
-                                {/* 마감 시간 — 배너 왼쪽 끝에 붙은 흰 탭 (공용 Badge surface xl). 시각 꼴(169:59:58) 대신 읽는 단위로 적는다 */}
-                                <Badge
-                                    variant="surface"
-                                    size="xl"
-                                    className="absolute top-7.5 left-0 rounded-l-none pl-12.5 tabular-nums"
-                                >
-                                    <Clock />
-                                    마감까지 {formatRemaining(remainingMs)}
-                                </Badge>
-                                {/*
-                                 * 글 덩어리는 세로 가운데에 모은다 — 버튼만 바닥에 붙이면 설명이 짧을 때
-                                 * 글은 위로 쏠리고 칩과 버튼 사이가 비어 허전했다
-                                 */}
-                                <div className="flex flex-1 flex-col items-start justify-center gap-6 px-6 pt-21 pb-8 sm:px-12.5 sm:pb-8.75">
-                                    <div className="flex max-w-150 flex-col gap-1">
-                                        <div className="flex items-center gap-1">
-                                            {/* 채운 불꽃 아이콘 — 아이콘·글자 모두 잉크(fg/primary) */}
-                                            <Flame
-                                                aria-hidden
-                                                className="fill-fg-primary text-fg-primary size-5.5"
-                                            />
-                                            <span className="text-fg-primary text-body-sm-bold">
-                                                오늘의 겟또타임
-                                            </span>
-                                        </div>
-                                        <div className="flex flex-col gap-3">
-                                            <h2 className="text-display text-fg-primary break-keep">
-                                                {event.title}
-                                            </h2>
-                                            <p className="text-body text-fg-primary line-clamp-2 break-keep whitespace-pre-line">
-                                                {event.description}
-                                            </p>
-                                            {renderStatus?.(event, slideIndex === safeIndex)}
-                                        </div>
-                                    </div>
-                                    {/* 상세로 이동하는 버튼이라 '응모하러 가기' — 실제로 응모권을 쓰는 '응모하기'와 구분한다 */}
-                                    <Button asChild size="lg" className="px-7">
-                                        <Link to={eventDetailPath(event)}>응모하러 가기</Link>
-                                    </Button>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-            {/* 피그마 홈 — 배너 오른쪽에 무너 캐릭터가 배너 밖으로 살짝 걸쳐 있다 (넓은 화면만) */}
-            {slides.length > 1 && (
-                <div className="relative z-10 flex justify-end">
-                    {/* 피그마 홈 — 원형 화살표 사이에 '01 / 04' (공용 Pager) */}
-                    <Pager
-                        current={safeIndex}
-                        total={slides.length}
-                        prevLabel="이전 이벤트"
-                        nextLabel="다음 이벤트"
-                        onPrev={goPrev}
-                        onNext={goNext}
-                    />
+            {isError && total === 0 && (
+                /*
+                 * 받아 둔 배너가 없으면 기본 배너로 자리를 채운다 — 홍보 자리라 실패 문구를 크게 띄우지 않는다.
+                 * 자리가 빠지면 아래 섹션이 밀려 올라오고, 빈 틀에 오류만 두면 홈 첫 화면이 고장 나 보인다.
+                 * 실패 안내·다시 불러오기는 아래 줄 갱신 표시가 작게 맡는다
+                 */
+                <div className="force-light">
+                    <FallbackBanner />
                 </div>
             )}
-            {SHOW_MASCOT && (
-                <img
-                    src={bannerMascot}
-                    alt=""
-                    aria-hidden
-                    className="pointer-events-none absolute -top-16.75 right-8 hidden w-125 select-none xl:block"
-                />
+            {total > 0 && (
+                // 그림 배너라 다크 모드에서도 라이트 색을 쓴다 (tokens.css force-light) — 아래 줄은 페이지 색을 따른다
+                <div className="force-light relative overflow-hidden rounded-2xl">
+                    <div
+                        className="flex ease-out motion-safe:transition-transform motion-safe:duration-500"
+                        style={{ transform: `translateX(-${safeIndex * 100}%)` }}
+                    >
+                        {banners?.map((banner, slideIndex) => (
+                            <div
+                                key={banner.id}
+                                role="group"
+                                aria-roledescription="슬라이드"
+                                aria-label={`${slideIndex + 1} / ${total}`}
+                                // 화면 밖 배너는 Tab 포커스·보조 기술에서 뺀다
+                                inert={slideIndex !== safeIndex}
+                                aria-hidden={slideIndex !== safeIndex}
+                                className="flex w-full min-w-0 shrink-0"
+                            >
+                                <BannerSlide
+                                    key={`${banner.id}:${banner.imageUrl}`}
+                                    banner={banner}
+                                    now={now}
+                                    isActive={slideIndex === safeIndex}
+                                    summaryEvent={summaryOf(banner.eventId)}
+                                    lazyDetail={lazyDetail}
+                                    renderStatus={renderStatus}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+            {(footer || total > 1 || renderRefresh || isError) && (
+                // 좁은 화면은 컨트롤을 위, 바로가기를 아래로 쌓는다
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0 flex-1">{footer}</div>
+                    <div className="flex flex-wrap items-center justify-end gap-2 self-end sm:self-auto">
+                        {/* 배너 목록 실패 — 받아 둔 배너(또는 기본 배너)를 둔 채 작은 '갱신 실패 · 다시 시도'만 */}
+                        {isError && (
+                            <RefreshStatus
+                                fetching={isFetching}
+                                error
+                                onRefresh={() => void refetch()}
+                            />
+                        )}
+                        {/* 배너 목록과 현황이 함께 실패하면(서버 장애) '갱신 실패 · 다시 시도'가 두 번 떴다 — 목록 실패 하나만 둔다 */}
+                        {!isError && active && renderRefresh && (
+                            <ActiveRefresh
+                                eventId={active.eventId}
+                                summaryEvent={summaryOf(active.eventId)}
+                                render={renderRefresh}
+                            />
+                        )}
+                        {total > 1 && (
+                            <div className="flex items-center gap-1">
+                                <SlideDots
+                                    total={total}
+                                    index={safeIndex}
+                                    playing={playing}
+                                    onSelect={(dot) => move(dot - safeIndex)}
+                                />
+                                {!reduceMotion && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon-sm"
+                                        className="ml-1 rounded-full"
+                                        aria-label={stopped ? '자동 재생 시작' : '자동 재생 정지'}
+                                        onClick={() => {
+                                            if (stopped) setFocused(false);
+                                            setPaused(!stopped);
+                                        }}
+                                    >
+                                        {stopped ? <Play aria-hidden /> : <Pause aria-hidden />}
+                                    </Button>
+                                )}
+                                {/* 피그마 홈 — 원형 화살표 사이에 '01 / 04' (공용 Pager) */}
+                                <Pager
+                                    current={safeIndex}
+                                    total={total}
+                                    prevLabel="이전 배너"
+                                    nextLabel="다음 배너"
+                                    onPrev={() => move(-1)}
+                                    onNext={() => move(1)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </section>
     );

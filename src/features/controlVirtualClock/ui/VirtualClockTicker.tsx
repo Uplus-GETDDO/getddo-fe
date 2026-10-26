@@ -1,10 +1,10 @@
 import { Minus, Plus } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 
-import { KST_TIME_ZONE } from '@shared/lib/date';
-import { cn } from '@shared/lib/utils';
-import { useVirtualClock } from '@shared/lib/virtualClock';
+import { useVirtualClock } from '@shared/model/virtualClock';
 import { Button } from '@shared/ui/button';
+import { cn } from '@shared/utils/cn';
+import { KST_TIME_ZONE } from '@shared/utils/date';
 
 const HOUR_MS = 3_600_000;
 // 시연 조작 단위는 10분 — 가상 시계 페이지의 "앞으로 이동"과 같은 간격 정책

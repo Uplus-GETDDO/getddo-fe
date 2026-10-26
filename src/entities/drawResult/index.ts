@@ -30,32 +30,40 @@ export {
     DRAWS_KEY,
     drawApiPath,
     drawChecksApiPath,
+    drawExecutionAuditsApiPath,
+    drawFailuresApiPath,
+    drawResultConfirmationApiPath,
     drawResumeApiPath,
     drawParticipantsApiPath,
+    drawRunOptions,
     eventDrawsApiPath,
+    fetchEventDrawsPage,
     useDrawCandidates,
+    useDrawExecutionAudits,
+    useDrawFailures,
     useDrawRun,
     useDrawRuns,
     useDrawVerifications,
     useEventDraws,
 } from './api/queries';
 export type { PageParams } from './api/queries';
-export {
-    DRAW_EXECUTION_TYPE_LABEL,
-    DRAW_RUN_STATUS_META,
-    isDrawRunInProgress,
-} from './model/runStatus';
+export { DRAW_AUDIT_ACTION_LABEL } from './model/auditAction';
+export { DRAW_RUN_STATUS_META, DRAW_TYPE_LABEL, isDrawRunInProgress } from './model/runStatus';
 export {
     cancellationSummarySchema,
     drawCandidateSchema,
     drawConfirmationResultSchema,
     drawConfirmationSchema,
+    drawExecutionAuditSchema,
     drawExecutionResponseSchema,
-    drawExecutionTypeSchema,
+    drawExecutionSummarySchema,
+    drawFailureSchema,
+    drawResultConfirmationSchema,
     drawResultSchema,
     drawRunDetailSchema,
     drawRunSchema,
     drawRunStatusSchema,
+    drawTypeSchema,
     drawVerificationSchema,
 } from './model/types';
 export type {
@@ -63,10 +71,15 @@ export type {
     DrawCandidate,
     DrawConfirmation,
     DrawConfirmationResult,
+    DrawExecutionAudit,
     DrawExecutionResponse,
+    DrawExecutionSummary,
+    DrawFailure,
     DrawResult,
+    DrawResultConfirmation,
     DrawRun,
     DrawRunDetail,
     DrawRunStatus,
+    DrawType,
     DrawVerification,
 } from './model/types';

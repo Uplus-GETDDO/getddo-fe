@@ -1,0 +1,153 @@
+{
+    "collectedAt": "2026-10-22T06:28:43.232Z",
+    "collector": "scripts/verifyPersonaFlows.mjs",
+    "condition": {
+        "commit": "40e9fdaaac2ee4ac6554a2a4a6c3a3e904cb83ca",
+        "browser": "system Chrome headless via Playwright 1.62.1",
+        "environment": "local-mock (MSW 활성 production 빌드)",
+        "preview": "http://localhost:6278",
+        "notes": [
+            "자동 spot-check다 — 사람 사용성 평가가 아니다",
+            "390px은 뷰포트 모사이며 실기기·브라우저 확대 검증의 대체다",
+            "키보드 검증은 Tab 도달 여부만 본다 (포커스 순서 품질 평가 아님)"
+        ]
+    },
+    "runs": [
+        {
+            "scenario": "persona-check-/missions",
+            "sampleIndex": 0,
+            "status": "ok",
+            "persona": "김도윤(데일리 루틴러)",
+            "note": "큰글씨 설정에서 출석 주행동이 표시·키보드로 닿는지",
+            "metrics": {
+                "markerVisible": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "waitForSelector"
+                },
+                "keyboardReached": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "Tab 9회로 주행동 도달"
+                },
+                "darkApplied": {
+                    "value": 0,
+                    "unit": "bool",
+                    "method": "root .dark 클래스 — 설정 theme=light"
+                },
+                "textScaleApplied": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "data-text-scale — 설정 large"
+                },
+                "consoleErrorCount": {
+                    "value": 0,
+                    "unit": "count",
+                    "method": "console error 수집"
+                }
+            }
+        },
+        {
+            "scenario": "persona-check-/time-raffle/evt-001",
+            "sampleIndex": 0,
+            "status": "ok",
+            "persona": "박서연(타임어택 헌터)",
+            "note": "다크모드에서 타임래플 응모 진입이 표시·키보드로 닿는지",
+            "metrics": {
+                "markerVisible": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "waitForSelector"
+                },
+                "keyboardReached": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "Tab 10회로 주행동 도달"
+                },
+                "darkApplied": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "root .dark 클래스 — 설정 theme=dark"
+                },
+                "textScaleApplied": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "data-text-scale — 설정 normal"
+                },
+                "consoleErrorCount": {
+                    "value": 0,
+                    "unit": "count",
+                    "method": "console error 수집"
+                }
+            }
+        },
+        {
+            "scenario": "persona-check-/my-entries",
+            "sampleIndex": 0,
+            "status": "ok",
+            "persona": "이하늘(신뢰중시 확인러)",
+            "note": "내 응모 결과 목록이 표시되는지 (조회 화면이라 CTA 키보드 검증 생략)",
+            "metrics": {
+                "markerVisible": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "waitForSelector"
+                },
+                "keyboardReached": {
+                    "value": null,
+                    "unit": "bool",
+                    "method": "CTA 키보드 검증 없음 (조회 화면)"
+                },
+                "darkApplied": {
+                    "value": 0,
+                    "unit": "bool",
+                    "method": "root .dark 클래스 — 설정 theme=light"
+                },
+                "textScaleApplied": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "data-text-scale — 설정 normal"
+                },
+                "consoleErrorCount": {
+                    "value": 0,
+                    "unit": "count",
+                    "method": "console error 수집"
+                }
+            }
+        },
+        {
+            "scenario": "persona-check-/",
+            "sampleIndex": 0,
+            "status": "ok",
+            "persona": "최민준(라이트 참여형)",
+            "note": "390px 모바일 폭에서 홈이 표시되는지 (뷰포트 모사 — 실기기 확대 아님)",
+            "metrics": {
+                "markerVisible": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "waitForSelector"
+                },
+                "keyboardReached": {
+                    "value": null,
+                    "unit": "bool",
+                    "method": "CTA 키보드 검증 없음 (조회 화면)"
+                },
+                "darkApplied": {
+                    "value": 0,
+                    "unit": "bool",
+                    "method": "root .dark 클래스 — 설정 theme=light"
+                },
+                "textScaleApplied": {
+                    "value": 1,
+                    "unit": "bool",
+                    "method": "data-text-scale — 설정 normal"
+                },
+                "consoleErrorCount": {
+                    "value": 0,
+                    "unit": "count",
+                    "method": "console error 수집"
+                }
+            }
+        }
+    ]
+}

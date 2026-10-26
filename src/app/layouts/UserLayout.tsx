@@ -1,4 +1,4 @@
-import { ChevronDown, LayoutDashboard, Menu } from 'lucide-react';
+import { ChevronDown, Menu } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, ScrollRestoration, useLocation, useMatches } from 'react-router-dom';
 
@@ -6,10 +6,13 @@ import { useSessionStore } from '@entities/user';
 import { VirtualClockTicker } from '@features/controlVirtualClock';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar-head.png';
-import { cn } from '@shared/lib/utils';
+import { env } from '@shared/config/env';
+import { TOUR_TARGET } from '@shared/config/tourTargets';
+import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
 import { Button } from '@shared/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
+import { cn } from '@shared/utils/cn';
 import { NotificationBell } from '@widgets/notificationBell';
 
 import { FOOTER_AWARDS, FOOTER_LINKS } from './footerData';
@@ -18,9 +21,20 @@ import { USER_NAV_ITEMS } from './userNavItems';
 export function UserLayout() {
     const navRef = useRef<HTMLElement>(null);
     const { pathname } = useLocation();
+    const matches = useMatches();
     // 라우트 handle에 fullBleed를 단 화면(게임 무대)은 위 여백 없이 헤더 바로 아래에서 시작한다
-    const fullBleed = useMatches().some(
+    const fullBleed = matches.some(
         (match) => (match.handle as { fullBleed?: boolean } | undefined)?.fullBleed,
+    );
+    /*
+     * 탭 제목은 가장 안쪽 라우트가 handle.title로 알려 준 이름을 쓴다 — 상세가 목록보다 우선한다.
+     * 화면마다 훅을 부르는 대신 여기서 한 번만 쓰므로, 제목을 두 곳에서 덮어쓸 일이 없다.
+     */
+    useDocumentTitle(
+        [...matches]
+            .reverse()
+            .map((match) => (match.handle as { title?: string } | undefined)?.title)
+            .find((title) => title != null),
     );
     // UserGuard가 미선택 상태를 먼저 걸러 주므로 여기서는 항상 있다
     const user = useSessionStore((state) => state.user)!;
@@ -55,8 +69,14 @@ export function UserLayout() {
             setIndicator({ left: rect.left - navRect.left, width: rect.width });
         };
         update();
+        // 창 크기가 그대로여도 메뉴 글자 폭이 바뀌면(큰글씨 모드·글꼴 늦게 도착) 다시 잰다 — 창 resize만 들으면 밑줄이 예전 자리에 남았다
+        const observer = new ResizeObserver(update);
+        navRef.current?.querySelectorAll('a').forEach((link) => observer.observe(link));
         window.addEventListener('resize', update);
-        return () => window.removeEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
     }, [pathname]);
 
     return (
@@ -70,13 +90,16 @@ export function UserLayout() {
                 )}
             >
                 {/* 피그마 홈 — 높이 76(위아래 20), 로고 24 Bold, 메뉴 16 */}
-                <div className="mx-auto flex h-19 w-full max-w-312 items-center gap-7.5 px-6">
-                    <NavLink to="/" className="text-title-2 text-fg-primary shrink-0">
+                <div className="mx-auto flex min-h-19 w-full max-w-312 flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2 sm:gap-x-4 sm:px-6 xl:flex-nowrap xl:gap-x-6">
+                    <NavLink
+                        to="/"
+                        className="text-subhead sm:text-title-2 text-fg-primary shrink-0 whitespace-nowrap"
+                    >
                         U<span className="text-fg-brand">+</span> GETDDO
                     </NavLink>
                     <nav
                         ref={navRef}
-                        className="relative hidden flex-1 items-stretch gap-7 self-stretch md:flex"
+                        className="relative hidden min-w-0 flex-1 items-stretch gap-4 self-stretch xl:flex"
                     >
                         {USER_NAV_ITEMS.map(({ to, label, end }) => (
                             <NavLink
@@ -85,7 +108,7 @@ export function UserLayout() {
                                 end={end}
                                 className={({ isActive }) =>
                                     cn(
-                                        'text-body relative flex items-center transition-colors',
+                                        'text-body-sm relative flex items-center whitespace-nowrap transition-colors',
                                         isActive
                                             ? 'text-fg-primary font-semibold'
                                             : 'text-fg-tertiary hover:text-fg-primary',
@@ -95,10 +118,11 @@ export function UserLayout() {
                                 {label}
                             </NavLink>
                         ))}
-                        {/* 활성 항목 밑줄은 텍스트 바닥과 프레임 하단의 중간 높이에 두고, 페이지 이동 시 미끄러지게 한다 */}
+                        {/* 활성 항목 밑줄은 텍스트 바닥과 프레임 하단의 중간 높이(헤더 바닥에서 16)에 두고, 페이지 이동 시 미끄러지게 한다.
+                            헤더 줄에 위아래 8px 여백(py-2)이 생겨 nav 바닥도 8px 올라왔으므로 nav 기준으로는 8px만 띄운다 */}
                         <span
                             aria-hidden
-                            className="bg-fg-primary pointer-events-none absolute bottom-4 h-0.5 rounded-full transition-all duration-300"
+                            className="bg-fg-primary pointer-events-none absolute bottom-2 h-0.5 rounded-full transition-all duration-300"
                             style={{
                                 left: indicator?.left ?? 0,
                                 width: indicator?.width ?? 0,
@@ -106,11 +130,11 @@ export function UserLayout() {
                             }}
                         />
                     </nav>
-                    {/* nav가 숨겨지는 md 미만에서는 햄버거 메뉴로 이동 경로를 제공한다 */}
+                    {/* nav가 숨겨지는 xl 미만에서는 햄버거 메뉴로 이동 경로를 제공한다 */}
                     <Popover open={menuOpen} onOpenChange={setMenuOpen}>
                         <PopoverTrigger
                             aria-label="메뉴"
-                            className="text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex size-8 items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:hidden"
+                            className="text-fg-primary focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none xl:hidden"
                         >
                             <Menu className="size-6" />
                         </PopoverTrigger>
@@ -150,52 +174,57 @@ export function UserLayout() {
                             </nav>
                         </PopoverContent>
                     </Popover>
-                    <div className="ml-auto flex items-center gap-5">
+                    <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
                         {/* 관리자 화면 진입은 관리자 계정에게만 보이는 버튼으로만 한다 — 로그인 시 자동 이동 없음 */}
                         {user.role === 'ADMIN' && (
                             <Button
                                 variant="secondary"
                                 size="sm"
                                 asChild
-                                className="hidden md:inline-flex"
+                                className="hidden min-h-[44px] min-w-[44px] xl:inline-flex"
                             >
-                                <NavLink to="/admin">
-                                    <LayoutDashboard aria-hidden />
-                                    관리자 화면으로
-                                </NavLink>
+                                <NavLink to="/admin">관리자 화면으로</NavLink>
                             </Button>
                         )}
-                        {/* 가상 시계 조작은 관리자만 — 일반 사용자는 시각 표시만 본다 */}
-                        <VirtualClockTicker
-                            className="hidden lg:flex"
-                            readOnly={user.role !== 'ADMIN'}
-                        />
-                        <NotificationBell />
+                        {/* 가상 시계는 로컬 개발 전용 표시 도구 — 조작은 관리자만, 일반 사용자는 시각 표시만 본다 */}
+                        {env.isDev && (
+                            <VirtualClockTicker
+                                className="hidden 2xl:flex"
+                                readOnly={user.role !== 'ADMIN'}
+                            />
+                        )}
+                        {/* 첫 방문 안내가 짚는 자리 — 종 단추만 감싸 밝힌다 */}
+                        <div data-tour={TOUR_TARGET.notifications} className="flex">
+                            <NotificationBell />
+                        </div>
                         {/* 피그마 홈 — 아바타·이름·멤버십 알약(그림자) + 아래 화살표 */}
                         <VirtualUserSwitcher
                             trigger={
                                 <button
                                     type="button"
-                                    className="bg-surface-page focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex h-9 cursor-pointer items-center gap-2.5 rounded-full py-1 pr-2 pl-2 shadow-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                    className="bg-surface-page focus-visible:ring-border-focus focus-visible:ring-offset-surface-page flex min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full p-2 shadow-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                 >
-                                    <span className="flex items-center gap-2">
+                                    <span className="flex min-w-0 items-center gap-2">
                                         <img
                                             src={profileAvatar}
                                             alt=""
-                                            className="size-7 rounded-full"
+                                            className="size-7 shrink-0 rounded-full"
                                         />
-                                        <span className="flex flex-col items-start">
-                                            <span className="text-fg-primary text-xs leading-3.5 font-bold">
+                                        <span className="hidden max-w-28 min-w-0 flex-col items-start sm:flex xl:max-w-32">
+                                            <span className="text-fg-primary max-w-full truncate text-xs leading-3.5 font-bold">
                                                 {user.name}
                                             </span>
                                             {user.personaLabel && (
-                                                <span className="text-fg-tertiary text-xs leading-3.5">
+                                                <span className="text-fg-tertiary max-w-full truncate text-xs leading-3.5">
                                                     {user.personaLabel}
                                                 </span>
                                             )}
                                         </span>
                                     </span>
-                                    <ChevronDown aria-hidden className="text-fg-tertiary size-6" />
+                                    <ChevronDown
+                                        aria-hidden
+                                        className="text-fg-tertiary hidden size-4 shrink-0 sm:block"
+                                    />
                                 </button>
                             }
                         />

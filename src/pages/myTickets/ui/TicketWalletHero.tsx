@@ -7,9 +7,10 @@ import {
     type MyTickets,
     type TicketGrade,
 } from '@entities/ticket';
-import { formatNumber } from '@shared/lib/format';
 import { Badge } from '@shared/ui/badge';
+import { Button } from '@shared/ui/button';
 import { TICKET_OUTLINE_FILTER, TICKET_SHADOW_FILTER } from '@shared/ui/ticket-card';
+import { formatNumber } from '@shared/utils/format';
 
 import { GradeBar } from './GradeBar';
 
@@ -18,6 +19,7 @@ const GRADE_DOT: Record<TicketGrade, string> = {
     BRONZE: 'bg-grade-bronze',
     SILVER: 'bg-grade-silver',
     GOLD: 'bg-grade-gold',
+    PLATINUM: 'bg-grade-platinum',
 };
 
 /**
@@ -43,11 +45,17 @@ export function TicketWalletHero({
     expiring,
     monthReceived,
     monthUsed,
+    summaryError,
+    summaryFetching,
+    onRetrySummary,
 }: {
     tickets: MyTickets;
     expiring: ExpiringSoon | null;
-    monthReceived: number;
-    monthUsed: number;
+    monthReceived: number | undefined;
+    monthUsed: number | undefined;
+    summaryError: boolean;
+    summaryFetching: boolean;
+    onRetrySummary: () => void;
 }) {
     const total = tickets.availableCount;
     return (
@@ -117,20 +125,40 @@ export function TicketWalletHero({
                                 </p>
                             )}
                         </div>
-                        <dl className="border-border-default grid grid-cols-2 rounded-xl border">
+                        <dl
+                            aria-live="polite"
+                            className="border-border-default grid grid-cols-2 rounded-xl border"
+                        >
                             <div className="flex flex-col gap-1 px-5 py-4">
                                 <dt className="text-body-sm text-fg-secondary">이번 달 받은</dt>
                                 <dd className="text-subhead text-fg-primary">
-                                    +{formatNumber(monthReceived)}장
+                                    {monthReceived === undefined
+                                        ? summaryError
+                                            ? '조회 실패'
+                                            : '불러오는 중'
+                                        : `+${formatNumber(monthReceived)}장`}
                                 </dd>
                             </div>
                             <div className="border-border-default flex flex-col gap-1 border-l px-5 py-4">
                                 <dt className="text-body-sm text-fg-secondary">이번 달 쓴</dt>
                                 <dd className="text-subhead text-fg-primary">
-                                    −{formatNumber(monthUsed)}장
+                                    {monthUsed === undefined
+                                        ? summaryError
+                                            ? '조회 실패'
+                                            : '불러오는 중'
+                                        : `−${formatNumber(monthUsed)}장`}
                                 </dd>
                             </div>
                         </dl>
+                        {summaryError && (
+                            <Button
+                                variant="secondary"
+                                disabled={summaryFetching}
+                                onClick={onRetrySummary}
+                            >
+                                월 합계 다시 시도
+                            </Button>
+                        )}
                     </div>
                 </section>
             </div>

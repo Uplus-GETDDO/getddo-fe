@@ -1,41 +1,51 @@
 import type { ReactNode } from 'react';
 
-import { TriangleAlert } from 'lucide-react';
-
-import { formatKst } from '@shared/lib/date';
-import { Button } from '@shared/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
+import { cn } from '@shared/utils/cn';
+import { formatKst } from '@shared/utils/date';
 
-import type {
-    AdminTicketHistory,
-    TicketGrant,
-    TicketInconsistency,
-    TicketRefund,
-} from '../model/admin';
+import type { AdminTicketHistory } from '../model/admin';
 
-import {
-    TICKET_OPERATION_LABEL,
-    TICKET_REFUND_REASON_LABEL,
-    TICKET_SOURCE_TYPE_LABEL,
-    TICKET_STATUS_LABEL,
-} from '../model/admin';
+import { TICKET_OPERATION_LABEL, TICKET_STATUS_LABEL } from '../model/admin';
 import { TICKET_GRADE_LABEL } from '../model/grade';
+import { TICKET_GRADE_IMAGE } from '../model/gradeImage';
+import { TICKET_OPERATION_DELTA } from '../model/operation';
 
-// 관리자 응모권 조회 표 4종 — 모두 조회 전용이라 행에 변경 버튼이 없다 (스펙: 수동 지급·회수 경로 없음)
+// 관리자 응모권 전체 이력 표 — 조회 전용이라 행에 변경 버튼이 없다 (스펙: 수동 지급·회수 경로 없음)
 
-const CHIP = 'text-caption rounded-md px-2 py-0.5 font-medium whitespace-nowrap';
 const TIME = 'text-fg-secondary text-body-sm whitespace-nowrap';
 
-function Frame({ headers, children }: { headers: string[]; children: ReactNode }) {
+/**
+ * columns — 칸 이름과 표 전체에서 차지할 폭. 폭을 정해 두고(table-fixed) 고르게 펼친다 —
+ * 마지막 칸이 남는 폭을 다 가져가면 짧은 값들이 왼쪽에 쏠려 붙어 보였다
+ */
+function Frame({
+    columns,
+    label,
+    children,
+}: {
+    columns: { header: string; width: string }[];
+    /** 가로 스크롤 영역의 이름 — 좁은 화면에서 표가 카드 안으로 스크롤할 때 읽힌다 */
+    label: string;
+    children: ReactNode;
+}) {
     return (
-        <div className="bg-surface-page border-border-default overflow-hidden rounded-2xl border">
-            <Table>
+        // 좁은 화면에서 표가 카드 밖으로 넘치면 카드 안쪽 가로 스크롤로 접근한다 — 스크롤 영역은
+        // 키보드 진입이 가능해야 하므로 region+tabIndex를 둔다 (GD-317 어뷰징 표와 같은 패턴)
+        <div
+            role="region"
+            aria-label={label}
+            tabIndex={0}
+            className="bg-surface-page border-border-default focus-visible:ring-border-focus overflow-x-auto border-y focus-visible:ring-2 focus-visible:outline-none [&>[data-slot=table-container]]:overflow-visible"
+        >
+            <Table className="min-w-[56rem] table-fixed">
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                        {headers.map((header) => (
+                        {columns.map(({ header, width }) => (
                             <TableHead
                                 key={header}
-                                className="text-caption text-fg-tertiary h-11 px-4 font-semibold"
+                                style={{ width }}
+                                className="text-fg-tertiary h-11 px-4 text-xs font-semibold whitespace-nowrap"
                             >
                                 {header}
                             </TableHead>
@@ -49,211 +59,88 @@ function Frame({ headers, children }: { headers: string[]; children: ReactNode }
 }
 
 const Cell = ({ children }: { children: ReactNode }) => (
-    <TableCell className="px-4 py-3 align-top">{children}</TableCell>
+    <TableCell className="truncate px-4 py-3 align-middle">{children}</TableCell>
 );
 
 function UserCell({ name, id }: { name: string; id: string }) {
     return (
-        <div className="flex flex-col">
-            <span className="text-body-sm text-fg-primary">{name}</span>
-            <span className="text-caption text-fg-secondary">{id}</span>
+        <div className="flex min-w-0 flex-col">
+            <span className="text-body-sm-bold text-fg-primary truncate">{name}</span>
+            <span className="text-caption text-fg-tertiary truncate">{id}</span>
         </div>
     );
 }
 
-const Gray = ({ children }: { children: ReactNode }) => (
-    <span className={`${CHIP} bg-surface-sunken text-fg-secondary`}>{children}</span>
-);
-
-/** AO09 — 불일치 응모권 목록. 응모권 상태·버전이 마지막 이력과 다른 값을 강조한다 */
-export function TicketInconsistencyTable({
-    rows,
-    onRowClick,
-}: {
-    rows: TicketInconsistency[];
-    onRowClick?: (row: TicketInconsistency) => void;
-}) {
-    return (
-        <Frame
-            headers={[
-                '사용자',
-                '응모권',
-                '등급',
-                '응모권 상태·버전',
-                '마지막 이력 상태·버전',
-                '상세',
-            ]}
-        >
-            {rows.map((row) => (
-                <TableRow
-                    key={row.ticketId}
-                    className="hover:bg-surface-sunken focus-within:bg-surface-sunken cursor-pointer"
-                    onClick={() => onRowClick?.(row)}
-                >
-                    <Cell>
-                        <UserCell name={row.userName} id={row.userId} />
-                    </Cell>
-                    <Cell>
-                        <span className="text-body-sm text-fg-primary break-all">
-                            {row.ticketId}
-                        </span>
-                    </Cell>
-                    <Cell>
-                        <Gray>{TICKET_GRADE_LABEL[row.grade]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <MismatchValue
-                            status={row.ticketStatus}
-                            version={row.ticketVersion}
-                            differs={
-                                row.ticketStatus !== row.latestHistoryStatus ||
-                                row.ticketVersion !== row.latestHistoryVersion
-                            }
-                        />
-                    </Cell>
-                    <Cell>
-                        <MismatchValue
-                            status={row.latestHistoryStatus}
-                            version={row.latestHistoryVersion}
-                        />
-                    </Cell>
-                    <Cell>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="hover:bg-surface-pressed"
-                            aria-label={`${row.userId} 정합성 상세`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onRowClick?.(row);
-                            }}
-                        >
-                            상세
-                        </Button>
-                    </Cell>
-                </TableRow>
-            ))}
-        </Frame>
-    );
-}
-
-/** 상태와 버전을 한 칸에 보인다. differs면 어긋난 쪽임을 색과 아이콘으로 함께 표시한다 */
-export function MismatchValue({
-    status,
-    version,
-    differs = false,
-}: {
-    status: keyof typeof TICKET_STATUS_LABEL;
-    version: number;
-    differs?: boolean;
-}) {
+/** 처리 뒤 장수 변동 — 늘면 +1, 줄면 −1, 정정은 장수가 그대로라 표시하지 않는다 */
+function DeltaText({ delta }: { delta: number | null }) {
+    if (delta === null) return null;
     return (
         <span
-            className={
-                differs
-                    ? 'text-semantic-error-strong text-body-sm inline-flex items-center gap-1'
-                    : 'text-body-sm text-fg-primary'
-            }
+            className={cn(
+                'text-sm font-semibold tabular-nums',
+                delta > 0 ? 'text-status-approved-text' : 'text-fg-tertiary',
+            )}
         >
-            {differs && <TriangleAlert className="size-3.5 shrink-0" aria-hidden />}
-            {TICKET_STATUS_LABEL[status]} · v{version}
-            {differs && <span className="sr-only">(이력과 불일치)</span>}
+            {delta > 0 ? `+${delta}` : `−${Math.abs(delta)}`}
         </span>
     );
 }
 
-/** AO03 — 지급 이력 */
-export function TicketGrantTable({ rows }: { rows: TicketGrant[] }) {
-    return (
-        <Frame headers={['지급 시각', '사용자', '구분', '등급', '출처 ID', '만료']}>
-            {rows.map((row) => (
-                <TableRow key={row.historyId} className="hover:bg-surface-sunken">
-                    <Cell>
-                        <span className={TIME}>{formatKst(row.grantedAt)}</span>
-                    </Cell>
-                    <Cell>
-                        <UserCell name={row.userName} id={row.userId} />
-                    </Cell>
-                    <Cell>
-                        <Gray>
-                            {TICKET_SOURCE_TYPE_LABEL[row.sourceType]}
-                            {row.missionId ? ` · ${row.missionId}` : ''}
-                        </Gray>
-                    </Cell>
-                    <Cell>
-                        <Gray>{TICKET_GRADE_LABEL[row.grade]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <span className="text-body-sm text-fg-secondary break-all">
-                            {row.sourceId}
-                        </span>
-                    </Cell>
-                    <Cell>
-                        <span className={TIME}>{formatKst(row.expiresAt)}</span>
-                    </Cell>
-                </TableRow>
-            ))}
-        </Frame>
-    );
-}
+/**
+ * AO05 — 전체 이력. 조회 전용이라 줄에 올려도 눌리는 듯한 색을 입히지 않는다.
+ * 무엇이 일어났는지(처리)와 몇 장 움직였는지(변동)를 한 칸에 붙이고, 길이가 제각각인 이벤트·미션 이름을 맨 끝에 둔다
+ */
+const COLUMNS = [
+    { header: '처리 시각', width: '17%' },
+    { header: '처리', width: '11%' },
+    { header: '등급', width: '12%' },
+    { header: '사용자', width: '17%' },
+    { header: '처리 후 상태', width: '12%' },
+    { header: '이벤트·미션', width: '31%' },
+];
 
-/** AO05 — 전체 이력 */
 export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }) {
     return (
-        <Frame headers={['처리 시각', '사용자', '처리', '등급', '처리 후 상태', '이벤트·미션']}>
+        <Frame columns={COLUMNS} label="응모권 이력 표 가로 스크롤">
             {rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-surface-sunken">
+                <TableRow key={row.id} className="hover:bg-transparent">
                     <Cell>
                         <span className={TIME}>{formatKst(row.createdAt)}</span>
                     </Cell>
                     <Cell>
+                        <span className="flex items-baseline gap-2 whitespace-nowrap">
+                            <span className="text-fg-primary text-sm font-semibold">
+                                {TICKET_OPERATION_LABEL[row.operationType]}
+                            </span>
+                            <DeltaText delta={TICKET_OPERATION_DELTA[row.operationType]} />
+                        </span>
+                    </Cell>
+                    {/* 등급은 응모권 그림과 이름으로 — 등급 색 알약은 표를 얼룩지게 해 오히려 눈에 안 들어왔다 */}
+                    <Cell>
+                        <span className="flex items-center gap-2 whitespace-nowrap">
+                            <img
+                                src={TICKET_GRADE_IMAGE[row.grade]}
+                                alt=""
+                                aria-hidden
+                                className="h-5 w-auto shrink-0"
+                            />
+                            <span className="text-fg-primary text-sm">
+                                {TICKET_GRADE_LABEL[row.grade]}
+                            </span>
+                        </span>
+                    </Cell>
+                    <Cell>
                         <UserCell name={row.userName} id={row.userId} />
                     </Cell>
                     <Cell>
-                        <Gray>{TICKET_OPERATION_LABEL[row.operationType]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <Gray>{TICKET_GRADE_LABEL[row.grade]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <span className="text-body-sm text-fg-primary">
+                        <span className="text-fg-secondary text-sm whitespace-nowrap">
                             {TICKET_STATUS_LABEL[row.status]}
                         </span>
                     </Cell>
                     <Cell>
-                        <span className="text-body-sm text-fg-primary">
+                        <span className="text-fg-primary text-sm">
                             {row.eventTitle ?? row.missionTitle ?? '-'}
                         </span>
-                    </Cell>
-                </TableRow>
-            ))}
-        </Frame>
-    );
-}
-
-/** AO08 — 반환 이력. 반환은 이벤트 취소와 같은 트랜잭션에서 끝나므로 처리 상태 열이 없다 */
-export function TicketRefundTable({ rows }: { rows: TicketRefund[] }) {
-    return (
-        <Frame headers={['반환 시각', '사용자', '이벤트', '등급', '사유', '반환분 만료']}>
-            {rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-surface-sunken">
-                    <Cell>
-                        <span className={TIME}>{formatKst(row.refundedAt)}</span>
-                    </Cell>
-                    <Cell>
-                        <UserCell name={row.userName} id={row.userId} />
-                    </Cell>
-                    <Cell>
-                        <span className="text-body-sm text-fg-primary">{row.eventTitle}</span>
-                    </Cell>
-                    <Cell>
-                        <Gray>{TICKET_GRADE_LABEL[row.grade]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <Gray>{TICKET_REFUND_REASON_LABEL[row.reasonType]}</Gray>
-                    </Cell>
-                    <Cell>
-                        <span className={TIME}>{formatKst(row.targetExpiresAt)}</span>
                     </Cell>
                 </TableRow>
             ))}

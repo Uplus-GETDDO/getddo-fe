@@ -36,18 +36,23 @@ async function sentHeaders() {
 describe('사용자 문맥 헤더 인터셉터', () => {
     afterEach(() => useSessionStore.setState({ user: null }));
 
-    it('세션 사용자의 ID·역할·멤버십을 헤더로 보낸다', async () => {
+    it('일반 사용자의 ID·역할·멤버십을 헤더로 보낸다', async () => {
+        useSessionStore.setState({ user: USER });
+        const headers = await sentHeaders();
+
+        expect(headers.get('X-User-ID')).toBe('user-1');
+        expect(headers.get('X-User-Role')).toBe('USER');
+        expect(headers.get('X-User-Membership')).toBe('vip');
+    });
+
+    // 헤더가 오면 BE가 DB 멤버십과 대조하는데 관리자 멤버십은 null이라 409 USER-006이 났다 (GD-215)
+    it('관리자는 ID·역할만 보내고 멤버십 헤더는 생략한다', async () => {
         useSessionStore.setState({ user: ADMIN });
         const headers = await sentHeaders();
 
         expect(headers.get('X-User-ID')).toBe('user-admin-1');
         expect(headers.get('X-User-Role')).toBe('ADMIN');
-        expect(headers.get('X-User-Membership')).toBe('vvip');
-    });
-
-    it('일반 사용자는 USER 역할을 보낸다', async () => {
-        useSessionStore.setState({ user: USER });
-        expect((await sentHeaders()).get('X-User-Role')).toBe('USER');
+        expect(headers.has('X-User-Membership')).toBe(false);
     });
 
     it('세션이 없으면 사용자 문맥 헤더를 보내지 않는다', async () => {

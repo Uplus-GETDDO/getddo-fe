@@ -1,16 +1,23 @@
-import type { Query } from '@tanstack/react-query';
+import type { Query, QueryFunctionContext } from '@tanstack/react-query';
 
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQueries, useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
-import { queryPresets } from '@shared/api/queryPresets';
+import {
+    queryPresets,
+    pollingReadPolicy,
+    pollingReadInterval,
+    withPollingReadGuard,
+} from '@shared/api/queryPresets';
 
 import type { DrawRunStatus, MyResult } from '../model/types';
 
 import { isDrawRunInProgress } from '../model/runStatus';
 import {
     drawCandidateSchema,
+    drawExecutionAuditSchema,
+    drawFailureSchema,
     drawRunDetailSchema,
     drawRunSchema,
     drawVerificationSchema,
@@ -32,55 +39,70 @@ export const eventResultsApiPath = (eventId: string) => `/v1/events/${eventId}/r
 export function useEventResults(eventId: string, enabled = true) {
     return useQuery({
         ...queryPresets.realtime,
+        ...pollingReadPolicy,
         queryKey: [...DRAW_RESULTS_KEY, eventId],
         enabled,
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(eventResultsApiPath(eventId));
-            return envelopeSchema(publicResultsSchema).parse(data).data;
-        },
+        queryFn: (context) =>
+            withPollingReadGuard(context, async () => {
+                const { data } = await apiClient.get<unknown>(eventResultsApiPath(eventId), {
+                    signal: context.signal,
+                });
+                return envelopeSchema(publicResultsSchema).parse(data).data;
+            }),
         refetchInterval: (query) =>
-            query.state.data?.isPublished ? false : queryPresets.realtime.refetchInterval,
+            pollingReadInterval(
+                query,
+                !query.state.data?.isPublished &&
+                    !['CANCELED', 'NO_ENTRANTS'].includes(query.state.data?.displayStatus ?? ''),
+            ),
     });
 }
 
 // getddo-spec 05-api/drawing.md E09 — 본인 결과 조회
 export const eventMyResultApiPath = (eventId: string) => `/v1/events/${eventId}/my-result`;
 
-/** 본인 결과 한 이벤트의 쿼리 설정 — 단건(useMyResult)과 여러 건(useMyResults)이 같은 캐시를 나눠 쓴다 */
-const myResultOptions = (eventId: string) => ({
+/** 단건과 다건은 같은 캐시를 공유한다. CANCELED만으로 종결 여부를 추측하지 않는다. */
+const myResultOptions = (eventId: string, polling = true) => ({
     ...queryPresets.realtime,
+    ...pollingReadPolicy,
     queryKey: [...DRAW_RESULTS_KEY, eventId, 'me'],
-    queryFn: async () => {
-        const { data } = await apiClient.get<unknown>(eventMyResultApiPath(eventId));
-        return envelopeSchema(myResultSchema).parse(data).data;
-    },
+    queryFn: (context: QueryFunctionContext) =>
+        withPollingReadGuard(context, async () => {
+            const { data } = await apiClient.get<unknown>(eventMyResultApiPath(eventId), {
+                signal: context.signal,
+            });
+            return envelopeSchema(myResultSchema).parse(data).data;
+        }),
     refetchInterval: (query: Query<MyResult>) =>
-        query.state.data?.isPublished ? false : queryPresets.realtime.refetchInterval,
+        pollingReadInterval(query, polling && !query.state.data?.isPublished),
 });
 
-/**
- * 로그인한 본인의 이벤트 결과.
- *
- * 공개 명단(E08)에서 뒷자리로 찾아보는 것과 달리 서버가 본인 것만 바로 답한다.
- * 공개 전에는 PENDING으로 고정되므로, 공개 여부를 화면이 따로 판정하지 않는다.
- * 폴링 기준은 E08과 같다 — 공개된 뒤에는 멈춘다.
- */
 export function useMyResult(eventId: string, enabled = true) {
     return useQuery({ ...myResultOptions(eventId), enabled });
 }
 
-/**
- * 내가 응모한 여러 이벤트의 본인 결과를 한꺼번에 받는다 (E09는 이벤트 단위라 이벤트마다 한 번씩).
- * 내 응모 내역·마이페이지에서 쓴다. 단건 조회와 캐시 키가 같아 상세 화면과 결과를 나눠 쓴다
- */
-export function useMyResults(eventIds: readonly string[]) {
-    return useQueries({ queries: eventIds.map((eventId) => myResultOptions(eventId)) });
+/** 최초 전체 집계 조회를 유지하고, 후속 주기 조회만 화면에 표시된 이벤트로 제한한다. */
+export function useMyResults(
+    eventIds: readonly string[],
+    pollingEventIds: readonly string[] = eventIds,
+) {
+    const pollingIds = new Set(pollingEventIds);
+    return useQueries({
+        queries: [...new Set(eventIds)].map((eventId) => ({
+            ...myResultOptions(eventId, pollingIds.has(eventId)),
+            // 숨긴 결과의 전체 집계는 화면 복귀·네트워크 복구 때 자동으로 다시 읽지 않는다.
+            refetchOnMount: false,
+            retryOnMount: false,
+            refetchOnReconnect: false,
+        })),
+    });
 }
-
 // ── 관리자 추첨 관리(GD-125) ──
 const drawRunPageSchema = pageSchema(drawRunSchema);
 const drawCandidatePageSchema = pageSchema(drawCandidateSchema);
 const drawVerificationPageSchema = pageSchema(drawVerificationSchema);
+const drawFailurePageSchema = pageSchema(drawFailureSchema);
+const drawExecutionAuditPageSchema = pageSchema(drawExecutionAuditSchema);
 
 export const DRAWS_KEY = ['admin', 'draws'] as const;
 
@@ -94,6 +116,13 @@ export const drawChecksApiPath = (drawId: string) => `${drawApiPath(drawId)}/che
 export const drawResumeApiPath = (runId: string) => `${drawApiPath(runId)}/resume`;
 export const cancellationRedrawsApiPath = (cancellationId: string) =>
     `/v1/admin/cancellations/${cancellationId}/redraws`;
+// GD-137 관리자 운영 이력 — 실행별 실패 이력·실행 감사. 공통 감사 조회와 다른 업무별 경로다
+export const drawFailuresApiPath = (drawId: string) => `${drawApiPath(drawId)}/failures`;
+export const drawExecutionAuditsApiPath = (drawId: string) =>
+    `${drawApiPath(drawId)}/execution-audits`;
+// GD-199 — 최신 검토 실행의 최종 확인과 최초 공개를 한 요청으로 처리한다 (본문·추가 멱등 헤더 없음)
+export const drawResultConfirmationApiPath = (runId: string) =>
+    `${drawApiPath(runId)}/result-confirmation`;
 
 export interface PageParams {
     page: number;
@@ -102,6 +131,12 @@ export interface PageParams {
 
 // 서버가 선정하는 동안만 realtime 프리셋 주기로 폴링하고, 끝나면 멈춘다
 const POLL_MS = queryPresets.realtime.refetchInterval;
+
+// AD01 단일 페이지 fetch — 취소 원본 결과를 찾기 위한 이전 페이지 순차 탐색에서도 쓴다
+export async function fetchEventDrawsPage(eventId: string, params: PageParams) {
+    const { data } = await apiClient.get<unknown>(eventDrawsApiPath(eventId), { params });
+    return envelopeSchema(drawRunPageSchema).parse(data).data;
+}
 
 // AD01 — 이벤트의 실행 목록(Page). 진행 중인 실행이 하나라도 있으면 폴링한다
 export function useEventDraws(eventId: string, params: PageParams) {
@@ -112,10 +147,9 @@ export function useEventDraws(eventId: string, params: PageParams) {
                 ? POLL_MS
                 : false,
         queryKey: [...DRAWS_KEY, 'list', eventId, params],
-        queryFn: async () => {
-            const { data } = await apiClient.get<unknown>(eventDrawsApiPath(eventId), { params });
-            return envelopeSchema(drawRunPageSchema).parse(data).data;
-        },
+        // 필터·페이지를 바꿔 다시 받는 동안 이전 목록을 그대로 두어 표가 스켈레톤으로 꺼졌다 켜지지 않게 한다
+        placeholderData: keepPreviousData,
+        queryFn: () => fetchEventDrawsPage(eventId, params),
         enabled: Boolean(eventId),
     });
 }
@@ -125,7 +159,8 @@ async function fetchDrawRun(drawId: string) {
     return envelopeSchema(drawRunDetailSchema).parse(data).data;
 }
 
-const drawRunOptions = (drawId: string | null) => ({
+// fetchQuery에서도 같은 키·fetcher를 써야 상세 캐시를 공유한다 — 화면 밖 탐색용으로 export한다
+export const drawRunOptions = (drawId: string | null) => ({
     ...queryPresets.realtime,
     refetchInterval: (query: { state: { data?: { status: DrawRunStatus } } }) =>
         query.state.data && isDrawRunInProgress(query.state.data.status) ? POLL_MS : false,
@@ -149,6 +184,7 @@ export function useDrawCandidates(drawId: string | null, params: PageParams) {
     return useQuery({
         ...queryPresets.standard,
         queryKey: [...DRAWS_KEY, 'participants', drawId, params],
+        placeholderData: keepPreviousData,
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawParticipantsApiPath(drawId!), {
                 params,
@@ -164,9 +200,42 @@ export function useDrawVerifications(drawId: string | null, params: PageParams) 
     return useQuery({
         ...queryPresets.standard,
         queryKey: [...DRAWS_KEY, 'checks', drawId, params],
+        placeholderData: keepPreviousData,
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(drawChecksApiPath(drawId!), { params });
             return envelopeSchema(drawVerificationPageSchema).parse(data).data;
+        },
+        enabled: Boolean(drawId),
+    });
+}
+
+// GD-137 — 실행의 전체 실패 이력 (failedAt·id 내림차순은 서버 정렬). 추가만 되는 기록이다
+export function useDrawFailures(drawId: string | null, params: PageParams) {
+    return useQuery({
+        ...queryPresets.standard,
+        queryKey: [...DRAWS_KEY, 'failures', drawId, params],
+        placeholderData: keepPreviousData,
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(drawFailuresApiPath(drawId!), {
+                params,
+            });
+            return envelopeSchema(drawFailurePageSchema).parse(data).data;
+        },
+        enabled: Boolean(drawId),
+    });
+}
+
+// GD-137 — 실행의 시작·재개·취소 등 업무 감사 이력 (createdAt·id 내림차순은 서버 정렬)
+export function useDrawExecutionAudits(drawId: string | null, params: PageParams) {
+    return useQuery({
+        ...queryPresets.standard,
+        queryKey: [...DRAWS_KEY, 'execution-audits', drawId, params],
+        placeholderData: keepPreviousData,
+        queryFn: async () => {
+            const { data } = await apiClient.get<unknown>(drawExecutionAuditsApiPath(drawId!), {
+                params,
+            });
+            return envelopeSchema(drawExecutionAuditPageSchema).parse(data).data;
         },
         enabled: Boolean(drawId),
     });

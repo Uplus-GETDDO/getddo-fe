@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 import type { VirtualUser } from '@entities/user';
 
-import { useSessionStore, useVirtualUsers } from '@entities/user';
-import { cn } from '@shared/lib/utils';
-import { Loading } from '@shared/ui/loading';
+import { useSessionStore, useVirtualUsers, virtualUserLabel } from '@entities/user';
+import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
+import { SkeletonList } from '@shared/ui/skeleton';
+import { cn } from '@shared/utils/cn';
 
 export function LoginPage() {
+    // 로그인은 사용자 레이아웃 바깥이라 라우트 handle을 읽어 줄 곳이 없다 — 여기서 직접 붙인다
+    useDocumentTitle('로그인');
     const navigate = useNavigate();
     const selectUser = useSessionStore((state) => state.selectUser);
     const { data: users, isPending, isError } = useVirtualUsers();
@@ -30,10 +33,19 @@ export function LoginPage() {
                     </p>
                 </div>
 
-                {isPending && <Loading />}
+                {isPending && (
+                    <div role="status">
+                        <span className="sr-only">사용자 목록을 불러오는 중이에요</span>
+                        <SkeletonList
+                            count={5}
+                            rowClassName="h-16"
+                            thumbnailClassName="size-10 rounded-full"
+                        />
+                    </div>
+                )}
                 {isError && (
                     <p className="text-destructive text-body-sm text-center">
-                        가상 사용자 목록을 불러오지 못했습니다.
+                        시연 계정 설정(VITE_VIRTUAL_USERS_JSON)이 없거나 형식이 올바르지 않습니다.
                     </p>
                 )}
 
@@ -65,7 +77,7 @@ export function LoginPage() {
                                         )}
                                     </div>
                                     <span className="text-body-sm text-fg-tertiary">
-                                        {user.personaLabel ?? '시스템 관리 계정'} · {user.id}
+                                        {virtualUserLabel(user)} · {user.id}
                                     </span>
                                 </div>
                             </button>

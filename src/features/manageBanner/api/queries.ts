@@ -10,6 +10,7 @@ import {
     adminBannerApiPath,
     adminBannerListSchema,
     adminBannerSchema,
+    BANNERS_KEY,
 } from '@entities/banner';
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
@@ -18,7 +19,11 @@ import { envelopeSchema } from '@shared/api/envelopeSchema';
 function useInvalidateBanners() {
     const queryClient = useQueryClient();
     // Promise를 반환해 재조회가 끝날 때까지 mutation을 pending으로 유지한다 — 순서 변경이 이전 목록으로 계산되지 않게
-    return () => queryClient.invalidateQueries({ queryKey: ADMIN_BANNERS_KEY });
+    return () =>
+        Promise.all([
+            queryClient.invalidateQueries({ queryKey: ADMIN_BANNERS_KEY }),
+            queryClient.invalidateQueries({ queryKey: BANNERS_KEY }),
+        ]);
 }
 
 export function useCreateBanner() {

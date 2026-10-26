@@ -1,8 +1,6 @@
 import { setupWorker } from 'msw/browser';
 
-import { env } from '@shared/config/env';
+import { handlers } from './handlers';
 
-import { handlers, hybridHandlers } from './handlers';
-
-// 개발은 전체 목업, 배포는 실서버에 없는 도메인만 목업(하이브리드)으로 가로챈다
-export const worker = setupWorker(...(env.isDev ? handlers : hybridHandlers));
+// 브라우저 목업은 로컬 개발 전용이다 — 배포 빌드는 VITE_ENABLE_MSW=false라 이 모듈이 실행되지 않는다
+export const worker = setupWorker(...handlers);

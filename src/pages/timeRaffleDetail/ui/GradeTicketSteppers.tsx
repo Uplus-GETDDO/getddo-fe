@@ -30,7 +30,7 @@ export function GradeTicketSteppers({
     availableByGrade,
     remainingLimit,
 }: GradeTicketSteppersProps) {
-    const total = value.BRONZE + value.SILVER + value.GOLD;
+    const total = value.BRONZE + value.SILVER + value.GOLD + value.PLATINUM;
     // 고른 장수를 등급만큼 곱해 더한 값 — 화면에는 '브론즈 몇 장만큼'으로 풀어 적는다
     const reflected = ticketGradeSchema.options.reduce(
         (sum, grade) => sum + value[grade] * TICKET_GRADE_WEIGHT[grade],
@@ -67,7 +67,9 @@ export function GradeTicketSteppers({
                                 </span>
                             </span>
                             <span className="text-caption text-fg-tertiary">
-                                보유 {availableByGrade ? `${availableByGrade[grade]}장` : '-'}
+                                {availableByGrade
+                                    ? `보유 ${availableByGrade[grade]}장`
+                                    : '보유 수량 확인 필요'}
                             </span>
                         </div>
                     </div>

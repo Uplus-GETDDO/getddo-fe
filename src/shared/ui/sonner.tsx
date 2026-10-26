@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 
-import { useUiSettingsStore } from '@shared/lib/uiSettings';
+import { useUiSettingsStore } from '@shared/model/uiSettings';
 
 const Toaster = ({ ...props }: ToasterProps) => {
     // sonner가 'system'을 자체 처리하므로 스토어 값을 그대로 넘긴다

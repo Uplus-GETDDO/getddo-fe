@@ -12,7 +12,8 @@
 2. **의미(semantic) 우선**: 같은 색이어도 "무엇에 쓰는가"에 따라 다른 토큰명을 쓴다.
 3. **관리자 전용 vs 사용자 전용 구분**: `status/*`, `chart/*`는 관리자(운영자) 화면 전용, `play/*`는 사용자(응모자) 사이트 전용.
 4. **값의 원천**: 이 문서의 모든 값은 Figma 도형에 실제로 바인딩된 Variable/Effect 값을 기준으로 작성했다 (캔버스에 사람이 손으로 적어둔 hex 텍스트 라벨이 아님). 2026-09-27 기준으로 캔버스 라벨과 실제 값은 모두 일치한다.
-5. **`cn()` 병합 주의**: `cn`(`@shared/lib/utils`)의 충돌 병합은 Tailwind 기본 그룹 기준이라 커스텀 토큰을 모른다. `cn('text-caption', 'text-fg-brand')`처럼 타이포 토큰과 색상 토큰을 함께 넣으면 같은 `text-*` 그룹으로 보고 앞 클래스를 지운다 — 그 조합은 `cn` 대신 문자열 결합을 쓴다 (사례: `features/checkAttendance/ui/AttendanceCheckCard.tsx`).
+5. **`cn()` 병합 주의**: `cn`(`@shared/utils/cn`)의 충돌 병합은 Tailwind 기본 그룹 기준이라 커스텀 토큰을 모른다. `cn('text-caption', 'text-fg-brand')`처럼 타이포 토큰과 색상 토큰을 함께 넣으면 같은 `text-*` 그룹으로 보고 앞 클래스를 지운다 — 그 조합은 `cn` 대신 문자열 결합을 쓴다 (사례: `features/checkAttendance/ui/AttendanceCheckCard.tsx`).
+6. **공용 정책 우선**: 토큰의 색·용도와 기능 제공 범위는 별개다. `../getddo-spec/00-requirements/scope.md`·`02-domain/`의 확정 정책을 우선하며 상태 색 이름만으로 참여 허용·추첨 제외·공통 감사 조회·탈퇴 기능을 제공하지 않는다. 발표 대기는 실제 공개까지 유지하고 단일 발표 요청에서 최종 확인·공개를 함께 처리한다(`03-decisions/022-manual-initial-publication.md`). 배너 이미지 허용 형식·용량은 미확정이며 아래 비율은 FE 권장값이다(`00-requirements/pending-decisions.md`).
 
 ---
 
@@ -40,12 +41,12 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 ### 3) Ticket — 응모권
 
-| Token                   | Hex       | 용도                                                           |
-| ----------------------- | --------- | -------------------------------------------------------------- |
-| `ticket/primary`        | `#FFC83D` | 티켓 카드 면, 응모권 획득 모먼트                               |
-| `ticket/accent`         | `#FFF4D1` | 티켓 카드 라벨, 장식, 보상 화면 바탕(지갑·보상 모달·당첨 배너) |
-| `ticket/accent-pressed` | `#FFE9A6` | 지금 쓰는 곳 없음 (예전 세컨더리 버튼 hover 테두리)            |
-| `ticket/on`             | `#1F242B` | 응모권 칩 위 텍스트                                            |
+| Token                   | Hex       | 용도                                                                  |
+| ----------------------- | --------- | --------------------------------------------------------------------- |
+| `ticket/primary`        | `#FFC83D` | 티켓 카드 면, 응모권 획득 모먼트                                      |
+| `ticket/accent`         | `#FFF4D1` | 티켓 카드 라벨, 장식, 보상 화면 바탕(보유 응모권·보상 모달·당첨 배너) |
+| `ticket/accent-pressed` | `#FFE9A6` | 지금 쓰는 곳 없음 (예전 세컨더리 버튼 hover 테두리)                   |
+| `ticket/on`             | `#1F242B` | 응모권 칩 위 텍스트                                                   |
 
 ### 4) Play — 놀이 파스텔 (사용자 사이트 전용)
 
@@ -55,7 +56,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `play/yellow`        | `#FFC83D` | 응모권·코인·별 장식                                    |
 | `play/pink-soft`     | `#FDEBF4` | 보상 가능 카드, 일러스트 뒤 블롭                       |
 | `play/pink`          | `#F5A3CB` | 장식                                                   |
-| `play/lavender-soft` | `#F0EBFF` | 게임·랭킹 영역 배경, 게임 미션 아이콘 원               |
+| `play/lavender-soft` | `#F0EBFF` | 게임 영역 배경, 게임 미션 아이콘 원                    |
 | `play/lavender`      | `#A78BFA` | 게임 일러스트, 캐릭터 소품 (텍스트·버튼에는 사용 금지) |
 
 #### Game — 글자색깔 맞추기 문제 색 (게임 화면 전용)
@@ -71,16 +72,18 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 #### Grade — 응모권 등급
 
-게임·미션 보상의 등급 응모권(브론즈 80%·실버 18%·골드 2%, 출석은 브론즈 고정)을 구분하는 색. 밝기·채도를 고르게 맞춰 너무 따뜻하지도 차갑지도 않게 했다. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕(글자는 잉크색). 다크 모드에도 같은 값을 쓴다.
+게임·미션 보상의 등급 응모권(브론즈 79.98%·실버 18%·골드 2%·플래티넘 0.02%, 출석은 브론즈 고정)을 구분하는 색. 플래티넘은 피그마 image 260(플래티넘 응모권)의 선 색과 바탕색에서 골랐다. 밝기·채도를 고르게 맞춰 너무 따뜻하지도 차갑지도 않게 했다. 진한 색은 점·막대·테두리, soft는 알약·카드 바탕(글자는 잉크색). 다크 모드에도 같은 값을 쓴다.
 
-| Token               | Hex       | 용도                  |
-| ------------------- | --------- | --------------------- |
-| `grade/bronze`      | `#C27C55` | 브론즈 점·막대·테두리 |
-| `grade/bronze-soft` | `#F6E9E1` | 브론즈 알약·카드 바탕 |
-| `grade/silver`      | `#8E9BAD` | 실버 점·막대·테두리   |
-| `grade/silver-soft` | `#ECEFF4` | 실버 알약·카드 바탕   |
-| `grade/gold`        | `#D9A92E` | 골드 점·막대·테두리   |
-| `grade/gold-soft`   | `#FAF0D2` | 골드 알약·카드 바탕   |
+| Token                                                 | Hex       | 용도                    |
+| ----------------------------------------------------- | --------- | ----------------------- |
+| `grade/bronze`                                        | `#C27C55` | 브론즈 점·막대·테두리   |
+| `grade/bronze-soft`                                   | `#F6E9E1` | 브론즈 알약·카드 바탕   |
+| `grade/silver`                                        | `#8E9BAD` | 실버 점·막대·테두리     |
+| `grade/silver-soft`                                   | `#ECEFF4` | 실버 알약·카드 바탕     |
+| `grade/gold`                                          | `#D9A92E` | 골드 점·막대·테두리     |
+| `grade/gold-soft`                                     | `#FAF0D2` | 골드 알약·카드 바탕     |
+| `grade/platinum` (`--color-grade-platinum`)           | `#5F7196` | 플래티넘 점·막대·테두리 |
+| `grade/platinum-soft` (`--color-grade-platinum-soft`) | `#DBE6F8` | 플래티넘 알약·카드 바탕 |
 
 ### 5) Surface — 배경 레이어
 
@@ -98,11 +101,14 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 | Token                 | Hex          | 용도                                          |
 | --------------------- | ------------ | --------------------------------------------- |
-| `border/default`      | `#E4E7EA`    | 카드·인풋 기본 테두리                         |
+| `border/default`      | `#E4E7EA`    | 카드 기본 테두리                              |
 | `border/strong`       | `#CDD2D8`    | 구분선, 테이블 경계                           |
+| `border/input`        | `#8A9199`    | 입력칸·라디오 테두리 (hover `#6B727C`)        |
 | `border/brand`        | `#E6007E`    | 선택된 카드 (세컨더리 버튼은 `border/strong`) |
 | `border/brand-subtle` | `#F5A3CB`    | 요약 카드 테두리                              |
 | `border/focus`        | `fg/primary` | 키보드 포커스 링 (2px, 요소와 2px 띄움)       |
+
+입력칸은 카드보다 진한 테두리를 쓴다. 카드는 회색 바탕(`surface/canvas`) 위 흰 칸이라 테두리가 연해도 경계가 읽히지만, 입력칸은 **흰 카드 위 흰 칸**이라 테두리만이 유일한 경계다. `border/default`는 흰 바탕과 1.24:1이라 칸이 있는지조차 보이지 않는다 — WCAG 1.4.11은 컨트롤 경계에 3:1을 요구한다. `border/input`은 3.19:1, hover는 4.86:1이다.
 
 ### 7) Foreground — 텍스트·아이콘
 
@@ -123,36 +129,41 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `semantic/success-soft`  | `#E8FAF3` | 성공 뱃지·배너 배경                      |
 | `semantic/error`         | `#F04438` | 에러 아이콘                              |
 | `semantic/error-strong`  | `#D92D20` | 밝은 배경 위 에러 텍스트, 삭제 버튼 바탕 |
-| `semantic/error-pressed` | `#B42318` | 삭제 버튼 호버·누름, 상태 뱃지 텍스트    |
+| `semantic/error-pressed` | `#D61F45` | 삭제 버튼 호버·누름, 상태 뱃지 텍스트    |
 
 ### 9) Status — 관리자 전용
 
-| Token                  | Hex       | 용도                                               |
-| ---------------------- | --------- | -------------------------------------------------- |
-| `status/pending`       | `#F1F3F5` | 검토 대기 뱃지 배경                                |
-| `status/active`        | `#E7F0FE` | 진행 중 뱃지 배경                                  |
-| `status/revision`      | `#FBF0D9` | 보완 요청 뱃지 배경                                |
-| `status/approved`      | `#E6F5EE` | 승인 뱃지 배경                                     |
-| `status/rejected`      | `#FBEBEE` | 반려 뱃지 배경                                     |
-| `status/pending-text`  | `#4B525C` | 검토 대기 뱃지 텍스트                              |
-| `status/active-text`   | `#1D4ED8` | 진행 중 뱃지 텍스트                                |
-| `status/revision-text` | `#92400E` | 보완 요청 뱃지 텍스트                              |
-| `status/approved-text` | `#0B6549` | 승인 뱃지 텍스트                                   |
-| `status/rejected-text` | `#B42318` | 반려 뱃지 텍스트 (`semantic/error-pressed` 재사용) |
+| Token                  | Hex       | 용도                                           |
+| ---------------------- | --------- | ---------------------------------------------- |
+| `status/pending`       | `#F1F3F5` | 검토 대기 뱃지 배경                            |
+| `status/active`        | `#EAF1FF` | 진행 중 뱃지 배경                              |
+| `status/revision`      | `#FFF0E6` | 보완 요청 뱃지 배경                            |
+| `status/approved`      | `#E3F6F1` | 승인 뱃지 배경                                 |
+| `status/rejected`      | `#FDECF0` | 반려 뱃지 배경                                 |
+| `status/pending-text`  | `#4B525C` | 검토 대기 뱃지 텍스트                          |
+| `status/active-text`   | `#2450D6` | 진행 중 뱃지 텍스트                            |
+| `status/revision-text` | `#C2410C` | 보완 요청 뱃지 텍스트                          |
+| `status/approved-text` | `#0A7A5C` | 승인 뱃지 텍스트                               |
+| `status/rejected-text` | `#D61F45` | 반려 뱃지 텍스트 — 마젠타와 같은 차가운 붉은색 |
 
 - 상태 칩 색은 라이프사이클로 묶는다 — `pending` 시작 전·준비 대기, `active` 진행 중·다음 단계 대기, `revision` 재처리 중, `approved` 완료·성공, `rejected` 취소·실패. 종료·결과 없음은 `surface/sunken` + `fg/secondary`의 중립 칩.
 - 분류(이벤트 유형 등)는 상태가 아니므로 라이프사이클 색을 쓰지 않는다 — 응모권 사용은 `ticket/accent`, 그 외는 중립 칩.
 
 ### 10) Chart — 관리자 전용
 
-| Token             | Hex       | 용도                                         |
-| ----------------- | --------- | -------------------------------------------- |
-| `chart/line`      | `#E6007E` | 현재 기간 선 (2px, `brand/primary` 재사용)   |
-| `chart/point`     | `#BC0066` | 강조 포인트 (`brand/primary-pressed` 재사용) |
-| `chart/compare`   | `#CDD2D8` | 지난 기간 선 (1.5px 점선)                    |
-| `chart/grid`      | `#F1F3F5` | 가로 격자선                                  |
-| `chart/axis`      | `#9AA1AB` | 축 라벨                                      |
-| `chart/highlight` | `#F59E0B` | 이상치, 어뷰징 탐지                          |
+| Token             | Hex       | 용도                                           |
+| ----------------- | --------- | ---------------------------------------------- |
+| `chart/line`      | `#E6007E` | 현재 기간 선 (2px, `brand/primary` 재사용)     |
+| `chart/point`     | `#BC0066` | 강조 포인트 (`brand/primary-pressed` 재사용)   |
+| `chart/compare`   | `#CDD2D8` | 지난 기간 선 (1.5px 점선)                      |
+| `chart/grid`      | `#F1F3F5` | 가로 격자선                                    |
+| `chart/axis`      | `#9AA1AB` | 축 라벨                                        |
+| `chart/highlight` | `#F59E0B` | 이상치, 어뷰징 탐지                            |
+| `chart/series-1`  | `#9E0057` | 분포 그래프 계열색 — 가장 진함 (예: 발표 대기) |
+| `chart/series-2`  | `#D1338C` | 분포 그래프 계열색 (예: 추첨 필요)             |
+| `chart/series-3`  | `#EC85B8` | 분포 그래프 계열색 (예: 진행 중)               |
+| `chart/series-4`  | `#F8C6DE` | 분포 그래프 계열색 (예: 진행 예정)             |
+| `chart/series-5`  | `#E4E7EA` | 분포 그래프 계열색 — 가장 옅음 (예: 종료)      |
 
 ### 11) Gradient
 
@@ -181,8 +192,8 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 | `primary`     | `action/neutral`          | `action/neutral-hover`                  | `action/neutral-pressed`                 | 행동 묶음의 주 행동 — **응모하기**, 확인, 제출, 저장, 출석하기                             |
 | `secondary`   | 흰 바탕 + `border/strong` | `surface/canvas` + `fg/disabled` 테두리 | `surface/pressed` + `fg/disabled` 테두리 | 보조 행동 — 취소·돌아가기, 카드마다 반복되는 이동(게임하러 가기, 미션하러 가기), 내역 보기 |
 | `ghost`       | 투명, 테두리 없음         | `surface/canvas`                        | `surface/pressed`                        | 아이콘 버튼, 모달 닫기(X), 더보기                                                          |
-| `destructive` | `semantic/error`          | `semantic/error-strong`                 | `semantic/error-strong`                  | 삭제, 탈퇴 등 되돌릴 수 없는 행동                                                          |
-| `link`        | `fg/primary` 글자         | 밑줄                                    | `fg/secondary` + 밑줄                    | 전체보기, 상세보기 등 글자 이동                                                            |
+| `destructive` | `semantic/error`          | `semantic/error-strong`                 | `semantic/error-strong`                  | 허용된 삭제·취소 등 되돌릴 수 없는 행동                                                    |
+| `link`        | `fg/secondary` 글자       | `fg/primary` 글자 (밑줄 없음)           | `fg/primary` 글자                        | 전체보기, 상세보기 등 글자 이동                                                            |
 
 - primary는 **행동 묶음마다 하나**만 둔다 (페이지 전체에 하나일 필요는 없다).
 - **마젠타 버튼은 쓰지 않는다** (`emphasis` 제거). 응모처럼 중요한 행동은 색이 아니라 크기(Large)·자리·확인 모달로 드러낸다.
@@ -217,7 +228,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 ### 화면 설정 (마이페이지)
 
-- 테마: `getddo-ui-settings` persist 스토어(`shared/lib/ui-settings.ts`)의 `theme` — 시스템/라이트/다크 중 선택, 기본은 라이트다(OS 다크가 자동 적용되지 않는다). `ThemeSync`(app/providers)가 `html.dark` 클래스를 토글하고, `index.html`의 인라인 스크립트가 React 마운트 전에 저장값을 적용해 라이트 플래시를 막는다. next-themes 시절의 원시 `theme` 키는 1회 마이그레이션된다.
+- 테마: `getddo-ui-settings` persist 스토어(`shared/model/uiSettings.ts`)의 `theme` — 시스템/라이트/다크 중 선택, 기본은 라이트다(OS 다크가 자동 적용되지 않는다). `ThemeSync`(app/providers)가 `html.dark` 클래스를 토글하고, `index.html`의 인라인 스크립트가 React 마운트 전에 저장값을 적용해 라이트 플래시를 막는다. next-themes 시절의 원시 `theme` 키는 1회 마이그레이션된다.
 - 큰글씨 모드: `html[data-text-scale='large']`로 루트 `font-size`를 120%로 올린다 — rem 기반 유틸리티에 자동 적용되고, 상태는 같은 `getddo-ui-settings` persist 스토어에 유지된다.
 
 ### 미정 사항
@@ -298,6 +309,22 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 ---
 
-## 5. 이 문서에 포함되지 않은 것
+## 5. 카드 안쪽 여백
+
+여백은 **카드의 역할**로 정한다. 카드 테두리부터 첫 글자까지의 거리를 기준으로 재며, 카드 안 목록 줄이 자체 여백을 가지면 **카드 여백 + 줄 여백의 합**을 맞춘다.
+
+| 여백           | 역할                                                   | 쓰는 곳                                                                                                   |
+| -------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| **16** (`p-4`) | 여러 장이 나란히 놓이는 작은 카드 — 훑어보고 고르는 것 | 게임·출석·설문 퀴즈 티켓 카드(공용 TicketCard), 다가오는 이벤트 카드, 게임 상세 기록 칸, 공용 Card 기본값 |
+| **20** (`p-5`) | 작은 카드 중 그림과 글이 가로로 놓이는 것              | 겟또타임 오픈 예정·진행 중 축소 카드                                                                      |
+| **24** (`p-6`) | 한 영역을 차지하는 내용 카드 — 읽고 조작하는 것        | 미션 출석체크·응모권 내역 카드, 마이페이지 카드, 내 응모권 카드, 겟또타임 진행 중 카드, 관리자 패널       |
+| **32** (`p-8`) | 모달·다이얼로그 (좁은 화면은 24)                       | 확인·완료·안내 모달                                                                                       |
+
+- 나란히 놓인 카드끼리는 여백이 같아야 한다 — 미션 페이지의 출석체크와 응모권 내역은 둘 다 24다.
+- 목록 줄이 hover 바탕을 위해 자체 여백(`px-4`)을 가지면 카드 쪽 여백을 줄여(`p-2`) 합을 24로 맞춘다.
+
+---
+
+## 6. 이 문서에 포함되지 않은 것
 
 `04 Button`, `05 Card`는 토큰이 아니라 토큰을 조합한 컴포넌트 스펙이라 제외했다. `04 Button`은 Primary 버튼의 Small/Medium/Large × Default/Hover/Pressed/Disabled 컴포넌트가 이미 만들어져 있고, `05 Card`는 아직 제목만 있고 내용은 비어 있다.

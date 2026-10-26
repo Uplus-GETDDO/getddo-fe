@@ -16,7 +16,8 @@ function PageHeader({
     backTo: string;
     backLabel: string;
     title: string;
-    description: string;
+    /** 한 줄 설명 — 제목만으로 충분하면 생략한다 */
+    description?: string;
     action?: React.ReactNode;
 }) {
     return (
@@ -24,14 +25,15 @@ function PageHeader({
             <div className="flex flex-col gap-2">
                 <Link
                     to={backTo}
-                    className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus flex w-fit items-center gap-0.5 rounded-md focus-visible:ring-2 focus-visible:outline-none"
+                    // 글줄(22px) 위아래로 패딩을 넓혀 누름 칸이 WCAG 2.5.8의 24px를 넘기고 음수 마진으로 줄간격을 지킨다
+                    className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus -my-0.5 flex w-fit items-center gap-0.5 rounded-md py-0.5 focus-visible:ring-2 focus-visible:outline-none"
                 >
                     <ChevronLeft aria-hidden className="size-4" />
                     {backLabel}
                 </Link>
                 <div className="flex flex-col gap-2">
                     <h1 className="text-title-2 text-fg-primary">{title}</h1>
-                    <p className="text-body-sm text-fg-secondary">{description}</p>
+                    {description && <p className="text-body-sm text-fg-secondary">{description}</p>}
                 </div>
             </div>
             {action}

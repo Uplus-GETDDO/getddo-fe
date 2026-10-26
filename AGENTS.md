@@ -6,7 +6,7 @@
 ## 프로젝트 개요
 
 - LG유플러스 응모 이벤트 플랫폼 프론트엔드 (가상 사용자 기반 응모/추첨 이벤트)
-- 기술 스택: TypeScript, React 19, Vite 8, React Router 7, TanStack Query, Zustand, Redux Toolkit, TailwindCSS v4, shadcn/ui, React Hook Form + Zod
+- 기술 스택: TypeScript, React 19, Vite 8, React Router 7, TanStack Query, Zustand, TailwindCSS v4, shadcn/ui, React Hook Form + Zod
 - 백엔드는 별도 레포 — API가 준비되기 전까지 MSW로 목업한다
 - Node >= 20.19 (`package.json` `engines` 기준, 24.x 권장) / npm
 
@@ -17,7 +17,7 @@
 - 기능 요구사항·구현 범위: `../getddo-spec/00-requirements/` — 새 화면·기능을 만들거나 구현/보류/제외 여부를 판단할 때 `functional-requirements.md`와 `scope.md`를 읽는다
 - 도메인 용어·정책: `../getddo-spec/02-domain/` — 용어는 `glossary.md`, 이벤트·응모권·응모·추첨·출석·미션·게임·알림 정책은 도메인별 파일. 상태 전이, 보상·차감 조건, 추첨·발표 규칙을 구현할 때 읽는다
 - 공용 결정(ADR): `../getddo-spec/03-decisions/` — 프론트·백엔드 공통으로 적용되는 결정과 그 이유. 정책 해석이 필요하거나 공용 결정을 바꾸려 할 때 읽는다
-- API 계약: `../getddo-spec/05-api/` — 도메인별 HTTP 경로·메서드·DTO·업무 오류 코드. 확정(채택)된 범위는 알림 N01~N03·AN01~AN05, 추첨 GD-87·GD-138·GD-169 선택 범위·E08/E09, 배너 B01·AB01~AB05, 관리자 사용자 AO01·AO02·응모권 AO03·AO04·AO05·AO08·AO09, 미션 M01~M04, 게임 G01·G02·G05·글자색깔 G03/G04이며, 응모·출석·미션·게임 제출의 현행 구현 범위(거절 이력·429 `COMMON-006` 등)도 명세에 반영됐다. 공통 감사 조회(AU01·AU02)는 제외다. 나머지는 검토 대기 단계의 제안이며 도메인별 상세는 `docs/CONTEXT.md`의 '백엔드 연동 전 임시 상태'가 기준이다. `common.md`에 응답 봉투·페이징·멱등키·시연용 `X-User-ID`/`X-User-Role`/`X-User-Membership` 헤더 등 공통 계약이 있다. API 연동 코드를 작성할 때 먼저 읽는다
+- API 계약: `../getddo-spec/05-api/` — 도메인별 HTTP 경로·메서드·DTO·업무 오류 코드. 확정(채택)된 범위는 알림 N01~N03·AN01~AN05, 추첨 GD-87·GD-138·GD-169 선택 범위·E08/E09·GD-199 최초 발표, 배너 B01·AB01~AB05, 관리자 사용자 AO01·AO02·응모 조회 AO06·AO07·응모권 AO03·AO04·AO05·AO08·AO09, 미션 M01~M04·AM01~AM05, 출석 AT01~AT03·AP01~AP06, 어뷰징 조회 AR01/AR02(채택·배포·실측 완료), 게임 G01·G02·G05·글자색깔 G03/G04이며, 응모·출석·미션·게임 제출의 현행 구현 범위(거절 이력·429 `COMMON-006`·GD-141 응모 일시 차단 등)도 명세에 반영됐다. E01 `winnerCount`(GD-251)·관리자 응답 이름 필드(ADR-028)·최초 자동 추첨 마감+1분(GD-268)은 계약 확정이며 각 API 문서의 상태 머리말에서 구현·배포 여부를 확인한다. 공통 감사 조회(AU01·AU02)는 제외다. 나머지는 검토 대기 단계의 제안이며 도메인별 상세는 `docs/CONTEXT.md`의 '백엔드 연동 전 임시 상태'가 기준이다. `common.md`에 응답 봉투·페이징·멱등키·시연용 `X-User-ID`/`X-User-Role`/`X-User-Membership` 헤더 등 공통 계약이 있다. API 연동 코드를 작성할 때 먼저 읽는다
 - 미결정 정책: `../getddo-spec/00-requirements/pending-decisions.md` — 여기 있는 항목과 각 문서의 미확정 표시는 임의로 확정해 코드에 반영하지 않는다
 - 공통 협업 규칙 원본: `../getddo-spec/01-conventions/` — 이 파일의 브랜치·커밋·PR 요약과 충돌하면 원본을 따른다. Jira 에픽·태스크 작성 양식은 `../getddo-spec/templates/jira-*.md`를 사용한다
 
@@ -39,15 +39,15 @@ src/
   widgets/    # 여러 feature/entity를 조합한 화면 블록
   features/   # 사용자 행동 단위 (enterEvent, checkAttendance, ...)
   entities/   # 도메인 모델 + 기본 표시 UI (event, ticket, user, ...)
-  shared/     # 도메인을 모르는 공통 코드 (ui, api, lib, config)
+  shared/     # 도메인을 모르는 공통 코드 (ui, api, model, hooks, utils, config)
   mocks/      # MSW 목업 — FSD 레이어 밖의 독립 영역, entities·shared만 참조 가능
 ```
 
-슬라이스 내부는 `ui/`, `model/`, `api/`, `lib/` 하위 폴더 + `index.ts`(공개 API)로 구성한다. 단, `pages` 슬라이스는 예외다 — 라우트가 페이지를 직접 가리키는 최상위 소비자라 공개 API 배럴이 불필요하므로, 페이지 컴포넌트(`XxxPage.tsx`)를 슬라이스 루트에 두고 `index.ts`를 만들지 않는다.
+슬라이스 내부는 `ui/`, `model/`, `api/`, `hooks/`, `utils/`, `assets/` 하위 폴더 + `index.ts`(공개 API)로 구성한다. 단, `pages` 슬라이스는 예외다 — 라우트가 페이지를 직접 가리키는 최상위 소비자라 공개 API 배럴이 불필요하므로, 페이지 컴포넌트(`XxxPage.tsx`)를 슬라이스 루트에 두고 `index.ts`를 만들지 않는다.
 
 세그먼트 배치 기준:
 
-- `ui/`에는 React 컴포넌트(.tsx)만 둔다 — 정적 데이터·에셋 매핑·상수는 `model/`, 순수 함수·훅·로더는 `lib/`에 둔다
+- `ui/`에는 React 컴포넌트(.tsx)만 둔다 — 정적 데이터·에셋 매핑·상수·스토어·context는 `model/`, 순수 함수·로더는 `utils/`, React 훅(`use*`)은 `hooks/`, 이미지·폰트·오디오·에셋 CSS는 `assets/`에 둔다 (구 `lib/`은 2026-10-17 GD-222에서 폐기·3분리됐다)
 - 슬라이스 루트 `index.ts`만이 공개 API다 — 세그먼트 `index.ts`는 두지 않고, 루트 index가 세그먼트 파일을 직접 참조해 공개 항목을 named export로 열거한다 (pages 제외 — pages는 index.ts 없이 루트의 `XxxPage.tsx`가 곧 공개 API다)
 - 폴더·일반 파일은 camelCase, React 컴포넌트 파일은 PascalCase. `shared/ui/`만 shadcn 관례(kebab-case.tsx)를 따르고, 이미지·폰트·오디오 등 바이너리 에셋 파일명은 rename 대상이 아니다
 
@@ -67,7 +67,7 @@ app → pages → widgets → features → entities → shared
 
 - 하위 → 상위 참조 ❌ (예: `entities → pages`)
 - 같은 레이어의 다른 슬라이스 참조 ❌ (예: `features/enterEvent → features/checkAttendance`) — 공유가 필요하면 `shared`나 `entities`로 내린다
-- 슬라이스 내부 파일 직접 import ❌ — 반드시 해당 슬라이스의 `index.ts`를 통해 import한다 (딥 임포트 금지). 단, pages는 슬라이스 루트의 `XxxPage.tsx`까지가 허용 경계다 — `ui/`·`model/`·`lib/` 하위 파일을 외부에서 참조할 수 없다
+- 슬라이스 내부 파일 직접 import ❌ — 반드시 해당 슬라이스의 `index.ts`를 통해 import한다 (딥 임포트 금지). 단, pages는 슬라이스 루트의 `XxxPage.tsx`까지가 허용 경계다 — `ui/`·`model/`·`api/`·`hooks/`·`utils/`·`assets/` 하위 파일을 외부에서 참조할 수 없다
 - `import.meta.env` 직접 참조 ❌ — `@shared/config/env`의 `env` 객체만 사용한다
 
 ## 코드 작성 규칙
@@ -75,7 +75,7 @@ app → pages → widgets → features → entities → shared
 ### 기존 코드 우선
 
 - 새 컴포넌트/함수/유틸을 만들기 전에 **반드시 기존 구현을 먼저 검색**한다
-- `shared/ui/`(shadcn/ui)와 `shared/lib/`에 이미 있는 것을 새로 만들지 않는다
+- `shared/ui/`(shadcn/ui), `shared/utils/`, `shared/hooks/`에 이미 있는 것을 새로 만들지 않는다
 - UI 컴포넌트가 필요하면 `npx shadcn add <component>`로 `shared/ui/`에 생성한다
 
 ### 컴포넌트
@@ -90,34 +90,34 @@ app → pages → widgets → features → entities → shared
 - 조회(읽기) 훅은 `entities/*/api/`에, 사용자 행동 mutation 훅은 `features/*/api/`에 둔다 (예: `features/enterEvent/api/queries.ts`)
 - 엔티티의 쿼리 키는 해당 `entities/*/api/`에서 상수로 export한다 (`EVENTS_KEY`, `TICKETS_KEY` 등). 다른 슬라이스에서 무효화할 때 이 상수를 쓰고, 문자열 리터럴로 키를 적지 않는다
 - 서버 응답은 Zod 스키마로 검증한다 (`entities/*/model/`에 정의)
-- 시간은 서버에서 UTC로 받고, 화면 표시는 `shared/lib/date`의 KST 변환 함수를 사용한다
-- "지금"이 필요한 코드는 `new Date()`를 직접 호출하지 않고 `useVirtualClock().now()`(`shared/lib/virtualClock`)를 쓴다 — 관리자 시간 여행이 오버라이드할 수 있어야 한다. 컴포넌트 밖 순수 함수는 `now`를 인자로 받는다
-- 응모·추첨 등 중복 위험 요청에는 `shared/lib/idempotencyKey`의 멱등키를 붙인다. 헤더명은 `IDEMPOTENCY_HEADER` 상수(`Idempotency-Key`)를 쓰고 문자열을 직접 쓰지 않는다 (ADR-0005)
+- 시간은 서버에서 UTC로 받고, 화면 표시는 `shared/utils/date`의 KST 변환 함수를 사용한다
+- "지금"이 필요한 코드는 `new Date()`를 직접 호출하지 않고 `useVirtualClock().now()`(`shared/model/virtualClock`)를 쓴다 — 관리자 시간 여행이 오버라이드할 수 있어야 한다. 컴포넌트 밖 순수 함수는 `now`를 인자로 받는다
+- 응모·추첨 등 중복 위험 요청에는 `shared/utils/idempotencyKey`의 멱등키를 붙인다. 헤더명은 `IDEMPOTENCY_HEADER` 상수(`Idempotency-Key`)를 쓰고 문자열을 직접 쓰지 않는다 (ADR-0005)
 
 ### 상태 관리 (역할이 겹치지 않도록 구분)
 
 새 상태의 도구는 **공유 범위 → 수명 → 변화 빈도** 순으로 판단한다:
 
-| 판단 질문                                         | 데이터 종류                                                 | 도구                                  |
-| ------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------- |
-| 서버가 진실의 원천인가?                           | 서버 데이터 (이벤트 목록, 응모권 잔액)                      | TanStack Query                        |
-| 한 컴포넌트·페이지 안에서만 살고 사라져도 되는가? | 일시적 로컬 상태 (입력값, 열림, 진행 단계)                  | `useState`/`useReducer` — 전역화 금지 |
-| 여러 컴포넌트·화면이 동기적으로 공유하는가?       | 전역 UI 상태 (테마, 큰글씨, 전역 모달, 화면 간 "의도" 전달) | Zustand (`shared/lib/uiSettings` 등)  |
-| Provider 생명주기와 같고 드물게 변하는가?         | 세션·환경 Context (가상 시계, 인증 세션)                    | React Context                         |
-| 여러 화면을 오가는 복잡한 전이가 있는가?          | 복잡한 전역 플로우                                          | Redux Toolkit                         |
-| 폼인가?                                           | 폼 상태                                                     | React Hook Form (전역 승격 금지)      |
+| 판단 질문                                         | 데이터 종류                                                 | 도구                                   |
+| ------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------- |
+| 서버가 진실의 원천인가?                           | 서버 데이터 (이벤트 목록, 응모권 잔액)                      | TanStack Query                         |
+| 한 컴포넌트·페이지 안에서만 살고 사라져도 되는가? | 일시적 로컬 상태 (입력값, 열림, 진행 단계)                  | `useState`/`useReducer` — 전역화 금지  |
+| 여러 컴포넌트·화면이 동기적으로 공유하는가?       | 전역 UI 상태 (테마, 큰글씨, 전역 모달, 화면 간 "의도" 전달) | Zustand (`shared/model/uiSettings` 등) |
+| Provider 생명주기와 같고 드물게 변하는가?         | 세션·환경 Context (가상 시계, 인증 세션)                    | React Context                          |
+| 여러 화면을 오가는 복잡한 전이가 있는가?          | 복잡한 전역 플로우                                          | Redux Toolkit                          |
+| 폼인가?                                           | 폼 상태                                                     | React Hook Form (전역 승격 금지)       |
 
 - 서버 데이터를 Zustand·Redux·store 내부 비동기 호출로 복사·캐싱하지 않는다 — 캐시·무효화·재시도는 TanStack Query가 소유한다 (store 안에서 `fetch → set()` 하는 이중 캐시 패턴 금지)
 - 로그인·가상 사용자 등 조건이 필요한 데이터는 라우트 가드(`app/routes/UserGuard`·`AdminGuard`)가 1차로 차단한다 — entities 쿼리 훅이 세션 스토어를 참조하면 같은 레이어 참조 위반이라 훅 내부에서 게이팅하지 않는다. 화면 단의 세부 조건은 호출부에서 `enabled`로 넘긴다
 - 여러 컴포넌트가 같은 행동을 중복 요청할 수 있으면 `useRef` Set으로 동기적으로 차단하고, 서버 측 중복은 멱등키로 막는다 (ADR-0005)
 - 컴포넌트 트리 밖 → 안쪽으로 신호를 보낼 때는 props 드릴링 대신 "의도" store(pending flag + consume) 패턴을 쓴다
 
-역할 분리 기준은 `docs/adr/ADR-0003-state-management-roles.md`를 따른다. Redux Toolkit은 의존성만 있고 스토어는 아직 없다 — 필요한 전역 플로우가 생길 때 도입한다. 가상 시계는 상태 라이브러리가 아닌 `shared/lib/virtualClock`의 React context다 — context·훅·Provider·저장 키가 한 폴더에 있다. Provider 중첩은 `QueryClientProvider`가 가장 바깥이다 — Context 기반 상태(가상 시계)가 쿼리의 `enabled`·queryFn에 영향을 줄 수 있어야 한다.
+역할 분리 기준은 `docs/adr/ADR-0003-state-management-roles.md`를 따른다. Redux Toolkit은 미사용으로 의존성을 제거했다 (GD-342) — 필요한 전역 플로우가 생길 때 ADR-0003의 판단 기준대로 재도입한다. 가상 시계는 상태 라이브러리가 아닌 `shared/model/virtualClock`의 React context다 — context·훅·Provider·저장 키가 한 폴더에 있다. Provider 중첩은 `QueryClientProvider`가 가장 바깥이다 — Context 기반 상태(가상 시계)가 쿼리의 `enabled`·queryFn에 영향을 줄 수 있어야 한다.
 
 ### 스타일
 
 - TailwindCSS v4 + shadcn/ui, `@custom-variant dark` 기반 다크모드
-- 조건부 클래스는 `cn()`(`@shared/lib/utils`)으로 조합한다
+- 조건부 클래스는 `cn()`(`@shared/utils/cn`)으로 조합한다
 - Prettier가 포맷을 강제한다: 세미콜론, 싱글 쿼트, 4칸 들여쓰기 (커밋 시 자동 적용)
 
 ### 타입·import
@@ -161,7 +161,7 @@ Conventional Commits + 팀 확장 타입. `commit-msg` 훅의 commitlint(`commit
 ## 개발·테스트
 
 - 개발 서버: `npm run dev` (`VITE_ENABLE_MSW=true`면 MSW 목업으로 시작 — 준비 절차는 CONTRIBUTING.md)
-- 테스트는 대상 파일 옆에 `*.test.ts(x)`로 둔다 (Vitest, jsdom, globals 활성, setup `src/shared/test/setup.ts` + MSW 수명주기 `src/mocks/testSetup.ts`). `lib/`의 순수 함수와 비자명한 파생 로직에는 테스트를 둔다
+- 테스트는 대상 파일 옆에 `*.test.ts(x)`로 둔다 (Vitest, jsdom, globals 활성, setup `src/shared/test/setup.ts` + MSW 수명주기 `src/mocks/testSetup.ts`). `utils/`의 순수 함수와 비자명한 파생 로직에는 테스트를 둔다
 
 ## 검증 명령
 
@@ -178,7 +178,7 @@ npm run build         # tsc -b && vite build
 
 ## 금지 사항
 
-- 새 상태관리·UI 라이브러리를 임의로 추가하지 않는다 (추가가 필요하면 팀 합의 후). 설치만 된 미사용 의존성(`gsap`, `canvas-confetti`, `react-day-picker` 등)을 새로 도입할 때도 마찬가지다 — 허용된 것: `framer-motion`(모션), `sonner`(토스트), `@tanstack/react-table`(테이블)
+- 새 상태관리·UI 라이브러리를 임의로 추가하지 않는다 (추가가 필요하면 팀 합의 후). 허용된 것: `framer-motion`(모션), `sonner`(토스트), `@tanstack/react-table`(테이블)
 - `main`과 `dev`에 직접 커밋·push하지 않는다 — `dev`는 PR(Squash and Merge)로만 머지한다. 한 브랜치는 한 Jira 이슈에 대응한다
 - 기존 컴포넌트/유틸과 유사한 것을 새로 만들지 않는다
 - API 스키마·연동 계약을 임의로 변경하지 않는다

@@ -1,0 +1,24 @@
+{
+    "checkedAt": "2026-10-21T00:49:22.003Z",
+    "rows": [
+        {
+            "port": 5188,
+            "status": 200,
+            "encoding": "gzip",
+            "etag": "W/\"218840-1792541596717\"",
+            "decodedBytes": 218840,
+            "sha256": "b19a9fcdb691b2158d837ef44b93412f755c06ec395363af87850a92252826b4",
+            "conditionalStatus": 304
+        },
+        {
+            "port": 5189,
+            "status": 200,
+            "encoding": "gzip",
+            "etag": "W/\"218840-1792541596717\"",
+            "decodedBytes": 218840,
+            "sha256": "b19a9fcdb691b2158d837ef44b93412f755c06ec395363af87850a92252826b4",
+            "conditionalStatus": 304
+        }
+    ],
+    "equalBody": true
+}

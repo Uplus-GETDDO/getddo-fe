@@ -1,23 +1,33 @@
 import type { LucideIcon } from 'lucide-react';
 
-import { CalendarCheck, ChevronRight, ClipboardList, Gamepad2, Ticket } from 'lucide-react';
+import { CalendarCheck, ChevronRight, ClipboardList, Gamepad2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import type { Game } from '@entities/game';
 
-import { useAttendanceToday } from '@entities/attendance';
-import { GameTicketCard, gameDetailPath, useGameList } from '@entities/game';
-import { missionThumbnail, useMissionList } from '@entities/mission';
+import { ATTENDANCE_THUMBNAIL, useAttendanceToday } from '@entities/attendance';
+import {
+    GameTicketCard,
+    gameDetailPath,
+    useGameList,
+    getGameContent,
+    useGameStatisticsList,
+} from '@entities/game';
+import { isMissionOpenByServerTime, missionThumbnail, useLatestMissions } from '@entities/mission';
+import { TICKET_GRADE_IMAGE, TICKET_RANDOM_IMAGE } from '@entities/ticket';
+import { useSessionStore } from '@entities/user';
 import { hasGamePlayer } from '@features/playGame';
-import { useDragScroll } from '@shared/lib/useDragScroll';
-import { cn } from '@shared/lib/utils';
+import { TOUR_TARGET } from '@shared/config/tourTargets';
+import { useDragScroll } from '@shared/hooks/useDragScroll';
 import { Button } from '@shared/ui/button';
-import { Skeleton } from '@shared/ui/skeleton';
-import { TicketCard } from '@shared/ui/ticket-card';
+import { LoadError } from '@shared/ui/load-error';
+import { SkeletonCard } from '@shared/ui/skeleton';
+import { TicketCard, TicketCardMedia } from '@shared/ui/ticket-card';
+import { cn } from '@shared/utils/cn';
 
-import type { OrderableEarnCard } from '../lib/orderEarnCards';
+import type { OrderableEarnCard } from '../utils/orderEarnCards';
 
-import { orderEarnCards } from '../lib/orderEarnCards';
+import { orderEarnCards } from '../utils/orderEarnCards';
 
 interface EarnCard extends OrderableEarnCard {
     id: string;
@@ -25,9 +35,11 @@ interface EarnCard extends OrderableEarnCard {
     description: string;
     /** 스텁에 적는 보상 단위 — 출석은 브론즈 고정, 미션·게임은 지급 시 확률 추첨의 등급 응모권 (getddo-spec ticket.md) */
     rewardKind: string;
+    /** 보상 옆 응모권 그림 — 등급이 정해진 출석은 브론즈, 받을 때 등급을 뽑는 미션·게임은 '?' 응모권 */
+    rewardImage: string;
     href: string;
     actionLabel: string;
-    /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(게임), 없으면 임시로 회색 블록 + 아이콘 */
+    /** 카드 상단 썸네일 — 이미지가 있으면 보여주고(출석·미션·게임), 없으면 회색 블록 + 아이콘 */
     thumbnailUrl: string | null;
     thumbnailIcon: LucideIcon;
     /** 게임 카드면 미션 페이지와 같은 공용 게임 카드(GameTicketCard)로 그린다 */
@@ -48,12 +60,29 @@ export function TicketBalanceWidget({
     cardClassName?: string;
     hideMoreLink?: boolean;
 } = {}) {
-    const { data: attendance, isPending: attendancePending } = useAttendanceToday();
-    const { data: missions, isPending: missionsPending } = useMissionList();
-    const { data: games, isPending: gamesPending } = useGameList();
+    const attendanceQuery = useAttendanceToday();
+    const missionsQuery = useLatestMissions();
+    const gamesQuery = useGameList();
+    const { data: attendance, isPending: attendancePending } = attendanceQuery;
+    const { data: missions, isPending: missionsPending } = missionsQuery;
+    const { data: games, isPending: gamesPending } = gamesQuery;
+    const anyError = attendanceQuery.isError || missionsQuery.isError || gamesQuery.isError;
+    const retryAll = () => {
+        if (attendanceQuery.isError) void attendanceQuery.refetch();
+        if (missionsQuery.isError) void missionsQuery.refetch();
+        if (gamesQuery.isError) void gamesQuery.refetch();
+    };
+    const isUser = useSessionStore((state) => state.user?.role === 'USER');
+    const statistics = useGameStatisticsList(
+        (games ?? []).filter((game) => hasGamePlayer(game.code)).map((game) => game.id),
+        isUser,
+    );
+    const claimed = (id: string) =>
+        statistics.find((query) => query.data?.gameId === id)?.data?.rewardClaimedToday;
     // 셋이 모두 올 때까지 카드 자리만 잡아 둔다 — 비어 있다가 갑자기 섹션이 생기면 아래 내용이 밀리고,
     // 하나씩 도착할 때마다 그리면 순서(orderEarnCards)가 바뀌며 카드가 뒤섞여 보인다
-    const loading = attendancePending || missionsPending || gamesPending;
+    const statisticsPending = isUser && statistics.some((query) => query.isPending);
+    const loading = attendancePending || missionsPending || gamesPending || statisticsPending;
     // 마우스 드래그 + 관성 스크롤은 공용 훅을 쓴다 (터치는 브라우저 네이티브 스크롤)
     const dragScroll = useDragScroll<HTMLDivElement>();
 
@@ -66,58 +95,68 @@ export function TicketBalanceWidget({
                       title: '오늘 출석 체크',
                       description: '하루 한 번, 누르면 바로 받아요',
                       rewardKind: '브론즈 응모권',
+                      rewardImage: TICKET_GRADE_IMAGE.BRONZE,
                       rewardTickets: attendance.dailyRewardTicketCount,
                       // 미션 페이지의 출석 섹션으로 바로 내려간다 (missionList MISSION_SECTION_IDS.attendance)
                       href: '/missions#today-attendance',
                       actionLabel: '출석하러 가기',
                       completed: attendance.attended,
-                      thumbnailUrl: null,
+                      thumbnailUrl: ATTENDANCE_THUMBNAIL,
                       thumbnailIcon: CalendarCheck,
                   },
               ]
             : []),
-        ...(missions ?? []).map((mission) => ({
-            id: mission.id,
-            category: 'MISSION' as const,
-            title: mission.title,
-            description: '미션 완료 시 등급 추첨 응모권을 받아요',
-            rewardKind: '등급 응모권',
-            rewardTickets: mission.rewardTicketCount,
-            // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
-            href: `/missions?mission=${mission.id}`,
-            actionLabel: '미션하러 가기',
-            completed: mission.completed,
-            thumbnailUrl: missionThumbnail(mission),
-            thumbnailIcon: ClipboardList,
-        })),
-        ...(games ?? []).map((game) => ({
-            id: game.id,
-            category: 'GAME' as const,
-            title: game.title,
-            description: `하루 최대 ${game.dailyLimit}회, 보상은 등급 추첨 응모권 1장`,
-            rewardKind: '등급 응모권',
-            rewardTickets: 1,
-            href: gameDetailPath(game.id),
-            actionLabel: '게임하러 가기',
-            completed: game.remainingPlays === 0,
-            thumbnailUrl: game.thumbnailUrl ?? null,
-            thumbnailIcon: Gamepad2,
-            game,
-        })),
+        // 진행 중이고 아직 완료하지 않은 미션만 카드로 — 목록(M01)은 끝난 미션도 내려주므로
+        // 응답의 serverTime으로 걸러 완료·종료·시작 전 카드가 홈에 나오지 않게 한다
+        ...(missions ?? [])
+            .filter((mission) => !mission.completed && isMissionOpenByServerTime(mission))
+            .map((mission) => ({
+                id: mission.id,
+                category: 'MISSION' as const,
+                title: mission.title,
+                description: '미션 완료 시 등급 추첨 응모권을 받아요',
+                rewardKind: '등급 응모권',
+                rewardImage: TICKET_RANDOM_IMAGE,
+                rewardTickets: mission.rewardTicketCount,
+                // 미션 페이지에서 그 미션의 풀이 모달을 바로 연다
+                href: `/missions?mission=${mission.id}`,
+                actionLabel: '미션하러 가기',
+                completed: mission.completed,
+                thumbnailUrl: missionThumbnail(mission),
+                thumbnailIcon: ClipboardList,
+            })),
+        ...(games ?? [])
+            .filter((game) => hasGamePlayer(game.code))
+            .map((game) => ({
+                id: game.id,
+                category: 'GAME' as const,
+                title: game.name,
+                description: '게임별 최소 점수로 완료하면 하루 1장, 횟수 제한 없이 플레이',
+                rewardKind: '등급 응모권',
+                rewardImage: TICKET_RANDOM_IMAGE,
+                rewardTickets: 1,
+                href: gameDetailPath(game.id),
+                actionLabel: '게임하러 가기',
+                completed: claimed(game.id) ?? false,
+                thumbnailUrl: getGameContent(game).heroImage,
+                thumbnailIcon: Gamepad2,
+                game,
+            })),
     ];
     const orderedCards = orderEarnCards(cards);
 
-    if (cards.length === 0 && !loading) {
+    // 받을 수 있는 게 정말 없을 때만 섹션을 감춘다 — 못 불러온 것이면 자리를 지키고 다시 시도를 연다
+    if (cards.length === 0 && !loading && !anyError) {
         return null;
     }
 
     return (
-        <section className="flex flex-col gap-6">
+        <section data-tour={TOUR_TARGET.earnTickets} className="flex flex-col gap-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-3">
                     <h2 className="text-title-3 text-fg-primary">오늘 받을 수 있는 응모권</h2>
                     <span className="text-fg-tertiary text-caption">
-                        출석과 게임 보상은 매일 자정(00:00 KST)에 다시 받을 수 있어요.
+                        출석과 게임 보상은 매일 자정에 다시 받을 수 있어요.
                     </span>
                 </div>
                 {!hideMoreLink && (
@@ -130,11 +169,17 @@ export function TicketBalanceWidget({
                 )}
             </div>
             {/* 한 화면에 N.5장 — 반 장이 잘려 보이며 옆으로 더 있다는 암시를 준다. 마우스는 드래그로, 터치는 브라우저 네이티브 스크롤로 움직인다 */}
-            {loading ? (
+            {cards.length === 0 && !loading && anyError ? (
+                <LoadError
+                    title="받을 수 있는 응모권을 불러오지 못했어요"
+                    onRetry={retryAll}
+                    inline
+                />
+            ) : loading ? (
                 <div role="status" className="flex gap-4 overflow-hidden">
                     <span className="sr-only">응모권 카드를 불러오는 중이에요</span>
                     {Array.from({ length: 4 }, (_, index) => (
-                        <Skeleton key={index} className="h-90 w-66.25 shrink-0 rounded-2xl" />
+                        <SkeletonCard key={index} className="h-90 w-66.25 shrink-0" />
                     ))}
                 </div>
             ) : (
@@ -160,8 +205,10 @@ export function TicketBalanceWidget({
                                 // 미션 페이지 게임 목록과 같은 카드 — 카드 어디를 눌러도 게임으로 들어가고, 준비 중인 게임은 막는다
                                 <GameTicketCard
                                     game={card.game}
+                                    rewardedToday={claimed(card.game.id)}
+                                    rewardImage={card.rewardImage}
                                     href={card.href}
-                                    ready={hasGamePlayer(card.game.id)}
+                                    ready={hasGamePlayer(card.game.code)}
                                     className="w-full"
                                 />
                             ) : (
@@ -190,7 +237,13 @@ function EarnTicketCard({ card }: { card: EarnCard }) {
                     <div className="mt-3.75 flex h-4.5 items-center justify-between gap-2">
                         <span className="text-fg-tertiary text-caption">{card.rewardKind}</span>
                         <span className="text-fg-primary text-body-sm-bold flex items-center gap-1">
-                            <Ticket className="size-4.5" />+{card.rewardTickets}
+                            <img
+                                src={card.rewardImage}
+                                alt=""
+                                aria-hidden
+                                className="h-4.5 w-auto object-contain"
+                            />
+                            +{card.rewardTickets}
                         </span>
                     </div>
                     {card.completed ? (
@@ -221,15 +274,11 @@ function EarnTicketCard({ card }: { card: EarnCard }) {
                 />
             )}
             {/* 미션 그림(16:9, 바탕 투명)은 바탕 없이 카드 위에 바로 얹는다 — 그림이 없을 때만 회색 칸 + 아이콘 */}
-            <div
-                className={`${card.thumbnailUrl ? '' : 'bg-surface-canvas'} flex h-30 shrink-0 items-center justify-center overflow-hidden rounded-lg`}
-            >
-                {card.thumbnailUrl ? (
-                    <img src={card.thumbnailUrl} alt="" className="size-full object-contain" />
-                ) : (
-                    <card.thumbnailIcon className="text-fg-disabled size-8" />
-                )}
-            </div>
+            <TicketCardMedia
+                src={card.thumbnailUrl}
+                fit="contain"
+                fallback={<card.thumbnailIcon className="text-fg-disabled size-8" />}
+            />
             <div className="mt-3 flex flex-col gap-2">
                 <div className="flex flex-col">
                     <span className="text-fg-tertiary text-caption">{card.category}</span>

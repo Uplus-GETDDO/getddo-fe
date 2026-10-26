@@ -5,7 +5,8 @@ import type { Event } from '@entities/event';
 
 import { EventCard } from '@entities/event';
 import { Button } from '@shared/ui/button';
-import { Skeleton } from '@shared/ui/skeleton';
+import { LoadError } from '@shared/ui/load-error';
+import { SkeletonCard } from '@shared/ui/skeleton';
 
 export function EventCardList({
     title,
@@ -15,6 +16,7 @@ export function EventCardList({
     events,
     isPending,
     isError,
+    onRetry,
     emptyMessage = '표시할 이벤트가 없습니다.',
 }: {
     title: string;
@@ -24,7 +26,9 @@ export function EventCardList({
     moreLabel?: string;
     events: Event[];
     isPending?: boolean;
+    /** 받아 둔 목록 없이 실패했는가 — 받아 둔 게 있으면 넘기지 않는다 */
     isError?: boolean;
+    onRetry?: () => void;
     emptyMessage?: string;
 }) {
     return (
@@ -49,12 +53,17 @@ export function EventCardList({
             {isPending && (
                 <div aria-hidden className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {Array.from({ length: 4 }, (_, index) => (
-                        <Skeleton key={index} className="h-70 rounded-2xl" />
+                        <SkeletonCard key={index} className="h-70" />
                     ))}
                 </div>
             )}
+            {/* 받아 둔 목록이 없을 때만 오는 실패 — 카드 한 줄 높이를 지켜 아래가 올라오지 않게 한다 */}
             {isError && (
-                <p className="text-destructive text-body-sm">이벤트 목록을 불러오지 못했습니다.</p>
+                <LoadError
+                    title="이벤트를 불러오지 못했어요"
+                    onRetry={onRetry}
+                    className="min-h-70"
+                />
             )}
             {!isPending && !isError && events.length === 0 && (
                 <p className="text-fg-tertiary text-body-sm">{emptyMessage}</p>

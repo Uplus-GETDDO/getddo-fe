@@ -53,7 +53,12 @@ function DialogContent({
             <DialogPrimitive.Content
                 data-slot="dialog-content"
                 className={cn(
-                    'bg-popover text-popover-foreground ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl p-4 text-sm ring-1 duration-100 outline-none sm:max-w-sm',
+                    /*
+                     * grid-cols는 minmax(0,1fr)로 고정한다. 기본 auto 칸은 min-content로 커져
+                     * 좁은 화면에서 안쪽 내용이 상자 밖으로 삐져나갔다 — 배너 모달에서 줄바꿈 없는
+                     * 이미지 키 한 줄이 칸을 487px로 벌려 '등록' 버튼이 화면 밖으로 나갔다(GD-344).
+                     */
+                    'bg-popover text-popover-foreground ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 grid-cols-[minmax(0,1fr)] gap-4 rounded-xl p-4 text-sm ring-1 duration-100 outline-none sm:max-w-sm',
                     className,
                 )}
                 {...props}
@@ -67,7 +72,7 @@ function DialogContent({
                             className="text-fg-secondary hover:text-fg-primary absolute top-3 right-3 size-9 cursor-pointer hover:bg-transparent dark:hover:bg-transparent [&_svg:not([class*='size-'])]:size-5"
                         >
                             <XIcon />
-                            <span className="sr-only">Close</span>
+                            <span className="sr-only">닫기</span>
                         </Button>
                     </DialogPrimitive.Close>
                 )}
@@ -107,7 +112,7 @@ function DialogFooter({
             {children}
             {showCloseButton && (
                 <DialogPrimitive.Close asChild>
-                    <Button variant="secondary">Close</Button>
+                    <Button variant="secondary">닫기</Button>
                 </DialogPrimitive.Close>
             )}
         </div>

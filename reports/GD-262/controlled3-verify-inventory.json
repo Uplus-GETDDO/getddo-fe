@@ -1,0 +1,11 @@
+{
+    "kind": "기존 전체 E06에서 eventId·ACCEPTED 필터 응답을 재구성한 통제 데이터",
+    "sourceHash": "f2d211551094a590870c5a3352ee0f47a3b5847133547f314894c68a004d5610",
+    "fixtureHash": "bf5fc4248f4eade1521d8295e0c618b7c732da9ee69c56678a9df2d652ff786b",
+    "sourceEntries": 16,
+    "added": [],
+    "liveRequests": 0,
+    "syntheticUserResponses": 90,
+    "syntheticUserBalance": 137,
+    "limitation": "새 실서버 표본이 아니며 필터 API의 서버 구현 정확성을 검증하지 않습니다."
+}

@@ -10,7 +10,10 @@ apiClient.interceptors.request.use((config) => {
         // 필수 헤더 — 서버가 DB 역할과 대조만 하며 헤더로 권한이 올라가지 않는다 (05-api/common.md)
         config.headers['X-User-Role'] = user.role;
         // 선택 헤더 — 보내면 서버가 DB 멤버십과 대조해 응모 자격을 판정한다 (05-api/common.md)
-        config.headers['X-User-Membership'] = user.membership;
+        // ADMIN은 보내지 않는다 — 멤버십이 없는 관리자와 대조하면 409 USER-006이 된다
+        if (user.role !== 'ADMIN') {
+            config.headers['X-User-Membership'] = user.membership;
+        }
     }
     return config;
 });

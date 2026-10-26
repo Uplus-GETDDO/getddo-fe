@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 
 import { queryClient } from '@shared/api/queryClient';
-import { useUiSettingsStore } from '@shared/lib/uiSettings';
-import { VirtualClockProvider } from '@shared/lib/virtualClock';
+import { useUiSettingsStore } from '@shared/model/uiSettings';
+import { VirtualClockProvider } from '@shared/model/virtualClock';
 import { Toaster } from '@shared/ui/sonner';
 
 import { router } from '../routes';

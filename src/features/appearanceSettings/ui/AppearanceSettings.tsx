@@ -1,8 +1,8 @@
 import { Moon, Sun, SunMoon } from 'lucide-react';
 
-import { useUiSettingsStore, type Theme } from '@shared/lib/uiSettings';
-import { cn } from '@shared/lib/utils';
+import { useUiSettingsStore, type Theme } from '@shared/model/uiSettings';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
+import { cn } from '@shared/utils/cn';
 
 const THEME_OPTIONS = [
     { value: 'system', label: '시스템 설정', icon: SunMoon },
@@ -67,7 +67,12 @@ export function AppearanceSettings() {
                     onClick={() => setTextScale(isLargeText ? 'normal' : 'large')}
                     className={cn(
                         'focus-visible:ring-border-focus focus-visible:ring-offset-surface-page relative h-6 w-10 shrink-0 cursor-pointer rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-                        isLargeText ? 'bg-action-neutral' : 'bg-border-strong',
+                        /*
+                         * 꺼짐 색은 입력칸 테두리와 같은 값을 쓴다 — border/strong(#CDD2D8)은 흰 바탕과
+                         * 1.52:1이라 스위치가 있는지도 보이지 않았다. WCAG 1.4.11은 컨트롤에 3:1을 요구한다
+                         * (GD-290에서 입력칸만 올리고 이 스위치가 남아 있었다).
+                         */
+                        isLargeText ? 'bg-action-neutral' : 'bg-border-input',
                     )}
                 >
                     <span

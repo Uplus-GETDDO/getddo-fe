@@ -1,164 +1,189 @@
-# GETDDO — LG유플러스 응모 이벤트 플랫폼 (Frontend)
+<h1 align="center">U+ GETDDO</h1>
 
-가상 사용자 기반 응모/추첨 이벤트 플랫폼의 프론트엔드 레포지토리입니다.
-출석·미션·게임으로 응모권을 적립하고, 유플러스 이벤트 경품 추첨에 응모하는 서비스입니다. 별도 회원가입 없이 미리 등록된 가상 사용자를 선택해 시연합니다.
+<p align="center">
+  <strong>출석하고, 도전하고, 응모하세요.</strong><br>
+  출석·미션·게임으로 모은 응모권을 이벤트 참여로 연결하는 플랫폼
+</p>
 
-- 팀: 3조 얻어가유 (8인 — 프론트엔드 3, 백엔드 5)
-- 요구사항·도메인 정책의 원본: [getddo-spec](https://github.com/GETDDO/getddo-spec) (공용 명세 저장소)
-- 백엔드 레포지토리: [getddo-be](https://github.com/GETDDO/getddo-be)
-- 기획 맥락(페르소나·유저플로우·비기능 요구사항): `docs/product-context.md`
+<p align="center">
+  <a href="https://getddo-fe.vercel.app">서비스 체험</a> ·
+  <a href="#주요-기능">주요 기능</a> ·
+  <a href="#핵심-설계">핵심 설계</a> ·
+  <a href="#시작하기">시작하기</a> ·
+  <a href="docs/README.md">문서 안내</a>
+</p>
 
-## 프로젝트 소개
+<p align="center">
+  <a href="https://github.com/Uplus-GETDDO/getddo-fe/actions/workflows/ci.yml">
+    <img src="https://github.com/Uplus-GETDDO/getddo-fe/actions/workflows/ci.yml/badge.svg?branch=dev" alt="dev 브랜치 CI 실행 상태">
+  </a>
+</p>
 
-**왜 만드는가** — 기존 응모·추첨 서비스는 당첨자가 어떤 기준으로 선정됐는지 사용자가 확인할 방법이 없어 결과 발표마다 공정성 논란이 반복됩니다. 이 프로젝트는 **"검증 가능한 공정한 추첨"**을 핵심 원칙으로 삼습니다.
+![실제 배포 홈의 이벤트 배너와 겟또타임 안내](docs/assets/readme/home-desktop.webp)
 
-**핵심 설계**
+GETDDO는 LG유플러스 멤버십 사용자를 위한 응모 이벤트 플랫폼입니다.
+사용자는 출석·미션·게임으로 응모권을 모으고, 이벤트에 응모한 뒤 발표된 결과를 확인합니다.
+관리자는 이벤트·응모권·추첨·결과 발표를 같은 서비스에서 운영합니다.
 
-- 추첨 시점의 응모자 명단·응모권 수·가중치·조건을 스냅샷으로 보관해, 관리자가 동일 조건으로 결과를 재현·검증할 수 있습니다
-- 응모권 지급·차감은 수정·삭제 없이 누적 기록하고, 이력 합계와 잔액이 항상 일치하도록 설계합니다
-- 발표 전 결과는 철저히 비공개, 발표 시점에는 마스킹된 당첨자 명단을 공개합니다
-- 어뷰징 의심 건은 자동 배제하지 않고 관리자가 사유를 기록해 결정하며, 당첨 취소·재추첨은 최초 추첨과 연결해 보존합니다
+이 저장소는 **사용자 화면과 관리자 화면을 구현한 프론트엔드**입니다.
+서비스 체험은 별도 회원가입 없이 시연용 가상 사용자를 선택해 시작합니다.
 
-**서비스 흐름**
+## 서비스 화면
+
+<table>
+  <tr>
+    <th>출석으로 적립</th>
+    <th>게임으로 적립</th>
+    <th>등급별 응모권 선택</th>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/assets/readme/attendance-mobile.webp" width="260" alt="연속 출석과 월간 출석 현황, 출석 보상 버튼"></td>
+    <td valign="top"><img src="docs/assets/readme/games-mobile.webp" width="260" alt="미션 화면의 게임 카드와 게임 보상 안내"></td>
+    <td valign="top"><img src="docs/assets/readme/raffle-mobile.webp" width="260" alt="브론즈·실버·골드·플래티넘 응모권의 보유량과 수량 선택"></td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>관리자 이벤트 관리 화면 보기</strong></summary>
+
+![배포 관리자 화면의 이벤트 검색, 필터, 상태별 목록](docs/assets/readme/admin-desktop.webp)
+
+이벤트 검색·필터·정렬·페이지 크기 선택과 이벤트 등록 진입을 제공합니다.
+
+</details>
+
+화면은 **2026-10-26 실제 배포본**을 촬영했습니다. 계정 선택 영역을 제외한 본문 캡처이며, 데이터는 시연용입니다.
+캡처 환경과 범위는 [이미지 안내](docs/assets/readme/README.md)에 기록했습니다.
+
+## 주요 기능
+
+| 영역        | 기능                                                                                   |
+| ----------- | -------------------------------------------------------------------------------------- |
+| 이벤트 참여 | 일반 이벤트와 응모권 사용 이벤트인 겟또타임 조회·응모, 멤버십 자격·응모 가능 상태 안내 |
+| 응모권      | 브론즈·실버·골드·플래티넘 보유량, 적립·사용·만료 예정 이력 조회                        |
+| 출석·미션   | 출석 현황과 보상, 퀴즈·설문 참여와 보상 결과 확인                                      |
+| 게임 4종    | 글자색깔 맞추기·타꼬런·타꼬 타이밍·타꼬 주문의 플레이, 점수 제출·개인 통계·보상        |
+| 결과·알림   | 내 응모 내역, 발표된 당첨 결과, 알림 목록·개별 읽음·전체 읽음·결과 이동                |
+| 관리자 운영 | 이벤트·배너·출석 정책·미션 관리, 사용자·응모·응모권·차단 이력 조회                     |
+| 추첨 운영   | 추첨 실행·후보·정합성 조회, 최초 발표, 당첨 취소·재추첨                                |
+| 화면 설정   | 모바일 대응, 다크모드·큰글씨 모드                                                      |
+
+서비스의 주요 흐름은 다음과 같습니다.
 
 ```text
-출석·미션·게임 → 응모권 적립 → 이벤트 응모(응모권 사용/미사용 두 유형)
-→ 마감 + 5분 검토 → 자동 추첨·발표 → 알림으로 결과 확인
+출석·미션·게임 → 응모권 적립 → 이벤트 응모 → 서버 자동 추첨
+→ 관리자 확인·발표 → 당첨 결과·알림 확인
 ```
 
-**시연 특징** — 회원가입 없이 가상 사용자를 선택해 진입하고, 관리자 화면의 가상 시계로 발표 시각까지 시간을 이동해 마감→발표 전 과정을 시연할 수 있습니다.
+자동 추첨은 이벤트 마감 **1분 이후** 실행 대상이 됩니다. 실제 실행은 서버 처리 상황에 따라 늦어질 수 있으며, 결과 공개는 관리자의 발표 요청을 거칩니다.
+
+**구현과 통합 검증은 구분합니다.** 추첨 실패·재개·취소·재추첨의 격리 시나리오, 발표→알림 생성의 전체 흐름, 배너 실서버 CRUD·업로드 계약 등은 추가 확인이 남아 있습니다.
+현재 근거와 제한 사항은 [연동 현황](docs/backend-integration-status.md), 측정 환경별 증거는 [검증 기록](reports/README.md)에서 확인할 수 있습니다.
+
+## 핵심 설계
+
+| 해결하려는 문제                      | 프론트엔드에서 적용한 방식                                                                      | 근거                                                         |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 기능 증가에 따른 화면·도메인 간 결합 | FSD 레이어와 슬라이스 공개 API를 사용하고 ESLint boundaries로 의존 방향을 검사합니다.           | [FSD 결정](docs/adr/ADR-0001-fsd-architecture.md)            |
+| 서버 데이터와 UI 상태의 중복 관리    | 서버 캐시는 TanStack Query, 공유 UI 상태는 Zustand, 폼은 React Hook Form으로 책임을 구분합니다. | [상태관리 결정](docs/adr/ADR-0003-state-management-roles.md) |
+| 반복 클릭·통신 오류 뒤 중복 처리     | 계약에 따라 멱등키를 사용하고, 재시도에서도 원래 요청의 키·입력을 유지합니다.                   | [멱등키 결정](docs/adr/ADR-0005-idempotency-key.md)          |
+| 추첨 결과와 응모권 변동의 확인       | 서버의 추첨 후보·조건·확정 결과와 지급·사용·반환 이력을 관리자 화면에서 조회합니다.             | [추첨 연동](docs/backend-integration-status.md)              |
+| 시각 차이로 인한 상태 해석 오류      | 서버 UTC를 KST로 표시합니다. 가상 시계는 로컬 개발 도구이며 서버 일정에 영향을 주지 않습니다.   | [시간 처리 결정](docs/adr/ADR-0004-utc-kst-virtual-clock.md) |
+| 초기 화면 비용과 회귀                | 사용자·관리자 라우트를 지연 로딩하고, 초기 JS·CSS gzip 크기를 CI에서 검사합니다.                | [성능 버짓](docs/performance-budget.md)                      |
+
+응모권 지급·차감과 추첨 판정은 서버가 처리합니다. 프론트엔드는 서버 응답을 Zod로 검증하고, 업무 상태·오류·재시도 경로를 화면에 표현합니다.
 
 ## 기술 스택
 
-| 구분            | 사용 기술                                       |
-| --------------- | ----------------------------------------------- |
-| 언어/빌드       | TypeScript, React 19, Vite 8                    |
-| 라우팅          | React Router 7                                  |
-| 서버 상태       | TanStack Query                                  |
-| HTTP            | Axios (`shared/api/client.ts` 인터셉터)         |
-| 클라이언트 상태 | Zustand                                         |
-| 스타일          | TailwindCSS v4, shadcn/ui                       |
-| 검증            | Zod                                             |
-| 연출            | Framer Motion, sonner(토스트)                   |
-| 테스트/목업     | Vitest, React Testing Library, MSW              |
-| 품질            | ESLint(boundaries), Prettier, Husky, commitlint |
+| 구분           | 기술과 역할                                                      |
+| -------------- | ---------------------------------------------------------------- |
+| 언어·UI·빌드   | TypeScript · React 19 · Vite 8                                   |
+| 라우팅         | React Router 7, 사용자·관리자 라우트 분리                        |
+| 서버 상태·HTTP | TanStack Query · Axios · Zod                                     |
+| UI 상태·폼     | Zustand · React Context · React Hook Form                        |
+| 스타일·연출    | Tailwind CSS v4 · shadcn/ui · Framer Motion · Sonner             |
+| 테스트·목업    | Vitest · React Testing Library · MSW                             |
+| 품질·배포      | ESLint · Prettier · Husky · commitlint · GitHub Actions · Vercel |
 
-역할이 확정됐지만 아직 미사용: Redux Toolkit(복잡한 전역 플로우), TanStack Table(관리자 테이블), React Hook Form(폼). 설치만 된 미사용 의존성(도입 미정, 사용하려면 팀 합의 필요): GSAP, canvas-confetti, react-day-picker.
-
-## 폴더 구조 (FSD — Feature-Sliced Design)
-
-레이어는 위에서 아래로만 참조할 수 있습니다: `app → pages → widgets → features → entities → shared`.
-위반은 ESLint(`eslint-plugin-boundaries`)로 자동 차단됩니다.
-
-```
-src/
-  app/        # 라우터, 전역 Provider, 전역 스타일, 가상 시계
-  pages/      # 라우트 단위 화면 (라우트 1개 = 슬라이스 1개, admin은 하위 폴더가 각각 슬라이스)
-  widgets/    # 여러 feature/entity를 조합한 화면 블록
-  features/   # 사용자가 수행하는 행동 단위 (응모하기, 출석하기 등)
-  entities/   # 도메인 모델 + 기본 표시 UI (이벤트, 응모권, 당첨자 등)
-  shared/     # 도메인을 모르는 공통 코드 (UI 키트, API 클라이언트, 유틸)
-```
-
-규칙:
-
-- 같은 레이어의 다른 슬라이스끼리 서로 참조하지 않습니다 (공유가 필요하면 `shared`/`entities`로 내립니다).
-- 슬라이스는 반드시 `index.ts`(공개 API)를 통해서만 import합니다. 내부 파일 직접 import는 ESLint가 차단합니다. 단, `pages` 슬라이스는 예외입니다 — 라우트가 페이지를 직접 가리키는 최상위 소비자라 배럴이 불필요하므로 `index.ts` 없이 루트의 `XxxPage.tsx`가 곧 공개 API입니다.
-- `import.meta.env`는 `src/shared/config/env.ts`에서만 접근합니다.
-
-## 구현 현황
-
-백엔드 API는 아직 준비 중이라 화면은 MSW 목업(`VITE_ENABLE_MSW=true`)으로 동작합니다 — 알림을 포함한 모든 데이터가 목업이며, 확정된 계약(N01~N03)부터 목업을 실제 연동으로 전환합니다.
-
-### 구현 완료
-
-사용자 화면:
-
-- 홈 — 배너 슬라이더·이벤트 카드·실시간 참여 현황(30초 자동 갱신, GD-78)·홈 UI/UX 개선 (GD-80)
-- 로그인 — 시연용 가상 사용자 선택·전환 (GD-31)
-- 이벤트 목록·상세 — 추천·카테고리별 구조 (GD-15, GD-16, GD-33). 상세는 정보 표시 전용이며 응모는 타임래플 상세에서만 수행
-- 타임래플 목록·상세 — 응모·추가 응모·멱등키·응모권 부족 안내·발표 카운트다운 (GD-26, GD-27)
-- 미션 — 출석 체크(굽기 스프라이트 연출·월간 출석판, AT01~AT03 계약 GD-151)·설문·퀴즈 제출 플로우·게임 목록 (GD-23)
-- 당첨 결과 — 타임래플 상세의 당첨 결과 섹션 (GD-24)
-- 게임 — 타꼬런 미니게임·게임 상세·방법 모달·배경 음악·스테이지 (GD-28, GD-66, GD-67)
-- 내 응모권 — 잔액·만료 예정·적립/사용 이력 (GD-29)
-- 내 응모 내역 — 응모한 이벤트·차감 응모권·처리 결과·거절 사유 (GD-25)
-- 마이페이지 — 내 활동 링크·가상 사용자 전환·화면 설정 진입
-- 알림 — 헤더 알림 벨(팝오버)과 전체 보기 드로어("더보기" 커서 페이지네이션, 열 때 재조회). 확정 계약 N01~N03 반영: 목록 커서 페이지네이션·개별 읽음·전체 읽음·`X-User-ID`·`X-User-Role` 헤더 (GD-75, GD-173)
-- 화면 설정 — 다크모드·큰글씨 모드 (GD-34)
-
-관리자 화면:
-
-- 대시보드·이벤트 관리 (목록·상세·등록·수정, GD-99)
-- 추첨 관리 — 실행 목록·상세·후보·정합성·당첨 취소·재추첨 (GD-125)
-- 응모권 관리 — 지급 이력·사용자별 정합성·전체 이력·반환 이력 (GD-152)
-- 어뷰징 차단 내역 — 지급 전 차단 내역 조회 (GD-148)
-- 배너 관리·가상 사용자 조회 (GD-126)
-- 감사 로그 조회 (GD-101)
-- 가상 시계 제어 — 절대 시각 지정·오프셋 표시·헤더 티커 (GD-57)
-
-공통 기반:
-
-- FSD 아키텍처와 ESLint `boundaries`로 의존 방향 기계적 강제
-- MSW 도메인별 목업 + Zod 응답 스키마 검증
-- 가상 시계 인프라 — UTC↔KST 변환, 관리자 시간 여행, 세션 유지 (GD-38)
-- 디자인 토큰·시맨틱 변수 체계 (피그마 값 동기화), 공용 UI 갤러리 (`/ui-gallery`)
-- 응모 등 중복 위험 요청의 멱등키 처리 (`X-Idempotency-Key`)
-
-### 예정 (미구현)
-
-- 출석 전용 라우트·게임 허브 — 별도 라우트 없이 출석·게임 목록 모두 미션 페이지에서 동작 중
-- 공개 명단 마스킹 세부 규칙 — 담당자 결정 대기 (현재 임시 표시)
-- 글자색깔 맞추기 서버 연동 — 계약 채택(2026-10-12), 구현은 GD-166 대상 (`getddo-spec/05-api/game-color-word-draft.md`)
-- 관리자 가상 사용자 생성·수정·상태 관리 — 수정 가능 범위 미확정, 현재 조회만
-- 배너 이미지 형식·용량 제한 — 담당자 확정 대기 (임시값)
-- 백엔드 실제 API 연동 전환 — 현재 MSW 목업 기준
+정확한 의존성 버전과 실행 명령은 [package.json](package.json), 품질 검사 순서는 [CI 설정](.github/workflows/ci.yml)을 따릅니다.
 
 ## 시작하기
 
-```bash
-# 1. 패키지 설치 (Node >= 20.19, 24.x 권장)
-npm install
+Node.js **20.19 이상**이 필요하며, CI와 같은 **24.x**를 권장합니다. 패키지 관리자는 npm입니다.
 
-# 2. 환경변수 설정 (Windows PowerShell에서는 copy 사용)
-cp .env.example .env.development
+```powershell
+npm ci
+Copy-Item .env.example .env.development
+```
 
-# 3. 개발 서버 실행 (MSW 목업 활성화 상태로 시작)
+`.env.development`의 `VITE_VIRTUAL_USERS_JSON`에 [목업 계정 예시](CONTRIBUTING.md#로컬-목업-계정)를 설정한 뒤 실행합니다.
+
+```powershell
 npm run dev
 ```
 
-검증 명령 (CI와 동일):
+| 환경 변수                 | 용도                                                              |
+| ------------------------- | ----------------------------------------------------------------- |
+| `VITE_API_BASE_URL`       | API 주소. 로컬 MSW와 Vercel 프록시 사용 시 `/api`                 |
+| `VITE_ENABLE_MSW`         | `true`이면 목업 실행. Vercel 배포 설정은 `false`                  |
+| `VITE_VIRTUAL_USERS_JSON` | 시연 계정 목록. 로컬 목업은 fixture ID, 실서버는 등록된 UUID 사용 |
 
-```bash
-npm run format:check  # Prettier
-npm run lint          # ESLint — FSD 규칙 포함, 경고 0개 기준
-npm run test:ci       # Vitest (npm run test는 watch 모드)
-npm run build         # tsc -b && vite build
+계정 목록이 없거나 형식이 틀리면 로그인 화면에 설정 안내가 표시됩니다.
+실서버 계정 설정·사용자 전환·배포 점검은 [시연 운영 안내](docs/demo-operations.md)를 참고하세요.
+
+로컬 `npm run dev`는 [Vercel API 프록시](vercel.json)를 실행하지 않습니다. 실서버에 연결하려면 브라우저 접근과 CORS가 허용된 API 주소가 필요합니다.
+가상 사용자 선택은 시연용 문맥 전환이며 실제 사용자 인증을 제공하지 않습니다.
+
+### 검증
+
+```powershell
+npm run format:check
+npm run lint
+npm run test:ci
+npm run build
+npm run perf:budget
 ```
 
-## 시연 방법
+개발 환경·목업·검증·협업 절차의 상세 기준은 [기여 가이드](CONTRIBUTING.md)에서 관리합니다.
 
-- 로그인 화면에서 가상 사용자를 선택해 시작합니다. `admin` 역할을 선택하면 관리자 화면(`/admin`)으로 진입합니다.
-- 추천 동선: 로그인 → 미션 페이지에서 출석으로 응모권 적립 → 타임래플 상세에서 응모 → 관리자 가상 시계로 발표 시각까지 시간 이동 → 카운트다운이 '당첨자 발표 완료'로 바뀌는 것까지 확인 → 당첨 결과 섹션에서 결과 확인
-- 헤더 알림 벨은 확정 계약(N01~N03) 기준 목업입니다 — 목록·읽음 처리를 확인할 수 있고, 시연 중 새 알림이 생성되지는 않습니다.
-- 공용 UI 컴포넌트는 `/ui-gallery`에서 확인할 수 있습니다.
+## 프로젝트 구조
 
-## 환경 변수
+```text
+src/
+├── app/        # 앱 부팅, 라우터, Provider, 전역 스타일
+├── pages/      # 사용자·관리자 라우트 화면
+├── widgets/    # 화면을 구성하는 복합 UI
+├── features/   # 응모·출석·게임 등 사용자 행동
+├── entities/   # 도메인 모델, API 조회, 기본 UI
+├── shared/     # 공통 UI, API 클라이언트, 설정, 유틸
+└── mocks/      # 로컬 개발·테스트용 MSW 목업
+docs/           # 현재 기준 문서, 설계 결정, 작업 계획
+reports/        # 날짜·환경별 검증 기록과 증거
+scripts/        # 검증·측정 도구
+```
 
-`.env.example`을 참고해 `.env.development` / `.env.production`을 만듭니다 (두 파일은 gitignore 대상).
+의존 방향은 `app → pages → widgets → features → entities → shared`입니다.
+상세 규칙은 [AGENTS.md](AGENTS.md)를 따릅니다.
 
-| 변수명              | 설명                                                                 |
-| ------------------- | -------------------------------------------------------------------- |
-| `VITE_API_BASE_URL` | 백엔드 API 베이스 URL. MSW 사용 시 `/api` (같은 origin이어야 가로챔) |
-| `VITE_ENABLE_MSW`   | `true`일 경우 MSW 목업 서버 활성화 (백엔드 미준비 시 개발용)         |
+## 팀과 저장소
 
-## 협업 문서
+**3조 얻어가유 · 총 8명**이 개발했습니다.
 
-- [CONTRIBUTING.md](./CONTRIBUTING.md) — 브랜치 전략, 커밋 컨벤션, PR 절차
-- [AGENTS.md](./AGENTS.md) — 코드 작성 규칙 (FSD 의존 방향, 상태관리 기준, 금지사항). 팀원과 AI 에이전트 공용
-- [CLAUDE.md](./CLAUDE.md) — Claude Code 진입점. AGENTS.md를 임포트하는 포인터 파일
-- [docs/CONTEXT.md](./docs/CONTEXT.md) — 도메인 용어집과 판단 기준 (시간 규칙, 멱등키 대상, 임시 계약)
-- [docs/DESIGN-SYSTEM.md](./docs/DESIGN-SYSTEM.md) — 디자인 토큰 명세 (색·타이포·radius·shadow). 토큰 값의 원천은 `src/app/styles/tokens.css`
-- [docs/adr/](./docs/adr/README.md) — 아키텍처 결정 기록 (FSD, MSW, 상태관리 분리 등)
-- [docs/product-context.md](./docs/product-context.md) — 기획 맥락 (페르소나·유저플로우·비기능 요구사항)
-- [getddo-spec](https://github.com/GETDDO/getddo-spec) — 공용 명세 저장소 (요구사항·도메인 정책·공용 ADR의 원본)
+| 역할       | 인원 | 담당 범위                                         |
+| ---------- | ---- | ------------------------------------------------- |
+| 프론트엔드 | 3명  | 사용자·관리자 UI, API 연동, 화면 품질·성능 검증   |
+| 백엔드     | 5명  | API, 도메인 정책 구현, 데이터 처리·추첨·서버 운영 |
+
+| 저장소                                                     | 역할                               |
+| ---------------------------------------------------------- | ---------------------------------- |
+| [getddo-fe](https://github.com/Uplus-GETDDO/getddo-fe)     | 사용자·관리자 프론트엔드           |
+| [getddo-be](https://github.com/Uplus-GETDDO/getddo-be)     | API와 서버 구현                    |
+| [getddo-spec](https://github.com/Uplus-GETDDO/getddo-spec) | 공용 요구사항·도메인 규칙·API 계약 |
+
+## 문서 안내
+
+- [문서 색인](docs/README.md): 현재 기준 문서와 과거 기록의 진입점
+- [설계 결정](docs/adr/README.md): 아키텍처·상태관리·목업·시간·멱등키의 판단 근거
+- [디자인 시스템](docs/DESIGN-SYSTEM.md): 디자인 토큰과 사용 기준
+- [연동 현황](docs/backend-integration-status.md): 구현·검증·미확인 범위
+- [검증 기록](reports/README.md): 날짜와 환경을 포함한 측정 근거

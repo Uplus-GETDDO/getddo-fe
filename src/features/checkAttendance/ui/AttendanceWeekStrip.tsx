@@ -1,6 +1,6 @@
-import { cn } from '@shared/lib/utils';
+import { cn } from '@shared/utils/cn';
 
-import type { AttendanceDay } from '../lib/attendanceWeek';
+import type { AttendanceDay } from '../utils/attendanceWeek';
 
 import { getAttendanceMascot } from '../model/mascots';
 
@@ -10,15 +10,16 @@ import { getAttendanceMascot } from '../model/mascots';
  */
 export function AttendanceWeekStrip({
     week,
-    bonusDays,
+    bonusDates,
 }: {
     week: AttendanceDay[];
-    bonusDays: ReadonlySet<number>;
+    /** 연속 출석 보상을 받은 출석 기준일 */
+    bonusDates: ReadonlySet<string>;
 }) {
     return (
         <ol className="bg-surface-sunken flex w-full items-center justify-between rounded-lg px-4 py-3">
             {week.map((day) => {
-                const mascot = getAttendanceMascot(day.date, bonusDays);
+                const mascot = getAttendanceMascot(day.date, bonusDates);
                 return (
                     <li
                         key={day.date}

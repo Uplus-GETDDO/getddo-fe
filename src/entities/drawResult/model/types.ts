@@ -41,10 +41,10 @@ export const publishedPrizeSchema = z.object({
 export const publicResultsSchema = z.object({
     eventId: z.string(),
     isPublished: z.boolean(),
-    publishedAt: z.iso.datetime().nullable(),
+    publishedAt: z.iso.datetime({ offset: true }).nullable(),
     revision: z.number().int().nullable(),
-    updatedAt: z.iso.datetime().nullable(),
-    serverTime: z.iso.datetime(),
+    updatedAt: z.iso.datetime({ offset: true }).nullable(),
+    serverTime: z.iso.datetime({ offset: true }),
     displayStatus: drawDisplayStatusSchema,
     prizes: z.array(publishedPrizeSchema),
 });
@@ -79,7 +79,7 @@ export const myResultSchema = z.object({
     isPublished: z.boolean(),
     // 공개 명단이 수정된 횟수 — 공개 전에는 null이다
     revision: z.number().int().nullable(),
-    serverTime: z.iso.datetime(),
+    serverTime: z.iso.datetime({ offset: true }),
 });
 
 export type DrawDisplayStatus = z.infer<typeof drawDisplayStatusSchema>;
@@ -91,30 +91,47 @@ export type MyResultStatus = z.infer<typeof myResultStatusSchema>;
 export type MyResult = z.infer<typeof myResultSchema>;
 
 // ── 관리자 추첨 관리(GD-125) — getddo-spec 05-api/drawing.md AD01~AD09 ──
-// 추첨 실행 상태 — getddo-spec 05-api/drawing.md DrawRun (검토 대기 초안)
-export const drawRunStatusSchema = z.enum(['PREPARING', 'READY', 'RUNNING', 'CONFIRMED', 'FAILED']);
-export const drawExecutionTypeSchema = z.enum(['AUTO', 'MANUAL']);
+// 추첨 실행 상태 — getddo-spec 05-api/drawing.md DrawRun.
+// NO_ENTRIES는 spec 확정 값, NO_CANDIDATES는 BE 현행 값이다 (계약 확인 중 — GD-215)
+export const drawRunStatusSchema = z.enum([
+    'PREPARING',
+    'READY',
+    'RUNNING',
+    'CONFIRMED',
+    'FAILED',
+    'NO_ENTRIES',
+    'NO_CANDIDATES',
+]);
+export const drawTypeSchema = z.enum(['INITIAL', 'REPLACEMENT']);
 
 export const drawRunSchema = z.object({
     id: z.string(),
     eventId: z.string(),
     runNumber: z.number().int(),
-    executionType: drawExecutionTypeSchema,
+    // 최초/재추첨 종류 — 자동 실행인지 관리자가 시작·재개했는지는 이 필드로 추정하지 않는다
+    drawType: drawTypeSchema,
     status: drawRunStatusSchema,
     // 이벤트의 최초 실행 ID — 시간상 직전 실행이나 취소 원본 실행이 아니다
     originalDrawId: z.string().nullable(),
-    startedAt: z.iso.datetime().nullable(),
-    confirmedAt: z.iso.datetime().nullable(),
-    createdAt: z.iso.datetime(),
+    startedAt: z.iso.datetime({ offset: true }).nullable(),
+    confirmedAt: z.iso.datetime({ offset: true }).nullable(),
+    createdAt: z.iso.datetime({ offset: true }),
 });
 
+/**
+ * AD02 실행 상세의 취소 근거 요약 — 해당 실행을 발생시킨 취소와 그 실행의 결과가
+ * 이후 취소된 근거를 함께 담는다. resultId는 취소된 결과, replacementRunId는
+ * 그 취소에 연결된 재추첨 실행(취소 원본 실행 ID와 다르다)
+ */
 export const cancellationSummarySchema = z.object({
     id: z.string(),
-    canceledDrawResultId: z.string(),
-    canceledDrawRunId: z.string(),
+    resultId: z.string(),
+    replacementRunId: z.string().nullable(),
     canceledBy: z.string(),
+    // ADR-028 표시용 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    canceledByName: z.string().nullish(),
     reason: z.string(),
-    canceledAt: z.iso.datetime(),
+    canceledAt: z.iso.datetime({ offset: true }),
 });
 
 export const drawResultSchema = z.object({
@@ -126,22 +143,55 @@ export const drawResultSchema = z.object({
     resultType: z.enum(['SELECTED', 'UNFILLED']),
     candidateId: z.string().nullable(),
     userId: z.string().nullable(),
+    // ADR-028 표시용 현재 이름 — 미충원 결과는 userId와 함께 null이다
+    userName: z.string().nullish(),
     // 실제 공개 명단에 반영된 이력 — 현재 명단 포함 여부가 아니다
     wasPublished: z.boolean(),
     isCanceled: z.boolean(),
 });
 
+// GET /admin/draws/{drawId}/failures 항목 — message는 코드에 대응하는 관리자용 안내이며 원문 예외·스택이 아니다
+export const drawFailureSchema = z.object({
+    id: z.string(),
+    runId: z.string(),
+    failureCode: z.string(),
+    message: z.string(),
+    failedAt: z.iso.datetime({ offset: true }),
+    traceId: z.string().nullable(),
+});
+
+// GET /admin/draws/{drawId}/execution-audits 항목 — beforeData/afterData는 JSON이 아닌 문자열로 온다
+export const drawExecutionAuditSchema = z.object({
+    id: z.string(),
+    actorId: z.string().nullable(),
+    // ADR-028 표시용 행위자 현재 이름 — 시스템 처리(actorId=null)면 null이다
+    actorName: z.string().nullish(),
+    action: z.string(),
+    reason: z.string().nullable(),
+    beforeData: z.string().nullable(),
+    afterData: z.string().nullable(),
+    requestId: z.string().nullable(),
+    createdAt: z.iso.datetime({ offset: true }),
+});
+
+/**
+ * 실행 요약 — 실패 정보와 취소 근거를 중첩으로 제공한다.
+ * retryAt이 있으면 자동 재시도 예약, 없고 FAILED면 waitingForOperator(운영자 대기)다.
+ */
+export const drawExecutionSummarySchema = z.object({
+    failureCount: z.number().int(),
+    latestFailure: drawFailureSchema.nullable(),
+    retryAt: z.iso.datetime({ offset: true }).nullable(),
+    waitingForOperator: z.boolean(),
+    cancellations: z.array(cancellationSummarySchema),
+});
+
 export const drawRunDetailSchema = drawRunSchema.extend({
     algorithmVersion: z.string().nullable(),
     rulesSnapshot: z.record(z.string(), z.unknown()).nullable(),
-    snapshotFixedAt: z.iso.datetime().nullable(),
-    cancellations: z.array(cancellationSummarySchema),
+    snapshotFixedAt: z.iso.datetime({ offset: true }).nullable(),
     results: z.array(drawResultSchema),
-    failureCount: z.number().int(),
-    lastFailureCode: z.string().nullable(),
-    lastFailureMessage: z.string().nullable(),
-    lastFailedAt: z.iso.datetime().nullable(),
-    lastFailureTraceId: z.string().nullable(),
+    execution: drawExecutionSummarySchema,
 });
 
 // ticketCount는 실제 차감 장수, weight는 등급 가중치 합(브론즈 1·실버 3·골드 5)으로 서로 다른 값이다
@@ -149,6 +199,8 @@ export const drawCandidateSchema = z.object({
     id: z.string(),
     participantId: z.string(),
     userId: z.string(),
+    // ADR-028 표시용 현재 이름 — entrySnapshot·eligibilitySnapshot에는 이름을 넣지 않는다
+    userName: z.string().nullish(),
     ticketCount: z.number().int(),
     weight: z.number().int(),
     entrySnapshot: z.record(z.string(), z.unknown()),
@@ -160,8 +212,10 @@ export const drawVerificationSchema = z.object({
     drawRunId: z.string(),
     passed: z.boolean(),
     checks: z.array(z.object({ code: z.string(), passed: z.boolean(), message: z.string() })),
-    verifiedAt: z.iso.datetime(),
+    verifiedAt: z.iso.datetime({ offset: true }),
     verifiedBy: z.string(),
+    // ADR-028 표시용 검증 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    verifiedByName: z.string().nullish(),
 });
 
 // 확정 결과 항목 — getddo-spec 05-api/drawing.md GD-138 절(AD09)·GD-87 절(최초 재개). DrawResult와 필드명이 다르다(resultId·rank)
@@ -173,11 +227,13 @@ export const drawConfirmationResultSchema = z.object({
     selectionOrder: z.number().int().nullable(),
     candidateId: z.string().nullable(),
     userId: z.string().nullable(),
+    // ADR-028 표시용 현재 이름 — 미충원 결과는 userId와 함께 null이다
+    userName: z.string().nullish(),
     resultType: z.enum(['SELECTED', 'UNFILLED']),
 });
 
 export const drawConfirmationSchema = z.object({
-    confirmedAt: z.iso.datetime(),
+    confirmedAt: z.iso.datetime({ offset: true }),
     results: z.array(drawConfirmationResultSchema),
 });
 
@@ -191,13 +247,38 @@ export const drawExecutionResponseSchema = z.object({
     confirmation: drawConfirmationSchema.nullable(),
 });
 
+/**
+ * GD-199 최초 발표 응답 (`POST /admin/draws/{runId}/result-confirmation`, 본문 없음).
+ * 최초 발표의 정상 성공은 isPublished=true + 실제 공개 식별자·버전·시각이다.
+ * confirmedBy/confirmedAt은 요청 실행의 확인 기록이라 실제 발표자와 다를 수 있다 —
+ * 실제 발표자·시각은 공개 버전(PublicListChange)의 confirmedBy/confirmedAt으로 확인한다.
+ */
+export const drawResultConfirmationSchema = z.object({
+    eventId: z.string(),
+    confirmationId: z.string(),
+    runId: z.string(),
+    confirmedBy: z.string(),
+    // ADR-028 표시용 확인 처리자 현재 이름 — BE 미배포라 생략·null을 허용한다
+    confirmedByName: z.string().nullish(),
+    confirmedAt: z.iso.datetime({ offset: true }),
+    isPublished: z.boolean(),
+    publicationId: z.string().nullable(),
+    revision: z.number().int().nullable(),
+    publishedAt: z.iso.datetime({ offset: true }).nullable(),
+});
+
 export type DrawRunStatus = z.infer<typeof drawRunStatusSchema>;
+export type DrawType = z.infer<typeof drawTypeSchema>;
 export type DrawRun = z.infer<typeof drawRunSchema>;
 export type CancellationSummary = z.infer<typeof cancellationSummarySchema>;
 export type DrawResult = z.infer<typeof drawResultSchema>;
+export type DrawFailure = z.infer<typeof drawFailureSchema>;
+export type DrawExecutionAudit = z.infer<typeof drawExecutionAuditSchema>;
+export type DrawExecutionSummary = z.infer<typeof drawExecutionSummarySchema>;
 export type DrawRunDetail = z.infer<typeof drawRunDetailSchema>;
 export type DrawCandidate = z.infer<typeof drawCandidateSchema>;
 export type DrawVerification = z.infer<typeof drawVerificationSchema>;
 export type DrawConfirmationResult = z.infer<typeof drawConfirmationResultSchema>;
 export type DrawConfirmation = z.infer<typeof drawConfirmationSchema>;
 export type DrawExecutionResponse = z.infer<typeof drawExecutionResponseSchema>;
+export type DrawResultConfirmation = z.infer<typeof drawResultConfirmationSchema>;

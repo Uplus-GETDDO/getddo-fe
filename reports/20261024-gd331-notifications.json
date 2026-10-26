@@ -1,0 +1,435 @@
+{
+    "kind": "GD-331 알림 통합 관측 — 배포본 읽기 + N02 1건",
+    "checkedAt": "2026-10-23T17:52:55.788555+00:00",
+    "verifierCommit": "0ae5a0d25dfb6d03bd73c393014b02e8e57014e1",
+    "url": "https://getddo-fe.vercel.app",
+    "apiChecks": [
+        {
+            "name": "N01 커서 페이징 추적 (size=5)",
+            "pages": [
+                {
+                    "page": 1,
+                    "items": 5,
+                    "hasNext": true
+                },
+                {
+                    "page": 2,
+                    "items": 5,
+                    "hasNext": true
+                },
+                {
+                    "page": 3,
+                    "items": 5,
+                    "hasNext": true
+                },
+                {
+                    "page": 4,
+                    "items": 5,
+                    "hasNext": true
+                },
+                {
+                    "page": 5,
+                    "items": 3,
+                    "hasNext": false
+                }
+            ],
+            "totalItems": 23,
+            "totalElements": 23,
+            "orderingDesc": true,
+            "idsUnique": true,
+            "envelope": {
+                "success": true,
+                "code": "SUCCESS",
+                "message": "성공했습니다."
+            }
+        },
+        {
+            "name": "N01 isRead 필터",
+            "total": 23,
+            "unread": 7,
+            "read": 16,
+            "sumMatches": true,
+            "unreadItemsAllUnread": true
+        },
+        {
+            "name": "N01 ADMIN 빈 목록",
+            "total": 0,
+            "nextCursorNull": true
+        }
+    ],
+    "requests": [
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "10"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "10"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "cursor": "<cursor>",
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "cursor": "<cursor>",
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "cursor": "<cursor>",
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "cursor": "<cursor>",
+                "size": "20"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "1",
+                "isRead": "false"
+            },
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me",
+            "query": {
+                "size": "20"
+            },
+            "status": 200
+        }
+    ],
+    "puts": [
+        {
+            "method": "PUT",
+            "path": "/v1/notifications/{id}/read",
+            "status": 200,
+            "envelope": {
+                "success": true,
+                "code": "SUCCESS"
+            },
+            "dataIsRead": true
+        }
+    ],
+    "checks": [
+        {
+            "name": "드로어 벨 미읽음 배지",
+            "ariaLabel": "알림, 읽지 않음 7개",
+            "expectedUnread": 7
+        },
+        {
+            "name": "드로어 열림·미읽음 문구",
+            "unreadText": true,
+            "hasMarkAll": true
+        },
+        {
+            "name": "드로어 N01 호출",
+            "calls": [
+                {
+                    "query": {
+                        "size": "1",
+                        "isRead": "false"
+                    },
+                    "status": 200
+                },
+                {
+                    "query": {
+                        "size": "10"
+                    },
+                    "status": 200
+                }
+            ],
+            "all200": true
+        },
+        {
+            "name": "N02 읽음 PUT 응답",
+            "puts": [
+                {
+                    "method": "PUT",
+                    "path": "/v1/notifications/{id}/read",
+                    "status": 200,
+                    "envelope": {
+                        "success": true,
+                        "code": "SUCCESS"
+                    },
+                    "dataIsRead": true
+                }
+            ],
+            "count": 1,
+            "ok": true
+        },
+        {
+            "name": "linkUrl 내부 이동",
+            "landedPattern": "/time-raffle/{id}",
+            "navigated": true
+        },
+        {
+            "name": "읽음 후 미읽음 델타",
+            "ariaLabel": "알림, 읽지 않음 6개",
+            "expectedUnread": 6
+        },
+        {
+            "name": "알림 페이지 1쪽 렌더",
+            "items": 20,
+            "hasPagination": true
+        },
+        {
+            "name": "알림 페이지 2쪽 커서 추적",
+            "items": 3,
+            "cursorRequests": [
+                {
+                    "status": 200
+                },
+                {
+                    "status": 200
+                },
+                {
+                    "status": 200
+                },
+                {
+                    "status": 200
+                }
+            ],
+            "cursorUsed": true
+        },
+        {
+            "name": "읽지 않음 필터 전환",
+            "isReadFalseCalls": 15,
+            "shownItems": 6,
+            "expectedUnread": 6
+        },
+        {
+            "name": "ADMIN 빈 목록 상태",
+            "emptyText": true,
+            "allReadText": true
+        },
+        {
+            "name": "콘솔 오류",
+            "count": 0,
+            "errors": []
+        }
+    ],
+    "errors": [],
+    "entryChunk": "index-DRCSlZyx.js"
+}

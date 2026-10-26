@@ -2,15 +2,23 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
     DRAWS_KEY,
+    DRAW_RESULTS_KEY,
     drawChecksApiPath,
     drawExecutionResponseSchema,
+    drawResultConfirmationApiPath,
+    drawResultConfirmationSchema,
     drawResumeApiPath,
     drawVerificationSchema,
 } from '@entities/drawResult';
-import { awardCancellationResultSchema, winCancellationsApiPath } from '@entities/winner';
+import { ADMIN_EVENTS_KEY, EVENTS_KEY } from '@entities/event';
+import {
+    awardCancellationResultSchema,
+    RESULT_CHANGES_KEY,
+    winCancellationsApiPath,
+} from '@entities/winner';
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema } from '@shared/api/envelopeSchema';
-import { IDEMPOTENCY_HEADER } from '@shared/lib/idempotencyKey';
+import { IDEMPOTENCY_HEADER } from '@shared/utils/idempotencyKey';
 
 // AD04 — 저장된 추첨 결과의 정합성 검증. 난수를 다시 돌리는 작업이 아니라 본문이 없다
 export function useVerifyDraw() {
@@ -65,6 +73,36 @@ export function useCancelWin() {
         },
         onSuccess: () => {
             // 취소된 결과와 새로 생긴 재추첨 실행이 목록·상세에 바로 반영된다
+            void queryClient.invalidateQueries({ queryKey: DRAWS_KEY });
+        },
+    });
+}
+
+/**
+ * GD-199 — 최신 검토 실행의 최종 확인과 최초 공개를 한 요청으로 처리한다.
+ * 본문·추가 멱등 헤더 없이 최신 검토 runId 하나만 보낸다. 최초 공개 전에는
+ * AD06(publication)을 연달아 호출하지 않으며, 확인 버튼과 공개 버튼을 분리하지 않는다.
+ * 성공 응답의 isPublished=false를 공개 완료로 해석하지 않는다 — 당첨자 공개의
+ * 정상 성공은 isPublished=true다.
+ */
+export function useConfirmResult() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (runId: string) => {
+            const { data } = await apiClient.post<unknown>(drawResultConfirmationApiPath(runId));
+            return envelopeSchema(drawResultConfirmationSchema).parse(data).data;
+        },
+        onSuccess: () => {
+            // 최초 공개로 실행 상세·변경 이력·공개 결과·이벤트 상태(PUBLISHED)가 함께 바뀐다
+            void queryClient.invalidateQueries({ queryKey: DRAWS_KEY });
+            void queryClient.invalidateQueries({ queryKey: RESULT_CHANGES_KEY });
+            void queryClient.invalidateQueries({ queryKey: DRAW_RESULTS_KEY });
+            void queryClient.invalidateQueries({ queryKey: ADMIN_EVENTS_KEY });
+            void queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+        },
+        onError: () => {
+            // 명단 변경 거절(PUBLICATION-005) 등 검토 시점과 다른 상태일 수 있으니 실행 목록을 새로 받는다
             void queryClient.invalidateQueries({ queryKey: DRAWS_KEY });
         },
     });

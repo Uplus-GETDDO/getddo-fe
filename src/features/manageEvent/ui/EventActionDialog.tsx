@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import type { AdminEvent } from '@entities/event';
 
 import { getErrorMessage } from '@shared/api/errorMessage';
-import { formatKst } from '@shared/lib/date';
 import { Button } from '@shared/ui/button';
 import {
     Dialog,
@@ -15,6 +14,7 @@ import {
     DialogTitle,
 } from '@shared/ui/dialog';
 import { Input } from '@shared/ui/input';
+import { formatKst } from '@shared/utils/date';
 
 import { useDeleteEvent, useEventAction } from '../api/queries';
 

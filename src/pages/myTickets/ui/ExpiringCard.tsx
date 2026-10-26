@@ -1,5 +1,5 @@
 import { TicketGradePill, type TicketHolding } from '@entities/ticket';
-import { formatKst, KST_HOUR_MINUTE } from '@shared/lib/date';
+import { formatKst, KST_HOUR_MINUTE } from '@shared/utils/date';
 
 /**
  * 만료 예정 — 보유 묶음(T01 holdings: 등급·만료 시각이 같은 응모권)을 만료가 이른 순으로.

@@ -69,6 +69,73 @@ afterEach(() => {
 });
 
 describe('출석 목업 핸들러', () => {
+    it.each([
+        ['2026-10-20', '2026-10-21'],
+        ['2026-10-31', '2026-11-01'],
+    ])('%s KST 자정에 기준일과 다음 초기화 시각이 바뀐다', async (day, nextDay) => {
+        const userId = uniqueUser();
+        freezeDate(`${day}T14:59:59Z`);
+        await check(userId);
+        expect((await today(userId)).data.data).toMatchObject({
+            attendanceDate: day,
+            attended: true,
+            nextResetAt: `${day}T15:00:00.000Z`,
+        });
+        expect((await check(userId)).status).toBe(200);
+
+        freezeDate(`${day}T15:00:00Z`);
+        const status = (await today(userId)).data.data;
+        expect(status).toMatchObject({
+            attendanceDate: nextDay,
+            attended: false,
+            nextResetAt: `${nextDay}T15:00:00.000Z`,
+        });
+        if (nextDay.endsWith('-01')) expect(status.consecutiveDays).toBe(0);
+        expect((await check(userId)).status).toBe(201);
+        expect((await check(userId)).status).toBe(200);
+    });
+
+    it('31일 연속 일수를 보존하고 월초에는 1일째로 다시 계산한다', async () => {
+        const userId = uniqueUser();
+        let streakReward = 0;
+        for (let day = 1; day <= 31; day += 1) {
+            freezeAt(`2026-10-${String(day).padStart(2, '0')}`);
+            const response = await check(userId);
+            streakReward += response.data.data.rewards
+                .filter((reward) => reward.rewardType === 'STREAK')
+                .reduce((sum, reward) => sum + reward.ticketCount, 0);
+        }
+        expect((await today(userId)).data.data.consecutiveDays).toBe(31);
+        expect(streakReward).toBe(11);
+        freezeAt('2026-11-01');
+        expect((await today(userId)).data.data.consecutiveDays).toBe(0);
+        const first = await check(userId);
+        expect(first.data.data.consecutiveDays).toBe(1);
+        expect(first.data.data.rewards.every((reward) => reward.rewardType === 'DAILY')).toBe(true);
+    });
+
+    it('누락 후 같은 달의 7일 단계를 다시 달성해도 추가 단계 보상은 없다', async () => {
+        const userId = uniqueUser();
+        for (let day = 1; day <= 7; day += 1) {
+            freezeAt(`2026-10-0${day}`);
+            await check(userId);
+        }
+        freezeAt('2026-10-09');
+        expect((await today(userId)).data.data.consecutiveDays).toBe(0);
+        let secondRewards = 0;
+        for (let day = 9; day <= 15; day += 1) {
+            freezeAt(`2026-10-${String(day).padStart(2, '0')}`);
+            const response = await check(userId);
+            secondRewards += response.data.data.rewards.filter(
+                (reward) => reward.rewardType === 'STREAK',
+            ).length;
+        }
+        expect(secondRewards).toBe(0);
+        expect(
+            (await today(userId)).data.data.milestones.find((m) => m.milestoneDays === 7)?.claimed,
+        ).toBe(true);
+    });
+
     it('첫 출석은 DAILY 보상을 담은 영수증을 201로 돌려준다', async () => {
         freezeAt('2026-10-20');
         const userId = uniqueUser();

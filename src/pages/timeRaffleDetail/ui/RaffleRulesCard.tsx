@@ -6,20 +6,22 @@ import {
     TICKET_GRADE_WEIGHT,
     TICKET_GRADES,
 } from '@entities/ticket';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/lib/date';
 import { BulletList } from '@shared/ui/bullet-list';
+import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
 
 // 운영 정책 고지 — 모든 래플에 공통이라 이벤트 안내 아래에 작게 둔다
 const POLICY_RULES = [
-    '비정상적이거나 대리 응모 등 불공정한 방법으로 참여가 적발될 시, 당첨이 자동 취소되며 향후 서비스 이용이 제한될 수 있습니다.',
-    '추첨 후보·조건 스냅샷과 결과 정합성이 보존되며, 관리자 승인 후 결과가 공개됩니다.',
+    '개별 당첨 취소는 관리자가 사유를 기록해 처리하며, 당첨 취소·재추첨을 이유로 응모권을 반환하거나 회수하지 않습니다.',
+    '추첨 후보·조건 스냅샷과 결과 정합성이 보존되며, 관리자의 명시적인 발표 요청 후 결과가 공개됩니다.',
     '상태는 모집 중·마감·발표 대기·취소 등으로 구분되며, 운영 정책에 따라 상태가 변경될 수 있습니다.',
-    '취소 시에는 연결된 반환 이력이 별도로 보존되며, 제외·응모자 없음·추첨 대상자 없음 등 예외 상황 발생 시 운영 정책에 따라 처리됩니다.',
+    '이벤트 취소 시 차감한 응모권은 원래 등급으로 반환하며 반환 이력을 보존합니다. 응모자가 없으면 추첨 없이 종료합니다.',
 ];
 
 /** 이 래플에 응모권을 몇 번·몇 장 낼 수 있는지 — 누적 상한(ADR-010)에 따라 문장이 갈린다 */
 function entryLimitRule(event: Event): string {
     if (event.eventType === 'NO_TICKET') return '응모권 없이 한 번 참여할 수 있어요.';
+    // 상한 실값은 상세(E02)에만 있다 — 목록만으로 만든 이벤트는 상한 문구를 적지 않는다
+    if (event.maxTicketsPerUser === undefined) return '응모권으로 이 래플에 응모할 수 있어요.';
     if (event.maxTicketsPerUser === null)
         return '마감 전까지 장수 제한 없이 나눠서 응모할 수 있어요.';
     if (event.maxTicketsPerUser <= event.requiredTickets)

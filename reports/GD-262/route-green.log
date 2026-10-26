@@ -1,0 +1,8 @@
+
+ RUN  v5.0.1 C:/Users/s_don/Desktop/Projects/Project_Hub/Ureca-GETDDO/getddo-fe
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  09:31:53
+   Duration  4.33s (setup 44%, environment 27%, transform 20%, tests 8%, worker 1%)

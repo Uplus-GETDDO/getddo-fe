@@ -36,14 +36,15 @@ function SelectTrigger({
             data-slot="select-trigger"
             data-size={size}
             className={cn(
-                "border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 flex w-fit items-center justify-between gap-1.5 rounded-lg border bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-3 data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                // 입력창과 같은 높이(40)·테두리·포커스 규칙
+                "border-border-input bg-surface-page text-fg-primary placeholder:text-fg-tertiary hover:border-border-input-hover focus-visible:border-border-focus aria-invalid:border-semantic-error-strong disabled:bg-surface-disabled disabled:text-fg-disabled data-placeholder:text-fg-tertiary text-body-sm flex w-fit items-center justify-between gap-1.5 rounded-lg border py-2 pr-2.5 pl-3 whitespace-nowrap transition-colors outline-none select-none disabled:cursor-not-allowed data-[size=default]:h-10 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
                 className,
             )}
             {...props}
         >
             {children}
             <SelectPrimitive.Icon asChild>
-                <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4" />
+                <ChevronDownIcon className="text-fg-tertiary pointer-events-none size-4" />
             </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
     );

@@ -1,0 +1,535 @@
+{
+    "kind": "MSW 없음, 로컬 브라우저에서 실제 API로 전송하는 프록시. 사용자 선택 목록만 fixture. 타이밍 첫 결과 응답은 전송 후 고의 유실.",
+    "requests": [
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=20",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/plays",
+            "status": 201
+        },
+        {
+            "method": "PUT",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/plays/01a158c4-ca82-71fc-a5cb-6bb2f619bb90/result",
+            "status": 200,
+            "validationData": {
+                "answers": [
+                    {
+                        "sequence": 1,
+                        "answer": null,
+                        "elapsedMs": 3000
+                    },
+                    {
+                        "sequence": 2,
+                        "answer": null,
+                        "elapsedMs": 3000
+                    },
+                    {
+                        "sequence": 3,
+                        "answer": null,
+                        "elapsedMs": 3000
+                    }
+                ]
+            },
+            "result": {
+                "playId": "01a158c4-ca82-71fc-a5cb-6bb2f619bb90",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:04:28.686322Z",
+                "reward": null
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=20",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/plays",
+            "status": 201
+        },
+        {
+            "method": "PUT",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/plays/01a158c5-07f7-78bf-bf7d-a1a38ad78960/result",
+            "status": 200,
+            "validationData": {
+                "endTick": 346,
+                "inputs": [
+                    {
+                        "tick": 0,
+                        "type": "press"
+                    },
+                    {
+                        "tick": 0,
+                        "type": "release"
+                    }
+                ]
+            },
+            "result": {
+                "playId": "01a158c5-07f7-78bf-bf7d-a1a38ad78960",
+                "status": "VALID",
+                "score": 121,
+                "completedAt": "2026-10-20T10:04:33.780946Z",
+                "reward": null
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=20",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/plays",
+            "status": 201
+        },
+        {
+            "method": "PUT",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/plays/01a158c5-1c11-7090-995b-fa30d6fd82b0/result",
+            "status": 200,
+            "validationData": {
+                "taps": [
+                    {
+                        "sequence": 1,
+                        "elapsedMs": 51
+                    }
+                ]
+            },
+            "result": {
+                "playId": "01a158c5-1c11-7090-995b-fa30d6fd82b0",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:04:39.152417Z",
+                "reward": null
+            }
+        },
+        {
+            "method": "PUT",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/plays/01a158c5-1c11-7090-995b-fa30d6fd82b0/result",
+            "status": 200,
+            "validationData": {
+                "taps": [
+                    {
+                        "sequence": 1,
+                        "elapsedMs": 51
+                    }
+                ]
+            },
+            "result": {
+                "playId": "01a158c5-1c11-7090-995b-fa30d6fd82b0",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:04:39.152417Z",
+                "reward": null
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=20",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "POST",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/plays",
+            "status": 201
+        },
+        {
+            "method": "PUT",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/plays/01a158c5-3011-7412-a585-52ceb38cb584/result",
+            "status": 200,
+            "validationData": {
+                "rounds": [
+                    {
+                        "sequence": 1,
+                        "picks": ["scallion"]
+                    },
+                    {
+                        "sequence": 2,
+                        "picks": ["scallion"]
+                    },
+                    {
+                        "sequence": 3,
+                        "picks": ["scallion"]
+                    }
+                ]
+            },
+            "result": {
+                "playId": "01a158c5-3011-7412-a585-52ceb38cb584",
+                "status": "VALID",
+                "score": 0,
+                "completedAt": "2026-10-20T10:04:57.429206Z",
+                "reward": null
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/tickets/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=20",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/tickets/histories/me?operationType=GRANT&from=2026-09-30T15:00:00.000Z&to=2026-10-31T15:00:00.000Z&size=1",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/tickets/histories/me?size=5&from=2026-09-20T10:04:56.903Z&to=2026-10-20T10:04:56.903Z",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/tickets/histories/me?operationType=USE&from=2026-09-30T15:00:00.000Z&to=2026-10-31T15:00:00.000Z&size=1",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=1&isRead=false",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a143a8-b6de-74af-afca-7f908caa54eb",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/notifications/me?size=20",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7929-9127-273bb6db4875/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a15714-8ece-7944-95ef-31fed5a68f81/statistics/me",
+            "status": 200
+        },
+        {
+            "method": "GET",
+            "path": "/v1/games/01a14dce-e375-7801-977c-19ba1dec3635/statistics/me",
+            "status": 200
+        }
+    ],
+    "checks": [
+        {
+            "code": "COLOR_WORD",
+            "serverResult": "서버 확정 점수: 0점. 이번 플레이의 보상은 없습니다. 최소 점수 또는 당일 보상 여부를 확인해 주세요.",
+            "localStorageHasToken": false
+        },
+        {
+            "code": "TAKKO_RUN",
+            "serverResult": "서버 확정 점수: 121점. 이번 플레이의 보상은 없습니다. 최소 점수 또는 당일 보상 여부를 확인해 주세요.",
+            "localStorageHasToken": false
+        },
+        {
+            "code": "TAKKO_TIMING",
+            "serverResult": "서버 확정 점수: 0점. 이번 플레이의 보상은 없습니다. 최소 점수 또는 당일 보상 여부를 확인해 주세요.",
+            "localStorageHasToken": false
+        },
+        {
+            "code": "TAKKO_ORDER",
+            "serverResult": "서버 확정 점수: 0점. 이번 플레이의 보상은 없습니다. 최소 점수 또는 당일 보상 여부를 확인해 주세요.",
+            "localStorageHasToken": false
+        },
+        {
+            "ticketScreen": "마이페이지\n내 응모권\n\n가진 응모권과 만료일, 받고 쓴 기록을 한곳에서 봐요.\n\n응모권 모으러 가기\n사용 가능 응모권\n1장\n브론즈 1장\n당첨 기회 1배\n실버 0장\n당첨 기회 3배\n골드 0장\n당첨 기회 5배\n플래티넘 0장\n당첨 기회 10배\n곧 만료돼요\nD-12\n\n1장\n11월 1일 00:00 만료\n\n이번 달 받은\n+4장\n이번 달 쓴\n−3장\n응모권 기록\n최근 30일\n전체\n받은\n쓴\n만료·반환\n내용\n등급\n수량\n만료 일시\n\n불러온 이력 기준 수량이에요. 더 불러오면 수량이 늘어날 수 있어요.\n\n10월 20일 오늘\n이벤트 응모\n응모에 사용\n브론즈\n−1장\n—\n10월 17일\n출석 보상\n출석 보상\n브론즈\n+1장\n11월 1일 00:00\n10월 16일\n글자색깔 맞추기 일일 보상\n게임 보상\n브론즈\n+1장\n11월 1일 00:00\n이벤트 응모\n응모에 사용\n브론즈\n−1장\n—\n이벤트 응모\n응모에 사용\n브론즈\n−1장\n—\n더 보기\n만료 예정\n브론즈 1장\n11월 1일 00:00\n\n일반 지급분은 다음 달 1일 0시, 반환분은 반환한 달의 다음 달 말까지 쓸 수 있어요.\n\n등급 안내\n등급\t받을 확률\t당첨 기회\n브론즈\t79.98%\t1배\n실버\t18%\t3배\n골드\t2%\t5배\n플래티넘\t0.02%\t10배\n\n받을 확률은 게임·미션 보상 기준이에요(출석은 브론즈 고정). 당첨 확률은 응모자 수에 따라 달라 알려 드리지 않아요."
+        },
+        {
+            "viewport": 320,
+            "horizontalOverflow": false
+        },
+        {
+            "keyboardFocus": {
+                "tag": "BUTTON",
+                "name": "가상 사용자 전환, 현재 사용자 테스트사용자2"
+            }
+        }
+    ],
+    "errors": []
+}

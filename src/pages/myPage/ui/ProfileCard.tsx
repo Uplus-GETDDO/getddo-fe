@@ -1,16 +1,26 @@
+import type { ReactNode } from 'react';
+
 import { ChevronRight, Repeat } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import type { VirtualUser } from '@entities/user';
 
 import { MEMBERSHIP_LABEL } from '@entities/event';
-import { TICKET_GRADES, TicketGradePill, type MyTickets } from '@entities/ticket';
+import {
+    TICKET_GRADES,
+    TicketGradePill,
+    TicketBalanceStatus,
+    type useMyTickets,
+} from '@entities/ticket';
+import { virtualUserLabel } from '@entities/user';
 import { VirtualUserSwitcher } from '@features/switchVirtualUser';
 import profileAvatar from '@shared/assets/ui/profile-avatar.png';
-import { formatNumber } from '@shared/lib/format';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
+import { RefreshStatus } from '@shared/ui/refresh-status';
+import { SkeletonText } from '@shared/ui/skeleton';
 import { TICKET_OUTLINE_FILTER } from '@shared/ui/ticket-card';
+import { formatNumber } from '@shared/utils/format';
 
 export interface ProfileStats {
     /** 응모 중 — 발표를 기다리는 접수 건 */
@@ -19,8 +29,22 @@ export interface ProfileStats {
     /** 가장 최근 당첨 응모의 날짜 표기 (없으면 null) */
     lastWonLabel: string | null;
     /** 오늘 받은 응모권 장수 */
-    todayGranted: number;
+    todayGranted: number | undefined;
+    historiesError?: boolean;
+    historiesFetching?: boolean;
+    onRetryHistories?: () => void;
+    /** 응모 내역(응모 중·당첨)을 불러오는 중 — 0건으로 잘못 보이지 않게 글줄 스켈레톤을 둔다 */
+    entriesLoading: boolean;
+    /** 응모 내역(E06) 자체가 실패해 건수를 알 수 없는 상태 — 일부 결과 미조회와 구분한다 */
+    entriesFailed?: boolean;
+    entriesUnavailable?: boolean;
+    /** 응모권 내역(오늘 적립)을 불러오는 중 */
+    historiesLoading: boolean;
 }
+
+/** 칸 값·설명 자리 — 불러오는 동안 다른 화면과 같은 둥근 글줄로 둔다 */
+const VALUE_SKELETON = <SkeletonText className="h-7 w-16" />;
+const CAPTION_SKELETON = <SkeletonText className="w-32" />;
 
 const TILE =
     'focus-visible:ring-border-focus relative flex min-h-30 flex-col gap-1 rounded-xl p-4 transition-colors focus-visible:ring-2 focus-visible:outline-none';
@@ -42,7 +66,7 @@ function StatTile({
 }: {
     to: string;
     label: string;
-    value: string;
+    value: ReactNode;
     children: React.ReactNode;
 }) {
     return (
@@ -70,13 +94,14 @@ function StatTile({
  */
 export function ProfileCard({
     user,
-    tickets,
+    ticketsQuery,
     stats,
 }: {
     user: VirtualUser;
-    tickets: MyTickets | undefined;
+    ticketsQuery: ReturnType<typeof useMyTickets>;
     stats: ProfileStats;
 }) {
+    const tickets = ticketsQuery.data;
     return (
         <section className="bg-surface-page border-border-default flex flex-col gap-6 rounded-2xl border p-6 shadow-md">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -94,7 +119,7 @@ export function ProfileCard({
                             )}
                         </div>
                         <span className="text-body-sm text-fg-tertiary">
-                            {user.personaLabel ?? '시스템 관리 계정'}
+                            {virtualUserLabel(user)}
                         </span>
                     </div>
                 </div>
@@ -102,7 +127,7 @@ export function ProfileCard({
                     trigger={
                         <Button variant="secondary" size="sm">
                             <Repeat className="size-4" />
-                            가상 사용자 전환
+                            계정 전환
                         </Button>
                     }
                 />
@@ -112,7 +137,13 @@ export function ProfileCard({
                 <StatTile
                     to="/my-tickets"
                     label="응모권"
-                    value={tickets ? `${formatNumber(tickets.availableCount)}장` : '–'}
+                    value={
+                        tickets
+                            ? `${formatNumber(tickets.availableCount)}장`
+                            : ticketsQuery.isPending
+                              ? VALUE_SKELETON
+                              : '조회 실패'
+                    }
                 >
                     {tickets && (
                         <span className="flex flex-wrap gap-1">
@@ -130,35 +161,84 @@ export function ProfileCard({
                 <StatTile
                     to="/my-entries?status=PENDING"
                     label="응모 중"
-                    value={`${formatNumber(stats.pendingCount)}건`}
+                    value={
+                        stats.entriesLoading
+                            ? VALUE_SKELETON
+                            : stats.entriesFailed
+                              ? '조회 실패'
+                              : stats.entriesUnavailable
+                                ? '일부 결과 미조회'
+                                : `${formatNumber(stats.pendingCount)}건`
+                    }
                 >
-                    <span className="text-caption text-fg-tertiary">
-                        {stats.pendingCount > 0
-                            ? '결과 발표를 기다리고 있어요'
-                            : '발표를 기다리는 응모가 없어요'}
-                    </span>
+                    {stats.entriesLoading ? (
+                        CAPTION_SKELETON
+                    ) : (
+                        <span className="text-caption text-fg-tertiary">
+                            {stats.entriesFailed
+                                ? '응모 내역을 불러오지 못했어요'
+                                : stats.entriesUnavailable
+                                  ? '마지막 조회 기준이에요'
+                                  : stats.pendingCount > 0
+                                    ? '결과 발표를 기다리고 있어요'
+                                    : '발표를 기다리는 응모가 없어요'}
+                        </span>
+                    )}
                 </StatTile>
                 <StatTile
                     to="/my-entries?status=WON"
                     label="당첨"
-                    value={`${formatNumber(stats.wonCount)}건`}
+                    value={
+                        stats.entriesLoading
+                            ? VALUE_SKELETON
+                            : stats.entriesFailed
+                              ? '조회 실패'
+                              : stats.entriesUnavailable
+                                ? '일부 결과 미조회'
+                                : `${formatNumber(stats.wonCount)}건`
+                    }
                 >
-                    <span className="text-caption text-fg-tertiary">
-                        {stats.lastWonLabel
-                            ? `최근 당첨 ${stats.lastWonLabel}`
-                            : '아직 당첨이 없어요'}
-                    </span>
+                    {stats.entriesLoading ? (
+                        CAPTION_SKELETON
+                    ) : (
+                        <span className="text-caption text-fg-tertiary">
+                            {stats.entriesFailed
+                                ? '응모 내역을 불러오지 못했어요'
+                                : stats.entriesUnavailable
+                                  ? '마지막 조회 기준이에요'
+                                  : stats.lastWonLabel
+                                    ? `최근 당첨 ${stats.lastWonLabel}`
+                                    : '아직 당첨이 없어요'}
+                        </span>
+                    )}
                 </StatTile>
                 <StatTile
                     to="/missions"
                     label="오늘 적립"
-                    value={`+${formatNumber(stats.todayGranted)}장`}
+                    value={
+                        stats.historiesLoading
+                            ? VALUE_SKELETON
+                            : stats.todayGranted === undefined
+                              ? '조회 실패'
+                              : `+${formatNumber(stats.todayGranted)}장`
+                    }
                 >
                     <span className="text-caption text-fg-tertiary">
                         출석·게임·미션으로 더 받을 수 있어요
                     </span>
                 </StatTile>
             </div>
+            {/* 받아 둔 합계가 있으면 다시 받기 실패에도 그 값을 두고 안내를 띄우지 않는다 */}
+            {stats.historiesError && stats.todayGranted === undefined && (
+                // '오늘 적립' 칸은 '조회 실패'로 남기고, 여기엔 다시 받는 작은 표시만 둔다 — 큰 안내 줄이 카드를 밀어냈다
+                <RefreshStatus
+                    fetching={stats.historiesFetching ?? false}
+                    error
+                    onRefresh={() => stats.onRetryHistories?.()}
+                    className="self-start"
+                />
+            )}
+            <TicketBalanceStatus query={ticketsQuery} />
         </section>
     );
 }

@@ -26,10 +26,10 @@ export const EVENT_TYPE_LABEL: Record<EventType, string> = {
     TICKET: '응모권 사용',
 };
 
-// 유형은 상태가 아닌 분류라 라이프사이클 색을 쓰지 않는다 — 응모권 사용은 티켓 토큰, 미사용은 중립
+// 유형은 상태가 아닌 분류라 라이프사이클 색을 쓰지 않는다 — 응모권 사용은 브랜드 옅은 바탕(글자 대비가 충분), 미사용은 중립
 export const EVENT_TYPE_CHIP: Record<EventType, string> = {
     NO_TICKET: 'bg-surface-sunken text-fg-secondary',
-    TICKET: 'bg-ticket-accent text-fg-primary',
+    TICKET: 'bg-brand-soft text-fg-brand',
 };
 
 export const MEMBERSHIP_LABEL: Record<MembershipRule, string> = {
