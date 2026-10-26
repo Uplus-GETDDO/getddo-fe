@@ -10,7 +10,8 @@ import { Button } from './button';
 
 /**
  * 관리자 목록 + 상세(인스펙터) — 줄을 고르면 오른쪽 칸에 상세가 열린다. 이벤트·추첨 관리와 같은 꼴로 모든 관리자 목록을 맞춘다.
- * 상세 칸은 화면 높이에 붙어 스크롤을 따라오고 안쪽만 스크롤한다. 두 칸은 세로선 하나로 나눈다.
+ * 상세 칸은 화면 높이에 붙어 스크롤을 따라오고 안쪽만 스크롤한다. 두 칸은 간격을 두고 상세를 둥근 카드로 띄운다 —
+ * 화면 끝까지 내려가는 세로선 하나로 나누면 목록이 거기서 뚝 끊긴 것처럼 보였다.
  * 좁은 폭에서는 상세가 목록 아래 카드로 열리고, 새로 열 때 그 자리로 스크롤한다
  */
 function ListDetailLayout({
@@ -39,16 +40,16 @@ function ListDetailLayout({
                 !open
                     ? 'lg:grid-cols-1'
                     : detailSize === 'wide'
-                      ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-x-0'
-                      : 'lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-x-0',
+                      ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]'
+                      : 'lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]',
             )}
         >
-            <div className={cn('min-w-0', open && 'lg:pr-6')}>{list}</div>
+            <div className="min-w-0">{list}</div>
             {open && (
                 <aside
                     ref={ref}
                     aria-label={label}
-                    className="border-border-default motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 min-w-0 scroll-mt-4 overflow-hidden rounded-2xl border motion-safe:duration-200 lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)] lg:rounded-none lg:border-0 lg:border-l"
+                    className="border-border-default motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 min-w-0 scroll-mt-4 overflow-hidden rounded-2xl border shadow-md motion-safe:duration-200 lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)]"
                 >
                     {detail}
                 </aside>
