@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 import type { RunPhase, RunState } from '../model/takkoRun';
@@ -33,7 +34,13 @@ const PEBBLES = Array.from({ length: 14 }, (_, i) => ({
     width: 4 + (i % 4) * 5,
 }));
 
-function draw(ctx: CanvasRenderingContext2D, run: RunState, sprites: TakkoRunSprites, ink: string) {
+function draw(
+    ctx: CanvasRenderingContext2D,
+    run: RunState,
+    sprites: TakkoRunSprites,
+    ink: string,
+    reduceMotion: boolean,
+) {
     ctx.clearRect(0, VIEW_TOP, WORLD_WIDTH, VIEW_HEIGHT);
     ctx.fillStyle = ink;
 
@@ -60,8 +67,9 @@ function draw(ctx: CanvasRenderingContext2D, run: RunState, sprites: TakkoRunSpr
         );
     }
 
-    // 대기 중에는 제자리에서 통통 튄다 — 누르면 달린다는 신호
-    const bob = run.phase === 'ready' ? Math.abs(Math.sin(run.elapsed * 4)) * 6 : 0;
+    // 대기 중에는 제자리에서 통통 튄다 — 누르면 달린다는 신호. 동작 줄이기 설정이면 가만히 선다 (점프는 직접 누른 것이라 그대로)
+    const bob =
+        run.phase === 'ready' && !reduceMotion ? Math.abs(Math.sin(run.elapsed * 4)) * 6 : 0;
     const [sx, sy, sw, sh] = pick(CHARACTER_FRAMES, runnerFrame(run));
     ctx.drawImage(
         sprites.character,
@@ -104,6 +112,7 @@ export function TakkoRunMini({ className }: { className?: string }) {
     const [phase, setPhase] = useState<RunPhase>('ready');
     const [score, setScore] = useState(0);
     const [best, setBest] = useState(0);
+    const reduceMotion = useReducedMotion() ?? false;
 
     useEffect(() => {
         let alive = true;
@@ -149,16 +158,18 @@ export function TakkoRunMini({ className }: { className?: string }) {
             ctx.setTransform(scale, 0, 0, scale, 0, -VIEW_TOP * scale);
             ctx.imageSmoothingEnabled = false;
             // 길바닥은 글자색을 따른다 — 다크 모드에서도 바탕과 대비가 맞는다
-            draw(ctx, run, sprites, getComputedStyle(canvas).color);
+            draw(ctx, run, sprites, getComputedStyle(canvas).color, reduceMotion);
             frame = requestAnimationFrame(tick);
         };
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
-    }, [sprites]);
+    }, [sprites, reduceMotion]);
 
     const press = () => setPhase(startOrJump(runRef));
 
+    // 입력은 그림을 받은 뒤에만 받는다 — 못 받았는데 스페이스를 막고 판만 바꾸면 빈 칸에 점수만 보였다
     useEffect(() => {
+        if (!sprites) return;
         const onKeyDown = (event: KeyboardEvent) => {
             if (!JUMP_KEYS.has(event.code) || !isFreeTarget(event.target, containerRef.current))
                 return;
@@ -175,14 +186,15 @@ export function TakkoRunMini({ className }: { className?: string }) {
             window.removeEventListener('keydown', onKeyDown);
             window.removeEventListener('keyup', onKeyUp);
         };
-    }, []);
+    }, [sprites]);
 
-    const hint =
-        phase === 'ready'
-            ? '스페이스 · 탭으로 달리기'
-            : phase === 'over'
-              ? '꽝! 다시 하려면 스페이스 · 탭'
-              : null;
+    const hint = !sprites
+        ? null
+        : phase === 'ready'
+          ? '스페이스 · 탭으로 달리기'
+          : phase === 'over'
+            ? '꽝! 다시 하려면 스페이스 · 탭'
+            : null;
 
     return (
         <div
@@ -191,7 +203,7 @@ export function TakkoRunMini({ className }: { className?: string }) {
             aria-label="ERROR 404 — 스페이스나 탭으로 타코야끼를 달리게 하는 작은 게임"
             className={`text-fg-primary relative w-full touch-manipulation select-none ${className ?? ''}`}
             onPointerDown={(event) => {
-                if (event.button === 0) press();
+                if (sprites && event.button === 0) press();
             }}
             onPointerUp={() => releaseJump(runRef.current)}
         >

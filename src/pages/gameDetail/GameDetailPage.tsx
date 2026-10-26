@@ -10,6 +10,7 @@ import {
     preloadGamePlayer,
     useGamePlaySession,
 } from '@features/playGame';
+import { getErrorMessage } from '@shared/api/errorMessage';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
@@ -78,7 +79,7 @@ function GameDetailContent({
                     title={isError ? '게임을 불러오지 못했어요' : '게임을 찾을 수 없어요'}
                     description={
                         isError
-                            ? (error?.message ?? '잠시 후 다시 시도해 주세요.')
+                            ? getErrorMessage(error, '잠시 후 다시 시도해 주세요.')
                             : '주소가 바뀌었거나 지금은 열리지 않은 게임이에요.'
                     }
                     actions={

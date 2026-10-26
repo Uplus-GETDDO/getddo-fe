@@ -164,6 +164,10 @@ export function AdminLayout() {
                         사용자 화면으로
                     </NavLink>
                 </nav>
+                {/* 좁은 화면에서는 사이드바 아래 출처 표시가 숨으므로 메뉴 탭 아래에 같은 줄을 둔다 */}
+                <p className="text-caption text-fg-tertiary px-4 pt-2 md:hidden">
+                    {DATA_SOURCE_LABEL[getDataSource()]}
+                </p>
                 <main className="flex-1 p-4 md:pt-5 md:pr-0 md:pl-10">
                     {/* 화면 렌더 오류가 나도 사이드바·헤더를 유지하고 라우트 전환으로 복구한다 */}
                     <RouteErrorBoundary resetKey={pathname} fallback={<RouteErrorFallback />}>
