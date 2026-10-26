@@ -27,17 +27,20 @@ export function AdminUserDetailSheet({
     isPending,
     error,
     onClose,
+    returnLabel = '사용자 조회',
 }: {
     userId: string | null;
     user: AdminUser | undefined;
     isPending: boolean;
     error: unknown;
     onClose: () => void;
+    /** 이력 화면으로 건너갔을 때 머리의 '← ○○로 돌아가기'에 쓸 이 화면 이름 */
+    returnLabel?: string;
 }) {
     const open = userId !== null;
     const uid = user?.id ?? userId ?? '';
-    // 응모·응모권 화면으로 건너가면 머리에 '← 사용자 조회로 돌아가기'가 떠 이 사용자 상세로 돌아온다
-    const back = useReturnState(`사용자 조회 · ${user?.name ?? '사용자'}`);
+    // 응모·응모권 화면으로 건너가면 머리에 '← (이 화면)로 돌아가기'가 떠 이 사용자 상세로 돌아온다
+    const back = useReturnState(`${returnLabel} · ${user?.name ?? '사용자'}`);
 
     return (
         <InspectorPanel open={open} onOpenChange={(next) => !next && onClose()}>
