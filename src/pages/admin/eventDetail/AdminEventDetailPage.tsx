@@ -21,10 +21,6 @@ import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
-import type { EventEntriesView } from './ui/EventEntriesDialog';
-
-import { EventEntriesDialog } from './ui/EventEntriesDialog';
-
 const KST_YMD_HM: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
@@ -111,7 +107,6 @@ export function AdminEventDetailPage() {
     const back = useReturnState(`이벤트 관리 · ${event?.title ?? '이벤트'}`);
     const [action, setAction] = useState<EventActionKind | null>(null);
     const [preview, setPreview] = useState<ImagePreview | null>(null);
-    const [entriesView, setEntriesView] = useState<EventEntriesView | null>(null);
 
     if (isPending) {
         return (
@@ -232,12 +227,18 @@ export function AdminEventDetailPage() {
                             <Link to={`/admin/events/${event.id}/edit`}>수정</Link>
                         </Button>
                     )}
-                    {/* 참여자·응모 이력은 화면을 옮기지 않고 모달로 연다 — 보던 이벤트 상세가 그대로 남는다 */}
-                    <Button variant="secondary" onClick={() => setEntriesView('participants')}>
-                        참여자 조회
+                    <Button variant="secondary" asChild>
+                        <Link
+                            to={`/admin/entries?view=participants&eventId=${event.id}`}
+                            state={back}
+                        >
+                            참여자 조회
+                        </Link>
                     </Button>
-                    <Button variant="secondary" onClick={() => setEntriesView('history')}>
-                        응모 이력 조회
+                    <Button variant="secondary" asChild>
+                        <Link to={`/admin/entries?eventId=${event.id}`} state={back}>
+                            응모 이력 조회
+                        </Link>
                     </Button>
                 </div>
             </section>
@@ -345,14 +346,6 @@ export function AdminEventDetailPage() {
             )}
 
             <ImagePreviewDialog preview={preview} onClose={() => setPreview(null)} />
-
-            <EventEntriesDialog
-                eventId={event.id}
-                eventTitle={event.title}
-                view={entriesView}
-                onViewChange={setEntriesView}
-                onClose={() => setEntriesView(null)}
-            />
 
             <EventActionDialog
                 event={event}

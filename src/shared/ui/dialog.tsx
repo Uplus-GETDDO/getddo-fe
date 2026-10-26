@@ -23,7 +23,6 @@ function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.C
     return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-/** 모달 뒤 막 — 블러 없이 어둡게만 덮는다. 블러는 뒤 화면을 못 읽게 해 어디서 열었는지 맥락이 끊기고, 큰 표 위에서는 무거웠다 */
 function DialogOverlay({
     className,
     ...props
@@ -32,7 +31,7 @@ function DialogOverlay({
         <DialogPrimitive.Overlay
             data-slot="dialog-overlay"
             className={cn(
-                'data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 bg-surface-overlay fixed inset-0 isolate z-50 duration-100',
+                'data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs dark:bg-black/50',
                 className,
             )}
             {...props}

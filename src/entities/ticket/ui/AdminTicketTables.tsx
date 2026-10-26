@@ -1,14 +1,10 @@
-import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-
-import { Clock, Minus, PenLine, Plus, Undo2 } from 'lucide-react';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
 
 import type { AdminTicketHistory } from '../model/admin';
-import type { TicketOperationType } from '../model/history';
 
 import { TICKET_OPERATION_LABEL, TICKET_STATUS_LABEL } from '../model/admin';
 import { TICKET_GRADE_LABEL } from '../model/grade';
@@ -75,46 +71,17 @@ function UserCell({ name, id }: { name: string; id: string }) {
     );
 }
 
-/** 처리마다 모양으로 구분하는 아이콘 — 색은 들어옴·나감 두 가지로만 쓴다 */
-const OPERATION_ICON: Record<TicketOperationType, LucideIcon> = {
-    GRANT: Plus,
-    REFUND: Undo2,
-    USE: Minus,
-    EXPIRE: Clock,
-    CORRECTION: PenLine,
-};
-
-/**
- * 처리 칸 — 아이콘 동그라미 · 처리 이름 · 장수 변동.
- * 장수가 느는 처리(지급·반환)는 응모권 노랑 바탕, 줄거나 그대로인 처리(사용·만료·정정)는 회색 바탕으로
- * 들어옴·나감만 색으로 나눈다 — 처리마다 색을 달리하거나 +만 초록으로 두면 표가 얼룩지고 오히려 흐려 보였다.
- * 정정은 장수가 그대로라 변동을 적지 않는다
- */
-function OperationCell({ type }: { type: TicketOperationType }) {
-    const delta = TICKET_OPERATION_DELTA[type];
-    const Icon = OPERATION_ICON[type];
-    const gain = delta !== null && delta > 0;
+/** 처리 뒤 장수 변동 — 늘면 +1, 줄면 −1, 정정은 장수가 그대로라 표시하지 않는다 */
+function DeltaText({ delta }: { delta: number | null }) {
+    if (delta === null) return null;
     return (
-        <span className="flex items-center gap-2 whitespace-nowrap">
-            <span
-                aria-hidden
-                className={cn(
-                    'flex size-6 shrink-0 items-center justify-center rounded-full',
-                    gain
-                        ? 'bg-ticket-accent text-ticket-on'
-                        : 'bg-surface-sunken text-fg-secondary',
-                )}
-            >
-                <Icon className="size-3.5" strokeWidth={2.5} />
-            </span>
-            <span className="text-fg-primary text-sm font-semibold">
-                {TICKET_OPERATION_LABEL[type]}
-            </span>
-            {delta !== null && (
-                <span className="text-fg-secondary text-sm tabular-nums">
-                    {delta > 0 ? `+${delta}` : `−${Math.abs(delta)}`}
-                </span>
+        <span
+            className={cn(
+                'text-sm font-semibold tabular-nums',
+                delta > 0 ? 'text-status-approved-text' : 'text-fg-tertiary',
             )}
+        >
+            {delta > 0 ? `+${delta}` : `−${Math.abs(delta)}`}
         </span>
     );
 }
@@ -125,11 +92,11 @@ function OperationCell({ type }: { type: TicketOperationType }) {
  */
 const COLUMNS = [
     { header: '처리 시각', width: '17%' },
-    { header: '처리', width: '13%' },
+    { header: '처리', width: '11%' },
     { header: '등급', width: '12%' },
     { header: '사용자', width: '17%' },
     { header: '처리 후 상태', width: '12%' },
-    { header: '이벤트·미션', width: '29%' },
+    { header: '이벤트·미션', width: '31%' },
 ];
 
 export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }) {
@@ -141,7 +108,12 @@ export function AdminTicketHistoryTable({ rows }: { rows: AdminTicketHistory[] }
                         <span className={TIME}>{formatKst(row.createdAt)}</span>
                     </Cell>
                     <Cell>
-                        <OperationCell type={row.operationType} />
+                        <span className="flex items-baseline gap-2 whitespace-nowrap">
+                            <span className="text-fg-primary text-sm font-semibold">
+                                {TICKET_OPERATION_LABEL[row.operationType]}
+                            </span>
+                            <DeltaText delta={TICKET_OPERATION_DELTA[row.operationType]} />
+                        </span>
                     </Cell>
                     {/* 등급은 응모권 그림과 이름으로 — 등급 색 알약은 표를 얼룩지게 해 오히려 눈에 안 들어왔다 */}
                     <Cell>
