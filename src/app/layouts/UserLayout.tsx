@@ -15,6 +15,8 @@ import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-b
 import { cn } from '@shared/utils/cn';
 import { NotificationBell } from '@widgets/notificationBell';
 
+import { getDataSource } from '../config/dataSource';
+import { DATA_SOURCE_LABEL } from './dataSourceLabel';
 import { FOOTER_AWARDS, FOOTER_LINKS } from './footerData';
 import { USER_NAV_ITEMS } from './userNavItems';
 
@@ -265,6 +267,8 @@ export function UserLayout() {
                             <p className="text-fg-tertiary">
                                 Copyright ⓒ U+GETDDO Corp. All Rights Reserved.
                             </p>
+                            {/* 이번 방문의 데이터 출처 — 서버가 닿지 않으면 예시 데이터로 보여 주므로 실데이터와 구분한다 */}
+                            <p className="text-fg-tertiary">{DATA_SOURCE_LABEL[getDataSource()]}</p>
                         </div>
                     </div>
                     <ul className="flex flex-wrap items-center gap-x-4 gap-y-3">

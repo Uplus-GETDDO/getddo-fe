@@ -7,7 +7,9 @@ import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
 import { cn } from '@shared/utils/cn';
 
+import { getDataSource } from '../config/dataSource';
 import { ADMIN_NAV_GROUPS, ADMIN_NAV_ITEMS } from './adminNavItems';
+import { DATA_SOURCE_LABEL } from './dataSourceLabel';
 import { useAdminNavBadges } from './useAdminNavBadges';
 
 export function AdminLayout() {
@@ -91,6 +93,10 @@ export function AdminLayout() {
                         <House aria-hidden className="size-4" />
                         사용자 화면으로
                     </NavLink>
+                    {/* 관리자 화면의 바닥글 자리 — 이번 방문의 데이터 출처 */}
+                    <p className="text-caption text-fg-tertiary mt-3 text-center">
+                        {DATA_SOURCE_LABEL[getDataSource()]}
+                    </p>
                 </div>
             </aside>
             <div className="flex min-w-0 flex-1 flex-col">

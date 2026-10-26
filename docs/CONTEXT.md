@@ -68,7 +68,7 @@
 
 이 절은 코드 기준 현황이다. API 호출 코드가 있다는 사실은 배포·쓰기·권한·통합 검증 완료를 의미하지 않는다.
 
-- `env.enableMsw`가 true일 때만 `app/main.tsx`가 브라우저 목업을 시작한다. 로컬 개발은 전체 `handlers`를 등록한다. 배포 빌드는 `vercel.json`의 `VITE_ENABLE_MSW=false`로 목업이 시작되지 않고, 부팅 시 과거에 설치된 우리 앱의 `mockServiceWorker.js`만 해제한다(`app/config/serviceWorkerCleanup.ts`). GD-260에서 `hybridHandlers` 구분을 제거했다.
+- 데이터 출처는 부팅 때 한 번 정하고 그 방문 동안 바꾸지 않는다(`app/config/dataSource.ts`). `env.enableMsw`가 true(로컬 개발)면 늘 목업이다. 배포(`VITE_ENABLE_MSW=false`)는 E01을 3초 제한으로 한 번 호출해 응답(4xx 포함)이 오면 실서버, 5xx·연결 실패·시간 초과면 브라우저 목업(전체 `handlers`)으로 시작한다 — 한 방문 안에서 실데이터와 목업을 섞지 않는다. `?demo=1`/`?demo=0`은 그 탭을 목업/실서버로 고정한다. 출처는 사용자 바닥글·관리자 사이드바 아래에 한 줄로 표시한다('실서버 데이터'/'예시 데이터 · 서버 연결 없음'). 실서버로 시작한 방문은 과거에 설치된 우리 앱의 `mockServiceWorker.js`를 해제한다(`app/config/serviceWorkerCleanup.ts`). GD-260에서 배포 목업을 껐다가, 서버 장애 시 포트폴리오·평가용 화면이 비는 문제로 서버 미응답 시에만 목업으로 시작하도록 바꿨다.
 - 배포에서 업무 가로채기는 없다. `/admin/abuse-cases`는 GD-317에서 실서버 200·계약 일치를 확인했다.
 - 알림 N01~N03·AN01~AN05, 사용자 결과 E08/E09, 관리자 배너 AB01~AB05, 관리자 응모권 AO05에는 실서버로 전달하는 호출 코드가 있다. 관리자 응모권 AO03·AO04·AO08·AO09(지급·정합성·반환 조회)는 GD-293에서 화면과 호출 코드를 걷었다 — 계약은 채택 상태로 남는다. 특히 관리자 알림은 이미 계약을 반영했으므로 신규 구현으로 중복 등록하지 않는다.
 - 홈 B01은 GD-255에서 연결했다. AO01/AO02와 최초 `result-confirmation`은 각각 GD-250·GD-253에서 연결했고, G02/G05·실제 G03/G04는 GD-257에서 연결했다. AO01의 `totalUserCount`는 필터와 무관한 현재 활성 일반 사용자 수이며 `totalElements`와 구분한다. E01 목록의 `winnerCount`는 GD-251 계약으로 경품 인원 합계다 — 실제 당첨자 수·응모자 수·당첨 확률이 아니다. 배너 실서버 CRUD는 격리 환경이 준비되지 않아 로컬 목업 인수와 구분한다.
