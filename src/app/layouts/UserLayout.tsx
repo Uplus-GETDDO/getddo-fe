@@ -15,9 +15,7 @@ import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-b
 import { cn } from '@shared/utils/cn';
 import { NotificationBell } from '@widgets/notificationBell';
 
-import { getDataSource } from '../config/dataSource';
-import { DATA_SOURCE_LABEL } from './dataSourceLabel';
-import { FOOTER_AWARDS, FOOTER_LINKS } from './footerData';
+import { UserFooter } from './UserFooter';
 import { USER_NAV_ITEMS } from './userNavItems';
 
 export function UserLayout() {
@@ -240,50 +238,7 @@ export function UserLayout() {
                     <Outlet />
                 </RouteErrorBoundary>
             </div>
-            {/* 피그마 홈 푸터 — 약관 줄, 회사 주소, 고객센터·가입문의, 저작권 (글자 12) */}
-            <footer className="bg-surface-inverse text-caption">
-                <div className="mx-auto flex w-full max-w-312 flex-col gap-10 px-6 pt-12.5 pb-18">
-                    <div className="flex flex-col gap-7.5">
-                        <p className="text-border-default flex flex-wrap gap-x-1">
-                            {FOOTER_LINKS.map(({ label, strong }, index) => (
-                                <span key={label} className={strong ? 'font-bold' : undefined}>
-                                    {index > 0 && <span className="mr-1 font-medium">|</span>}
-                                    {label}
-                                </span>
-                            ))}
-                        </p>
-                        <div className="flex flex-col gap-2">
-                            <p className="text-fg-tertiary">
-                                (주)얻어가유 서울특별시 멀티캠퍼스 선릉위워크
-                            </p>
-                            <p className="text-fg-tertiary">
-                                <span className="text-border-default font-bold">고객센터</span>{' '}
-                                1588-0000
-                            </p>
-                            <p className="text-fg-tertiary">
-                                <span className="text-border-default font-bold">가입문의</span>{' '}
-                                1588-0000
-                            </p>
-                            <p className="text-fg-tertiary">
-                                Copyright ⓒ U+GETDDO Corp. All Rights Reserved.
-                            </p>
-                            {/* 이번 방문의 데이터 출처 — 서버가 닿지 않으면 예시 데이터로 보여 주므로 실데이터와 구분한다 */}
-                            <p className="text-fg-tertiary">{DATA_SOURCE_LABEL[getDataSource()]}</p>
-                        </div>
-                    </div>
-                    <ul className="flex flex-wrap items-center gap-x-4 gap-y-3">
-                        {FOOTER_AWARDS.map(({ icon, title, detail }) => (
-                            <li key={title} className="flex items-center gap-2">
-                                <img src={icon} alt="" className="h-10 w-12.5 opacity-80" />
-                                <p className="text-fg-tertiary flex flex-col">
-                                    <span>{title}</span>
-                                    <span>{detail}</span>
-                                </p>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </footer>
+            <UserFooter />
         </div>
     );
 }
