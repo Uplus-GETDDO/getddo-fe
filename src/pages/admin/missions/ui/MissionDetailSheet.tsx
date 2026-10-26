@@ -14,7 +14,13 @@ import {
     DetailSection,
     DetailSummary,
 } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    InspectorBody,
+    InspectorDescription,
+    InspectorHeader,
+    InspectorPanel,
+    InspectorTitle,
+} from '@shared/ui/inspector';
 import { LoadingBlock, SkeletonRows } from '@shared/ui/skeleton';
 import { StatusDot } from '@shared/ui/status-dot';
 import { formatKstFullDot } from '@shared/utils/date';
@@ -25,21 +31,19 @@ import { FreeTextAnswers } from './FreeTextAnswers';
 import { SurveySummaryPanel } from './SurveySummaryPanel';
 
 /**
- * 미션 상세 드로어 — 다른 관리자 상세와 같이 오른쪽에서 열린다.
+ * 미션 상세 — 다른 관리자 상세와 같이 목록 옆 칸에 열린다.
  * 맨 위 요약(상태·유형·제목·기간) → 기본 정보 → 문항 → (설문) 응답 집계·서술 답변 순
  */
 export function MissionDetailSheet({ id, onClose }: { id: string | null; onClose: () => void }) {
     return (
-        <Sheet
+        <InspectorPanel
             open={id !== null}
             onOpenChange={(next) => {
                 if (!next) onClose();
             }}
         >
-            <SheetContent className="sm:max-w-2xl">
-                {id && <MissionDetailBody key={id} id={id} />}
-            </SheetContent>
-        </Sheet>
+            <InspectorBody>{id && <MissionDetailBody key={id} id={id} />}</InspectorBody>
+        </InspectorPanel>
     );
 }
 
@@ -48,12 +52,12 @@ function MissionDetailBody({ id }: { id: string }) {
     const mission = query.data;
     return (
         <>
-            <SheetHeader>
-                <SheetTitle>미션 상세</SheetTitle>
-                <SheetDescription className="sr-only">
+            <InspectorHeader>
+                <InspectorTitle>미션 상세</InspectorTitle>
+                <InspectorDescription className="sr-only">
                     기본 정보·문항·설문 응답을 확인합니다.
-                </SheetDescription>
-            </SheetHeader>
+                </InspectorDescription>
+            </InspectorHeader>
             <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                 {query.isPending && (
                     <LoadingBlock label="상세를 불러오는 중…">

@@ -8,13 +8,23 @@ import { LoginPage } from '@pages/login/LoginPage';
 import { NotFoundPage } from '@pages/notFound/NotFoundPage';
 import { env } from '@shared/config/env';
 import { RouteErrorFallback } from '@shared/ui/route-error-boundary';
-import { SkeletonDetail } from '@shared/ui/skeleton';
+
+/**
+ * 코드 조각을 받는 동안의 자리 — 화면에는 아무것도 그리지 않고 화면 낭독기에만 알린다.
+ * 예전에는 공용 상세 스켈레톤을 꽉 채워 그려, 새로고침·첫 진입마다 어느 화면과도 다른 모양이 한 번 번쩍인 뒤
+ * 페이지 자신의 스켈레톤으로 바뀌었다. 조각은 금방 오고, 데이터를 기다리는 모양은 각 페이지가 그린다 (관리자와 같음)
+ */
+const ChunkLoading = () => (
+    <p role="status" className="sr-only">
+        불러오는 중…
+    </p>
+);
 
 // 관리자 경로와 같은 로딩 경계를 페이지에 둔다. 청크를 받는 동안 사용자 셸을 유지한다.
 const lazyPage = (importer: () => Promise<{ default: ComponentType }>) => {
     const Page = lazy(importer);
     return (
-        <Suspense fallback={<SkeletonDetail />}>
+        <Suspense fallback={<ChunkLoading />}>
             <Page />
         </Suspense>
     );
@@ -62,7 +72,7 @@ export const userRoutes: RouteObject[] = [
     {
         element: (
             <UserGuard>
-                <Suspense fallback={<SkeletonDetail />}>
+                <Suspense fallback={<ChunkLoading />}>
                     <UserLayoutLazy />
                 </Suspense>
             </UserGuard>

@@ -190,7 +190,6 @@ export const eventSchema = z.object({
             paragraphs: z.array(z.string()),
             prizeComposition: z.string(),
             shippingSchedule: z.string(),
-            membershipNote: z.string(),
         })
         .optional(),
     // spec EventSummary의 응모 규칙 필드 — 응모 요청(tickets 맵)의 허용 조합을 이 값으로 판정한다.

@@ -46,3 +46,4 @@ export { TicketBalanceStatus } from './ui/TicketBalanceStatus';
 export { groupTicketHistories } from './utils/groupHistories';
 export type { TicketHistoryGroup } from './utils/groupHistories';
 export { TicketHistoryRow } from './ui/TicketHistoryRow';
+export { CapsuleStatusArt } from './ui/CapsuleStatusArt';

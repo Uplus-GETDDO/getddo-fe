@@ -10,10 +10,12 @@ import {
     preloadGamePlayer,
     useGamePlaySession,
 } from '@features/playGame';
+import { getErrorMessage } from '@shared/api/errorMessage';
 import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
 import { GameRail } from '@widgets/gameRail';
+import { PageStatus } from '@widgets/pageStatus';
 
 import { GameHero } from './ui/GameHero';
 import { GameStats } from './ui/GameStats';
@@ -49,7 +51,7 @@ function GameDetailContent({
     userId: string;
     isUser: boolean;
 }) {
-    const { data: game, isPending, isError, error } = useGameDetail(gameId);
+    const { data: game, isPending, isError, error, isFetching, refetch } = useGameDetail(gameId);
     const statistics = useGameStatistics(gameId, isUser);
     const play = useGamePlaySession(gameId, userId, isUser, game?.code);
     const [guideOpen, setGuideOpen] = useState(false);
@@ -71,15 +73,32 @@ function GameDetailContent({
     }
     if (isError || !game) {
         return (
-            <main className={`${CONTAINER} flex flex-col items-start gap-3 py-20`}>
-                <p className="text-body text-fg-primary">
-                    {isError
-                        ? (error?.message ?? '게임 정보를 불러오지 못했습니다.')
-                        : '게임을 찾을 수 없어요.'}
-                </p>
-                <Link to="/missions" className="text-body-sm text-fg-brand">
-                    미션 페이지로 돌아가기
-                </Link>
+            <main className={CONTAINER}>
+                <PageStatus
+                    variant={isError ? 'error' : 'notFound'}
+                    title={isError ? '게임을 불러오지 못했어요' : '게임을 찾을 수 없어요'}
+                    description={
+                        isError
+                            ? getErrorMessage(error, '잠시 후 다시 시도해 주세요.')
+                            : '주소가 바뀌었거나 지금은 열리지 않은 게임이에요.'
+                    }
+                    actions={
+                        <>
+                            {isError && (
+                                <Button
+                                    type="button"
+                                    disabled={isFetching}
+                                    onClick={() => void refetch()}
+                                >
+                                    {isFetching ? '불러오는 중…' : '다시 시도'}
+                                </Button>
+                            )}
+                            <Button variant={isError ? 'secondary' : 'primary'} asChild>
+                                <Link to="/missions">미션 페이지로</Link>
+                            </Button>
+                        </>
+                    }
+                />
             </main>
         );
     }

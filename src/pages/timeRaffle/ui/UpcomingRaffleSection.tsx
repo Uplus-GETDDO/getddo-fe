@@ -46,13 +46,13 @@ export function UpcomingRaffleSection({
                         onNext={page.next}
                         prevDisabled={page.current === 0}
                         nextDisabled={page.current === page.total - 1}
-                        prevLabel="이전 오픈 예정 래플"
-                        nextLabel="다음 오픈 예정 래플"
+                        prevLabel="이전 오픈 예정 겟또타임"
+                        nextLabel="다음 오픈 예정 겟또타임"
                     />
                 )}
             </div>
             {events.length === 0 ? (
-                <p className="text-body-sm text-fg-tertiary">오픈 예정인 래플이 없어요.</p>
+                <p className="text-body-sm text-fg-tertiary">오픈 예정인 겟또타임이 없어요.</p>
             ) : (
                 <PagedCardGrid
                     items={page.items}

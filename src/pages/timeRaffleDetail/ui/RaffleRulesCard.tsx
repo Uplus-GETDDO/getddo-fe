@@ -21,12 +21,12 @@ const POLICY_RULES = [
 function entryLimitRule(event: Event): string {
     if (event.eventType === 'NO_TICKET') return '응모권 없이 한 번 참여할 수 있어요.';
     // 상한 실값은 상세(E02)에만 있다 — 목록만으로 만든 이벤트는 상한 문구를 적지 않는다
-    if (event.maxTicketsPerUser === undefined) return '응모권으로 이 래플에 응모할 수 있어요.';
+    if (event.maxTicketsPerUser === undefined) return '응모권으로 이 겟또타임에 응모할 수 있어요.';
     if (event.maxTicketsPerUser === null)
         return '마감 전까지 장수 제한 없이 나눠서 응모할 수 있어요.';
     if (event.maxTicketsPerUser <= event.requiredTickets)
         return `응모권 ${event.requiredTickets}장으로 한 번 응모할 수 있어요.`;
-    return `응모권은 이 래플에 최대 ${event.maxTicketsPerUser}장까지 쓸 수 있고, 마감 전까지 나눠서 더 응모할 수 있어요.`;
+    return `응모권은 이 겟또타임에 최대 ${event.maxTicketsPerUser}장까지 쓸 수 있고, 마감 전까지 나눠서 더 응모할 수 있어요.`;
 }
 
 /**
@@ -64,7 +64,7 @@ export function RaffleRulesCard({ event }: { event: Event }) {
                                 추첨 반영
                             </th>
                             <th scope="col" className="px-4 py-2.5 font-medium">
-                                이 래플
+                                이 겟또타임
                             </th>
                         </tr>
                     </thead>

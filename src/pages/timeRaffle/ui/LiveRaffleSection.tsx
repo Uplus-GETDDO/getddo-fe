@@ -64,8 +64,8 @@ export function LiveRaffleSection({ id, events, now, ticketLimit }: LiveRaffleSe
                         onNext={page.next}
                         prevDisabled={page.current === 0}
                         nextDisabled={page.current === page.total - 1}
-                        prevLabel="이전 진행 중 래플"
-                        nextLabel="다음 진행 중 래플"
+                        prevLabel="이전 진행 중 겟또타임"
+                        nextLabel="다음 진행 중 겟또타임"
                     />
                 )}
             </div>
@@ -93,7 +93,7 @@ export function LiveRaffleSection({ id, events, now, ticketLimit }: LiveRaffleSe
                     )}
                 </div>
             ) : (
-                <p className="text-body-sm text-fg-tertiary">지금 진행 중인 래플이 없어요.</p>
+                <p className="text-body-sm text-fg-tertiary">지금 진행 중인 겟또타임이 없어요.</p>
             )}
         </section>
     );

@@ -12,6 +12,7 @@ import { Button } from '@shared/ui/button';
 import { SkeletonDetail } from '@shared/ui/skeleton';
 import { StatusDot } from '@shared/ui/status-dot';
 import { formatKst } from '@shared/utils/date';
+import { PageStatus } from '@widgets/pageStatus';
 
 const CONTAINER = 'mx-auto w-full max-w-312 px-6';
 
@@ -46,14 +47,32 @@ export function MissionDetailPage() {
     }
     if (!mission) {
         return (
-            <main className={`${CONTAINER} flex flex-col items-start gap-3 pb-20`}>
-                <p className="text-body text-fg-primary">
-                    {isError ? '미션 정보를 불러오지 못했습니다.' : '미션을 찾을 수 없어요.'}
-                </p>
-                {/* 글줄(22px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다 */}
-                <Link to="/missions" className="text-body-sm text-fg-brand -my-0.5 py-0.5">
-                    미션 페이지로 돌아가기
-                </Link>
+            <main className={CONTAINER}>
+                <PageStatus
+                    variant={isError ? 'error' : 'notFound'}
+                    title={isError ? '미션을 불러오지 못했어요' : '미션을 찾을 수 없어요'}
+                    description={
+                        isError
+                            ? '잠시 후 다시 시도해 주세요.'
+                            : '끝났거나 주소가 바뀐 미션이에요. 미션 페이지에서 다른 미션을 확인해 보세요.'
+                    }
+                    actions={
+                        <>
+                            {isError && (
+                                <Button
+                                    type="button"
+                                    disabled={missionQuery.isFetching}
+                                    onClick={() => void missionQuery.refetch()}
+                                >
+                                    {missionQuery.isFetching ? '불러오는 중…' : '다시 시도'}
+                                </Button>
+                            )}
+                            <Button variant={isError ? 'secondary' : 'primary'} asChild>
+                                <Link to="/missions">미션 페이지로</Link>
+                            </Button>
+                        </>
+                    }
+                />
             </main>
         );
     }

@@ -1,10 +1,10 @@
-import { keepPreviousData, useQueries, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { apiClient } from '@shared/api/client';
 import { envelopeSchema, pageSchema } from '@shared/api/envelopeSchema';
 import { queryPresets } from '@shared/api/queryPresets';
 
-import type { AdminEventStatus, EventType } from '../model/adminTypes';
+import type { AdminEvent, AdminEventStatus, EventType } from '../model/adminTypes';
 
 import { adminEventSchema } from '../model/adminTypes';
 
@@ -45,9 +45,21 @@ export function useAdminEvents(params: AdminEventsParams) {
 }
 
 export function useAdminEvent(eventId: string) {
+    const queryClient = useQueryClient();
     return useQuery({
         ...queryPresets.realtime,
         queryKey: [...ADMIN_EVENTS_KEY, 'detail', eventId],
+        // 목록에서 줄을 눌러 열 때는 목록에 이미 받은 같은 이벤트를 먼저 보여 준다 — 상세를 받는 동안 오른쪽 칸이
+        // 스켈레톤으로 깜빡였다. 목록과 상세는 같은 스키마(AdminEvent)라 그대로 쓸 수 있고, 받은 뒤 상세로 바뀐다
+        placeholderData: () => {
+            for (const [, page] of queryClient.getQueriesData<{ items: AdminEvent[] }>({
+                queryKey: [...ADMIN_EVENTS_KEY, 'list'],
+            })) {
+                const found = page?.items.find((event) => event.id === eventId);
+                if (found) return found;
+            }
+            return undefined;
+        },
         queryFn: async () => {
             const { data } = await apiClient.get<unknown>(adminEventApiPath(eventId));
             return envelopeSchema(adminEventSchema).parse(data).data;

@@ -10,6 +10,7 @@ import { Badge } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { TextFilter } from '@shared/ui/filter-fields';
 import { chipValue, FilterChips, FilterPanel, FilterRow } from '@shared/ui/filter-panel';
+import { ListDetailLayout } from '@shared/ui/inspector';
 import { PagedResult } from '@shared/ui/paged-result';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
@@ -20,7 +21,7 @@ import { AdminUserDetailSheet } from './ui/AdminUserDetailSheet';
 import { MembershipBadge, UserStatus } from './ui/UserBadges';
 
 const SIZE_OPTIONS = [20, 50, 100];
-/** 서랍을 닫은 클릭이 아래 줄로 새어 다시 여는 것을 막는 시간 */
+/** 상세를 닫은 클릭이 아래 줄로 새어 다시 여는 것을 막는 시간 */
 const CLICK_THROUGH_MS = 400;
 const ROLE_OPTIONS = [
     { value: ALL, label: '전체' },
@@ -72,11 +73,12 @@ export function AdminUsersPage() {
     });
     const detailQuery = useAdminUser(validDetailId);
 
-    // 서랍 바깥을 눌러 닫으면 같은 클릭이 닫힌 뒤 아래 줄에 떨어져 서랍이 다시 열렸다 — 닫힌 직후 잠깐은 줄 클릭을 무시한다
+    // 상세 바깥을 눌러 닫으면 같은 클릭이 닫힌 뒤 아래 줄에 떨어져 상세가 다시 열렸다 — 닫힌 직후 잠깐은 줄 클릭을 무시한다.
+    // 상세를 열고 닫는 것은 같은 화면 안의 일이라 주소가 바뀌어도 스크롤을 맨 위로 올리지 않는다
     const justClosed = useRef(false);
     const openDetail = (id: string) => {
         if (justClosed.current) return;
-        setSearchParams({ detail: id });
+        setSearchParams({ detail: id }, { preventScrollReset: true });
     };
     const closeDetail = () => {
         justClosed.current = true;
@@ -85,7 +87,7 @@ export function AdminUsersPage() {
         }, CLICK_THROUGH_MS);
         const next = new URLSearchParams(searchParams);
         next.delete('detail');
-        setSearchParams(next);
+        setSearchParams(next, { preventScrollReset: true });
     };
 
     // 칩 조건은 누르는 즉시 걸고, 글자 검색만 검색 버튼으로 확정한다
@@ -190,123 +192,141 @@ export function AdminUsersPage() {
                 </FilterRow>
             </FilterPanel>
 
-            <PagedResult
-                data={listQuery.data}
-                isPending={listQuery.isPending}
-                isError={listQuery.isError}
-                isFetching={listQuery.isFetching}
-                updatedAt={listQuery.dataUpdatedAt}
-                page={page}
-                onPageChange={setPage}
-                emptyText="해당하는 사용자가 없습니다."
-                errorText={getErrorMessage(listQuery.error, '사용자를 불러오지 못했습니다.')}
-                onRetry={() => void listQuery.refetch()}
-                toolbar={
-                    // 검색과 무관한 전체 수 — 화면 맨 위 한 줄을 차지하면 검색 줄이 다른 화면보다 내려가 보여 목록 위 오른쪽으로 옮겼다
-                    <div className="flex items-center gap-4">
-                        <span className="text-body-sm text-fg-secondary tabular-nums">
-                            현재 활성 일반 사용자 {listQuery.data?.totalUserCount ?? '—'}명
-                        </span>
-                        <Select
-                            value={String(size)}
-                            onValueChange={(v) => {
-                                setSize(Number(v));
-                                setPage(1);
-                            }}
-                        >
-                            <SelectTrigger className="w-28" aria-label="페이지 크기">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {SIZE_OPTIONS.map((n) => (
-                                    <SelectItem key={n} value={String(n)}>
-                                        {n}개씩
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                }
-                emptyAction={
-                    hasAppliedFilters ? (
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="self-start"
-                            onClick={resetFilters}
-                        >
-                            검색 조건 초기화
-                        </Button>
-                    ) : undefined
-                }
-            >
-                {(rows) => (
-                    <div className="bg-surface-page border-border-default overflow-hidden border-y">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="hover:bg-transparent">
-                                    <TableHead className={HEAD}>사용자</TableHead>
-                                    {/* 역할 배지는 모두 같은 폭이라 가운데로 — 왼쪽에 붙이면 짧은 머리글과 어긋나 쏠려 보였다 */}
-                                    <TableHead className={`${HEAD} text-center`}>역할</TableHead>
-                                    <TableHead className={HEAD}>상태</TableHead>
-                                    <TableHead className={HEAD}>멤버십</TableHead>
-                                    <TableHead className={HEAD}>가입일</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {rows.map((row) => (
-                                    <TableRow
-                                        key={row.id}
-                                        className="cursor-pointer"
-                                        role="button"
-                                        tabIndex={0}
-                                        onClick={() => openDetail(row.id)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                openDetail(row.id);
-                                            }
-                                        }}
-                                    >
-                                        {/* 이름과 ID는 한 사람의 정보라 한 칸에 — 따로 떨어져 있으면 행을 가로로 훑어야 했다 */}
-                                        <TableCell className="px-4 py-3">
-                                            <span className="text-body-sm-bold text-fg-primary block">
-                                                {row.name}
-                                            </span>
-                                            <span className="text-caption text-fg-tertiary block">
-                                                {row.id}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell className="px-4 text-center">
-                                            <Badge
-                                                variant={row.role === 'ADMIN' ? 'info' : 'outline'}
+            {/* 줄을 고르면 오른쪽 칸에 상세 — 이벤트·추첨 관리와 같은 목록 + 상세 꼴 */}
+            <ListDetailLayout
+                open={validDetailId !== null}
+                detailKey={validDetailId}
+                label="사용자 상세"
+                list={
+                    <PagedResult
+                        data={listQuery.data}
+                        isPending={listQuery.isPending}
+                        isError={listQuery.isError}
+                        isFetching={listQuery.isFetching}
+                        updatedAt={listQuery.dataUpdatedAt}
+                        page={page}
+                        onPageChange={setPage}
+                        emptyText="해당하는 사용자가 없습니다."
+                        errorText={getErrorMessage(
+                            listQuery.error,
+                            '사용자를 불러오지 못했습니다.',
+                        )}
+                        onRetry={() => void listQuery.refetch()}
+                        toolbar={
+                            // 검색과 무관한 전체 수 — 화면 맨 위 한 줄을 차지하면 검색 줄이 다른 화면보다 내려가 보여 목록 위 오른쪽으로 옮겼다
+                            <div className="flex items-center gap-4">
+                                <span className="text-body-sm text-fg-secondary tabular-nums">
+                                    현재 활성 일반 사용자 {listQuery.data?.totalUserCount ?? '—'}명
+                                </span>
+                                <Select
+                                    value={String(size)}
+                                    onValueChange={(v) => {
+                                        setSize(Number(v));
+                                        setPage(1);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-28" aria-label="페이지 크기">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {SIZE_OPTIONS.map((n) => (
+                                            <SelectItem key={n} value={String(n)}>
+                                                {n}개씩
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        }
+                        emptyAction={
+                            hasAppliedFilters ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="self-start"
+                                    onClick={resetFilters}
+                                >
+                                    검색 조건 초기화
+                                </Button>
+                            ) : undefined
+                        }
+                    >
+                        {(rows) => (
+                            <div className="bg-surface-page border-border-default overflow-hidden border-y">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="hover:bg-transparent">
+                                            <TableHead className={HEAD}>사용자</TableHead>
+                                            {/* 역할 배지는 모두 같은 폭이라 가운데로 — 왼쪽에 붙이면 짧은 머리글과 어긋나 쏠려 보였다 */}
+                                            <TableHead className={`${HEAD} text-center`}>
+                                                역할
+                                            </TableHead>
+                                            <TableHead className={HEAD}>상태</TableHead>
+                                            <TableHead className={HEAD}>멤버십</TableHead>
+                                            <TableHead className={HEAD}>가입일</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {rows.map((row) => (
+                                            <TableRow
+                                                key={row.id}
+                                                className="cursor-pointer"
+                                                role="button"
+                                                tabIndex={0}
+                                                onClick={() => openDetail(row.id)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        openDetail(row.id);
+                                                    }
+                                                }}
                                             >
-                                                {USER_ROLE_LABEL[row.role]}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="px-4">
-                                            <UserStatus status={row.status} />
-                                        </TableCell>
-                                        <TableCell className="px-4">
-                                            <MembershipBadge membership={row.membership} />
-                                        </TableCell>
-                                        <TableCell className="text-fg-secondary px-4 text-sm tabular-nums">
-                                            {formatKstFullDot(row.createdAt)}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                )}
-            </PagedResult>
-
-            <AdminUserDetailSheet
-                userId={validDetailId}
-                user={detailQuery.data}
-                isPending={detailQuery.isPending}
-                error={detailQuery.error}
-                onClose={closeDetail}
+                                                {/* 이름과 ID는 한 사람의 정보라 한 칸에 — 따로 떨어져 있으면 행을 가로로 훑어야 했다 */}
+                                                <TableCell className="px-4 py-3">
+                                                    <span className="text-body-sm-bold text-fg-primary block">
+                                                        {row.name}
+                                                    </span>
+                                                    <span className="text-caption text-fg-tertiary block">
+                                                        {row.id}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="px-4 text-center">
+                                                    <Badge
+                                                        variant={
+                                                            row.role === 'ADMIN'
+                                                                ? 'info'
+                                                                : 'outline'
+                                                        }
+                                                    >
+                                                        {USER_ROLE_LABEL[row.role]}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="px-4">
+                                                    <UserStatus status={row.status} />
+                                                </TableCell>
+                                                <TableCell className="px-4">
+                                                    <MembershipBadge membership={row.membership} />
+                                                </TableCell>
+                                                <TableCell className="text-fg-secondary px-4 text-sm tabular-nums">
+                                                    {formatKstFullDot(row.createdAt)}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
+                    </PagedResult>
+                }
+                detail={
+                    <AdminUserDetailSheet
+                        userId={validDetailId}
+                        user={detailQuery.data}
+                        isPending={detailQuery.isPending}
+                        error={detailQuery.error}
+                        onClose={closeDetail}
+                    />
+                }
             />
         </div>
     );

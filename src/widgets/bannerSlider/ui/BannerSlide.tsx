@@ -39,7 +39,7 @@ export function FallbackBanner() {
                     <span className="text-fg-primary text-body-sm-bold">오늘의 겟또타임</span>
                 </div>
                 <h2 className="text-display text-fg-primary break-keep group-hover:underline group-hover:underline-offset-4">
-                    지금 열린 래플을 확인해 보세요
+                    지금 열린 겟또타임을 확인해 보세요
                 </h2>
                 <p className="text-body text-fg-primary break-keep">
                     모은 응모권으로 바로 응모할 수 있어요.

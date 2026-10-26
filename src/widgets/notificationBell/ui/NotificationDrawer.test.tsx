@@ -124,8 +124,11 @@ describe('NotificationDrawer', () => {
 
         await userEvent.click(within(dialog).getByRole('button', { name: '모두 읽음' }));
 
-        expect(await within(dialog).findByText('모두 읽었어요')).toBeInTheDocument();
-        expect(within(dialog).getByRole('button', { name: '모두 읽음' })).toBeDisabled();
+        // 다 읽으면 미읽음 수와 '모두 읽음' 버튼이 머리에서 사라진다
+        await waitFor(() =>
+            expect(within(dialog).queryByText('읽지 않음 3개')).not.toBeInTheDocument(),
+        );
+        expect(within(dialog).queryByRole('button', { name: '모두 읽음' })).not.toBeInTheDocument();
     });
 
     it('개별 알림을 누르면 읽음 처리되어 미읽음 수가 줄어든다', async () => {

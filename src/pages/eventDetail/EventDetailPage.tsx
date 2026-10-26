@@ -23,6 +23,7 @@ import {
     InsufficientTicketsDialog,
     readEligibility,
 } from '@widgets/eventEntry';
+import { PageStatus } from '@widgets/pageStatus';
 
 import { ColorPickEventVisual } from './ui/ColorPickEventVisual';
 import { CouponEventVisual } from './ui/CouponEventVisual';
@@ -111,31 +112,31 @@ export function EventDetailPage() {
         const notFound = eventQuery.error instanceof ApiError && eventQuery.error.status === 404;
         return (
             <main className={CONTAINER}>
-                <div className="flex flex-col items-start gap-4 pt-6">
-                    <h1 className="text-title-2 text-fg-primary">
-                        {notFound ? '이벤트를 찾을 수 없어요' : '이벤트를 불러오지 못했어요'}
-                    </h1>
-                    <p role="status" className="text-body-sm text-fg-secondary">
-                        {notFound
+                <PageStatus
+                    variant={notFound ? 'notFound' : 'error'}
+                    title={notFound ? '이벤트를 찾을 수 없어요' : '이벤트를 불러오지 못했어요'}
+                    description={
+                        notFound
                             ? '끝났거나 취소된 이벤트일 수 있어요. 목록에서 다른 이벤트를 확인해 보세요.'
-                            : getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                        {!notFound && (
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                disabled={eventQuery.isFetching}
-                                onClick={() => void eventQuery.refetch()}
-                            >
-                                {eventQuery.isFetching ? '불러오는 중…' : '다시 시도'}
+                            : getErrorMessage(eventQuery.error, '잠시 후 다시 시도해 주세요.')
+                    }
+                    actions={
+                        <>
+                            {!notFound && (
+                                <Button
+                                    type="button"
+                                    disabled={eventQuery.isFetching}
+                                    onClick={() => void eventQuery.refetch()}
+                                >
+                                    {eventQuery.isFetching ? '불러오는 중…' : '다시 시도'}
+                                </Button>
+                            )}
+                            <Button variant={notFound ? 'primary' : 'secondary'} asChild>
+                                <Link to="/events">이벤트 목록으로</Link>
                             </Button>
-                        )}
-                        <Button variant="secondary" asChild>
-                            <Link to="/events">이벤트 목록으로</Link>
-                        </Button>
-                    </div>
-                </div>
+                        </>
+                    }
+                />
             </main>
         );
     }

@@ -77,13 +77,13 @@ describe('TimeRaffleDetailPage의 E07 사유별 버튼', () => {
         );
         expect(screen.getByRole('button', { name: '응모하기' })).toBeInTheDocument();
         expect(
-            screen.getByText('래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'),
+            screen.getByText('겟또타임 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'),
         ).toBeInTheDocument();
         server.resetHandlers();
-        await userEvent.click(screen.getByRole('button', { name: '래플 정보 다시 시도' }));
+        await userEvent.click(screen.getByRole('button', { name: '겟또타임 정보 다시 시도' }));
         await waitFor(() =>
             expect(
-                screen.queryByText('래플 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'),
+                screen.queryByText('겟또타임 정보를 갱신하지 못했어요. 이전 정보를 표시해요.'),
             ).not.toBeInTheDocument(),
         );
         client.clear();

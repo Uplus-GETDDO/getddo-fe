@@ -22,6 +22,7 @@ import {
     FilterRow,
     rangeValue,
 } from '@shared/ui/filter-panel';
+import { ListDetailLayout } from '@shared/ui/inspector';
 import { PagedResult } from '@shared/ui/paged-result';
 import { formatKst, kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
 
@@ -167,61 +168,70 @@ export function JobsTab() {
                 </FilterRow>
             </FilterPanel>
 
-            <PagedResult
-                data={query.data}
-                isPending={query.isPending}
-                isError={query.isError}
-                isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
-                page={page}
-                onPageChange={setPage}
-                toolbar={
-                    // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
-                    <BulkRetryButton
-                        kind="job"
-                        targets={(query.data?.items ?? [])
-                            .filter((item) => item.retryable)
-                            .map((item) => ({
-                                id: item.id,
-                                label: `${NOTIFICATION_TYPE_LABEL[item.notificationType]} · ${formatKst(item.scheduledAt)} 예정`,
-                            }))}
-                    />
-                }
-                emptyText="해당하는 알림 작업이 없습니다."
-                errorText="알림 작업 목록을 불러오지 못했습니다."
-                onRetry={() => void query.refetch()}
-                emptyAction={
-                    hasAppliedFilters ? (
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="self-start"
-                            onClick={resetFilters}
-                        >
-                            검색 조건 초기화
-                        </Button>
-                    ) : undefined
-                }
-            >
-                {(rows) => <NotificationJobTable jobs={rows} onRowClick={setSelectedJob} />}
-            </PagedResult>
-
-            <NotificationJobDetailDrawer
-                job={selectedJob}
+            {/* 줄을 고르면 오른쪽 칸에 상세 — 이벤트·추첨 관리와 같은 목록 + 상세 꼴 */}
+            <ListDetailLayout
                 open={selectedJob !== null}
-                onOpenChange={(open) => {
-                    if (!open) setSelectedJob(null);
-                }}
-                action={(job, detailReady) =>
-                    job.retryable ? (
-                        <Button
-                            className="w-full"
-                            disabled={!detailReady}
-                            onClick={() => setRetryJob(job)}
-                        >
-                            {detailReady ? '생성 복구 재시도' : '상세를 확인하는 중…'}
-                        </Button>
-                    ) : null
+                detailKey={selectedJob?.id}
+                label="알림 작업 상세"
+                list={
+                    <PagedResult
+                        data={query.data}
+                        isPending={query.isPending}
+                        isError={query.isError}
+                        isFetching={query.isFetching}
+                        updatedAt={query.dataUpdatedAt}
+                        page={page}
+                        onPageChange={setPage}
+                        toolbar={
+                            // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
+                            <BulkRetryButton
+                                kind="job"
+                                targets={(query.data?.items ?? [])
+                                    .filter((item) => item.retryable)
+                                    .map((item) => ({
+                                        id: item.id,
+                                        label: `${NOTIFICATION_TYPE_LABEL[item.notificationType]} · ${formatKst(item.scheduledAt)} 예정`,
+                                    }))}
+                            />
+                        }
+                        emptyText="해당하는 알림 작업이 없습니다."
+                        errorText="알림 작업 목록을 불러오지 못했습니다."
+                        onRetry={() => void query.refetch()}
+                        emptyAction={
+                            hasAppliedFilters ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="self-start"
+                                    onClick={resetFilters}
+                                >
+                                    검색 조건 초기화
+                                </Button>
+                            ) : undefined
+                        }
+                    >
+                        {(rows) => <NotificationJobTable jobs={rows} onRowClick={setSelectedJob} />}
+                    </PagedResult>
+                }
+                detail={
+                    <NotificationJobDetailDrawer
+                        job={selectedJob}
+                        open={selectedJob !== null}
+                        onOpenChange={(open) => {
+                            if (!open) setSelectedJob(null);
+                        }}
+                        action={(job, detailReady) =>
+                            job.retryable ? (
+                                <Button
+                                    className="w-full"
+                                    disabled={!detailReady}
+                                    onClick={() => setRetryJob(job)}
+                                >
+                                    {detailReady ? '생성 복구 재시도' : '상세를 확인하는 중…'}
+                                </Button>
+                            ) : null
+                        }
+                    />
                 }
             />
 

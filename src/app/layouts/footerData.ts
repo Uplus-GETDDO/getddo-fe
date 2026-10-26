@@ -29,3 +29,9 @@ export const FOOTER_AWARDS = [
     { icon: verifiedIcon, title: '추첨 결과 정합성 검증', detail: '후보·조건·확정 결과 보존' },
     { icon: privacyIcon, title: '당첨자 개인정보 마스킹', detail: '안심 발표 시스템 적용' },
 ];
+
+// 팀 역할 분담 — 연락처 대신 이름만 둔다 (개인 번호는 공개 화면에 싣지 않는다)
+export const FOOTER_TEAM = [
+    { role: '백엔드', members: ['전민규', '박지훈', '석종수', '이경주', '윤태형'] },
+    { role: '프론트엔드', members: ['박소연', '송동현', '장준환'] },
+];

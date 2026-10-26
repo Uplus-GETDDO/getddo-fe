@@ -33,11 +33,15 @@
 
 _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `action/*`이다.)_
 
-| Token                    | Hex       | 용도                        |
-| ------------------------ | --------- | --------------------------- |
-| `action/neutral`         | `#1F242B` | 무채색 버튼 채움, 모달 확인 |
-| `action/neutral-hover`   | `#343A42` | Hover 상태                  |
-| `action/neutral-pressed` | `#111417` | Pressed 상태                |
+| Token                    | Hex       | 용도                                     |
+| ------------------------ | --------- | ---------------------------------------- |
+| `action/neutral`         | `#1F242B` | 무채색 버튼 채움, 모달 확인              |
+| `action/neutral-hover`   | `#343A42` | Hover 상태                               |
+| `action/neutral-pressed` | `#111417` | Pressed 상태                             |
+| `action/accent`          | `#FFC83D` | 노랑 버튼 채움 (안내·보상 강조 한정)     |
+| `action/accent-hover`    | `#F5B820` | Hover 상태                               |
+| `action/accent-pressed`  | `#E6A80F` | Pressed 상태                             |
+| `action/accent-fg`       | `#1F242B` | 노랑 버튼 글자 (다크 모드에서도 같은 값) |
 
 ### 3) Ticket — 응모권
 
@@ -197,7 +201,7 @@ _(Figma 원본 섹션 라벨은 "2. Button — 버튼"이며, 토큰 이름은 `
 
 - primary는 **행동 묶음마다 하나**만 둔다 (페이지 전체에 하나일 필요는 없다).
 - **마젠타 버튼은 쓰지 않는다** (`emphasis` 제거). 응모처럼 중요한 행동은 색이 아니라 크기(Large)·자리·확인 모달로 드러낸다.
-- **노랑 버튼은 두지 않는다.** secondary hover를 노랑으로 하면 취소 버튼까지 노랗게 변해 어색했다. 보상처럼 노랑으로 강조할 버튼이 필요해지면 그때 `accent` 종류와 hover·pressed 토큰을 함께 정한다.
+- **노랑 버튼은 일반 화면에 두지 않는다.** secondary hover를 노랑으로 하면 취소 버튼까지 노랗게 변해 어색했다. 예외로 첫 방문 안내의 '다음'처럼 화면 위에 떠서 다음 행동을 이끄는 버튼에만 `action/accent`(평소·hover·pressed·글자 토큰)를 쓴다 — 응모권 노랑과 같은 계열이라 마젠타와 붙이지 않는다.
 - secondary hover는 회색 바탕이 비활성과 닮지 않도록 **테두리를 한 단계 진하게**(`fg/disabled`) 바꾸고 글자는 `fg/primary` 그대로 둔다 — 비활성은 테두리가 없고 글자가 연해 구분된다.
 - 상세로 **이동**하는 버튼은 "응모하러 가기", 실제로 응모권을 **쓰는** 버튼은 "응모하기"로 이름을 구분한다.
 - 모서리 `radius/lg` 8px, 라벨 SemiBold(Small 14 · Medium/Large 16), 높이 Small 36 · Medium 40 · Large 48.

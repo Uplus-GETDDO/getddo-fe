@@ -93,6 +93,8 @@ AO01은 `AdminUserList`의 `totalElements`와 `totalUserCount`를 분리한다. 
 
 `feat/GD-260`에서 배포 런타임 목업을 종료했다. `hybridHandlers` 구분을 제거하고 `mocks/browser.ts`는 전체 `handlers`만 등록한다 — 로컬 개발·테스트 전용이다. `vercel.json` build.env의 `VITE_ENABLE_MSW=false`로 배포 빌드는 `app/main.tsx`에서 목업을 시작하지 않으며, 대신 과거에 설치된 우리 앱의 `mockServiceWorker.js`만 등록 해제한다(`app/config/serviceWorkerCleanup.ts`, 다른 앱의 Worker는 건드리지 않는다).
 
+> 이후 변경: 서버가 닿지 않을 때(5xx·연결 실패·시간 초과)만 그 방문을 목업으로 시작하도록 바꿨다. 실서버가 응답하면 지금처럼 목업 없이 동작하고, 화면 바닥글에 데이터 출처를 표시한다 — 자세한 규칙은 [CONTEXT](CONTEXT.md)의 목업 항목.
+
 - 시연 계정: `/virtual-users` HTTP 경로를 제거하고 `entities/user/model/virtualUsers.ts`가 `VITE_VIRTUAL_USERS_JSON`을 직접 읽는다. 미설정·형식 오류는 로그인 화면의 명시 안내이며 샘플 계정으로 자동 대체하지 않는다. Vercel 환경변수의 실제 등록 계정 JSON은 사용자 입력 대기다.
 - `/admin/abuse-cases`는 목업 해제로 실서버를 그대로 받는다 — 2026-10-23 배포가 확인돼 GD-317 실측에서 200·계약 일치를 확인했다.
 - 가상 시계는 배포에서 티커·`/admin/virtual-clock` 라우트·메뉴·오버라이드 저장을 모두 비활성화한다. 로컬 개발에서는 유지하며 화면에 “서버 일정은 바뀌지 않는다”를 명시한다.

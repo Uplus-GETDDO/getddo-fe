@@ -4,8 +4,21 @@ import type { Event } from '@entities/event';
 import { useMyEventEntries } from '@entities/entry';
 import { describeTicketUsage } from '@entities/event';
 import { useMyTickets } from '@entities/ticket';
-import { KST_HOUR_MINUTE, formatKst } from '@shared/utils/date';
+import { KST_HOUR_MINUTE, formatKst, isSameKstDate } from '@shared/utils/date';
 import { formatNumber } from '@shared/utils/format';
+
+/**
+ * 모집 시각 — 하루 안에 열고 닫으면 시각만, 날을 넘기면 날짜를 붙인다.
+ * 시각만 적으면 며칠짜리 래플이 '17:28 시작 · 14:28 마감'처럼 마감이 시작보다 앞서 보였다
+ */
+function formatRecruitWindow(startsAt: string, endsAt: string) {
+    const at = (iso: string, withDate: boolean) =>
+        withDate
+            ? `${formatKst(iso, { month: 'long', day: 'numeric' })} ${formatKst(iso, KST_HOUR_MINUTE)}`
+            : formatKst(iso, KST_HOUR_MINUTE);
+    const withDate = !isSameKstDate(startsAt, endsAt);
+    return `${at(startsAt, withDate)} 시작 · ${at(endsAt, withDate)} 마감`;
+}
 
 /** 멤버십 자격 문구 — 이벤트마다 최소 등급이 다르다 (이벤트 상세와 같은 말을 쓴다) */
 const MEMBERSHIP_NOTE: Record<Event['membershipRule'], string> = {
@@ -45,19 +58,13 @@ export function RaffleDetailsCard({
                     : null,
         },
         { label: '배송 일정', value: detail?.shippingSchedule ?? null },
-        {
-            label: '모집 시각',
-            value: `${formatKst(event.startsAt, KST_HOUR_MINUTE)} 시작 · ${formatKst(event.endsAt, KST_HOUR_MINUTE)} 마감`,
-        },
+        { label: '모집 시각', value: formatRecruitWindow(event.startsAt, event.endsAt) },
         /*
          * raffleDetail은 목업 전용이라 실서버에서는 비어 있다 — 그걸로만 적어 두면
          * 등급 제한이 있는 래플에서 자격 줄이 통째로 사라져, 응모가 막힌 이유를 알 수 없었다.
-         * 서버가 늘 주는 membershipRule로 대신 적는다 (일반 이벤트 상세와 같은 문구).
+         * 서버가 늘 주는 membershipRule로 적는다 (일반 이벤트 상세와 같은 문구).
          */
-        {
-            label: '멤버십 자격',
-            value: detail?.membershipNote ?? MEMBERSHIP_NOTE[event.membershipRule],
-        },
+        { label: '멤버십 자격', value: MEMBERSHIP_NOTE[event.membershipRule] },
         /*
          * '1회 차감 수량'으로 두면 가중치 래플이 '1회 1장'으로 읽힌다 — 등급을 골라
          * 누적 상한까지 여러 번 나눠 낼 수 있는 래플이라 쓰는 방식 자체를 적는다 (ADR-010)

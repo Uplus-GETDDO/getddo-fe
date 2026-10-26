@@ -7,7 +7,13 @@ import {
     DetailSection,
     DetailSummary,
 } from '@shared/ui/detail-list';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@shared/ui/sheet';
+import {
+    InspectorBody,
+    InspectorDescription,
+    InspectorHeader,
+    InspectorPanel,
+    InspectorTitle,
+} from '@shared/ui/inspector';
 import { formatKst } from '@shared/utils/date';
 
 import type { AdminNotification } from '../model/types';
@@ -30,7 +36,7 @@ export function ErrorBox({ message }: { message: string }) {
 const kstOrDash = (iso: string | null) => (iso ? formatKst(iso) : '-');
 
 /**
- * 개별 알림 모의 발송 진단 드로어 — AN04 목록 응답 필드만으로 구성한다.
+ * 개별 알림 모의 발송 진단 상세(목록 옆 칸) — AN04 목록 응답 필드만으로 구성한다.
  * 별도의 발송 상세 API가 없어 마지막 오류·다음 재시도·발송 차수·내용을 여기서 확인한다.
  * 복구 재시도 같은 사용자 행동은 페이지가 action 슬롯으로 주입한다.
  */
@@ -49,16 +55,16 @@ export function AdminNotificationDetailDrawer({
     const blockReason = notification ? deliveryRetryBlockReason(notification) : null;
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-lg">
-                <SheetHeader>
-                    <SheetTitle>{notification?.title ?? '발송 상세'}</SheetTitle>
-                    <SheetDescription>
+        <InspectorPanel open={open} onOpenChange={onOpenChange}>
+            <InspectorBody>
+                <InspectorHeader>
+                    <InspectorTitle>{notification?.title ?? '발송 상세'}</InspectorTitle>
+                    <InspectorDescription>
                         {notification
                             ? `받는 사람 ${notification.userName ?? notification.userId}`
                             : ''}
-                    </SheetDescription>
-                </SheetHeader>
+                    </InspectorDescription>
+                </InspectorHeader>
                 {notification && (
                     <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
                         {/* 핵심 — 발송 상태와 지금 복구할 수 있는지, 실패했다면 왜 */}
@@ -135,7 +141,7 @@ export function AdminNotificationDetailDrawer({
                         <DetailMeta>알림 ID {notification.id}</DetailMeta>
                     </div>
                 )}
-            </SheetContent>
-        </Sheet>
+            </InspectorBody>
+        </InspectorPanel>
     );
 }

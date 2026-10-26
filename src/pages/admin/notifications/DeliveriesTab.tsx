@@ -20,6 +20,7 @@ import {
     FilterRow,
     rangeValue,
 } from '@shared/ui/filter-panel';
+import { ListDetailLayout } from '@shared/ui/inspector';
 import { PagedResult } from '@shared/ui/paged-result';
 import { kstDateStartUtcIso, kstNextDateStartUtcIso } from '@shared/utils/date';
 
@@ -167,63 +168,75 @@ export function DeliveriesTab() {
                 </FilterRow>
             </FilterPanel>
 
-            <PagedResult
-                data={query.data}
-                isPending={query.isPending}
-                isError={query.isError}
-                isFetching={query.isFetching}
-                updatedAt={query.dataUpdatedAt}
-                page={page}
-                onPageChange={setPage}
-                toolbar={
-                    // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
-                    <BulkRetryButton
-                        kind="delivery"
-                        targets={(query.data?.items ?? [])
-                            .filter((item) => item.retryable)
-                            .map((item) => ({
-                                id: item.id,
-                                label: `${item.title} · ${item.userName ?? item.userId}`,
-                            }))}
-                    />
-                }
-                emptyText="해당하는 발송 이력이 없습니다."
-                errorText="발송 이력을 불러오지 못했습니다."
-                onRetry={() => void query.refetch()}
-                emptyAction={
-                    hasAppliedFilters ? (
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="self-start"
-                            onClick={resetFilters}
-                        >
-                            검색 조건 초기화
-                        </Button>
-                    ) : undefined
-                }
-            >
-                {(rows) => (
-                    <AdminNotificationTable
-                        notifications={rows}
-                        onRetry={setRetryTarget}
-                        onRowClick={setDetailTarget}
-                    />
-                )}
-            </PagedResult>
-
-            <AdminNotificationDetailDrawer
-                notification={detailTarget}
+            {/* 줄을 고르면 오른쪽 칸에 상세 — 이벤트·추첨 관리와 같은 목록 + 상세 꼴 */}
+            <ListDetailLayout
                 open={detailTarget !== null}
-                onOpenChange={(open) => {
-                    if (!open) setDetailTarget(null);
-                }}
-                action={(notification, blockReason) =>
-                    blockReason === null ? (
-                        <Button className="w-full" onClick={() => setRetryTarget(notification)}>
-                            발송 복구 재시도
-                        </Button>
-                    ) : null
+                detailKey={detailTarget?.id}
+                label="발송 상세"
+                list={
+                    <PagedResult
+                        data={query.data}
+                        isPending={query.isPending}
+                        isError={query.isError}
+                        isFetching={query.isFetching}
+                        updatedAt={query.dataUpdatedAt}
+                        page={page}
+                        onPageChange={setPage}
+                        toolbar={
+                            // 지금 목록에서 복구할 수 있는 실패 건만 — 한 건씩 누르지 않고 한 번에 다시 접수한다
+                            <BulkRetryButton
+                                kind="delivery"
+                                targets={(query.data?.items ?? [])
+                                    .filter((item) => item.retryable)
+                                    .map((item) => ({
+                                        id: item.id,
+                                        label: `${item.title} · ${item.userName ?? item.userId}`,
+                                    }))}
+                            />
+                        }
+                        emptyText="해당하는 발송 이력이 없습니다."
+                        errorText="발송 이력을 불러오지 못했습니다."
+                        onRetry={() => void query.refetch()}
+                        emptyAction={
+                            hasAppliedFilters ? (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="self-start"
+                                    onClick={resetFilters}
+                                >
+                                    검색 조건 초기화
+                                </Button>
+                            ) : undefined
+                        }
+                    >
+                        {(rows) => (
+                            <AdminNotificationTable
+                                notifications={rows}
+                                onRetry={setRetryTarget}
+                                onRowClick={setDetailTarget}
+                            />
+                        )}
+                    </PagedResult>
+                }
+                detail={
+                    <AdminNotificationDetailDrawer
+                        notification={detailTarget}
+                        open={detailTarget !== null}
+                        onOpenChange={(open) => {
+                            if (!open) setDetailTarget(null);
+                        }}
+                        action={(notification, blockReason) =>
+                            blockReason === null ? (
+                                <Button
+                                    className="w-full"
+                                    onClick={() => setRetryTarget(notification)}
+                                >
+                                    발송 복구 재시도
+                                </Button>
+                            ) : null
+                        }
+                    />
                 }
             />
 
