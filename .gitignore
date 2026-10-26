@@ -54,3 +54,6 @@ __pycache__/
 
 # dryforge 작업 문서
 .dryforge/
+
+# 로컬 에이전트 작업트리
+.claude-worktrees/

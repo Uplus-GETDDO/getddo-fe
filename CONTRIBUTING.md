@@ -121,6 +121,8 @@ npm run build
 npm run perf:budget  # 초기 번들 버짓 검사 — build 산출물 필요
 ```
 
+`.claude-worktrees/`는 로컬 에이전트의 별도 체크아웃이므로 Git·Prettier·ESLint·Vitest 대상에서 제외합니다. 그 안의 복제 코드나 테스트가 현재 저장소 검사에 섞이지 않도록 하는 설정이며, `src/`·`scripts/`의 실제 테스트와 Vitest 기본 제외 목록은 유지합니다. 작업트리의 실제 파일은 이동하거나 삭제하지 않습니다.
+
 ## AI 에이전트와 함께 작업할 때
 
 - 에이전트에게 작업을 시키기 전 `AGENTS.md`를 읽도록 한다 — FSD 규칙, 금지사항, 검증 명령이 들어 있다
