@@ -30,7 +30,8 @@ export const eventSchema = z.object({
     // 목록 카드 썸네일 (가로형)
     bannerImageUrl: z.string().nullable(),
     // 상세 화면 본문 이미지 — 이벤트마다 디자이너가 만드는 세로로 긴 한 장. 썸네일과 비율·용도가 달라 분리했다.
-    // TODO: 필드명·형식·용량 제한은 백엔드와 미합의 (docs/CONTEXT.md "배너 이미지 형식·용량 제한 — 담당자 확정 대기")
+    // 계약(05-api/event.md)에 없는 FE 확장 필드라 optional이다 — 필드명·형식·용량 제한은
+    // R4 배너 이미지 업로드 계약 확정 대기 (docs/superpowers/plans/2026-10-26-gd352-be-requests.md)
     detailImageUrl: z.string().nullable().optional(),
     detailVisual: z
         .discriminatedUnion('template', [
@@ -167,7 +168,8 @@ export const eventSchema = z.object({
     // R4 확정(getddo-spec 05-api/event.md)에 따라 toEvent가 eventType으로 판정해 채운다.
     isTimeRaffle: z.boolean().optional(),
     // 타임래플 상세 화면의 안내 문구 — 운영자가 이벤트마다 작성하는 값이라 계산으로 만들 수 없다.
-    // TODO: 필드 구성은 백엔드와 미합의. 없으면 상세 화면이 기본값으로 대체한다.
+    // E02 상세 계약(05-api/event.md)에 없는 FE 확장 필드라 전체를 optional로 둔다 — 없으면 상세 화면이
+    // 기본 문구로 대체한다. 계약 추가는 BE 합의 후속 과제다.
     raffleDetail: z
         .object({
             paragraphs: z.array(z.string()),
@@ -186,13 +188,14 @@ export const eventSchema = z.object({
     maxTicketsPerUser: z.number().int().nullable().optional(),
     membershipRule: membershipRuleSchema,
     // 레거시 표시용 필드 — 목록 섹션 분리·카드 표시에 쓴다. 응모 규칙 판정은 위 네 필드를 따른다.
-    // TODO: 응모권 필요 여부 표시를 eventType으로 옮기는 전환은 별도 작업
+    // 응모권 필요 여부 표시를 eventType으로 옮기는 전환은 계약 영향이라 별도 후속 작업으로 남긴다 — 여기서는 하지 않는다
     requiredTickets: z.number().int().nonnegative(),
     // 경품 요약 — prizes는 상세(E02)에만 있어 목록만으로 만든 이벤트에는 없다 (spec EventSummary)
     prizeName: z.string().optional(),
     winnerCount: z.number().int().positive().optional(),
     // 응모 현황(응모자 수·차감 합계)은 E03 전용 조회(entities/entry의 useEntryStatistics)로 받는다 — ADR-0007
-    // TODO: 백엔드는 아래 두 필드를 제공하지 않는다 — 화면은 entities/entry의 useMyEventEntries로 직접 계산한다. 필드 추가는 이벤트 담당 백엔드 후속 과제
+    // 아래 두 필드는 현행 계약에 없다 — 상세 화면의 '이번 래플' 카운터는 entities/entry의 useMyEventEntries가
+    // 내 응모 이력(E05/E06)으로 직접 계산해 채운다(구현 완료). 계약에 필드가 추가되면 응답값을 우선 쓰는지 별도 합의가 필요하다
     myEntryCount: z.number().int().nonnegative().nullable().optional(),
     // 내가 이 이벤트에 지금까지 쓴 응모권 수 — 추가 응모로 한도(ADR-010)까지 얼마나 남았는지 계산하는 값.
     // 한 번에 여러 장을 쓸 수 있어서 myEntryCount × requiredTickets로는 실제 사용량을 알 수 없다.

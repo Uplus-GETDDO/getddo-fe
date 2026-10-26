@@ -124,7 +124,8 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                                     type="button"
                                     disabled={summary.isFetching}
                                     onClick={summary.refetch}
-                                    className="text-semantic-error-strong focus-visible:ring-border-focus cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:outline-none enabled:hover:font-semibold disabled:cursor-default"
+                                    // 작은 글(caption 18px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다
+                                    className="text-semantic-error-strong focus-visible:ring-border-focus -my-1 cursor-pointer rounded-sm py-1 focus-visible:ring-2 focus-visible:outline-none enabled:hover:font-semibold disabled:cursor-default"
                                 >
                                     이번 달 합계 조회 실패 · 다시 시도
                                 </button>
@@ -135,9 +136,10 @@ export function TicketWallet({ now, action }: TicketWalletProps) {
                                 </>
                             )}
                         </span>
+                        {/* 글줄(22px) 위아래 패딩으로 누름 칸을 WCAG 2.5.8의 24px 이상으로 넓히고 음수 마진으로 줄간격을 지킨다 */}
                         <Link
                             to={action.to}
-                            className="text-body-sm-bold text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                            className="text-body-sm-bold text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus -my-0.5 flex shrink-0 items-center gap-0.5 rounded-sm py-0.5 whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
                         >
                             {action.label}
                             <ChevronRight className="size-4" />
@@ -193,7 +195,7 @@ export function TicketWalletCompact({ action }: Pick<TicketWalletProps, 'action'
             </ul>
             <Link
                 to={action.to}
-                className="text-body-sm-bold text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus ml-auto flex shrink-0 items-center gap-0.5 rounded-sm whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                className="text-body-sm-bold text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus -my-0.5 ml-auto flex shrink-0 items-center gap-0.5 rounded-sm py-0.5 whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
                 {action.label}
                 <ChevronRight className="size-4" />

@@ -107,7 +107,8 @@ export function TicketHistoryRow({
                     {link && (
                         <Link
                             to={link.to}
-                            className={`text-body-sm-bold text-fg-primary flex w-fit items-center gap-0.5 rounded-sm underline underline-offset-4 ${FOCUS}`}
+                            // 글줄(22px) 위아래로 누름 칸을 24px(WCAG 2.5.8)까지 넓히고 음수 마진으로 줄간격을 지킨다
+                            className={`text-body-sm-bold text-fg-primary -my-0.5 flex w-fit items-center gap-0.5 rounded-sm py-0.5 underline underline-offset-4 ${FOCUS}`}
                         >
                             {link.label}
                             <ArrowUpRight aria-hidden className="size-4" />
