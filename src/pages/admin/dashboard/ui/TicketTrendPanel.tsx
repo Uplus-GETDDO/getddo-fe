@@ -255,6 +255,11 @@ export function TicketTrendPanel({
     // 말풍선 좌표를 직접 계산하려고 y축 범위를 고정한다 — 눈금 4칸, 정수 간격
     const yStep = Math.max(1, Math.ceil(Math.max(0, ...rows.map((row) => row.granted)) / 4));
     const yTop = yStep * 4;
+    /*
+     * 축 칸 폭은 눈금 글자에 맞춰 늘린다. 48로 고정해 두면 지급이 네 자리가 되는 순간
+     * 맨 앞 숫자가 잘려 1008이 008처럼 보였다(GD-354). 12px 숫자 한 자가 약 7px, 좌우 여백 12px.
+     */
+    const yAxisWidth = Math.max(32, formatNumber(yTop).length * 7 + 12);
     const last = rows.length - 1;
     const chartRows: ChartRow[] = rows.map((row, index) => ({
         ...row,
@@ -303,7 +308,7 @@ export function TicketTrendPanel({
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart
                             data={chartRows}
-                            margin={{ top: 16, right: 12, bottom: 0, left: -16 }}
+                            margin={{ top: 16, right: 12, bottom: 0, left: 0 }}
                             onClick={(state) => openDay(state.activeTooltipIndex)}
                             onMouseMove={(state) => {
                                 const index = state.activeTooltipIndex;
@@ -344,7 +349,8 @@ export function TicketTrendPanel({
                                 tickLine={false}
                                 axisLine={false}
                                 tick={AXIS_TICK}
-                                width={48}
+                                width={yAxisWidth}
+                                tickFormatter={(value: number) => formatNumber(value)}
                                 domain={[0, yTop]}
                                 ticks={[0, yStep, yStep * 2, yStep * 3, yTop]}
                             />
