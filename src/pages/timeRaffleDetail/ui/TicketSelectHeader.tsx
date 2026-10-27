@@ -47,7 +47,7 @@ export function TicketSelectHeader({ gradeReflected, remainingLimit }: TicketSel
                         <p className="text-caption text-fg-tertiary mt-3">
                             {gradeReflected
                                 ? '고른 장수만큼 더해 추첨에 들어가요. 쓴 응모권은 되돌릴 수 없어요.'
-                                : '이 래플은 등급을 반영하지 않아 브론즈 1장으로만 응모해요. 쓴 응모권은 되돌릴 수 없어요.'}
+                                : '이 겟또타임은 등급을 반영하지 않아 브론즈 1장으로만 응모해요. 쓴 응모권은 되돌릴 수 없어요.'}
                         </p>
                     </PopoverContent>
                 </Popover>
@@ -59,7 +59,7 @@ export function TicketSelectHeader({ gradeReflected, remainingLimit }: TicketSel
                               ? ''
                               : ` 이번에 최대 ${remainingLimit}장까지 쓸 수 있어요.`
                       }`
-                    : '이 래플은 등급과 관계없이 브론즈 1장으로 응모해요.'}
+                    : '이 겟또타임은 등급과 관계없이 브론즈 1장으로 응모해요.'}
             </p>
         </div>
     );

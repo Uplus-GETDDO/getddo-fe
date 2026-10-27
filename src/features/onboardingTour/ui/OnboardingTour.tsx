@@ -12,7 +12,14 @@ import { hasSeenTour, markTourSeen } from '../utils/tourSeen';
 const START_DELAY_MS = 800;
 
 /**
- * 홈 첫 방문 안내 — 가상 사용자마다 처음 한 번만 4단계 말풍선으로 화면을 짚는다 (driver.js).
+ * 닫기 아이콘 — driver.js 기본은 글자 '×'라 다른 모달의 lucide X와 굵기·크기가 달랐다. 같은 lucide X(20px)로 바꿔 그린다.
+ * driver.js가 body에 직접 붙이는 버튼이라 React 아이콘 대신 같은 모양의 SVG 문자열을 넣는다
+ */
+const CLOSE_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+
+/**
+ * 홈 첫 방문 안내 — 가상 사용자마다 처음 한 번만 5단계 말풍선으로 화면을 짚는다 (driver.js).
  * 시작하는 순간 본 것으로 적는다 — 중간에 닫거나 다른 화면으로 가도 다시 뜨지 않는다.
  * 그리는 것은 driver.js가 body에 직접 붙이므로 이 컴포넌트는 아무것도 렌더하지 않는다.
  * ready: 홈 목록이 도착해 짚을 자리가 화면에 다 그려졌는지
@@ -39,6 +46,14 @@ export function OnboardingTour({ ready }: { ready: boolean }) {
             stageRadius: 16,
             // 안내 중 밝힌 자리를 눌러 다른 화면으로 가지 않게 — 끝까지 보거나 닫은 뒤에 쓴다
             disableActiveInteraction: true,
+            // 바깥(어두운 막)을 눌러도 닫지 않는다 — 시작할 때 이미 '봤다'로 적어, 스크롤하려다 잘못 누르면 다시 볼 길이 없다.
+            // 닫기는 × 버튼과 Esc로만 한다
+            overlayClickBehavior: () => {},
+            onPopoverRender: (popover) => {
+                popover.closeButton.innerHTML = CLOSE_ICON;
+                // 다음 버튼에 포커스 — 커서는 옮길 수 없어도 Enter 한 번으로 넘어가고, 포커스 테두리가 자리를 알려 준다
+                requestAnimationFrame(() => popover.nextButton.focus({ preventScroll: true }));
+            },
             // 자리가 없으면(조회 실패로 섹션이 빠진 경우 등) 그 단계만 건너뛴다
             skipMissingElement: true,
             animate: !reduceMotion,

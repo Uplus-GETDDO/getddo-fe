@@ -17,7 +17,7 @@
     font-size: var(--text-subhead);
     line-height: var(--text-subhead--line-height);
     font-weight: var(--text-subhead--font-weight);
-    padding-right: 28px;
+    padding-right: 36px;
 }
 
 .getddo-tour .driver-popover-description {
@@ -31,19 +31,34 @@
     margin-top: 4px;
 }
 
+/* 닫기 — 공용 모달 X와 같게: 36 누름 칸·20 아이콘, 평소 fg-secondary, 올리면 fg-primary, 바탕은 바뀌지 않는다 */
 .getddo-tour .driver-popover-close-btn {
     top: 12px;
     right: 12px;
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
+    /* driver.js가 display:block을 인라인으로 주므로 flex 대신 안쪽 여백으로 20px 아이콘을 가운데 둔다 */
+    padding: 8px;
     border-radius: var(--radius-lg);
-    color: var(--color-fg-tertiary);
+    color: var(--color-fg-secondary);
+    background-color: transparent;
+    cursor: pointer;
+    transition: color 0.15s;
 }
 
-.getddo-tour .driver-popover-close-btn:hover,
+.getddo-tour .driver-popover-close-btn svg {
+    display: block;
+}
+
+.getddo-tour .driver-popover-close-btn:hover {
+    color: var(--color-fg-primary);
+    background-color: transparent;
+}
+
 .getddo-tour .driver-popover-close-btn:focus-visible {
     color: var(--color-fg-primary);
-    background-color: var(--color-surface-canvas);
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
 }
 
 .getddo-tour .driver-popover-footer {
@@ -88,14 +103,39 @@
     outline-offset: 2px;
 }
 
+/*
+ * 다음 버튼 — 노랑(action/accent)으로 칠하고, 말풍선이 뜰 때 잠깐 번지는 테두리로 '여기를 누르세요'를 알린다.
+ * 마우스 커서는 브라우저가 옮기게 두지 않아 대신 키보드 포커스를 이 버튼에 둔다 (Enter로 바로 넘어간다)
+ */
 .getddo-tour .driver-popover-next-btn {
-    color: var(--color-fg-on-brand);
-    background-color: var(--color-action-neutral);
-    border-color: var(--color-action-neutral);
+    color: var(--color-action-accent-fg);
+    background-color: var(--color-action-accent);
+    border-color: var(--color-action-accent);
 }
 
 .getddo-tour .driver-popover-next-btn:hover {
-    background-color: var(--color-action-neutral-hover);
+    background-color: var(--color-action-accent-hover);
+    border-color: var(--color-action-accent-hover);
+}
+
+.getddo-tour .driver-popover-next-btn:active {
+    background-color: var(--color-action-accent-pressed);
+    border-color: var(--color-action-accent-pressed);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .getddo-tour .driver-popover-next-btn {
+        animation: getddo-tour-nudge 1.6s ease-out 0.3s 2;
+    }
+}
+
+@keyframes getddo-tour-nudge {
+    0% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-action-accent) 70%, transparent);
+    }
+    100% {
+        box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-action-accent) 0%, transparent);
+    }
 }
 
 /* 첫 단계의 '이전'은 누를 수 없으니 자리만 차지하지 않게 감춘다 */

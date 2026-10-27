@@ -161,8 +161,6 @@ export function BannerSlider({
             </div>
         );
     }
-    // 등록된 배너가 없으면 자리를 비운다 — 아래 줄 내용(바로가기)은 남긴다
-    if (!isError && total === 0) return footer ?? null;
 
     const move = (offset: number) => {
         setPaused(true);
@@ -186,9 +184,10 @@ export function BannerSlider({
                 if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
             }}
         >
-            {isError && total === 0 && (
+            {total === 0 && (
                 /*
-                 * 받아 둔 배너가 없으면 기본 배너로 자리를 채운다 — 홍보 자리라 실패 문구를 크게 띄우지 않는다.
+                 * 받아 둔 배너가 없으면(못 받았거나 등록된 배너가 0개) 기본 배너로 자리를 채운다 — 홍보 자리라
+                 * '배너가 없어요' 같은 빈 상태를 띄우지 않는다. 자리가 비면 홈 첫 화면이 고장 나 보였다.
                  * 자리가 빠지면 아래 섹션이 밀려 올라오고, 빈 틀에 오류만 두면 홈 첫 화면이 고장 나 보인다.
                  * 실패 안내·다시 불러오기는 아래 줄 갱신 표시가 작게 맡는다
                  */

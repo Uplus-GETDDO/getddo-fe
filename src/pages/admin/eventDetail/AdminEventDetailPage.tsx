@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import type { EventActionKind } from '@features/manageEvent';
+import type { ImagePreview } from '@shared/ui/image-preview-dialog';
 
 import {
     ADMIN_STATUS_META,
@@ -11,20 +12,18 @@ import {
     useAdminEvent,
 } from '@entities/event';
 import { EventActionDialog } from '@features/manageEvent';
-import { useImageFallback } from '@shared/hooks/useImageFallback';
+import { useReturnState } from '@shared/model/returnTo';
 import { Badge, badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { DetailItem, DetailList, DetailMeta } from '@shared/ui/detail-list';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@shared/ui/dialog';
+import { ImagePreviewDialog } from '@shared/ui/image-preview-dialog';
 import { CardSkeleton, LoadingBlock } from '@shared/ui/skeleton';
 import { cn } from '@shared/utils/cn';
 import { formatKst } from '@shared/utils/date';
+
+import type { EventEntriesView } from './ui/EventEntriesDialog';
+
+import { EventEntriesDialog } from './ui/EventEntriesDialog';
 
 const KST_YMD_HM: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -96,25 +95,6 @@ function ZoomableThumbnail({
     );
 }
 
-function PreviewImage({ src, label }: { src: string; label: string }) {
-    const image = useImageFallback(src);
-    if (!image.shown) {
-        return (
-            <div className="bg-surface-sunken text-body-sm text-fg-tertiary flex h-64 items-center justify-center rounded-lg">
-                이미지를 불러오지 못했습니다
-            </div>
-        );
-    }
-    return (
-        <img
-            src={src}
-            alt={label}
-            onError={image.onError}
-            className="mx-auto max-h-[70vh] max-w-full object-contain"
-        />
-    );
-}
-
 export function AdminEventDetailPage() {
     const { eventId = '' } = useParams();
     const navigate = useNavigate();
@@ -124,10 +104,14 @@ export function AdminEventDetailPage() {
         pathname: '/admin/events',
         search: searchParams.toString() ? `?${searchParams.toString()}` : '',
     };
-    const close = () => void navigate(closeTo);
+    // 상세를 닫아도 목록 스크롤 자리는 그대로 둔다
+    const close = () => void navigate(closeTo, { preventScrollReset: true });
     const { data: event, isPending, isError } = useAdminEvent(eventId);
+    // 추첨·응모 화면으로 건너가면 머리에 '← 이벤트 관리로 돌아가기'가 떠 이 이벤트가 열린 목록으로 돌아온다
+    const back = useReturnState(`이벤트 관리 · ${event?.title ?? '이벤트'}`);
     const [action, setAction] = useState<EventActionKind | null>(null);
-    const [preview, setPreview] = useState<{ src: string; label: string } | null>(null);
+    const [preview, setPreview] = useState<ImagePreview | null>(null);
+    const [entriesView, setEntriesView] = useState<EventEntriesView | null>(null);
 
     if (isPending) {
         return (
@@ -238,7 +222,9 @@ export function AdminEventDetailPage() {
                 <div className="flex flex-wrap gap-2">
                     {hasDraw && (
                         <Button asChild>
-                            <Link to={`/admin/draw?eventId=${event.id}`}>추첨 관리</Link>
+                            <Link to={`/admin/draw?eventId=${event.id}`} state={back}>
+                                추첨 관리
+                            </Link>
                         </Button>
                     )}
                     {canEdit && (
@@ -246,13 +232,12 @@ export function AdminEventDetailPage() {
                             <Link to={`/admin/events/${event.id}/edit`}>수정</Link>
                         </Button>
                     )}
-                    <Button variant="secondary" asChild>
-                        <Link to={`/admin/entries?view=participants&eventId=${event.id}`}>
-                            참여자 조회
-                        </Link>
+                    {/* 참여자·응모 이력은 화면을 옮기지 않고 모달로 연다 — 보던 이벤트 상세가 그대로 남는다 */}
+                    <Button variant="secondary" onClick={() => setEntriesView('participants')}>
+                        참여자 조회
                     </Button>
-                    <Button variant="secondary" asChild>
-                        <Link to={`/admin/entries?eventId=${event.id}`}>응모 이력 조회</Link>
+                    <Button variant="secondary" onClick={() => setEntriesView('history')}>
+                        응모 이력 조회
                     </Button>
                 </div>
             </section>
@@ -359,17 +344,15 @@ export function AdminEventDetailPage() {
                 </section>
             )}
 
-            <Dialog open={preview !== null} onOpenChange={(open) => !open && setPreview(null)}>
-                <DialogContent className="sm:max-w-lg">
-                    <DialogHeader>
-                        <DialogTitle>{preview?.label}</DialogTitle>
-                        <DialogDescription className="sr-only">
-                            이미지 확대 미리보기
-                        </DialogDescription>
-                    </DialogHeader>
-                    {preview && <PreviewImage src={preview.src} label={preview.label} />}
-                </DialogContent>
-            </Dialog>
+            <ImagePreviewDialog preview={preview} onClose={() => setPreview(null)} />
+
+            <EventEntriesDialog
+                eventId={event.id}
+                eventTitle={event.title}
+                view={entriesView}
+                onViewChange={setEntriesView}
+                onClose={() => setEntriesView(null)}
+            />
 
             <EventActionDialog
                 event={event}

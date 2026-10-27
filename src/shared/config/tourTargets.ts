@@ -4,6 +4,7 @@
  */
 export const TOUR_TARGET = {
     getddoTime: 'getddo-time',
+    events: 'events',
     earnTickets: 'earn-tickets',
     notifications: 'notifications',
     myResults: 'my-results',

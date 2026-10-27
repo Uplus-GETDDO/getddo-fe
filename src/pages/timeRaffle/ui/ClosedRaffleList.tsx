@@ -58,10 +58,10 @@ export function ClosedRaffleList({
                 <div className="flex flex-col items-start gap-3">
                     <Button variant="link" size="text" onClick={onBack}>
                         <ChevronLeft />
-                        진행 중인 래플 보기
+                        진행 중인 겟또타임 보기
                     </Button>
                     <div className="flex items-center gap-2">
-                        <h2 className="text-title-3 text-fg-primary">마감한 래플</h2>
+                        <h2 className="text-title-3 text-fg-primary">마감한 겟또타임</h2>
                         <Badge variant="neutral" size="sm">
                             {formatNumber(events.length)}
                         </Badge>
@@ -71,7 +71,7 @@ export function ClosedRaffleList({
             {mode === 'preview' && (
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <h2 className="text-title-3 text-fg-primary">마감한 래플</h2>
+                        <h2 className="text-title-3 text-fg-primary">마감한 겟또타임</h2>
                         {events.length > 0 && (
                             <Badge variant="neutral" size="sm">
                                 {formatNumber(events.length)}
@@ -88,7 +88,7 @@ export function ClosedRaffleList({
             )}
 
             {events.length === 0 ? (
-                <p className="text-body-sm text-fg-tertiary">마감한 래플이 없어요.</p>
+                <p className="text-body-sm text-fg-tertiary">마감한 겟또타임이 없어요.</p>
             ) : (
                 <div className="flex flex-col">
                     {/* 홈 '발표 대기 · 결과'와 같은 목록 — 구분선은 호버 배경과 같은 8px 안쪽에서 시작한다 */}
@@ -109,7 +109,7 @@ export function ClosedRaffleList({
                                         .getElementById(id)
                                         ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
                             }}
-                            label="마감한 래플 페이지"
+                            label="마감한 겟또타임 페이지"
                             className="justify-center pt-4"
                         />
                     )}

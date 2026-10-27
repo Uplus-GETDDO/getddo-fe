@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/readme/getddo-banner.png" width="100%" alt="U+ GETDDO 로고와 타코야끼 마스코트가 있는 픽셀 아트 배너">
+</p>
+
 <h1 align="center">U+ GETDDO</h1>
 
 <p align="center">
@@ -19,8 +23,6 @@
   </a>
 </p>
 
-![실제 배포 홈의 이벤트 배너와 겟또타임 안내](docs/assets/readme/home-desktop.webp)
-
 GETDDO는 LG유플러스 멤버십 사용자를 위한 응모 이벤트 플랫폼입니다.
 사용자는 출석·미션·게임으로 응모권을 모으고, 이벤트에 응모한 뒤 발표된 결과를 확인합니다.
 관리자는 이벤트·응모권·추첨·결과 발표를 같은 서비스에서 운영합니다.
@@ -30,6 +32,8 @@ GETDDO는 LG유플러스 멤버십 사용자를 위한 응모 이벤트 플랫�
 
 ## 서비스 화면
 
+![실제 상품 이미지가 표시된 홈 배너와 겟또타임 이벤트](docs/assets/readme/home-desktop.webp)
+
 <table>
   <tr>
     <th>출석으로 적립</th>
@@ -37,9 +41,9 @@ GETDDO는 LG유플러스 멤버십 사용자를 위한 응모 이벤트 플랫�
     <th>등급별 응모권 선택</th>
   </tr>
   <tr>
-    <td valign="top"><img src="docs/assets/readme/attendance-mobile.webp" width="260" alt="연속 출석과 월간 출석 현황, 출석 보상 버튼"></td>
-    <td valign="top"><img src="docs/assets/readme/games-mobile.webp" width="260" alt="미션 화면의 게임 카드와 게임 보상 안내"></td>
-    <td valign="top"><img src="docs/assets/readme/raffle-mobile.webp" width="260" alt="브론즈·실버·골드·플래티넘 응모권의 보유량과 수량 선택"></td>
+    <td valign="top"><img src="docs/assets/readme/attendance-mobile.webp" width="260" alt="마스코트가 표시된 월간 출석 달력과 연속 출석 보너스, 오늘 출석 완료 상태"></td>
+    <td valign="top"><img src="docs/assets/readme/games-mobile.webp" width="260" alt="타꼬 주문과 타꼬 타이밍의 게임 썸네일, 게임 보상 안내"></td>
+    <td valign="top"><img src="docs/assets/readme/raffle-mobile.webp" width="260" alt="상품 이미지와 브론즈·실버·골드·플래티넘 응모권의 보유량 및 수량 선택"></td>
   </tr>
 </table>
 
@@ -52,7 +56,7 @@ GETDDO는 LG유플러스 멤버십 사용자를 위한 응모 이벤트 플랫�
 
 </details>
 
-화면은 **2026-10-26 실제 배포본**을 촬영했습니다. 계정 선택 영역을 제외한 본문 캡처이며, 데이터는 시연용입니다.
+화면은 **2026-10-26 실제 배포본**에서 상품 이미지·게임 썸네일·출석 달력의 로딩을 확인한 뒤 다시 촬영했습니다. 계정 선택 영역을 제외한 본문 캡처이며, 데이터는 시연용입니다.
 캡처 환경과 범위는 [이미지 안내](docs/assets/readme/README.md)에 기록했습니다.
 
 ## 주요 기능

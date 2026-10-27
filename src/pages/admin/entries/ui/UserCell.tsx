@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { useReturnState } from '@shared/model/returnTo';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/popover';
 
 const MENU_ITEM =
@@ -11,6 +12,8 @@ const MENU_ITEM =
  * '이 사람 응모만 걸러 보기'가 가장 흔해, 맨 위에 두고 지금 화면에 그대로 머문다
  */
 export function UserCell({ userId, userName }: { userId: string; userName?: string | null }) {
+    // 다른 화면으로 건너가면 머리에 '← 응모 조회로 돌아가기'가 뜬다 — 보던 조건 그대로 돌아온다
+    const back = useReturnState('응모 조회');
     return (
         <>
             <Popover>
@@ -21,11 +24,11 @@ export function UserCell({ userId, userName }: { userId: string; userName?: stri
                     <Link className={MENU_ITEM} to={`/admin/entries?userId=${userId}`}>
                         이 사용자 응모만 보기
                     </Link>
-                    <Link className={MENU_ITEM} to={`/admin/tickets?userId=${userId}`}>
+                    <Link className={MENU_ITEM} to={`/admin/tickets?userId=${userId}`} state={back}>
                         응모권 이력 보기
                         <span aria-hidden>→</span>
                     </Link>
-                    <Link className={MENU_ITEM} to={`/admin/users?detail=${userId}`}>
+                    <Link className={MENU_ITEM} to={`/admin/users?detail=${userId}`} state={back}>
                         사용자 상세 열기
                         <span aria-hidden>→</span>
                     </Link>

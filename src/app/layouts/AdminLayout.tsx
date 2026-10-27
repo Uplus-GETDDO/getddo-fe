@@ -1,17 +1,22 @@
-import { House } from 'lucide-react';
-import { NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
+import { ChevronLeft, House } from 'lucide-react';
+import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 
 import { VirtualClockTicker } from '@features/controlVirtualClock';
 import { env } from '@shared/config/env';
 import { useDocumentTitle } from '@shared/hooks/useDocumentTitle';
+import { readReturnTo } from '@shared/model/returnTo';
 import { RouteErrorBoundary, RouteErrorFallback } from '@shared/ui/route-error-boundary';
 import { cn } from '@shared/utils/cn';
 
+import { getDataSource } from '../config/dataSource';
 import { ADMIN_NAV_GROUPS, ADMIN_NAV_ITEMS } from './adminNavItems';
+import { DATA_SOURCE_LABEL } from './dataSourceLabel';
 import { useAdminNavBadges } from './useAdminNavBadges';
 
 export function AdminLayout() {
-    const { pathname } = useLocation();
+    const location = useLocation();
+    const { pathname } = location;
+    const returnTo = readReturnTo(location.state as unknown);
     const badges = useAdminNavBadges();
     const current = ADMIN_NAV_ITEMS.find((item) =>
         item.end
@@ -91,12 +96,33 @@ export function AdminLayout() {
                         <House aria-hidden className="size-4" />
                         사용자 화면으로
                     </NavLink>
+                    {/* 관리자 화면의 바닥글 자리 — 이번 방문의 데이터 출처 */}
+                    <p className="text-caption text-fg-tertiary mt-3 text-center">
+                        {DATA_SOURCE_LABEL[getDataSource()]}
+                    </p>
                 </div>
             </aside>
             <div className="flex min-w-0 flex-1 flex-col">
                 {/* 화면 이름은 본문 위에 크게 — 띠 모양 머리줄 대신 바탕 위에 제목만 둔다. 바탕은 흰색 하나로, 칸 구분은 1px 선과 여백으로만 (회색 바탕 위 흰 카드는 화면을 상자투성이로 보이게 했다) */}
-                <header className="bg-surface-page flex h-20 items-end px-4 pb-1 md:pr-10 md:pl-10">
-                    <h1 className="text-title-2 text-fg-primary">{current?.label ?? '관리자'}</h1>
+                <header className="bg-surface-page flex min-h-20 items-end px-4 pb-1 md:pr-10 md:pl-10">
+                    <div className="flex min-w-0 flex-col gap-1">
+                        {/*
+                         * 다른 화면의 상세에서 건너왔으면 제목 위에 돌아갈 곳을 둔다 — 보던 주소(조건·고른 줄) 그대로 돌아간다.
+                         * 메뉴로 들어오면 실려 온 곳이 없어 뜨지 않는다
+                         */}
+                        {returnTo && (
+                            <Link
+                                to={returnTo.to}
+                                className="text-body-sm text-fg-secondary hover:text-fg-primary focus-visible:ring-border-focus flex w-fit min-w-0 items-center gap-1 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+                            >
+                                <ChevronLeft aria-hidden className="size-4 shrink-0" />
+                                <span className="truncate">{returnTo.label}로 돌아가기</span>
+                            </Link>
+                        )}
+                        <h1 className="text-title-2 text-fg-primary">
+                            {current?.label ?? '관리자'}
+                        </h1>
+                    </div>
                     {/* 가상 시계는 로컬 개발 전용 표시 도구다 */}
                     {env.isDev && <VirtualClockTicker className="ml-auto hidden md:flex" />}
                 </header>
@@ -138,6 +164,10 @@ export function AdminLayout() {
                         사용자 화면으로
                     </NavLink>
                 </nav>
+                {/* 좁은 화면에서는 사이드바 아래 출처 표시가 숨으므로 메뉴 탭 아래에 같은 줄을 둔다 */}
+                <p className="text-caption text-fg-tertiary px-4 pt-2 md:hidden">
+                    {DATA_SOURCE_LABEL[getDataSource()]}
+                </p>
                 <main className="flex-1 p-4 md:pt-5 md:pr-0 md:pl-10">
                     {/* 화면 렌더 오류가 나도 사이드바·헤더를 유지하고 라우트 전환으로 복구한다 */}
                     <RouteErrorBoundary resetKey={pathname} fallback={<RouteErrorFallback />}>

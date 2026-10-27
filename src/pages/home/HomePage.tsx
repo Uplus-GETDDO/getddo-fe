@@ -94,17 +94,20 @@ export function HomePage() {
                 <TicketBalanceWidget />
             </div>
             <div className={`${CONTAINER} flex flex-col gap-20`}>
-                <EventCardList
-                    title="이벤트"
-                    description="응모권 없이도 참여할 수 있어요."
-                    moreHref="/events"
-                    moreLabel="더보기"
-                    events={freeEvents.slice(0, FREE_EVENT_LIMIT)}
-                    isPending={isPending}
-                    isError={isError}
-                    onRetry={() => void eventsQuery.refetch()}
-                    emptyMessage="지금 참여할 수 있는 이벤트가 없어요."
-                />
+                {/* 첫 방문 안내가 겟또타임 다음에 짚어 둘의 차이를 보인다 */}
+                <div data-tour={TOUR_TARGET.events}>
+                    <EventCardList
+                        title="이벤트"
+                        description="응모권 없이도 참여할 수 있어요."
+                        moreHref="/events"
+                        moreLabel="더보기"
+                        events={freeEvents.slice(0, FREE_EVENT_LIMIT)}
+                        isPending={isPending}
+                        isError={isError}
+                        onRetry={() => void eventsQuery.refetch()}
+                        emptyMessage="지금 참여할 수 있는 이벤트가 없어요."
+                    />
+                </div>
                 {/* 응모한 이벤트가 없거나 못 불러와도 섹션은 두고 안내를 보인다 — 있다 없다 하면 홈 아래쪽이 들썩인다 */}
                 <section data-tour={TOUR_TARGET.myResults} className="flex flex-col gap-6">
                     {/* 다른 홈 섹션처럼 제목 옆에 작은 설명 — 내가 응모한 것만 모았다는 걸 밝힌다 */}

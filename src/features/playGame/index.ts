@@ -11,3 +11,4 @@ export type { GameSubmission } from './api/queries';
 export { snapshotSubmission } from './model/gameSession';
 
 export { useGamePlaySession } from './hooks/useGamePlaySession';
+export { TakkoRunMini } from './ui/TakkoRunMini';

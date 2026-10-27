@@ -292,7 +292,7 @@ describe('관리자 미션', () => {
             get.mock.calls.filter(([url]) => url.includes('survey-answers')).at(-1)?.[1]?.params,
         ).toMatchObject({ questionId: 'q1', page: 1, to: '2026-10-15' });
     });
-    it('ESC로 상세 모달을 닫는다', async () => {
+    it('ESC로 상세 칸을 닫는다', async () => {
         const summary = {
             id: 'm-1',
             title: '퀴즈 미션',
@@ -335,7 +335,7 @@ describe('관리자 미션', () => {
         expect(within(dialog).getByText('종료')).toBeInTheDocument();
         await userEvent.keyboard('{Escape}');
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-        // 트리거 없이 열린 모달은 Radix 복귀 대상이 없으므로 상세 버튼으로 포커스를 돌려준다
+        // 상세 칸이 닫히면 눌렀던 상세 버튼으로 포커스를 돌려준다
         await vi.waitFor(() =>
             expect(screen.getByRole('button', { name: '퀴즈 미션 상세' })).toHaveFocus(),
         );

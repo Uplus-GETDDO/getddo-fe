@@ -190,16 +190,19 @@ export function CapsuleGacha({
     onPhaseChange,
     grade,
     reduceMotion = false,
+    rewardSrc,
 }: {
     phase: GachaPhase;
     onPhaseChange: (next: GachaPhase) => void;
     grade?: TicketGrade | null;
     reduceMotion?: boolean;
+    /** 캡슐에서 나올 그림을 직접 정할 때 — 404의 꽝(어지러운 타코야끼)처럼 응모권이 아닌 경우 */
+    rewardSrc?: string;
 }) {
     const shaking = phase === 'spinning';
     // 모달을 열 때마다 공 자리를 새로 섞는다 (첫 렌더에 한 번만)
     const [balls] = useState(() => createBalls(Math.floor(Math.random() * 1e9)));
-    const reward = grade ? TICKET_GRADE_IMAGE[grade] : rewardMascot;
+    const reward = rewardSrc ?? (grade ? TICKET_GRADE_IMAGE[grade] : rewardMascot);
 
     return (
         // 무대는 248×184 고정 — 모달이 낮아져도 줄지 않게 하고, 좁은 화면에서는 통째로 줄인다

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import type { AdminEvent, AdminEventStatus, EventType } from '@entities/event';
 
 import { ADMIN_STATUS_META, useAdminEventsByStatus } from '@entities/event';
+import { useRevealWhenStacked } from '@shared/hooks/useRevealWhenStacked';
 import { useVirtualClock } from '@shared/model/virtualClock';
 import { DateRangeFilter, TextFilter } from '@shared/ui/filter-fields';
 import {
@@ -18,7 +19,6 @@ import { cn } from '@shared/utils/cn';
 
 import { DrawEventPanel } from './ui/DrawEventPanel';
 import { DrawEventPicker } from './ui/DrawEventPicker';
-import { PolicyPendingNotice } from './ui/PolicyPendingNotice';
 
 // 마감 이후 추첨 단계(자동 추첨 대기·진행, 확정, 발표, 재추첨)의 이벤트를 관리 대상으로 고른다.
 // 마감(CLOSED)도 최초 추첨 실행이 생길 수 있어 포함한다 — 대시보드 '추첨 필요'와 같은 범위
@@ -69,6 +69,7 @@ const STAGE_ORDER: readonly AdminEventStatus[] = [
 export function AdminDrawPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const eventId = searchParams.get('eventId') ?? '';
+    const detailRef = useRevealWhenStacked<HTMLElement>(eventId, '(min-width: 1280px)');
     const now = useVirtualClock().now();
     const [kind, setKind] = useState<'all' | EventType>('all');
     const [stage, setStage] = useState<'all' | AdminEventStatus>('all');
@@ -109,7 +110,9 @@ export function AdminDrawPage() {
     const events = all
         .filter((e) => stage === 'all' || e.status === stage)
         .sort((a, b) => (DRAW_PRIORITY[a.status] ?? 9) - (DRAW_PRIORITY[b.status] ?? 9));
-    const select = (next: string | null) => setSearchParams(next ? { eventId: next } : {});
+    // 줄을 고르는 것은 같은 화면 안의 일이라 주소가 바뀌어도 스크롤을 맨 위로 올리지 않는다
+    const select = (next: string | null) =>
+        setSearchParams(next ? { eventId: next } : {}, { preventScrollReset: true });
 
     return (
         <div className="flex flex-col gap-6 pb-10 md:pr-10">
@@ -208,7 +211,7 @@ export function AdminDrawPage() {
                     // 칸 너비를 애니메이션하면 표가 매 프레임 다시 줄을 맞추며 덜컥거렸다 — 너비는 한 번에 바꾸고
                     // 오른쪽 패널만 옅게 밀려 들어오게 한다
                     eventId
-                        ? 'xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] xl:gap-x-4'
+                        ? 'xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] xl:gap-x-6'
                         : 'xl:grid-cols-1',
                 )}
             >
@@ -241,9 +244,11 @@ export function AdminDrawPage() {
                     )}
                 </div>
                 {eventId && (
+                    // 이벤트 관리와 같은 인스펙터 — 화면 높이에 붙어 따라오고, 세로선 하나로 목록과 나눈다
                     <aside
+                        ref={detailRef}
                         aria-label="추첨 관리 상세"
-                        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 min-w-0 motion-safe:duration-200"
+                        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 xl:border-border-default min-w-0 scroll-mt-4 motion-safe:duration-200 xl:sticky xl:top-4 xl:h-[calc(100dvh-2rem)] xl:overflow-y-auto xl:border-l xl:pl-6"
                     >
                         <DrawEventPanel
                             key={eventId}
@@ -253,9 +258,6 @@ export function AdminDrawPage() {
                     </aside>
                 )}
             </div>
-
-            {/* 계약 대기 안내 — 운영 화면의 첫 자리를 차지하지 않게 맨 아래에 접어 둔다 */}
-            <PolicyPendingNotice />
         </div>
     );
 }

@@ -47,7 +47,7 @@ describe('제외된 공통 감사 경로', () => {
             const { client, router } = renderRoute(path);
             try {
                 expect(
-                    await screen.findByRole('heading', { name: '페이지를 찾을 수 없습니다' }),
+                    await screen.findByRole('heading', { name: '페이지를 찾을 수 없어요' }),
                 ).toBeInTheDocument();
                 for (const nav of screen.getAllByRole('navigation')) {
                     expect(

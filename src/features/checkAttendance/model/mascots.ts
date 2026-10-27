@@ -1,9 +1,10 @@
+import mascotDizzy from '@shared/assets/ui/mascot-dizzy.png';
+
 import mascotBasic from '../assets/mascot-basic.png';
 import mascotBatter from '../assets/mascot-batter.png';
 import mascotBonusDumpling from '../assets/mascot-bonus-dumpling.png';
 import mascotBonusRiceball from '../assets/mascot-bonus-riceball.png';
 import mascotBonusVegetable from '../assets/mascot-bonus-vegetable.png';
-import mascotDizzy from '../assets/mascot-dizzy.png';
 import steam from '../assets/steam.webp';
 import { isStreakBonusDate, pickBonusMascotIndex } from '../utils/attendanceWeek';
 

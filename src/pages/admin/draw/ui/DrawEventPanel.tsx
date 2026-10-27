@@ -6,6 +6,7 @@ import type { AdminEventStatus } from '@entities/event';
 
 import { DRAW_RUN_STATUS_META, useEventDraws } from '@entities/drawResult';
 import { ADMIN_STATUS_META, useAdminEvent } from '@entities/event';
+import { useReturnState } from '@shared/model/returnTo';
 import { badgeVariants } from '@shared/ui/badge';
 import { Button } from '@shared/ui/button';
 import { ChipTabs } from '@shared/ui/chip-tabs';
@@ -76,6 +77,8 @@ export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?
     };
 
     const status = event ? ADMIN_STATUS_META[event.status] : null;
+    // 이벤트 상세로 건너가면 머리에 '← 추첨 관리로 돌아가기'가 떠 이 이벤트가 열린 추첨 관리로 돌아온다
+    const back = useReturnState(`추첨 관리 · ${event?.title ?? '이벤트'}`);
     const flow = event ? DRAW_FLOW[event.status] : undefined;
     const latestRun = latest.data?.items[0];
     // ADR-022 — 발표 예정 시각·카운트다운은 계약에서 제외됐다. 표시 시각은 최초 자동 추첨 기준이다
@@ -123,7 +126,9 @@ export function DrawEventPanel({ eventId, onClose }: { eventId: string; onClose?
                             </p>
                         </div>
                         <Button size="sm" variant="secondary" asChild>
-                            <Link to={`/admin/events/${event.id}`}>이벤트 상세</Link>
+                            <Link to={`/admin/events/${event.id}`} state={back}>
+                                이벤트 상세
+                            </Link>
                         </Button>
                         {onClose && (
                             <Button
