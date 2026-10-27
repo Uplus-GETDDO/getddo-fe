@@ -15,29 +15,3 @@ export function PolicyPendingChip({ className }: { className?: string }) {
         </span>
     );
 }
-
-// getddo-spec 00-requirements/pending-decisions.md "추첨과 결과 발표"에서 남은 항목 — 확정 전에는 동작을 만들지 않는다.
-// 최초 발표(GD-199)와 실행 감사(GD-137)는 계약이 잡혀 화면에 연결됐으므로 목록에서 뺐다
-const PENDING_ITEMS = [
-    '최초 발표 지연 안내 문구와 새 발표 예정 시각의 제공 여부',
-    '최초 발표 후 취소부터 공개 명단 갱신 전까지의 취소자 표시와 본인 중간 결과',
-    '시스템 장애·정합성 오류의 복구·재시도·취소 전환 기준',
-];
-
-export function PolicyPendingNotice() {
-    return (
-        <details className="bg-surface-page border-border-default rounded-2xl border p-5">
-            <summary className="text-body-bold text-fg-primary focus-visible:ring-border-focus cursor-pointer rounded-md focus-visible:ring-2 focus-visible:outline-none">
-                정책 미확정 항목 {PENDING_ITEMS.length}건 <PolicyPendingChip className="ml-2" />
-            </summary>
-            <ul className="text-body-sm text-fg-secondary mt-3 flex list-disc flex-col gap-1.5 pl-5">
-                {PENDING_ITEMS.map((item) => (
-                    <li key={item}>{item}</li>
-                ))}
-            </ul>
-            <p className="text-caption text-fg-tertiary mt-3">
-                해당 기능은 비활성 안내로만 표시하며, 계약이 확정되면 연결합니다.
-            </p>
-        </details>
-    );
-}
