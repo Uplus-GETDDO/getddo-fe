@@ -15,10 +15,12 @@ import { PagedResult } from '@shared/ui/paged-result';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shared/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/table';
 import { formatKstFullDot } from '@shared/utils/date';
-
-import { USER_ROLE_LABEL } from './model/labels';
-import { AdminUserDetailSheet } from './ui/AdminUserDetailSheet';
-import { MembershipBadge, UserStatus } from './ui/UserBadges';
+import {
+    AdminUserDetailSheet,
+    MembershipBadge,
+    USER_ROLE_LABEL,
+    UserStatus,
+} from '@widgets/adminUserDetail';
 
 const SIZE_OPTIONS = [20, 50, 100];
 /** 상세를 닫은 클릭이 아래 줄로 새어 다시 여는 것을 막는 시간 */
